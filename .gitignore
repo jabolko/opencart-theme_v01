@@ -1,0 +1,27 @@
+# Database credentials - NEVER commit these
+opencart/config.php
+opencart/admin/config.php
+
+# Cache and temporary files
+opencart/image/cache/
+opencart/system/storage/
+
+# Docker database volume
+db_data/
+
+# Dependencies (can be re-downloaded)
+node_modules/
+
+# Compiled CSS/JS (gets rebuilt from source)
+opencart/catalog/view/theme/*/stylesheet/dist/
+opencart/catalog/view/theme/*/javascript/dist/
+
+# Mac system files
+.DS_Store
+
+# IDE settings
+.vscode/
+.idea/
+
+# Xdebug profiler output
+*.cachegrind

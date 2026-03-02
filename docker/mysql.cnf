@@ -1,0 +1,5 @@
+[mysqld]
+; Log any database query that takes longer than 0.5 seconds
+slow_query_log = 1
+long_query_time = 0.5
+slow_query_log_file = /var/log/mysql/mysql-slow.log
