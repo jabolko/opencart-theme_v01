@@ -1,0 +1,178 @@
+// =============================================================================
+// _nav.scss — Primary navigation (#menu). Overrides Bootstrap 3 .navbar.
+// HTML structure: see opencart/catalog/view/theme/default/template/common/menu.twig
+// =============================================================================
+@use '../abstracts' as *;
+
+// ============================================================
+// #menu — navbar wrapper (Bootstrap .navbar override)
+// ============================================================
+
+#menu.navbar {
+  background-color: $color-secondary;
+  border: none;
+  border-radius: 0;
+  margin-bottom: 0;
+  min-height: 0;
+}
+
+// ============================================================
+// Desktop nav links
+// ============================================================
+
+#menu .navbar-nav > li > a {
+  color: $color-text-on-dark;
+  font-family: $font-family-body;
+  font-size: $font-size-base;
+  font-weight: $font-weight-body;
+  padding: $space-3 $space-4;
+  border-bottom: 2px solid transparent;
+  transition: color $transition-base, border-color $transition-base;
+
+  &:hover,
+  &:focus {
+    color: $color-primary;
+    background-color: transparent;
+    border-bottom-color: $color-primary;
+  }
+}
+
+// Open/active state
+#menu .navbar-nav > li.open > a,
+#menu .navbar-nav > li.active > a {
+  color: $color-primary;
+  background-color: transparent;
+  border-bottom-color: $color-primary;
+}
+
+// ============================================================
+// Dropdown — multi-column category panel
+// ============================================================
+
+#menu .dropdown-menu {
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-top: none;
+  border-radius: 0 0 $radius-md $radius-md;
+  box-shadow: $shadow-hover;
+  padding: $space-4 0;
+  min-width: 220px;
+}
+
+#menu .dropdown-inner {
+  display: flex;
+  gap: $space-6;
+  padding: 0 $space-4;
+
+  ul {
+    min-width: 140px;
+  }
+
+  a {
+    display: block;
+    color: $color-text-base;
+    font-size: $font-size-sm;
+    padding: $space-1 0;
+    transition: color $transition-base;
+
+    &:hover {
+      color: $color-primary;
+    }
+  }
+}
+
+// "See all Category" link at bottom of dropdown
+#menu .see-all {
+  display: block;
+  padding: $space-3 $space-4;
+  margin-top: $space-2;
+  border-top: 1px solid $color-border;
+  color: $color-primary;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-heading-md;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $color-primary-dark;
+  }
+}
+
+// ============================================================
+// Mobile — hamburger button + collapsed menu
+// ============================================================
+
+#menu .navbar-header {
+  @include flex-between;
+  padding: 0 $space-4;
+}
+
+#menu #category {
+  color: $color-text-on-dark;
+  font-size: $font-size-base;
+  font-weight: $font-weight-heading-md;
+  line-height: 44px;
+}
+
+#menu .navbar-toggle {
+  border-color: $color-border-dark;
+  background-color: transparent;
+  padding: $space-2 $space-3;
+  margin: $space-2 0;
+  transition: background-color $transition-base;
+
+  .fa-bars {
+    color: $color-text-on-dark;
+    font-size: $font-size-lg;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: $color-secondary-dark;
+    border-color: $color-border-dark;
+  }
+}
+
+// Collapsed panel — keep charcoal background
+#menu .navbar-collapse {
+  background-color: $color-secondary;
+  border-top: 1px solid $color-border-dark;
+  box-shadow: none;
+}
+
+// Mobile link list
+@include respond-below('sm') {
+  #menu .navbar-nav > li > a {
+    padding: $space-3 $space-4;
+    border-bottom: 1px solid $color-border-dark;
+    border-left: none;
+  }
+
+  #menu .dropdown-menu {
+    background-color: $color-secondary-dark;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  #menu .dropdown-inner {
+    flex-direction: column;
+    gap: 0;
+
+    a {
+      color: $color-text-on-dark;
+      padding: $space-2 $space-8;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
+
+  #menu .see-all {
+    padding: $space-2 $space-8;
+    border-top: 1px solid $color-border-dark;
+    color: $color-primary;
+  }
+}

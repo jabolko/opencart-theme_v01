@@ -1,0 +1,4 @@
+// Barrel file — forward all abstracts.
+// Partials use: @use '../abstracts' as *;
+@forward 'variables';
+@forward 'mixins';

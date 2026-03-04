@@ -1,0 +1,65 @@
+// =============================================================================
+// _mixins.scss — Reusable SCSS mixins.
+// =============================================================================
+@use 'sass:map';
+
+// Breakpoints — Bootstrap 3 compatible (sm 768, md 992, lg 1200) + xl 1550
+$breakpoints: (
+  'sm': 768px,
+  'md': 992px,
+  'lg': 1200px,
+  'xl': 1550px
+);
+
+// respond-to($breakpoint) — mobile-first min-width media query
+// Usage: @include respond-to('md') { ... }
+@mixin respond-to($breakpoint) {
+  $value: map.get($breakpoints, $breakpoint);
+  @if $value == null {
+    @warn "Unknown breakpoint: #{$breakpoint}. Available: sm, md, lg, xl.";
+  } @else {
+    @media (min-width: $value) {
+      @content;
+    }
+  }
+}
+
+// respond-below($breakpoint) — max-width query for mobile-only styles
+// Usage: @include respond-below('sm') { ... }
+@mixin respond-below($breakpoint) {
+  $value: map.get($breakpoints, $breakpoint);
+  @if $value == null {
+    @warn "Unknown breakpoint: #{$breakpoint}. Available: sm, md, lg, xl.";
+  } @else {
+    @media (max-width: ($value - 1px)) {
+      @content;
+    }
+  }
+}
+
+// flex-center — horizontal + vertical centering
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// flex-between — space-between row with vertical alignment
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// visually-hidden — hides visually but keeps accessible to screen readers
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

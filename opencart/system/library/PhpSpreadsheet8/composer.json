@@ -1,0 +1,16 @@
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/andresjavierpf/PhpSpreadsheet"
+    }
+  ],
+  "require": {
+    "phpoffice/phpspreadsheet": "dev-master"
+  },
+  "config": {
+    "platform": {
+      "php": "8.0"
+    }
+  }
+}

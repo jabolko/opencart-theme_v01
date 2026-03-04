@@ -1,0 +1,5 @@
+{
+    "require": {
+        "asimlqt/php-google-spreadsheet-client": "3.0.*"
+    }
+}

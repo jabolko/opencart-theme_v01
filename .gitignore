@@ -6,6 +6,9 @@ opencart/admin/config.php
 opencart/image/cache/
 opencart/system/storage/
 
+# Product images — too large for git (1.4 GB)
+opencart/image/izdelki/
+
 # Docker database volume
 db_data/
 

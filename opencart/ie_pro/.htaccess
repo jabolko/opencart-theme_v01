@@ -1,0 +1,4 @@
+AddType text/iepro iepro
+                    <FilesMatch "\.(json|xlsx|xls|ods|xml|xls|txt|iepro)$">
+                        allow from all
+                    </FilesMatch>

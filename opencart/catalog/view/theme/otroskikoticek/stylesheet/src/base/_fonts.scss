@@ -1,0 +1,32 @@
+// =============================================================================
+// _fonts.scss — @font-face declarations for self-hosted fonts.
+// Source files: node_modules/@fontsource/{family}/files/
+// Copied to stylesheet/dist/fonts/ by: npm run fonts:copy
+// =============================================================================
+
+// Open Sans 500 — Medium (h4–h6)
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/open-sans-latin-500-normal.woff2') format('woff2');
+}
+
+// Open Sans 600 — SemiBold (h1–h3)
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/open-sans-latin-600-normal.woff2') format('woff2');
+}
+
+// DM Sans 400 — Regular (body)
+@font-face {
+  font-family: 'DM Sans';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/dm-sans-latin-400-normal.woff2') format('woff2');
+}

@@ -1,0 +1,35 @@
+// =============================================================================
+// theme.scss — Entry point. @use statements only — no styles here.
+// Compile: npm run scss:build | Watch: npm run dev
+// =============================================================================
+
+// Base
+@use 'base/fonts';
+@use 'base/reset';
+@use 'base/body';
+@use 'base/typography';
+
+// Layout
+@use 'layout/grid';
+@use 'layout/header';
+@use 'layout/nav';
+@use 'layout/footer';
+
+// Components
+@use 'components/button';
+@use 'components/product-card';
+@use 'components/badge';
+@use 'components/form';
+@use 'components/pagination';
+
+// Pages
+@use 'pages/home';
+@use 'pages/category';
+@use 'pages/product';
+@use 'pages/cart';
+
+// Vendors
+@use 'vendors/bootstrap-overrides';
+
+// Utilities
+@use 'utilities/helpers';

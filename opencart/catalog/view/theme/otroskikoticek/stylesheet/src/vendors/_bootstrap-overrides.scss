@@ -1,0 +1,8 @@
+// =============================================================================
+// _bootstrap-overrides.scss — Targeted Bootstrap 3 overrides.
+// Strategy: override, do NOT replace Bootstrap (see ADR-002).
+// Add rules here as Bootstrap conflicts are discovered during component work.
+// =============================================================================
+@use '../abstracts' as *;
+
+// Overrides go here

@@ -1,0 +1,15 @@
+// =============================================================================
+// _grid.scss — Container widths and layout helpers.
+// Bootstrap 3 containers: sm 750, md 970, lg 1170 (all unchanged).
+// xl 1550px breakpoint adds a wider container for large monitors.
+// =============================================================================
+@use '../abstracts' as *;
+
+// Wider container at xl (≥ 1550px)
+// 30px gutters on each side = 1520px usable content width
+@include respond-to('xl') {
+  .container {
+    max-width: 1520px;
+    width: 1520px;
+  }
+}

@@ -1,0 +1,15 @@
+// =============================================================================
+// _helpers.scss — Single-purpose utility classes.
+// =============================================================================
+@use '../abstracts' as *;
+
+// Accessible visually-hidden (content remains readable by screen readers)
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// Muted helper text
+.text-muted {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+}

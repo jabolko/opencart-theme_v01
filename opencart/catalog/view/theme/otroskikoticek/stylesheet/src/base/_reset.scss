@@ -1,0 +1,34 @@
+// =============================================================================
+// _reset.scss — Minimal reset layered on Bootstrap 3's normalize.css.
+// Only addresses what Bootstrap leaves unset or inconsistent for our design.
+// =============================================================================
+@use '../abstracts' as *;
+
+// Consistent box model (Bootstrap already sets this on most elements — defensive)
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Remove default margin/padding from common block elements
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, figure, blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+// Responsive images
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// Remove list chrome inside nav elements only (not globally — breaks OC widgets)
+nav ul,
+nav ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

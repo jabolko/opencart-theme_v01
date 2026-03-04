@@ -1,0 +1,125 @@
+// =============================================================================
+// _header.scss — Utility bar (#top) + main header row.
+// =============================================================================
+@use '../abstracts' as *;
+
+// ============================================================
+// .site-header — sticky wrapper around header + nav
+// ============================================================
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: $color-surface;
+}
+
+// ============================================================
+// #top — utility bar (phone, account, wishlist, cart links)
+// ============================================================
+
+#top {
+  background-color: $color-secondary-dark;
+  font-size: $font-size-sm;
+
+  .container {
+    @include flex-between;
+    flex-wrap: wrap;
+    gap: $space-2;
+    padding-top: $space-2;
+    padding-bottom: $space-2;
+  }
+}
+
+#top-links {
+  .list-inline {
+    margin-bottom: 0;
+  }
+
+  > ul > li {
+    padding-left: $space-3;
+  }
+
+  a {
+    color: $color-text-on-dark;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover {
+      color: $color-primary;
+      text-decoration: none;
+    }
+  }
+
+  // Account dropdown
+  .dropdown-menu {
+    background-color: $color-secondary-dark;
+    border: 1px solid $color-border-dark;
+    border-radius: $radius-md;
+    box-shadow: $shadow-hover;
+    min-width: 160px;
+
+    a {
+      color: $color-text-on-dark;
+      font-size: $font-size-sm;
+      padding: $space-2 $space-4;
+
+      &:hover {
+        background-color: $color-secondary;
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+// ============================================================
+// header — main bar (logo + search + cart)
+// ============================================================
+
+header {
+  background-color: $color-surface;
+  border-bottom: 1px solid $color-border;
+  padding: $space-4 0;
+
+  // Vertically align all columns in the row
+  .row {
+    display: flex;
+    align-items: center;
+  }
+}
+
+#logo a {
+  display: inline-block;
+}
+
+#logo img {
+  max-height: 48px;
+  width: auto;
+
+  @include respond-to('sm') {
+    max-height: 60px;
+  }
+}
+
+// Text fallback when no logo image is set
+#logo h1 {
+  margin: 0;
+  font-size: $font-size-xl;
+
+  a {
+    color: $color-text-heading;
+    font-weight: $font-weight-heading-semi;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary;
+    }
+  }
+}
+
+// Cart column — right-aligned
+.header-cart {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

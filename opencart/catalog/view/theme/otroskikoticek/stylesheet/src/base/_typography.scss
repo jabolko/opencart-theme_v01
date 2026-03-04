@@ -1,0 +1,58 @@
+// =============================================================================
+// _typography.scss — Heading, link, and text element defaults.
+// =============================================================================
+@use '../abstracts' as *;
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-heading;
+  color: $color-text-heading;
+  line-height: $line-height-heading;
+}
+
+h1, h2, h3 {
+  font-weight: $font-weight-heading-semi;
+}
+
+h4, h5, h6 {
+  font-weight: $font-weight-heading-md;
+}
+
+h1 { font-size: $font-size-3xl; }
+h2 { font-size: $font-size-2xl; }
+h3 { font-size: $font-size-xl; }
+h4 { font-size: $font-size-lg; }
+h5 { font-size: $font-size-base; }
+h6 { font-size: $font-size-sm; }
+
+// Paragraphs
+p {
+  margin-bottom: $space-4;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Links
+a {
+  color: $color-text-link;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+    border-radius: $radius-sm;
+  }
+}
+
+// Small text
+small {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
