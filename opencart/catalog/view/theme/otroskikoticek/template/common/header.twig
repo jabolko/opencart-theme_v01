@@ -39,45 +39,57 @@
 </head>
 <body>
 <div class="site-header">
-<nav id="top">
-  <div class="container">{{ currency }}
-    {{ language }}
-    <div id="top-links" class="nav pull-right">
-      <ul class="list-inline">
-        <li><a href="{{ contact }}"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md">{{ telephone }}</span></li>
-        <li class="dropdown"><a href="{{ account }}" title="{{ text_account }}" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_account }}</span> <span class="caret"></span></a>
-          <ul class="dropdown-menu dropdown-menu-right">
-            {% if logged %}
-            <li><a href="{{ account }}">{{ text_account }}</a></li>
-            <li><a href="{{ order }}">{{ text_order }}</a></li>
-            <li><a href="{{ transaction }}">{{ text_transaction }}</a></li>
-            <li><a href="{{ download }}">{{ text_download }}</a></li>
-            <li><a href="{{ logout }}">{{ text_logout }}</a></li>
-            {% else %}
-            <li><a href="{{ register }}">{{ text_register }}</a></li>
-            <li><a href="{{ login }}">{{ text_login }}</a></li>
-            {% endif %}
-          </ul>
-        </li>
-        <li><a href="{{ wishlist }}" id="wishlist-total" title="{{ text_wishlist }}"><i class="fa fa-heart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_wishlist }}</span></a></li>
-        <li><a href="{{ shopping_cart }}" title="{{ text_shopping_cart }}"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_shopping_cart }}</span></a></li>
-        <li><a href="{{ checkout }}" title="{{ text_checkout }}"><i class="fa fa-share"></i> <span class="hidden-xs hidden-sm hidden-md">{{ text_checkout }}</span></a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-<header>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-4">
-        <div id="logo">{% if logo %}<a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" /></a>{% else %}
-          <h1><a href="{{ home }}">{{ name }}</a></h1>
-          {% endif %}</div>
+
+  <header>
+    <div class="container">
+      <div class="header-inner">
+
+        <!-- Logo -->
+        <div class="header-logo">
+          <div id="logo">
+            <a href="{{ home }}"><img src="image/catalog/assets/logo/Logo-250x32px-normal.svg" width="250" height="33" title="{{ name }}" alt="{{ name }}" /></a>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="header-search">{{ search }}</div>
+
+        <!-- Header actions -->
+        <div class="header-actions">
+
+          <!-- Account dropdown -->
+          <div class="header-action dropdown">
+            <a href="{{ account }}" class="header-action__btn dropdown-toggle" data-toggle="dropdown" title="{{ text_account }}">
+              <i class="fa fa-user-o"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right">
+              {% if logged %}
+              <li><a href="{{ account }}">{{ text_account }}</a></li>
+              <li><a href="{{ order }}">{{ text_order }}</a></li>
+              <li><a href="{{ transaction }}">{{ text_transaction }}</a></li>
+              <li><a href="{{ download }}">{{ text_download }}</a></li>
+              <li><a href="{{ logout }}">{{ text_logout }}</a></li>
+              {% else %}
+              <li><a href="{{ register }}">{{ text_register }}</a></li>
+              <li><a href="{{ login }}">{{ text_login }}</a></li>
+              {% endif %}
+            </ul>
+          </div>
+
+          <!-- Wishlist — span is updated by OC JS: $('#wishlist-total span').html(count) -->
+          <a href="{{ wishlist }}" id="wishlist-total" class="header-action header-action__btn" title="{{ text_wishlist }}">
+            <i class="fa fa-heart-o"></i>
+            <span class="sr-only"></span>
+          </a>
+
+          <!-- Cart widget (OC-provided dropdown) -->
+          <div class="header-action header-action--cart">{{ cart }}</div>
+
+        </div>
       </div>
-      <div class="col-sm-5">{{ search }}</div>
-      <div class="col-sm-3 header-cart">{{ cart }}</div>
     </div>
-  </div>
-</header>
-{{ menu }}
+  </header>
+
+  {{ menu }}
+
 </div>

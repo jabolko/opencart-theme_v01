@@ -1,19 +1,31 @@
 // =============================================================================
 // _nav.scss — Primary navigation (#menu). Overrides Bootstrap 3 .navbar.
-// HTML structure: see opencart/catalog/view/theme/default/template/common/menu.twig
+// Design: white bg, uppercase links, gold underline slide on hover.
+// Twig: catalog/view/theme/otroskikoticek/template/common/menu.twig
 // =============================================================================
 @use '../abstracts' as *;
 
+// Private — used exclusively for .nav-item-cta (Prodaj oblačila)
+$_cta-start:      #68b48a;
+$_cta-end:        #528e6d;
+$_cta-hover-start:#559c75;
+$_cta-hover-end:  #427358;
+$_nav-link-h:     3.06rem; // ~52px @ 17px root
+
 // ============================================================
-// #menu — navbar wrapper (Bootstrap .navbar override)
+// #menu — navbar shell
 // ============================================================
 
 #menu.navbar {
-  background-color: $color-secondary;
+  background-color: $color-surface;
   border: none;
   border-radius: 0;
   margin-bottom: 0;
-  min-height: 0;
+  min-height: $_nav-link-h;
+  box-shadow:
+    0 1px 0 $color-border,
+    0 4px 24px rgba(43, 46, 53, 0.07),
+    0 8px 40px rgba(43, 46, 53, 0.04);
 }
 
 // ============================================================
@@ -21,85 +33,239 @@
 // ============================================================
 
 #menu .navbar-nav > li > a {
-  color: $color-text-on-dark;
-  font-family: $font-family-body;
-  font-size: $font-size-base;
-  font-weight: $font-weight-body;
-  padding: $space-3 $space-4;
-  border-bottom: 2px solid transparent;
-  transition: color $transition-base, border-color $transition-base;
+  height: $_nav-link-h;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: $font-family-heading;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-heading-semi;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: $color-text-heading;
+  padding: 0 $space-4;
+  background-color: transparent;
+  position: relative;
+  transition: color $transition-base;
+
+  // Sliding gold underline
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: $space-4;
+    right: $space-4;
+    height: 2.5px;
+    background: $color-primary;
+    border-radius: 2px 2px 0 0;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
   &:hover,
   &:focus {
-    color: $color-primary;
+    color: $color-primary-dark;
     background-color: transparent;
-    border-bottom-color: $color-primary;
+
+    &::after { transform: scaleX(1); }
   }
 }
 
-// Open/active state
+// Bootstrap .open / .active state
 #menu .navbar-nav > li.open > a,
 #menu .navbar-nav > li.active > a {
-  color: $color-primary;
+  color: $color-primary-dark;
   background-color: transparent;
-  border-bottom-color: $color-primary;
+
+  &::after { transform: scaleX(1); }
 }
 
 // ============================================================
-// Dropdown — multi-column category panel
+// Custom caret
+// ============================================================
+
+#menu .nav-caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-top: 4px solid currentColor;
+  opacity: 0.45;
+  flex-shrink: 0;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+#menu .dropdown:hover .nav-caret,
+#menu .dropdown.open .nav-caret {
+  opacity: 0.8;
+  transform: rotate(180deg);
+}
+
+// ============================================================
+// Desktop hover — show dropdown via CSS
+// ============================================================
+
+@include respond-to('sm') {
+  #menu .dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+}
+
+// ============================================================
+// Dropdown panel
 // ============================================================
 
 #menu .dropdown-menu {
   background-color: $color-surface;
   border: 1px solid $color-border;
-  border-top: none;
   border-radius: 0 0 $radius-md $radius-md;
-  box-shadow: $shadow-hover;
-  padding: $space-4 0;
-  min-width: 220px;
+  box-shadow: 0 12px 32px rgba(43, 46, 53, 0.1);
+  padding: $space-2 0 $space-3;
+  min-width: 250px;
 }
 
 #menu .dropdown-inner {
-  display: flex;
-  gap: $space-6;
-  padding: 0 $space-4;
+  padding: $space-1 0;
 
   ul {
-    min-width: 140px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 
   a {
     display: block;
-    color: $color-text-base;
+    padding: $space-2 $space-4;
+    color: #565656;
+    font-family: $font-family-body;
     font-size: $font-size-sm;
-    padding: $space-1 0;
-    transition: color $transition-base;
+    font-weight: $font-weight-body;
+    text-decoration: none;
+    transition: background $transition-base, color $transition-base, padding-left 0.15s ease;
 
     &:hover {
-      color: $color-primary;
+      background-color: $color-surface-alt;
+      color: $color-primary-dark;
+      padding-left: $space-6;
     }
   }
 }
 
-// "See all Category" link at bottom of dropdown
+// "See all" link at bottom of dropdown
 #menu .see-all {
   display: block;
-  padding: $space-3 $space-4;
-  margin-top: $space-2;
+  padding: $space-2 $space-4;
+  margin-top: $space-1;
   border-top: 1px solid $color-border;
   color: $color-primary;
+  font-family: $font-family-body;
   font-size: $font-size-sm;
   font-weight: $font-weight-heading-md;
   text-decoration: none;
   transition: color $transition-base;
 
-  &:hover {
-    color: $color-primary-dark;
+  &:hover { color: $color-primary-dark; }
+}
+
+// ============================================================
+// Right-aligned extras
+// ============================================================
+
+#menu .nav-extras {
+  > li {
+    display: flex;
+    align-items: center;
+    height: $_nav-link-h;
+  }
+}
+
+// "O nas" — quiet secondary link
+#menu .nav-item-secondary > a {
+  height: $_nav-link-h;
+  display: flex;
+  align-items: center;
+  font-family: $font-family-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-body;
+  text-transform: none;
+  letter-spacing: 0;
+  color: $color-text-muted;
+  padding: 0 $space-4;
+  background-color: transparent;
+  transition: color $transition-base;
+
+  &::after { display: none; }
+
+  &:hover,
+  &:focus {
+    color: $color-text-heading;
+    background-color: transparent;
   }
 }
 
 // ============================================================
-// Mobile — hamburger button + collapsed menu
+// "Prodaj oblačila" — teal gradient CTA pill
+// ============================================================
+
+#menu .navbar-nav > li.nav-item-cta > a {
+  height: 2rem;        // ~34px
+  display: flex;
+  align-items: center;
+  gap: 0.41rem;        // ~7px
+  font-family: $font-family-body;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #ffffff;
+  background: linear-gradient(135deg, $_cta-start 0%, $_cta-end 100%);
+  border-radius: $radius-full;
+  padding: 0 1.18rem;  // ~20px
+  margin-left: $space-2;
+  box-shadow: 0 2px 10px rgba(45, 157, 168, 0.35);
+  transition: box-shadow $transition-base, transform $transition-base, background $transition-base;
+  position: relative;
+  overflow: hidden;
+
+  &::after { display: none; }
+
+  // Shimmer sweep animation
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -70%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: skewX(-15deg);
+    animation: nav-shimmer 3.5s infinite;
+  }
+
+  svg {
+    flex-shrink: 0;
+    display: block;
+  }
+
+  &:hover,
+  &:focus {
+    color: #565656;
+    background: linear-gradient(135deg, $_cta-hover-start 0%, $_cta-hover-end 100%);
+    box-shadow: 0 4px 18px rgba(45, 157, 168, 0.45);
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes nav-shimmer {
+  0%   { left: -70%; }
+  60%  { left: 130%; }
+  100% { left: 130%; }
+}
+
+// ============================================================
+// Mobile — hamburger + collapse
 // ============================================================
 
 #menu .navbar-header {
@@ -108,71 +274,81 @@
 }
 
 #menu #category {
-  color: $color-text-on-dark;
+  color: $color-text-heading;
   font-size: $font-size-base;
   font-weight: $font-weight-heading-md;
   line-height: 44px;
 }
 
 #menu .navbar-toggle {
-  border-color: $color-border-dark;
+  border-color: $color-border;
   background-color: transparent;
   padding: $space-2 $space-3;
   margin: $space-2 0;
   transition: background-color $transition-base;
 
-  .fa-bars {
-    color: $color-text-on-dark;
+  .fa {
+    color: $color-text-heading;
     font-size: $font-size-lg;
   }
 
   &:hover,
   &:focus {
-    background-color: $color-secondary-dark;
-    border-color: $color-border-dark;
+    background-color: $color-surface-alt;
+    border-color: $color-border;
   }
 }
 
-// Collapsed panel — keep charcoal background
 #menu .navbar-collapse {
-  background-color: $color-secondary;
-  border-top: 1px solid $color-border-dark;
-  box-shadow: none;
+  background-color: $color-surface;
 }
 
-// Mobile link list
 @include respond-below('sm') {
   #menu .navbar-nav > li > a {
+    height: auto;
     padding: $space-3 $space-4;
-    border-bottom: 1px solid $color-border-dark;
-    border-left: none;
+    border-bottom: 1px solid $color-border;
+
+    &::after { display: none; }
   }
 
+  #menu .nav-extras > li { height: auto; }
+
   #menu .dropdown-menu {
-    background-color: $color-secondary-dark;
+    background-color: $color-surface-alt;
     border: none;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
+    position: static;
+    float: none;
+    width: 100%;
   }
 
-  #menu .dropdown-inner {
-    flex-direction: column;
-    gap: 0;
+  #menu .dropdown-inner a {
+    padding: $space-2 $space-8;
 
-    a {
-      color: $color-text-on-dark;
-      padding: $space-2 $space-8;
-
-      &:hover {
-        color: $color-primary;
-      }
-    }
+    &:hover { padding-left: $space-8; }
   }
 
   #menu .see-all {
     padding: $space-2 $space-8;
-    border-top: 1px solid $color-border-dark;
-    color: $color-primary;
+  }
+
+  #menu .nav-item-secondary > a {
+    height: auto;
+    padding: $space-3 $space-4;
+    border-bottom: 1px solid $color-border;
+  }
+
+  #menu .nav-item-cta > a {
+    height: auto;
+    border-radius: 0;
+    margin: $space-3 $space-4;
+    padding: $space-2 $space-4;
+    display: inline-flex;
+    transform: none;
+
+    &::before { display: none; } // disable shimmer on mobile
   }
 }

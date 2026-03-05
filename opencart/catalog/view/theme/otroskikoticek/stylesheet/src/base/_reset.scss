@@ -4,6 +4,12 @@
 // =============================================================================
 @use '../abstracts' as *;
 
+// Anchor rem base — 1rem = 17px across the entire page.
+// Overrides Bootstrap 3's hardcoded body { font-size: 14px }.
+html {
+  font-size: 17px;
+}
+
 // Consistent box model (Bootstrap already sets this on most elements — defensive)
 *,
 *::before,

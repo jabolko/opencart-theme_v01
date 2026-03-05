@@ -1,0 +1,73 @@
+{% if categories %}
+<nav id="menu" class="navbar">
+  <div class="container">
+
+    <!-- Mobile toggle -->
+    <div class="navbar-header">
+      <span id="category" class="visible-xs">{{ text_category }}</span>
+      <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+
+      <!-- Left: category links -->
+      <ul class="nav navbar-nav">
+        {% for category in categories %}
+        {% if category.children %}
+        <li class="dropdown">
+          <a href="{{ category.href }}" class="dropdown-toggle" data-toggle="dropdown">
+            {{ category.name }}<span class="nav-caret"></span>
+          </a>
+          <div class="dropdown-menu">
+            <div class="dropdown-inner">
+              {% for children in category.children|batch(category.children|length / category.column|round(1, 'ceil')) %}
+              <ul class="list-unstyled">
+                {% for child in children %}
+                <li><a href="{{ child.href }}">{{ child.name }}</a></li>
+                {% endfor %}
+              </ul>
+              {% endfor %}
+            </div>
+            <a href="{{ category.href }}" class="see-all">{{ text_all }} {{ category.name }} →</a>
+          </div>
+        </li>
+        {% else %}
+        <li><a href="{{ category.href }}">{{ category.name }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        <!-- Paket presenečenja — hardcoded dropdown linking both sub-categories -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Paket presenečenja<span class="nav-caret"></span>
+          </a>
+          <div class="dropdown-menu">
+            <div class="dropdown-inner">
+              <ul class="list-unstyled">
+                <li><a href="{{ base }}index.php?route=product/category&path=226_247">Za deklice</a></li>
+                <li><a href="{{ base }}index.php?route=product/category&path=225_248">Za dečke</a></li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <!-- Right: secondary + CTA -->
+      <ul class="nav navbar-nav navbar-right nav-extras">
+        <li class="nav-item-secondary">
+          <a href="#">O nas</a>
+        </li>
+        <li class="nav-item-cta">
+          <a href="#">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            Prodaj oblačila
+          </a>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+</nav>
+{% endif %}

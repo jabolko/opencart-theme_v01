@@ -2,6 +2,7 @@
 // _mixins.scss — Reusable SCSS mixins.
 // =============================================================================
 @use 'sass:map';
+@use 'variables' as v;
 
 // Breakpoints — Bootstrap 3 compatible (sm 768, md 992, lg 1200) + xl 1550
 $breakpoints: (
@@ -49,6 +50,31 @@ $breakpoints: (
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+// cta-gold-pill — gradient gold pill for all primary CTAs.
+// Option 2: gradient + resting shadow + lift on hover. No animation.
+// Exclude: nav "Prodaj oblačila" (its own green treatment).
+@mixin cta-gold-pill {
+  background: linear-gradient(135deg, v.$color-primary 0%, v.$color-primary-light 100%);
+  color: v.$color-text-on-primary;
+  border: none;
+  border-radius: v.$radius-full;
+  box-shadow: 0 2px 8px rgba(249, 185, 74, 0.3);
+  transition: background v.$transition-base, transform v.$transition-base, box-shadow v.$transition-base;
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(135deg, v.$color-primary-dark 0%, v.$color-primary 100%);
+    color: v.$color-text-on-primary;
+    box-shadow: 0 5px 18px rgba(249, 185, 74, 0.5);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(249, 185, 74, 0.3);
+  }
 }
 
 // visually-hidden — hides visually but keeps accessible to screen readers

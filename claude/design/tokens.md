@@ -71,9 +71,10 @@ When a token changes here, update the corresponding SCSS variable in `abstracts/
 | font-weight-heading-semi | `$font-weight-heading-semi`  | 600                                |
 | font-weight-heading-md   | `$font-weight-heading-md`    | 500                                |
 | font-weight-body         | `$font-weight-body`          | 400                                |
-| font-size-base           | `$font-size-base`            | 1rem                               |
-| font-size-sm             | `$font-size-sm`              | 0.875rem                           |
-| font-size-lg             | `$font-size-lg`              | 1.125rem                           |
+| html-root                | `html { font-size }`         | 17px — anchors 1rem = 17px sitewide |
+| font-size-base           | `$font-size-base`            | 1rem = 17px                        |
+| font-size-sm             | `$font-size-sm`              | 0.875rem ≈ 15px                    |
+| font-size-lg             | `$font-size-lg`              | 1.125rem ≈ 19px                    |
 | font-size-xl             | `$font-size-xl`              | 1.25rem                            |
 | font-size-2xl            | `$font-size-2xl`             | 1.5rem                             |
 | font-size-3xl            | `$font-size-3xl`             | 2rem                               |

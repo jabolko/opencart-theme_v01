@@ -1,45 +1,105 @@
-<footer>
+<footer class="site-footer">
   <div class="container">
-    <div class="row">
-      {% if informations %}
-      <div class="col-sm-3">
-        <h5>{{ text_information }}</h5>
-        <ul class="list-unstyled">
-         {% for information in informations %}
-          <li><a href="{{ information.href }}">{{ information.title }}</a></li>
-          {% endfor %}
-        </ul>
+
+    {# Founder banner #}
+    <div class="footer__banner">
+      <img class="footer__photo"
+           src="{{ base }}image/catalog/assets/elements/spletna-meta-002.jpg"
+           alt="Meta, ustanoviteljica Otroškega kotička">
+      <div class="footer__quote">
+        &#8220;Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.&#8221;
+        <cite class="footer__cite">— Meta</cite>
       </div>
-      {% endif %}
-      <div class="col-sm-3">
-        <h5>{{ text_service }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ contact }}">{{ text_contact }}</a></li>
-          <li><a href="{{ return }}">{{ text_return }}</a></li>
-          <li><a href="{{ sitemap }}">{{ text_sitemap }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-3">
-        <h5>{{ text_extra }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ manufacturer }}">{{ text_manufacturer }}</a></li>
-          <li><a href="{{ voucher }}">{{ text_voucher }}</a></li>
-          <li><a href="{{ affiliate }}">{{ text_affiliate }}</a></li>
-          <li><a href="{{ special }}">{{ text_special }}</a></li>
-        </ul>
-      </div>
-      <div class="col-sm-3">
-        <h5>{{ text_account }}</h5>
-        <ul class="list-unstyled">
-          <li><a href="{{ account }}">{{ text_account }}</a></li>
-          <li><a href="{{ order }}">{{ text_order }}</a></li>
-          <li><a href="{{ wishlist }}">{{ text_wishlist }}</a></li>
-          <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
-        </ul>
-      </div>
+      <a href="{{ base }}index.php?route=information/information&information_id=11"
+         class="footer__review"
+         title="Preberi mnenja strank">
+        <img class="footer__review-badge"
+             src="{{ base }}image/catalog/assets/elements/badges/foofter%20review%20ver01.png"
+             alt="Google in Facebook ocene">
+        <span class="footer__review-count"><strong>207</strong> ocen</span>
+      </a>
     </div>
-    <hr>
-    <p>{{ powered }}</p>
+
+    {# 4-column grid #}
+    <div class="row footer__grid">
+
+      {# Col 1: Store info #}
+      <div class="col-sm-3 footer__col">
+        <p class="footer__heading">Naša trgovina</p>
+        <address class="footer__address">
+          <strong>Otroški kotiček</strong>
+          Šolska ulica 2<br>
+          3330 Mozirje
+        </address>
+        <div class="footer__hours">
+          <div class="footer__hours-row"><span>Tor – Pet</span><span>10:00 – 18:00</span></div>
+          <div class="footer__hours-row"><span>Sobota</span><span>9:00 – 12:00</span></div>
+          <div class="footer__hours-row"><span>Pon, Ned</span><span>Zaprto</span></div>
+        </div>
+        <a href="tel:+38640611233" class="footer__contact">
+          <i class="fa fa-phone"></i> +386 40 611 233
+        </a>
+        <a href="{{ contact }}" class="footer__contact">
+          <i class="fa fa-envelope"></i> info@otroski-koticek.si
+        </a>
+      </div>
+
+      {# Col 2: Informacije #}
+      <div class="col-sm-3 footer__col">
+        <p class="footer__heading">Informacije</p>
+        <ul class="footer__links">
+          <li><a href="{{ base }}index.php?route=information/information&information_id=16">Varnost podatkov</a></li>
+          <li><a href="{{ base }}index.php?route=information/information&information_id=5">Pogoji sodelovanja</a></li>
+          <li><a href="{{ return }}">Vračila</a></li>
+          <li><a href="{{ sitemap }}">Zemljevid strani</a></li>
+          <li><a href="{{ voucher }}">Darilni bon</a></li>
+          <li><a href="#">Dostava</a></li>
+          <li><a href="#">Pomoč pri nakupu</a></li>
+        </ul>
+      </div>
+
+      {# Col 3: Odkrijte #}
+      <div class="col-sm-3 footer__col">
+        <p class="footer__heading">Odkrijte</p>
+        <ul class="footer__links">
+          <li><a href="{{ base }}index.php?route=information/information&information_id=9">Prodaj oblačila</a></li>
+          <li><a href="{{ base }}index.php?route=information/information&information_id=11">Mnenja strank</a></li>
+          <li><a href="#">O nas</a></li>
+          <li><a href="{{ contact }}">Kontakt</a></li>
+        </ul>
+      </div>
+
+      {# Col 4: Moj račun #}
+      <div class="col-sm-3 footer__col">
+        <p class="footer__heading">Moj račun</p>
+        <ul class="footer__links">
+          <li><a href="{{ account }}">Moj račun</a></li>
+          <li><a href="{{ order }}">Moje naročilo</a></li>
+          <li><a href="{{ wishlist }}">Seznam želja</a></li>
+        </ul>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/otroskikoticek/" class="footer__social-btn"
+             target="_blank" rel="noopener" aria-label="Facebook">
+            <i class="fa fa-facebook"></i>
+          </a>
+          <a href="https://www.instagram.com/otroski_koticek" class="footer__social-btn"
+             target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fa fa-instagram"></i>
+          </a>
+          <a href="https://x.com/OtroskiKoticek" class="footer__social-btn"
+             target="_blank" rel="noopener" aria-label="X">
+            <i class="fa fa-twitter"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    {# Bottom bar #}
+    <div class="footer__bottom">
+      <p class="footer__copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+    </div>
+
   </div>
 </footer>
 {% for style in styles %}
@@ -48,8 +108,5 @@
 {% for script in scripts %}
 <script src="{{ script }}" type="text/javascript"></script>
 {% endfor %}
-<!--
-OpenCart is open source software and you are free to remove the powered by OpenCart if you want, but its generally accepted practise to make a small donation.
-Please donate via PayPal to donate@opencart.com
-//-->
+<script src="catalog/view/theme/otroskikoticek/javascript/dist/theme.min.js" type="text/javascript"></script>
 </body></html>

@@ -5,4 +5,17 @@
 // =============================================================================
 @use '../abstracts' as *;
 
-// Overrides go here
+// Bootstrap 3 hardcodes font-size: 14px on these components.
+// Re-apply our base size so they scale with the html root (1rem = 17px).
+
+.btn {
+  font-size: $font-size-base;
+}
+
+.form-control {
+  font-size: $font-size-base;
+}
+
+.input-group-btn > .btn {
+  font-size: $font-size-base;
+}

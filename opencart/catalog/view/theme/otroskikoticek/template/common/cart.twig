@@ -1,0 +1,64 @@
+<div id="cart" class="btn-group btn-block">
+  <button type="button" data-toggle="dropdown" data-loading-text="{{ text_loading }}" class="btn btn-inverse btn-block btn-lg dropdown-toggle">
+    <span class="cart-icon-wrap">
+      <svg class="icon-cart" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+    </span>
+    <span id="cart-total" class="sr-only">{{ text_items }}</span>
+  </button>
+  <ul class="dropdown-menu pull-right">
+    {% if products or vouchers %}
+    <li>
+      <div class="cart-drop">
+        <div class="cart-drop__header">Košarica</div>
+        <ul class="cart-drop__items">
+          {% for product in products %}
+          <li class="cart-drop__item">
+            <a href="{{ product.href }}" class="cart-drop__thumb">
+              {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}" />{% endif %}
+            </a>
+            <div class="cart-drop__info">
+              <a href="{{ product.href }}" class="cart-drop__name">{{ product.name }}</a>
+              {% if product.option %}
+              <span class="cart-drop__option">{% for option in product.option %}{{ option.name }}: {{ option.value }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+              {% endif %}
+            </div>
+            <span class="cart-drop__price">{{ product.total }}</span>
+            <button type="button" onclick="cart.remove('{{ product.cart_id }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
+          </li>
+          {% endfor %}
+          {% for voucher in vouchers %}
+          <li class="cart-drop__item">
+            <span class="cart-drop__thumb cart-drop__thumb--empty"></span>
+            <div class="cart-drop__info">
+              <span class="cart-drop__name">{{ voucher.description }}</span>
+            </div>
+            <span class="cart-drop__price">{{ voucher.amount }}</span>
+            <button type="button" onclick="voucher.remove('{{ voucher.key }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
+          </li>
+          {% endfor %}
+        </ul>
+        <div class="cart-drop__footer">
+          {% for total in totals %}
+          <div class="cart-drop__total{% if loop.last %} cart-drop__total--grand{% endif %}">
+            <span>{{ total.title }}</span>
+            <span>{{ total.text }}</span>
+          </div>
+          {% endfor %}
+          <a href="{{ checkout }}" class="cart-drop__cta">{{ text_checkout }} →</a>
+          <a href="{{ cart }}" class="cart-drop__view">{{ text_cart }}</a>
+        </div>
+      </div>
+    </li>
+    {% else %}
+    <li>
+      <div class="cart-drop__empty">
+        <p>{{ text_empty }}</p>
+      </div>
+    </li>
+    {% endif %}
+  </ul>
+</div>

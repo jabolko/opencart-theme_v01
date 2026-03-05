@@ -1,7 +1,110 @@
 // =============================================================================
-// _button.scss — Primary, secondary, and ghost button variants.
-// Patterns defined in claude/design/tokens.md#button-patterns
+// _button.scss — Bootstrap 3 .btn overrides for brand palette.
+// Primary = gold, Inverse = charcoal, Default = neutral, Danger = error red.
 // =============================================================================
 @use '../abstracts' as *;
 
-// Styles go here
+// ============================================================
+// Base — font, radius, focus ring, transition
+// ============================================================
+
+.btn {
+  font-family: $font-family-body;
+  font-weight: $font-weight-heading-md;
+  border-radius: $radius-sm;
+  transition: background-color $transition-base,
+              border-color $transition-base,
+              color $transition-base;
+
+  &:focus,
+  &.focus {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+    box-shadow: none;
+  }
+
+  &:active:focus,
+  &.active:focus {
+    box-shadow: none;
+  }
+}
+
+// ============================================================
+// Primary — gold gradient pill (add-to-cart, checkout, main CTAs)
+// ============================================================
+
+.btn-primary {
+  @include cta-gold-pill;
+  font-family: $font-family-body;
+  font-weight: $font-weight-heading-semi;
+}
+
+// ============================================================
+// Default — neutral (generic actions, search button fallback)
+// ============================================================
+
+.btn-default {
+  background-color: $color-surface;
+  border-color: $color-border;
+  color: $color-text-base;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    background-color: $color-surface-alt;
+    border-color: $color-border;
+    color: $color-text-heading;
+  }
+}
+
+// ============================================================
+// Inverse — charcoal (cart toggle, secondary header buttons)
+// ============================================================
+
+.btn-inverse {
+  background-color: $color-secondary;
+  border-color: $color-secondary-dark;
+  color: $color-text-on-dark;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    background-color: $color-secondary-dark;
+    border-color: $color-secondary-dark;
+    color: $color-text-on-dark;
+  }
+}
+
+// ============================================================
+// Danger — error/remove (cart row remove buttons)
+// ============================================================
+
+.btn-danger {
+  background-color: $color-error;
+  border-color: $color-error;
+  color: $color-surface;
+
+  &:hover,
+  &:focus {
+    background-color: #b84d5e;
+    border-color: #b84d5e;
+    color: $color-surface;
+  }
+}
+
+// ============================================================
+// Link — used by currency/language selectors in #top
+// ============================================================
+
+.btn-link {
+  color: $color-text-link;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: $color-primary;
+    text-decoration: none;
+  }
+}

@@ -16,3 +16,14 @@
 | 2026-03-03 | COMP-003   | `_header.scss` — sticky `.site-header`, `#top` dark bar, `header` main bar   | |
 | 2026-03-03 | COMP-004   | `_nav.scss` — Bootstrap navbar override, gold hover, dropdown, mobile menu    | |
 | 2026-03-03 | SCSS-XL    | xl breakpoint (1550px) added to mixins; container widened to 1520px           | `_grid.scss` created |
+| 2026-03-04 | DATA       | Imported 8000 products, categories, filters, options, manufacturers, Slovenian language | Via phpMyAdmin / CSV |
+| 2026-03-04 | GIT        | Initial commit + push to private GitHub repo `jabolko/opencart-theme_v01`    | `opencart/image/izdelki/` excluded (1.4GB) |
+| 2026-03-04 | COMP-002   | `_button.scss` — Bootstrap 3 btn overrides: primary (gold), default, inverse, danger, link | |
+| 2026-03-04 | COMP-005   | `footer.twig` + `_footer.scss` — dark charcoal footer, 4-column grid, mobile stack | |
+| 2026-03-04 | BASE       | `html { font-size: 17px }` in `_reset.scss` — anchors 1rem sitewide          | User chose 17px |
+| 2026-03-04 | BASE       | `_bootstrap-overrides.scss` — `.btn`, `.form-control`, `.input-group-btn > .btn` font-size | Fixes BS3 14px hardcode |
+| 2026-03-04 | COMP-003   | `_header.scss` complete rewrite — flex layout, pill search, icon action buttons, mobile wrap | Removed #top bar |
+| 2026-03-04 | TWIG-001   | `header.twig` complete rewrite — `.header-inner` flex, `.header-actions`, no #top | |
+| 2026-03-04 | COMP-004   | `_nav.scss` rewrite — white navbar, uppercase links, gold border-bottom on hover/active | |
+| 2026-03-04 | FONTS      | `_fonts.scss` — added `latin-ext` @font-face rules for čžš support (unicode-range) | 6 woff2 files total |
+| 2026-03-04 | BUILD      | `package.json` fonts:copy updated to copy 6 woff2 files (latin + latin-ext per weight) | |
