@@ -4,4 +4,28 @@
 // =============================================================================
 @use '../abstracts' as *;
 
-// Styles go here
+// =============================================================================
+// PRODUCT GRID  .product-grid
+// Responsive CSS Grid — wraps .product-card items on the category page.
+// 4 cols desktop → 2 cols tablet → 2 cols mobile (cards are compact enough).
+// =============================================================================
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-3; // 12px
+  margin-top: $space-6;
+
+  @include respond-below('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-below('md') {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-3; // 12px
+  }
+
+  @include respond-below('sm') {
+    gap: 0.59rem; // 10px ÷ 17
+  }
+}

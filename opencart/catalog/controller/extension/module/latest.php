@@ -53,8 +53,10 @@ class ControllerExtensionModuleLatest extends Controller {
 					'price'       => $price,
 					'special'     => $special,
 					'tax'         => $tax,
-					'rating'      => $rating,
-					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
+					'rating'       => $rating,
+					'manufacturer' => $result['manufacturer'],
+					'minimum'      => $result['minimum'],
+					'href'         => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
 			}
 

@@ -1,6 +1,1067 @@
 // =============================================================================
-// _home.scss — Homepage-specific styles. Scoped to body#common-home.
+// _home.scss — Homepage-specific styles. All sections: hero → newsletter.
+// Scoped to .page-home (replaces default #common-home container lock-in).
+// rem base: 17px  |  spacings via $space-* tokens  |  BEM throughout
 // =============================================================================
 @use '../abstracts' as *;
 
-// Styles go here
+// Local token — green sell band (matches nav CTA end colour).
+// Not a global token: used only on this one full-width section.
+$_sell-green: #528e6d;
+
+// =============================================================================
+// SHARED UTILITIES  (used by multiple sections)
+// =============================================================================
+
+.home-eyebrow {
+  font-family: $font-family-body;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-body;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-primary;
+  margin: 0 0 $space-2;
+}
+
+.home-section-header {
+  @include flex-between;
+  align-items: flex-end;
+  margin-bottom: $space-8;
+}
+
+.home-section-heading {
+  font-family: $font-family-heading;
+  font-size: 1.88rem; // 32px ÷ 17
+  font-weight: $font-weight-heading-semi;
+  line-height: $line-height-heading;
+  color: $color-text-heading;
+  margin: 0;
+}
+
+.home-section-link {
+  font-family: $font-family-body;
+  font-size: $font-size-base;
+  font-weight: $font-weight-body;
+  color: $color-text-heading;
+  text-decoration: underline;
+  white-space: nowrap;
+  transition: color $transition-base;
+
+  &:hover,
+  &:focus {
+    color: $color-primary-dark;
+  }
+}
+
+// =============================================================================
+// S1 — HERO + TRUST (combined)  .home-hero
+// Image: 1550×603, grey left zone → clothes right zone.
+// Section bg: #eeeeee full-width. Image contained in 1550px frame.
+// Text absolutely positioned over the grey left portion of the photo.
+// Mobile: stack — image on top, content block below on grey bg.
+// =============================================================================
+
+.home-hero {
+  background: #eeeeee;
+
+  // Frame: matches image width exactly (1550px = $breakpoints.xl)
+  &__frame {
+    max-width: 1550px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  // The LCP image — fills full frame width, height is natural (603px)
+  &__img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  // Content overlay — sits on the grey left zone of the photo
+  &__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 47%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: $space-8 $space-8 $space-8 5.18rem; // 88px left ÷ 17
+
+    @include respond-below('sm') {
+      position: static;
+      width: 100%;
+      padding: $space-8 $space-6;
+    }
+  }
+
+  &__eyebrow {
+    font-family: $font-family-body;
+    font-size: 0.59rem; // 10px ÷ 17
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 $space-4;
+
+    @include respond-below('sm') {
+      color: $color-text-muted;
+    }
+  }
+
+  &__headline {
+    font-family: $font-family-heading;
+    font-size: clamp(2.12rem, 3.8vw, 3.29rem); // 36px → 56px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    line-height: 1.08;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+    margin: 0 0 $space-4;
+
+    @include respond-below('sm') {
+      color: $color-text-heading;
+      font-size: 1.88rem; // 32px on mobile
+    }
+  }
+
+  // "Nežno rabljena" — gold accent, pops on dark grey bg
+  &__headline-gold {
+    color: $color-primary;
+  }
+
+  &__tagline {
+    font-family: $font-family-body;
+    font-style: italic;
+    font-size: $font-size-base;
+    color: rgba(255, 255, 255, 0.72);
+    line-height: $line-height-body;
+    margin: 0 0 $space-8;
+
+    @include respond-below('sm') {
+      color: $color-text-muted;
+    }
+  }
+
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    align-items: center;
+    margin-bottom: $space-8;
+  }
+
+  &__btn-primary {
+    @include cta-gold-pill;
+    display: inline-block;
+    padding: 0.76rem 1.76rem; // ~13px 30px ÷ 17
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  &__btn-ghost {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.72);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    padding-bottom: 2px;
+    text-decoration: none;
+    transition: color $transition-base, border-color $transition-base;
+
+    &:hover,
+    &:focus {
+      color: #ffffff;
+      border-bottom-color: rgba(255, 255, 255, 0.7);
+    }
+
+    @include respond-below('sm') {
+      color: $color-text-link;
+      border-bottom-color: rgba(86, 107, 111, 0.35);
+
+      &:hover,
+      &:focus {
+        color: $color-primary-dark;
+        border-bottom-color: $color-primary-dark;
+      }
+    }
+  }
+
+  // Trust stats — combined inside hero, below CTAs
+  &__trust {
+    display: flex;
+    gap: $space-8;
+    margin: 0;
+    padding-top: $space-6;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    list-style: none;
+
+    @include respond-below('sm') {
+      border-top-color: $color-border;
+      gap: $space-6;
+    }
+  }
+
+  &__trust-item {
+    flex: 0 0 auto;
+  }
+
+  &__trust-num {
+    display: block;
+    font-family: $font-family-heading;
+    font-size: 2.47rem; // ~42px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    line-height: 1;
+    color: $color-primary;
+    letter-spacing: -0.02em;
+    margin: 0 0 $space-1;
+
+    span {
+      font-size: 1.41rem; // superscript + scaled down
+    }
+  }
+
+  &__trust-label {
+    display: block;
+    font-family: $font-family-body;
+    font-size: 0.65rem; // 11px ÷ 17
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0;
+
+    @include respond-below('sm') {
+      color: $color-text-muted;
+    }
+  }
+}
+
+// S2 — Trust bar removed: stats are now inside .home-hero__trust
+
+// =============================================================================
+// S3 — CATEGORY STRIP  .home-categories / .home-category
+// Opus V2 "Uredniški" — 2+3 asymmetric editorial grid.
+// Top row: 2 feature tiles (1.15fr / 0.85fr). Bottom row: 3 equal tiles.
+// Products: transparent PNGs, right-anchored, drop-shadow follows shape.
+// =============================================================================
+
+// Local easing for tile hover + product lift — matches Opus prototype timing.
+$_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+.home-categories {
+  background: rgba(247, 247, 248, 1);
+  padding: $space-12 0;
+
+  @include respond-below('sm') {
+    padding: 1.88rem 0; // 32px ÷ 17
+  }
+}
+
+// Top row: 2 unequal feature tiles (wider Deklice, narrower Fantje).
+// Asymmetric ratio creates editorial tension without obvious imbalance.
+.home-categories__top {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: $space-4;
+  margin-bottom: $space-4;
+
+  .home-category { height: 17.06rem; } // 290px ÷ 17
+
+  // Tablet: equal columns, slightly shorter
+  @include respond-below('md') {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.71rem; // 12px ÷ 17
+
+    .home-category { height: 14.71rem; } // 250px ÷ 17
+  }
+
+  // Mobile: single column stack
+  @include respond-below('sm') {
+    grid-template-columns: 1fr;
+    margin-bottom: 0.71rem;
+
+    .home-category { height: 14.12rem; } // 240px ÷ 17
+  }
+}
+
+// Bottom row: 3 equal discovery tiles
+.home-categories__bottom {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-4;
+
+  .home-category { height: 13.82rem; } // 235px ÷ 17
+
+  @include respond-below('md') {
+    gap: 0.71rem;
+
+    .home-category { height: 12.35rem; } // 210px ÷ 17
+  }
+
+  // Mobile: 2 columns; Novo spans full width via --novo modifier
+  @include respond-below('sm') {
+    grid-template-columns: repeat(2, 1fr);
+
+    .home-category { height: 11.76rem; } // 200px ÷ 17
+  }
+}
+
+.home-category {
+  position: relative;
+  display: block;
+  background: var(--cat-bg, #{$color-surface-section});
+  border-radius: $radius-lg;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.35s $_cat-ease, box-shadow 0.35s $_cat-ease;
+
+  &:hover,
+  &:focus {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.09);
+    outline: none;
+  }
+
+  // Novo prispelo: gold diagonal gradient, no product image
+  &--novo {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 16px 40px rgba(249, 185, 74, 0.25);
+    }
+  }
+
+  // Novo spans full row on mobile so it reads as primary CTA
+  @include respond-below('sm') {
+    &--novo { grid-column: 1 / -1; }
+  }
+
+  // Transparent PNG — drop-shadow follows clothing silhouette (not a box)
+  &__img {
+    position: absolute;
+    right: $space-6; // 24px
+    bottom: 0;
+    width: 44%;
+    max-height: 80%;
+    object-fit: contain;
+    object-position: bottom right;
+    z-index: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.10));
+    transition: transform 0.35s $_cat-ease;
+
+    .home-categories__bottom & {
+      width: 40%;
+      max-height: 78%;
+    }
+
+    .home-category:hover & {
+      transform: scale(1.04);
+    }
+  }
+
+  // Text zone: pinned to bottom-left, thin gradient floor for legibility
+  &__content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.65rem; // 28px ÷ 17
+    z-index: 3;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0%, transparent 100%);
+
+    .home-category--novo & { background: none; }
+  }
+
+  // Eyebrow label above name (e.g. "Oblačila", "Top znamke")
+  &__eyebrow {
+    display: block;
+    font-family: $font-family-heading;
+    font-size: 0.59rem; // ~10px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: $color-text-base;
+    opacity: 0.45;
+    margin-bottom: $space-1;
+
+    .home-category--novo & {
+      color: $color-text-heading;
+      opacity: 0.4;
+    }
+  }
+
+  // Category name
+  &__name {
+    display: block;
+    font-family: $font-family-heading;
+    font-size: 1.25rem; // ~21px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    line-height: 1.2;
+
+    .home-category--novo & { font-size: 1.35rem; }
+
+    @include respond-below('sm') {
+      font-size: 1.06rem; // ~18px ÷ 17
+    }
+  }
+
+  // Price / descriptor line
+  &__sub {
+    display: block;
+    font-family: $font-family-body;
+    font-size: 0.76rem; // ~13px ÷ 17
+    color: $color-text-base;
+    opacity: 0.6;
+    margin-top: $space-1;
+
+    .home-category--novo & {
+      color: $color-text-heading;
+      opacity: 0.5;
+    }
+  }
+
+  // Arrow CTA — dim at rest, fully visible on tile hover
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem; // ~6px ÷ 17
+    margin-top: 0.82rem; // ~14px ÷ 17
+    font-family: $font-family-body;
+    font-size: 0.76rem;
+    color: $color-text-base;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, gap 0.3s ease, color 0.3s ease;
+
+    .home-category:hover & {
+      opacity: 1;
+      gap: 0.59rem; // ~10px ÷ 17
+      color: $color-text-heading;
+    }
+
+    .home-category--novo & {
+      color: $color-text-heading;
+      opacity: 0.6;
+    }
+
+    .home-category--novo:hover & { opacity: 0.9; }
+  }
+}
+
+// =============================================================================
+// S4 — NEW ARRIVALS  .home-arrivals
+// OC Latest Products module injects into {{ content_top }}.
+// Template override: template/extension/module/latest.twig
+// Layout: scroller sits inside .container (left-aligned automatically).
+// margin-right: calc(-50vw + 50%) extends the right edge to the viewport edge.
+// overflow-x: clip on the section clips that overhang without creating a BFC.
+// =============================================================================
+
+.home-arrivals {
+  background: #eeeeee;
+  padding-top: $space-6; // 24px
+  padding-bottom: $space-8;
+  overflow-x: clip;
+
+  .home-section-header {
+    margin-bottom: 0;
+  }
+
+  .home-section-heading {
+    font-size: 1.41rem; // ~24px ÷ 17
+  }
+
+  // Nav group: "Poglej vse" link + arrow buttons
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  // Circular arrow button
+  &__arrow {
+    width: 1.88rem; // 32px ÷ 17
+    height: 1.88rem;
+    border-radius: 50%;
+    border: 2px solid $color-border;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $color-text-base;
+    padding: 0;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      border-color: $color-border-dark;
+      color: $color-text-heading;
+      outline: none;
+    }
+
+    // Prev button: invisible until JS activates it
+    &--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  // Scroll strip — inside .container so left edge is automatic.
+  // margin-right extends it to the right viewport edge.
+  &__scroller {
+    overflow-x: auto;
+    overflow-y: visible;
+    margin-right: calc(-50vw + 50%);
+    padding-right: $space-6;
+    padding-top: $space-6;
+    padding-bottom: $space-3;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; // Firefox
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome / Safari
+    }
+
+    // Override .product-grid from a grid to a horizontal flex row
+    .product-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: $space-3;
+      margin-top: 0;
+      width: max-content;
+    }
+
+    // Fixed-width cards that snap to start
+    .product-card {
+      flex: 0 0 14.71rem; // 250px ÷ 17
+      width: 14.71rem;
+      scroll-snap-align: start;
+    }
+  }
+}
+
+// =============================================================================
+// S5 — POPULAR BRANDS  .home-brands
+// =============================================================================
+
+.home-brands {
+  background: $color-surface;
+  padding: $space-12 0;
+  border-bottom: 1px solid $color-border;
+
+  &__heading {
+    font-family: $font-family-heading;
+    font-size: 2.82rem; // 48px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    text-align: center;
+    margin: 0 0 $space-8;
+    line-height: $line-height-heading;
+  }
+
+  &__heading-muted {
+    color: $color-text-base;
+  }
+
+  &__heading-accent {
+    color: $color-primary;
+  }
+
+  &__strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: $space-8;
+
+    @include respond-below('sm') {
+      gap: $space-6;
+    }
+  }
+
+  &__logo {
+    height: 3.06rem; // 52px ÷ 17
+    width: auto;
+    filter: grayscale(100%);
+    opacity: 0.55;
+    transition: filter $transition-base, opacity $transition-base;
+    display: block;
+
+    &:hover {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+  }
+}
+
+// =============================================================================
+// S6 — PRODAJ SVOJA OBLAČILA  .home-sell
+// =============================================================================
+
+.home-sell {
+  background: $_sell-green;
+  padding: $space-16 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-12;
+    align-items: center;
+
+    @include respond-below('sm') {
+      grid-template-columns: 1fr;
+      gap: $space-8;
+    }
+  }
+
+  &__eyebrow {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-body;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 $space-2;
+  }
+
+  &__heading {
+    font-family: $font-family-heading;
+    font-size: 2.35rem; // ~40px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    line-height: $line-height-heading;
+    color: $color-surface;
+    margin: 0 0 $space-4;
+
+    @include respond-below('sm') {
+      font-size: 1.88rem;
+    }
+  }
+
+  &__body {
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    color: rgba(255, 255, 255, 0.88);
+    line-height: $line-height-body;
+    margin: 0 0 $space-8;
+  }
+
+  &__cta {
+    @include cta-gold-pill;
+    display: inline-block;
+    padding: 0.76rem 1.88rem;
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  &__steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+  }
+
+  &__step {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-4;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: $space-1;
+    }
+
+    strong {
+      font-family: $font-family-heading;
+      font-size: $font-size-base;
+      font-weight: $font-weight-heading-semi;
+      color: $color-surface;
+    }
+
+    span {
+      font-family: $font-family-body;
+      font-size: $font-size-sm;
+      color: rgba(255, 255, 255, 0.75);
+    }
+  }
+
+  &__step-n {
+    flex-shrink: 0;
+    width: 2.12rem; // 36px ÷ 17
+    height: 2.12rem;
+    border-radius: $radius-full;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: $color-surface;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-base;
+    @include flex-center;
+    line-height: 1;
+  }
+}
+
+// =============================================================================
+// S7 — HOW IT WORKS  .home-how
+// =============================================================================
+
+.home-how {
+  background: $color-surface;
+  padding: $space-12 0;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $space-8;
+
+    .home-eyebrow {
+      margin-bottom: $space-1;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-8;
+
+    @include respond-below('sm') {
+      grid-template-columns: 1fr;
+      gap: $space-6;
+    }
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: $space-6;
+  }
+
+  &__icon {
+    width: 3.53rem; // 60px ÷ 17
+    height: 3.53rem;
+    border-radius: $radius-full;
+    background: rgba(249, 185, 74, 0.12);
+    @include flex-center;
+    margin-bottom: $space-4;
+    font-size: 1.41rem; // 24px ÷ 17
+    color: $color-primary;
+  }
+
+  &__step {
+    font-family: $font-family-body;
+    font-size: 0.71rem; // 12px ÷ 17
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+    margin: 0 0 $space-2;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    margin: 0 0 $space-2;
+  }
+
+  &__desc {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    line-height: $line-height-body;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// S8 — GOOGLE REVIEWS  .home-reviews / .home-review
+// Static HTML — zero 3rd-party JS. Styled to look like real Google cards.
+// =============================================================================
+
+.home-reviews {
+  background: $color-surface-alt;
+  padding-top: $space-6;
+  padding-bottom: $space-8;
+  border-top: 1px solid $color-border;
+  border-bottom: 1px solid $color-border;
+  overflow-x: clip;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $space-4;
+  }
+
+  &__summary {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin: $space-2 0 0;
+  }
+
+  &__stars {
+    color: $color-primary;
+    letter-spacing: 0.05em;
+  }
+
+  &__g-icon {
+    color: #4285f4; // Google brand blue
+    font-size: 1rem;
+  }
+
+  &__fb-icon {
+    color: #1877f2; // Facebook brand blue
+    font-size: 1rem;
+  }
+
+  // Arrow buttons row — right-aligned, sits between header and scroller
+  &__nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    margin-bottom: $space-2;
+  }
+
+  // Circular arrow button — same style as home-arrivals__arrow
+  &__arrow {
+    width: 1.88rem;
+    height: 1.88rem;
+    border-radius: 50%;
+    border: 2px solid $color-border;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $color-text-base;
+    padding: 0;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover,
+    &:focus {
+      border-color: $color-border-dark;
+      color: $color-text-heading;
+      outline: none;
+    }
+
+    &--hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+
+  // Scroll strip — same technique as home-arrivals__scroller
+  &__scroller {
+    overflow-x: auto;
+    overflow-y: visible;
+    margin-right: calc(-50vw + 50%);
+    padding-right: $space-6;
+    padding-top: $space-6;
+    padding-bottom: $space-3;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    // Override grid to a horizontal flex row
+    .home-reviews__grid {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: $space-4;
+      width: max-content;
+    }
+
+    // Fixed-width cards that snap to start
+    .home-review {
+      flex: 0 0 17.65rem; // 300px ÷ 17
+      width: 17.65rem;
+      scroll-snap-align: start;
+    }
+  }
+}
+
+.home-review {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  padding: $space-6;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__av {
+    flex-shrink: 0;
+    width: 2.35rem; // 40px ÷ 17
+    height: 2.35rem;
+    border-radius: $radius-full;
+    @include flex-center;
+    font-family: $font-family-heading;
+    font-size: $font-size-base;
+    font-weight: $font-weight-heading-semi;
+    color: $color-surface;
+  }
+
+  &__meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-text-heading;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__date {
+    font-family: $font-family-body;
+    font-size: 0.71rem; // 12px ÷ 17
+    color: $color-text-muted;
+    margin: 0;
+  }
+
+  // Google "G" badge — top-right of card header
+  &__g {
+    flex-shrink: 0;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-sm;
+    color: #4285f4; // Google brand blue — not a site token
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-full;
+    width: 1.65rem; // 28px ÷ 17
+    height: 1.65rem;
+    @include flex-center;
+    margin-left: auto;
+  }
+
+  &__stars {
+    color: $color-primary;
+    font-size: $font-size-sm;
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
+
+  &__text {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-base;
+    line-height: $line-height-body;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// S9 — VALUES / SUSTAINABILITY  .home-values
+// Full-width dark band — #2b2e35 = $color-text-heading
+// =============================================================================
+
+.home-values {
+  background: $color-text-heading;
+  padding: $space-16 0;
+
+  &__inner {
+    max-width: 42.35rem; // ~720px ÷ 17 — readable line length
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-6;
+  }
+
+  &__tag {
+    font-family: $font-family-heading;
+    font-size: 1.65rem; // ~28px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    color: $color-primary;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  &__text {
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    color: rgba(245, 245, 245, 0.85);
+    line-height: $line-height-body;
+    margin: 0;
+  }
+
+  &__counter {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: rgba(245, 245, 245, 0.7);
+    margin: 0;
+
+    .fa {
+      color: $color-primary;
+      font-size: $font-size-base;
+    }
+
+    strong {
+      color: $color-surface;
+      font-weight: 600;
+    }
+  }
+}
+
+// =============================================================================
+// S10 — NEWSLETTER  .home-newsletter
+// content_bottom = OC newsletter module injection point
+// =============================================================================
+
+.home-newsletter {
+  background: $color-surface-alt;
+  padding: $space-12 0;
+  border-top: 1px solid $color-border;
+
+  &__inner {
+    max-width: 35.29rem; // ~600px ÷ 17
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__heading {
+    font-family: $font-family-heading;
+    font-size: 1.65rem; // ~28px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    margin: 0 0 $space-3;
+  }
+
+  &__sub {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    line-height: $line-height-body;
+    margin: 0 0 $space-6;
+  }
+}

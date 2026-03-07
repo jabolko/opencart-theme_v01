@@ -10,6 +10,20 @@ Theme name: otroskikoticek. Language: Slovenian. Platform: PHP 8.4, MySQL 8.0, A
 - Read `claude/architecture/scss-architecture.md` before touching any .scss file
 - Read `claude/architecture/twig-conventions.md` before touching any .twig file
 - Check `claude/tasks/active.md` before starting any work — it shows the current focus
+- Check `claude/handoff/active/` for pending design handoffs from Opus — implement these first
+
+## Design ↔ Code Workflow (Opus + Sonnet)
+This project uses two Claude models in tandem:
+- **Opus** (Mac app): design sprints — HTML prototypes in `prototypes/`, design decisions
+- **Sonnet** (VS Code / Claude Code): implementation — SCSS, Twig, JS
+
+**Handoff system:** `claude/handoff/`
+- `opus-context.md` — paste into every Opus session to give it project context
+- `template.md` — copy to `active/[component].md` to start a new handoff
+- `active/` — components ready for Sonnet to implement
+- `done/` — completed handoffs
+
+When a user says "implement [component]", read `claude/handoff/active/[component].md` first.
 
 ## Where Things Live
 

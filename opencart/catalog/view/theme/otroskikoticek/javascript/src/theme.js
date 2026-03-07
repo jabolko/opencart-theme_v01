@@ -82,9 +82,69 @@
   // Init
   // ---------------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------------
+  // Home arrivals — prev / next scroll buttons
+  // Prev button starts hidden (CSS .home-arrivals__arrow--hidden).
+  // It becomes visible on the first next-click.
+  // ---------------------------------------------------------------------------
+
+  function initArrivalsScroll() {
+    var scroller = document.getElementById('js-arrivals-scroller');
+    var btnNext = document.getElementById('js-arrivals-next');
+    var btnPrev = document.getElementById('js-arrivals-prev');
+    if (!scroller || !btnNext) { return; }
+
+    function activatePrev() {
+      if (!btnPrev) { return; }
+      btnPrev.classList.remove('home-arrivals__arrow--hidden');
+      btnPrev.removeAttribute('aria-hidden');
+    }
+
+    btnNext.addEventListener('click', function () {
+      activatePrev();
+      scroller.scrollBy({ left: 250 * 3, behavior: 'smooth' });
+    });
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', function () {
+        scroller.scrollBy({ left: -(250 * 3), behavior: 'smooth' });
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Home reviews — prev / next scroll buttons (same pattern as arrivals)
+  // ---------------------------------------------------------------------------
+
+  function initReviewsScroll() {
+    var scroller = document.getElementById('js-reviews-scroller');
+    var btnNext = document.getElementById('js-reviews-next');
+    var btnPrev = document.getElementById('js-reviews-prev');
+    if (!scroller || !btnNext) { return; }
+
+    function activatePrev() {
+      if (!btnPrev) { return; }
+      btnPrev.classList.remove('home-reviews__arrow--hidden');
+      btnPrev.removeAttribute('aria-hidden');
+    }
+
+    btnNext.addEventListener('click', function () {
+      activatePrev();
+      scroller.scrollBy({ left: 300 * 3, behavior: 'smooth' });
+    });
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', function () {
+        scroller.scrollBy({ left: -(300 * 3), behavior: 'smooth' });
+      });
+    }
+  }
+
   $(document).ready(function () {
     reformatCart();
     updateWishlistBadge();
+    initArrivalsScroll();
+    initReviewsScroll();
 
     if (window.MutationObserver) {
       var observer = new MutationObserver(function (mutations) {
