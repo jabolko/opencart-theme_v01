@@ -22,10 +22,7 @@ $_nav-link-h:     3.06rem; // ~52px @ 17px root
   border-radius: 0;
   margin-bottom: 0;
   min-height: $_nav-link-h;
-  box-shadow:
-    0 1px 0 $color-border,
-    0 4px 24px rgba(43, 46, 53, 0.07),
-    0 8px 40px rgba(43, 46, 53, 0.04);
+  box-shadow: 0 8px 24px -4px rgba(43, 46, 53, 0.10);
 }
 
 // ============================================================
@@ -160,9 +157,9 @@ $_nav-link-h:     3.06rem; // ~52px @ 17px root
   margin-top: $space-1;
   border-top: 1px solid $color-border;
   color: $color-primary;
-  font-family: $font-family-body;
+  font-family: $font-family-heading;
   font-size: $font-size-sm;
-  font-weight: $font-weight-heading-md;
+  font-weight: 700;
   text-decoration: none;
   transition: color $transition-base;
 
@@ -251,7 +248,7 @@ $_nav-link-h:     3.06rem; // ~52px @ 17px root
 
   &:hover,
   &:focus {
-    color: #565656;
+    color: #ffffff;
     background: linear-gradient(135deg, $_cta-hover-start 0%, $_cta-hover-end 100%);
     box-shadow: 0 4px 18px rgba(45, 157, 168, 0.45);
     transform: translateY(-1px);

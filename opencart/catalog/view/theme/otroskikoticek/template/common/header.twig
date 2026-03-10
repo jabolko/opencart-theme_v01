@@ -60,7 +60,7 @@
           <!-- Account dropdown -->
           <div class="header-action dropdown">
             <a href="{{ account }}" class="header-action__btn dropdown-toggle" data-toggle="dropdown" title="{{ text_account }}">
-              <i class="fa fa-user-o"></i>
+              <svg class="header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
               {% if logged %}
@@ -78,7 +78,7 @@
 
           <!-- Wishlist — span is updated by OC JS: $('#wishlist-total span').html(count) -->
           <a href="{{ wishlist }}" id="wishlist-total" class="header-action header-action__btn" title="{{ text_wishlist }}">
-            <i class="fa fa-heart-o"></i>
+            <svg class="header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <span class="sr-only"></span>
           </a>
 
@@ -92,4 +92,59 @@
 
   {{ menu }}
 
+</div>
+
+<!-- Sticky compact nav — populated + shown by JS on scroll -->
+<div class="sticky-nav" id="js-sticky-nav" aria-hidden="true">
+  <div class="container">
+    <div class="sticky-nav__inner">
+      <ul class="sticky-nav__cats" id="js-sticky-cats"></ul>
+      <div class="sticky-nav__actions">
+
+        <button type="button" class="sticky-nav__btn" id="js-sticky-search" aria-label="Iskanje">
+          <svg class="sticky-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+
+        <div class="sticky-nav__action dropdown">
+          <a href="{{ account }}" class="sticky-nav__btn dropdown-toggle" data-toggle="dropdown" aria-label="{{ text_account }}">
+            <svg class="sticky-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-right">
+            {% if logged %}
+            <li><a href="{{ account }}">{{ text_account }}</a></li>
+            <li><a href="{{ order }}">{{ text_order }}</a></li>
+            <li><a href="{{ logout }}">{{ text_logout }}</a></li>
+            {% else %}
+            <li><a href="{{ register }}">{{ text_register }}</a></li>
+            <li><a href="{{ login }}">{{ text_login }}</a></li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <a href="{{ wishlist }}" class="sticky-nav__btn" aria-label="{{ text_wishlist }}">
+          <svg class="sticky-nav__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        </a>
+
+        <div class="sticky-nav__action dropdown" id="js-sticky-cart-wrap">
+          <button type="button" class="sticky-nav__btn dropdown-toggle" id="js-sticky-cart" data-toggle="dropdown" aria-label="Košarica">
+            <span class="cart-icon-wrap">
+              <svg class="sticky-nav__icon icon-cart" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            </span>
+            <span class="sticky-nav__cart-price"></span>
+          </button>
+          <!-- dropdown cloned from #cart by syncStickyCart() -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating toast — replaces OC's inline .alert-dismissible -->
+<div id="oc-toast" class="oc-toast" role="status" aria-live="polite" aria-atomic="true">
+  <div class="oc-toast__body">
+    <svg class="oc-toast__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span class="oc-toast__msg"></span>
+  </div>
+  <button type="button" class="oc-toast__close" aria-label="Zapri">&times;</button>
 </div>

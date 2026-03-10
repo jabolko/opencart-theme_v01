@@ -8,7 +8,7 @@
     "scss:build": "sass stylesheet/src:stylesheet/dist --style compressed",
     "css:minify": "cleancss -o stylesheet/dist/theme.min.css stylesheet/dist/theme.css",
     "js:minify": "uglifyjs javascript/src/*.js -o javascript/dist/theme.min.js -c -m",
-    "fonts:copy": "mkdir -p stylesheet/dist/fonts && cp node_modules/@fontsource/open-sans/files/open-sans-latin-500-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-600-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-ext-500-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-ext-600-normal.woff2 stylesheet/dist/fonts/ && cp node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2 node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-400-normal.woff2 stylesheet/dist/fonts/",
+    "fonts:copy": "mkdir -p stylesheet/dist/fonts && cp node_modules/@fontsource/open-sans/files/open-sans-latin-500-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-600-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-700-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-ext-500-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-ext-600-normal.woff2 node_modules/@fontsource/open-sans/files/open-sans-latin-ext-700-normal.woff2 stylesheet/dist/fonts/ && cp node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2 node_modules/@fontsource/dm-sans/files/dm-sans-latin-ext-400-normal.woff2 stylesheet/dist/fonts/",
     "dev": "npm run scss:watch",
     "build": "npm-run-all fonts:copy scss:build css:minify js:minify"
   },

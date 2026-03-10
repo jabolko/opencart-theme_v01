@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer FINAL — Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;1,400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-light: #ffd369;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --light-grey: #f7f7f7;
+            --border: #d6d9e0;
+            --dark-border: #4a4a4a;
+            --star: #f9b94a;
+            --footer-bg: #3a3a3a;
+            --footer-surface: rgba(255,255,255,0.06);
+            --footer-text: rgba(255,255,255,0.65);
+            --footer-text-bright: rgba(255,255,255,0.9);
+            --footer-link-hover: var(--gold);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--charcoal);
+            background: var(--white);
+            -webkit-font-smoothing: antialiased;
+        }
+
+
+        /* ================================================================
+           .site-footer
+           ================================================================ */
+        .site-footer {
+            background: var(--footer-bg);
+            color: var(--footer-text);
+        }
+
+        /* ── Social Proof Row ── */
+        .site-footer__proof {
+            background: rgba(255,255,255,0.05);
+        }
+        .site-footer__proof-inner {
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 52px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 48px;
+        }
+        .site-footer__quote {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+        .site-footer__avatar {
+            width: 107px;
+            height: 107px;
+            border-radius: 50%;
+            background: rgba(249,185,74,0.12);
+            border: 2px solid rgba(249,185,74,0.3);
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+        .site-footer__quote-text {
+            font-style: italic;
+            font-size: 1rem;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.7;
+        }
+        .site-footer__quote-text strong {
+            color: var(--gold);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        /* Google badge */
+        .site-footer__google {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255,255,255,0.08);
+            padding: 20px 28px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.12);
+            flex-shrink: 0;
+        }
+        .site-footer__google-rating {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.85rem;
+            color: var(--white);
+            line-height: 1;
+        }
+        .site-footer__google-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .site-footer__google-stars {
+            display: flex;
+            gap: 2px;
+        }
+        .site-footer__google-stars svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--star);
+        }
+        .site-footer__google-count {
+            font-size: 0.72rem;
+            color: var(--footer-text);
+        }
+
+        /* ── Links Grid ── */
+        .site-footer__grid {
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 48px 32px;
+            display: grid;
+            grid-template-columns: 1.3fr 0.9fr 0.9fr 1.2fr;
+            gap: 48px;
+        }
+
+        /* Shop panel — boosted with gold left accent */
+        .site-footer__shop {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 28px 24px;
+            border-left: 3px solid var(--gold);
+            margin: -8px 0;
+        }
+
+        .site-footer__col-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        .site-footer__shop-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+        .site-footer__address {
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .site-footer__hours {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4px 16px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .site-footer__hours-day { color: var(--footer-text); }
+        .site-footer__hours-time {
+            text-align: right;
+            color: var(--footer-text-bright);
+            font-weight: 500;
+        }
+        .site-footer__hours--closed { color: rgba(255,255,255,0.3); }
+
+        .site-footer__contact {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--footer-text-bright);
+            margin-bottom: 10px;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        a.site-footer__contact:hover { color: var(--gold); }
+        .site-footer__contact svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--gold);
+            fill: none;
+            stroke-width: 1.5;
+            flex-shrink: 0;
+        }
+
+        /* Social icons */
+        .site-footer__socials {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .site-footer__social {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+        .site-footer__social:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+        }
+        .site-footer__social svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--white);
+        }
+        .site-footer__social:hover svg { fill: var(--heading); }
+
+        /* Link columns */
+        .site-footer__links {
+            list-style: none;
+        }
+        .site-footer__links li { margin-bottom: 10px; }
+        .site-footer__links a {
+            font-size: 0.85rem;
+            color: var(--footer-text);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .site-footer__links a:hover { color: var(--footer-link-hover); }
+
+        /* ── Newsletter Column ── */
+        .site-footer__newsletter {
+            padding-left: 40px;
+        }
+        .site-footer__nl-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        .site-footer__nl-heading {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--white);
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+        .site-footer__nl-desc {
+            font-size: 0.82rem;
+            color: var(--footer-text);
+            line-height: 1.55;
+            margin-bottom: 20px;
+        }
+        .site-footer__nl-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .site-footer__nl-input {
+            width: 100%;
+            padding: 13px 18px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.07);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            color: var(--white);
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        .site-footer__nl-input::placeholder { color: rgba(255,255,255,0.3); }
+        .site-footer__nl-input:focus {
+            border-color: var(--gold);
+            background: rgba(255,255,255,0.1);
+        }
+        .site-footer__nl-btn {
+            width: 100%;
+            padding: 13px 24px;
+            background: var(--gold);
+            color: var(--heading);
+            border: none;
+            border-radius: 10px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: background 0.25s ease;
+        }
+        .site-footer__nl-btn:hover { background: var(--gold-light); }
+        .site-footer__nl-privacy {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            line-height: 1.5;
+            margin-top: 4px;
+        }
+
+        /* ── Bottom bar ── */
+        .site-footer__bottom {
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 20px 32px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 992px) {
+            .site-footer__proof-inner { flex-direction: column; text-align: center; }
+            .site-footer__quote { flex-direction: column; }
+            .site-footer__grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px 32px;
+            }
+            .site-footer__shop { margin: 0; }
+            .site-footer__newsletter {
+                padding-left: 0;
+                padding-top: 32px;
+                grid-column: 1 / -1;
+                max-width: 400px;
+            }
+            .site-footer__nl-form { flex-direction: row; }
+            .site-footer__nl-btn { width: auto; flex-shrink: 0; }
+        }
+        @media (max-width: 576px) {
+            .site-footer__grid { grid-template-columns: 1fr; gap: 32px; }
+            .site-footer__newsletter { max-width: none; }
+            .site-footer__nl-form { flex-direction: column; }
+            .site-footer__nl-btn { width: 100%; }
+            .site-footer__bottom { flex-direction: column; gap: 8px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SVG sprite — icons used in footer -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <symbol id="icon-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+        <symbol id="icon-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></symbol>
+        <symbol id="icon-fb" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></symbol>
+        <symbol id="icon-ig" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.054 1.97.24 2.43.403a4.08 4.08 0 011.47.958c.453.453.77.898.958 1.47.163.46.349 1.26.404 2.43.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.17-.241 1.97-.404 2.43a4.08 4.08 0 01-.958 1.47 4.08 4.08 0 01-1.47.958c-.46.163-1.26.349-2.43.404-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.055-1.97-.241-2.43-.404a4.08 4.08 0 01-1.47-.958 4.08 4.08 0 01-.958-1.47c-.163-.46-.349-1.26-.404-2.43C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.055-1.17.241-1.97.404-2.43a4.08 4.08 0 01.958-1.47A4.08 4.08 0 015.065 2.3c.46-.163 1.26-.349 2.43-.404C8.761 1.838 9.141 1.826 12 1.826V2.163zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.468a3.333 3.333 0 110-6.666 3.333 3.333 0 010 6.666zm5.338-8.671a1.2 1.2 0 11-2.4 0 1.2 1.2 0 012.4 0z"/></symbol>
+        <symbol id="icon-tw" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></symbol>
+    </svg>
+
+
+    <!-- ============================================================
+         SITE FOOTER
+         ============================================================ -->
+    <footer class="site-footer">
+
+        <!-- Social Proof Row -->
+        <div class="site-footer__proof">
+            <div class="site-footer__proof-inner">
+                <div class="site-footer__quote">
+                    <div class="site-footer__avatar">M</div>
+                    <div class="site-footer__quote-text">"Otroški kotiček – nežno rabljena otroška oblačila,<br>izbrana z ljubeznijo in mislijo na vašo družino."<br>— <strong>Meta</strong></div>
+                </div>
+                <div class="site-footer__google">
+                    <svg style="width:28px;height:28px" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    <div class="site-footer__google-rating">4.9</div>
+                    <div class="site-footer__google-info">
+                        <div class="site-footer__google-stars"><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg><svg><use href="#icon-star"/></svg></div>
+                        <div class="site-footer__google-count">207 ocen</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4-Column Grid -->
+        <div class="site-footer__grid">
+
+            <!-- Col 1: Naša trgovina -->
+            <div class="site-footer__shop">
+                <div class="site-footer__col-title">Naša trgovina</div>
+                <div class="site-footer__shop-name">Otroški kotiček</div>
+                <div class="site-footer__address">Šolska ulica 2<br>3330 Mozirje</div>
+                <div class="site-footer__hours">
+                    <span class="site-footer__hours-day">Tor – Pet</span><span class="site-footer__hours-time">10:00 – 18:00</span>
+                    <span class="site-footer__hours-day">Sobota</span><span class="site-footer__hours-time">9:00 – 12:00</span>
+                    <span class="site-footer__hours-day site-footer__hours--closed">Pon, Ned</span><span class="site-footer__hours-time site-footer__hours--closed">Zaprto</span>
+                </div>
+                <a href="tel:+38640611233" class="site-footer__contact"><svg><use href="#icon-phone"/></svg> +386 40 611 233</a>
+                <a href="mailto:info@otroski-koticek.si" class="site-footer__contact"><svg><use href="#icon-mail"/></svg> info@otroski-koticek.si</a>
+                <div class="site-footer__socials">
+                    <a href="https://www.facebook.com/otroskikoticek" class="site-footer__social" aria-label="Facebook"><svg><use href="#icon-fb"/></svg></a>
+                    <a href="https://www.instagram.com/otroski_koticek" class="site-footer__social" aria-label="Instagram"><svg><use href="#icon-ig"/></svg></a>
+                    <a href="#" class="site-footer__social" aria-label="Twitter"><svg><use href="#icon-tw"/></svg></a>
+                </div>
+            </div>
+
+            <!-- Col 2: Informacije -->
+            <div>
+                <div class="site-footer__col-title">Informacije</div>
+                <ul class="site-footer__links">
+                    <li><a href="#">Varnost podatkov</a></li>
+                    <li><a href="#">Pogoji sodelovanja</a></li>
+                    <li><a href="#">Vračila</a></li>
+                    <li><a href="#">Zemljevid strani</a></li>
+                    <li><a href="#">Darilni bon</a></li>
+                    <li><a href="#">Dostava</a></li>
+                    <li><a href="#">Pomoč pri nakupu</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 3: Odkrijte + Moj račun -->
+            <div>
+                <div class="site-footer__col-title">Odkrijte</div>
+                <ul class="site-footer__links">
+                    <li><a href="#">Prodaj oblačila</a></li>
+                    <li><a href="#">Mnenja strank</a></li>
+                    <li><a href="#">O nas</a></li>
+                    <li><a href="#">Kontakt</a></li>
+                </ul>
+                <div class="site-footer__col-title" style="margin-top: 24px;">Moj račun</div>
+                <ul class="site-footer__links">
+                    <li><a href="#">Moj račun</a></li>
+                    <li><a href="#">Moje naročilo</a></li>
+                    <li><a href="#">Seznam želja</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 4: Newsletter -->
+            <div class="site-footer__newsletter">
+                <div class="site-footer__nl-title">Ostanite obveščeni</div>
+                <div class="site-footer__nl-heading">Bodite prvi, ki izveste za nove kose</div>
+                <div class="site-footer__nl-desc">Prijavite se in izveste takoj, ko prispejo novi kosi vaših najljubših znamk.</div>
+                <form class="site-footer__nl-form">
+                    <input type="email" class="site-footer__nl-input" placeholder="Vaš e-poštni naslov" required>
+                    <button type="submit" class="site-footer__nl-btn">Prijavi se na novice</button>
+                </form>
+                <div class="site-footer__nl-privacy">S prijavo se strinjate s prejemanjem obvestil. Odjava je mogoča kadarkoli.</div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="site-footer__bottom">
+            <span>© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</span>
+        </div>
+    </footer>
+
+</body>
+</html>
+
+<!--
+=== SONNET HANDOFF ===
+RECOMMENDED VARIATION: Final — Newsletter Column Footer
+REASON: Clean 4-column footer with social proof row, boosted shop panel, and integrated newsletter column
+
+STRUCTURE:
+┌─────────────────────────────────────────────────────────────────────┐
+│  .site-footer__proof  — full-width bg rgba(255,255,255,0.05)      │
+│    .site-footer__proof-inner (1550px)                              │
+│      .site-footer__quote  — avatar 107px + italic quote text      │
+│      .site-footer__google — Google "G" SVG + 4.9 + 5 stars badge  │
+├─────────────────────────────────────────────────────────────────────┤
+│  .site-footer__grid (1550px, CSS Grid 4 cols)                     │
+│    Col 1: .site-footer__shop  — card panel, gold left border 3px  │
+│           Shop name, address, hours grid, phone, email, socials   │
+│    Col 2: Informacije — 7 links                                   │
+│    Col 3: Odkrijte (4 links) + Moj račun (3 links), 24px gap     │
+│    Col 4: .site-footer__newsletter — title, heading, desc,        │
+│           email input (rounded 10px) + gold CTA button + privacy  │
+├─────────────────────────────────────────────────────────────────────┤
+│  .site-footer__bottom (1550px) — border-top on inner container    │
+│    © copyright text                                               │
+└─────────────────────────────────────────────────────────────────────┘
+
+TWIG: Replace existing footer in template/common/footer.twig
+SCSS: Add .site-footer block in stylesheet/src/layout/_footer.scss
+
+IMPLEMENTATION NOTES:
+- Footer bg: #3a3a3a (--charcoal-dark), same as current site
+- Social proof row: rgba(255,255,255,0.05) bg, 52px vertical padding, 48px gap
+- Avatar: 107x107px circle, gold-tinted bg rgba(249,185,74,0.12), gold border
+  → In production replace "M" placeholder with <img> of spletna-meta-002.jpg
+- Google badge: rgba(255,255,255,0.08) bg card with 14px radius, 20px/28px padding, inline SVG "G" logo
+- Google rating: 1.85rem font, 18px stars
+- Grid: grid-template-columns: 1.3fr 0.9fr 0.9fr 1.2fr, gap 48px
+- Shop panel (.site-footer__shop): rgba white 5% bg, 12px radius, 3px gold left border
+- Hours: CSS Grid 2-col (auto 1fr), closed days at 0.3 opacity
+- Contact links: gold SVG icons (stroke, no fill), text brightens on hover
+- Social icons: 42px circles, rgba(255,255,255,0.1) bg + 0.15 border → gold bg on hover, SVG fill white → heading-dark
+- Social SVG icons: filled Instagram glyph, X (formerly Twitter) logo, Facebook "f"
+- Newsletter input: rgba white 7% bg, 10px radius, gold border on :focus
+- Newsletter CTA: gold bg, heading-dark text, 10px radius, gold-light on hover
+- Bottom bar: border-top on the inner 1550px container (not full-width)
+- Responsive 992px: grid → 2 cols, newsletter spans full width (grid-column: 1/-1), max-width 400px, form goes inline (row)
+- Responsive 576px: grid → 1 col, newsletter full width, form stacks vertical
+- SVG icons use sprite with <symbol> + <use href="#icon-*">
+- Social links: real URLs for FB + IG (facebook.com/otroskikoticek, instagram.com/otroski_koticek)
+- All text in Slovenian
+
+DESIGN TOKENS USED:
+- $color-primary (#f9b94a) — col titles, social hover bg, CTA button, avatar tint, stars
+- $color-primary-light (#ffd369) — CTA hover
+- $color-charcoal-dark (#3a3a3a) — footer background
+- $color-text-heading (#2b2e35) — CTA button text, social icon hover fill
+- $color-white (#ffffff) — shop name, rating number, nl heading, input text
+- rgba(255,255,255, 0.05–0.08) — surface cards (proof row, shop panel, google badge, nl input)
+- rgba(255,255,255, 0.65) — body text on dark
+- rgba(255,255,255, 0.9) — bright text (hours times, contact lines)
+- rgba(255,255,255, 0.3) — muted (closed hours, copyright, privacy note, placeholders)
+- rgba(255,255,255, 0.06–0.12) — borders and dividers
+=== END HANDOFF ===
+-->

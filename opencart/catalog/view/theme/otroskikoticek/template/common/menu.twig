@@ -30,7 +30,7 @@
               </ul>
               {% endfor %}
             </div>
-            <a href="{{ category.href }}" class="see-all">{{ text_all }} {{ category.name }} →</a>
+            <a href="{{ category.href }}" class="see-all">Vse za {{ category.name|lower }} →</a>
           </div>
         </li>
         {% else %}
@@ -46,8 +46,8 @@
           <div class="dropdown-menu">
             <div class="dropdown-inner">
               <ul class="list-unstyled">
-                <li><a href="{{ base }}index.php?route=product/category&path=226_247">Za deklice</a></li>
-                <li><a href="{{ base }}index.php?route=product/category&path=225_248">Za dečke</a></li>
+                <li><a href="{{ base }}index.php?route=product/category&path=226_247">Za deklice{% if paket_count_deklice %} ({{ paket_count_deklice }}){% endif %}</a></li>
+                <li><a href="{{ base }}index.php?route=product/category&path=225_248">Za dečke{% if paket_count_decke %} ({{ paket_count_decke }}){% endif %}</a></li>
               </ul>
             </div>
           </div>
@@ -56,11 +56,20 @@
 
       <!-- Right: secondary + CTA -->
       <ul class="nav navbar-nav navbar-right nav-extras">
-        <li class="nav-item-secondary">
-          <a href="#">O nas</a>
+        <li class="nav-item-secondary dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">O nas<span class="nav-caret"></span></a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-inner">
+              <ul class="list-unstyled">
+                {% for link in onas_links %}
+                <li><a href="{{ link.href }}">{{ link.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
         </li>
         <li class="nav-item-cta">
-          <a href="#">
+          <a href="{{ base }}index.php?route=information/information&information_id=9">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             Prodaj oblačila
           </a>

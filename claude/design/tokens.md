@@ -34,7 +34,7 @@ When a token changes here, update the corresponding SCSS variable in `abstracts/
 |-----------------------|-------------------------|---------|------------------------------------------------|
 | color-surface         | `$color-surface`        | #ffffff | Main page background                           |
 | color-surface-alt     | `$color-surface-alt`    | #f7f7f7 | Product cards, input fields                    |
-| color-surface-section | `$color-surface-section`| #ececec | Homepage bands, category header bg             |
+| color-surface-section | `$color-surface-section`| #eeeeee | Homepage bands, category tiles bg              |
 | color-surface-dark    | `$color-surface-dark`   | #3a3a3a | Footer (tied to charcoal family)               |
 
 ### Borders

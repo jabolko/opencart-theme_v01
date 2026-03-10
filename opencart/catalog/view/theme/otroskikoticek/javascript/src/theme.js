@@ -21,6 +21,71 @@
     '</svg>' +
     '</span>';
 
+  // Mirrors main cart price, badge, and dropdown into the sticky nav cart
+  function syncStickyCart() {
+    var priceEl    = document.querySelector('.sticky-nav__cart-price');
+    var stickyIconWrap = document.querySelector('#js-sticky-cart .cart-icon-wrap');
+    var stickyCartWrap = document.getElementById('js-sticky-cart-wrap');
+
+    // Sync price text
+    if (priceEl) {
+      var mainPrice = document.querySelector('#cart .cart-price');
+      priceEl.textContent = mainPrice ? mainPrice.textContent : '';
+    }
+
+    // Sync badge count
+    if (stickyIconWrap) {
+      var mainIconWrap = document.querySelector('#cart .cart-icon-wrap');
+      var count = mainIconWrap ? mainIconWrap.getAttribute('data-count') : null;
+      if (count) {
+        stickyIconWrap.setAttribute('data-count', count);
+      } else {
+        stickyIconWrap.removeAttribute('data-count');
+      }
+    }
+
+    // Clone dropdown menu from main cart into sticky cart wrapper.
+    // Update innerHTML in-place (never remove the element) so Bootstrap's
+    // .open state on the parent is preserved while the cart refreshes.
+    if (stickyCartWrap) {
+      var mainDropdown = document.querySelector('#cart .dropdown-menu');
+      var existing = stickyCartWrap.querySelector('.dropdown-menu');
+      if (mainDropdown) {
+        if (existing) {
+          existing.innerHTML = mainDropdown.innerHTML;
+        } else {
+          var clone = mainDropdown.cloneNode(true);
+          clone.classList.add('dropdown-menu-right');
+          stickyCartWrap.appendChild(clone);
+        }
+      } else if (existing) {
+        stickyCartWrap.removeChild(existing);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Toast notification — replaces OC's inline .alert-dismissible
+  // ---------------------------------------------------------------------------
+
+  var toastTimer = null;
+
+  function showToast(message) {
+    var toast = document.getElementById('oc-toast');
+    if (!toast) { return; }
+    var msgEl = toast.querySelector('.oc-toast__msg');
+    if (msgEl) { msgEl.textContent = message; }
+    if (toastTimer) { clearTimeout(toastTimer); }
+    toast.classList.add('oc-toast--visible');
+    toastTimer = setTimeout(function () { hideToast(); }, 3500);
+  }
+
+  function hideToast() {
+    var toast = document.getElementById('oc-toast');
+    if (toast) { toast.classList.remove('oc-toast--visible'); }
+    if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
+  }
+
   // Guard against re-entrant calls when our DOM changes re-trigger the observer
   var cartReformatting = false;
 
@@ -29,6 +94,8 @@
     cartReformatting = true;
 
     var $btn = $('#cart > .btn');
+    // Skip while Bootstrap button-loading state is active (button is disabled)
+    if ($btn.prop('disabled')) { cartReformatting = false; return; }
     if ($btn.length) {
       // OC sets: <span id="cart-total"><i class="fa fa-shopping-cart"></i> N text - price</span>
       // OR initial cart.twig render: <span class="cart-icon-wrap">...</span> <span id="cart-total" class="sr-only">N text - price</span>
@@ -140,11 +207,95 @@
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Sticky compact nav — clones category links from #menu, slides in on scroll
+  // ---------------------------------------------------------------------------
+
+  function initStickyNav() {
+    var siteHeader = document.querySelector('.site-header');
+    var stickyNav  = document.getElementById('js-sticky-nav');
+    var stickyCats = document.getElementById('js-sticky-cats');
+    if (!stickyNav || !siteHeader) { return; }
+
+    // Clone top-level category <li> items from main nav
+    var mainCats = document.querySelectorAll('#menu .navbar-nav:first-child > li');
+    if (stickyCats && mainCats.length) {
+      var i;
+      for (i = 0; i < mainCats.length; i++) {
+        stickyCats.appendChild(mainCats[i].cloneNode(true));
+      }
+    }
+
+    // Show/hide based on scroll position
+    var threshold = siteHeader.offsetHeight;
+    function onScroll() {
+      if (window.pageYOffset > threshold) {
+        stickyNav.classList.add('sticky-nav--visible');
+        stickyNav.removeAttribute('aria-hidden');
+      } else {
+        stickyNav.classList.remove('sticky-nav--visible');
+        stickyNav.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    window.addEventListener('scroll', onScroll);
+
+    // Search button: scroll to top then focus main search
+    var searchBtn = document.getElementById('js-sticky-search');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(function () {
+          var input = document.querySelector('#search .form-control');
+          if (input) { input.focus(); }
+        }, 400);
+      });
+    }
+
+    // Cart button uses Bootstrap data-toggle="dropdown" — no custom handler needed
+  }
+
   $(document).ready(function () {
     reformatCart();
+    syncStickyCart();
     updateWishlistBadge();
     initArrivalsScroll();
     initReviewsScroll();
+    initStickyNav();
+
+    // Suppress OC's scroll-to-top animation on cart/wishlist/compare add
+    var _origAnimate = $.fn.animate;
+    $.fn.animate = function (props) {
+      if (props && typeof props.scrollTop !== 'undefined' && props.scrollTop === 0 && $(this).is('html, body')) {
+        return this;
+      }
+      return _origAnimate.apply(this, arguments);
+    };
+
+    // Intercept OC alert insertions at jQuery level — works even when #content
+    // is absent (e.g. home page), where $(...).before() would silently no-op.
+    var _origBefore = $.fn.before;
+    $.fn.before = function (content) {
+      if (typeof content === 'string' && content.indexOf('alert-dismissible') !== -1) {
+        var text = $('<div>').html(content).text().replace(/\s*×\s*$/, '').trim();
+        if (text) { showToast(text); }
+        return this;
+      }
+      return _origBefore.apply(this, arguments);
+    };
+
+    // Keep cart dropdown open when clicking remove buttons.
+    // Bootstrap 3 closes a dropdown on any click that bubbles to document.
+    // Stopping propagation here prevents that without breaking the remove action.
+    $(document).on('click', '#cart .cart-drop__remove, #js-sticky-cart-wrap .cart-drop__remove', function (e) {
+      e.stopPropagation();
+    });
+
+    // Close toast on button click
+    var toastCloseBtn = document.querySelector('.oc-toast__close');
+    if (toastCloseBtn) {
+      toastCloseBtn.addEventListener('click', function () { hideToast(); });
+    }
 
     if (window.MutationObserver) {
       var observer = new MutationObserver(function (mutations) {
@@ -163,7 +314,7 @@
         }
 
         if (inWishlist) { updateWishlistBadge(); }
-        if (inCart) { reformatCart(); }
+        if (inCart) { reformatCart(); syncStickyCart(); }
       });
 
       var wishlistEl = document.getElementById('wishlist-total');

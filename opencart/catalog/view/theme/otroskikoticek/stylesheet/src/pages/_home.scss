@@ -175,6 +175,7 @@ $_sell-green: #528e6d;
     &:focus {
       color: #ffffff;
       border-bottom-color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
     }
 
     @include respond-below('sm') {
@@ -238,7 +239,64 @@ $_sell-green: #528e6d;
   }
 }
 
-// S2 — Trust bar removed: stats are now inside .home-hero__trust
+// =============================================================================
+// S2 — USP STRIP  .home-usp
+// 3 illustrated icons: quality · returns · sustainability
+// =============================================================================
+
+.home-usp {
+  background: #eeeeee;
+  padding: $space-6 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-6;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @include respond-below('sm') {
+      grid-template-columns: 1fr;
+      gap: $space-4;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+
+    // Divider between items on desktop
+    & + & {
+      @include respond-to('sm') {
+        border-left: 1px solid $color-border;
+        padding-left: $space-6;
+      }
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    height: 3.53rem; // 60px ÷ 17
+    width: auto;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-size: $font-size-base;
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    margin: 0;
+  }
+
+  &__sub {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin: $space-1 0 0;
+  }
+}
 
 // =============================================================================
 // S3 — CATEGORY STRIP  .home-categories / .home-category
@@ -267,7 +325,23 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   gap: $space-4;
   margin-bottom: $space-4;
 
-  .home-category { height: 17.06rem; } // 290px ÷ 17
+  .home-category {
+    height: 17.06rem; // 290px ÷ 17
+
+    // Diagonal stripe — lighter band (white overlay on coloured bg)
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.25);
+      clip-path: polygon(95% 0%, 100% 0%, 100% 100%, 60% 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+  }
 
   // Tablet: equal columns, slightly shorter
   @include respond-below('md') {
@@ -292,7 +366,24 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   grid-template-columns: repeat(3, 1fr);
   gap: $space-4;
 
-  .home-category { height: 13.82rem; } // 235px ÷ 17
+  .home-category {
+    height: 13.82rem; // 235px ÷ 17
+    --cat-bg: #{$color-surface-section};
+
+    // Diagonal stripe — slightly darker band behind the product image
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.04);
+      clip-path: polygon(95% 0%, 100% 0%, 100% 100%, 60% 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+  }
 
   @include respond-below('md') {
     gap: 0.71rem;
@@ -324,13 +415,11 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     outline: none;
   }
 
-  // Novo prispelo: gold diagonal gradient, no product image
+  // Novo prispelo: no product image, same light grey as sibling tiles
   &--novo {
-    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
-
     &:hover,
     &:focus {
-      box-shadow: 0 16px 40px rgba(249, 185, 74, 0.25);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.09);
     }
   }
 
@@ -369,7 +458,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 1.65rem; // 28px ÷ 17
+    padding: 1.65rem 48% 1.65rem 1.65rem; // right 48% = clear of the product image
     z-index: 3;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0%, transparent 100%);
 
@@ -398,15 +487,18 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__name {
     display: block;
     font-family: $font-family-heading;
-    font-size: 1.25rem; // ~21px ÷ 17
+    font-size: 1.76rem; // ~30px ÷ 17
     font-weight: $font-weight-heading-semi;
     color: $color-text-heading;
     line-height: 1.2;
 
-    .home-category--novo & { font-size: 1.35rem; }
+    .home-category--novo & { font-size: 1.76rem; }
+
+    .home-categories__top & { font-size: 2.35rem; } // ~40px ÷ 17
 
     @include respond-below('sm') {
-      font-size: 1.06rem; // ~18px ÷ 17
+      font-size: 1.35rem; // ~23px ÷ 17
+      .home-categories__top & { font-size: 1.65rem; } // ~28px ÷ 17
     }
   }
 
@@ -414,7 +506,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__sub {
     display: block;
     font-family: $font-family-body;
-    font-size: 0.76rem; // ~13px ÷ 17
+    font-size: $font-size-base;
     color: $color-text-base;
     opacity: 0.6;
     margin-top: $space-1;
@@ -432,7 +524,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     gap: 0.35rem; // ~6px ÷ 17
     margin-top: 0.82rem; // ~14px ÷ 17
     font-family: $font-family-body;
-    font-size: 0.76rem;
+    font-size: $font-size-base;
     color: $color-text-base;
     opacity: 0.6;
     transition: opacity 0.3s ease, gap 0.3s ease, color 0.3s ease;
@@ -449,6 +541,15 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     .home-category--novo:hover & { opacity: 0.9; }
+  }
+
+  &__cta-arrow {
+    display: inline-block;
+    transition: transform 0.25s ease;
+
+    .home-category:hover & {
+      transform: translateX(4px);
+    }
   }
 }
 
@@ -484,24 +585,33 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   // Circular arrow button
   &__arrow {
-    width: 1.88rem; // 32px ÷ 17
-    height: 1.88rem;
-    border-radius: 50%;
-    border: 2px solid $color-border;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 2.59rem; // 44px ÷ 17
+    height: 2.59rem;
+    border-radius: $radius-full;
+    border: none;
+    background: $color-surface;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    @include flex-center;
     cursor: pointer;
-    color: $color-text-base;
     padding: 0;
     flex-shrink: 0;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+
+    svg {
+      width: 1.18rem; // 20px ÷ 17
+      height: 1.18rem;
+      stroke: $color-text-heading;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      transition: stroke 0.25s ease;
+    }
 
     &:hover,
     &:focus {
-      border-color: $color-border-dark;
-      color: $color-text-heading;
+      background: $color-surface;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
       outline: none;
     }
 
@@ -516,11 +626,12 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   // margin-right extends it to the right viewport edge.
   &__scroller {
     overflow-x: auto;
-    overflow-y: visible;
+    // overflow-y: visible coerces to auto per CSS spec when overflow-x != visible.
+    // Shadow (0 16px 40px) needs ~56px clearance; $space-16 = 64px is safe.
     margin-right: calc(-50vw + 50%);
     padding-right: $space-6;
     padding-top: $space-6;
-    padding-bottom: $space-3;
+    padding-bottom: $space-8; // 32px — room for hover box-shadow (offset 8 + blur 20)
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; // Firefox
@@ -598,6 +709,14 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
       filter: grayscale(0%);
       opacity: 1;
     }
+  }
+
+  &__more {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-base;
+    color: $color-text-muted;
+    white-space: nowrap;
   }
 }
 
@@ -712,89 +831,148 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 // =============================================================================
-// S7 — HOW IT WORKS  .home-how
+// S8 — SELL CYCLE  .home-sell-cycle
 // =============================================================================
 
-.home-how {
+.home-sell-cycle {
   background: $color-surface;
   padding: $space-12 0;
 
-  &__header {
-    text-align: center;
-    margin-bottom: $space-8;
+  .home-eyebrow {
+    color: $color-text-base; // #565656
+  }
 
-    .home-eyebrow {
-      margin-bottom: $space-1;
+  &__heading {
+    font-family: $font-family-heading;
+    font-size: 2.35rem; // ~40px ÷ 17 — matches home-sell__heading
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    line-height: $line-height-heading;
+    margin: 0 0 $space-4;
+
+    @include respond-below('sm') {
+      font-size: 1.88rem;
     }
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: $space-8;
+    align-items: center;
 
-    @include respond-below('sm') {
+    @include respond-below('md') {
       grid-template-columns: 1fr;
-      gap: $space-6;
     }
   }
 
-  &__item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: $space-6;
-  }
+  &__accent { color: $color-primary; }
 
-  &__icon {
-    width: 3.53rem; // 60px ÷ 17
-    height: 3.53rem;
-    border-radius: $radius-full;
-    background: rgba(249, 185, 74, 0.12);
-    @include flex-center;
-    margin-bottom: $space-4;
-    font-size: 1.41rem; // 24px ÷ 17
-    color: $color-primary;
-  }
-
-  &__step {
+  &__body {
     font-family: $font-family-body;
-    font-size: 0.71rem; // 12px ÷ 17
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: $color-text-muted;
-    margin: 0 0 $space-2;
+    font-size: $font-size-base;
+    color: $color-text-base;
+    line-height: $line-height-body;
+    margin: 0 0 $space-4;
   }
 
-  &__title {
+  &__link {
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $color-primary-dark;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  &__image-wrap {
+    @include flex-center;
+  }
+
+  &__image {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+// =============================================================================
+// S9 — ABOUT  .home-about
+// =============================================================================
+
+.home-about {
+  background: $color-surface;
+  padding: $space-12 0;
+
+  .home-eyebrow {
+    color: $color-text-base; // #565656
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-8;
+    align-items: center;
+
+    @include respond-below('md') {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__image-wrap {
+    @include flex-center;
+  }
+
+  &__image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  &__heading {
     font-family: $font-family-heading;
-    font-size: $font-size-lg;
+    font-size: 2.47rem; // 42px ÷ 17
     font-weight: $font-weight-heading-semi;
     color: $color-text-heading;
-    margin: 0 0 $space-2;
+    line-height: $line-height-heading;
+    margin: 0 0 $space-4;
   }
 
-  &__desc {
+  &__accent { color: $color-primary; }
+
+  &__body {
     font-family: $font-family-body;
-    font-size: $font-size-sm;
-    color: $color-text-muted;
+    font-size: $font-size-base;
+    color: $color-text-base;
     line-height: $line-height-body;
-    margin: 0;
+    margin: 0 0 $space-3;
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    margin-top: $space-4;
+  }
+
+  &__link {
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $color-primary-dark;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
   }
 }
 
 // =============================================================================
 // S8 — GOOGLE REVIEWS  .home-reviews / .home-review
-// Static HTML — zero 3rd-party JS. Styled to look like real Google cards.
+// Handoff: social-proof-FINAL.html — badge pill header, line-clamp cards
 // =============================================================================
 
 .home-reviews {
   background: $color-surface-alt;
-  padding-top: $space-6;
-  padding-bottom: $space-8;
-  border-top: 1px solid $color-border;
-  border-bottom: 1px solid $color-border;
+  padding: $space-12 0;
   overflow-x: clip;
 
   &__header {
@@ -802,56 +980,103 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     margin-bottom: $space-4;
   }
 
-  &__summary {
-    font-family: $font-family-body;
-    font-size: $font-size-sm;
-    color: $color-text-muted;
-    margin: $space-2 0 0;
+  &__title {
+    font-family: $font-family-heading;
+    font-size: 2.82rem; // 48px ÷ 17 — matches .home-brands__heading
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    line-height: $line-height-heading;
+    margin: 0;
+  }
+
+  &__title-accent { color: $color-primary; }
+  &__title-muted  { color: $color-text-base; }
+
+  // Badge + arrows on one row — same pattern as .home-section-header
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $space-4;
+  }
+
+  // Rating pill — Google G + score + stars + count
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-3;
+    background: $color-surface;
+    padding: $space-2 $space-6;
+    border-radius: $radius-full;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  &__google-g {
+    width: 1.41rem; // 24px ÷ 17
+    height: 1.41rem;
+    flex-shrink: 0;
+  }
+
+  &__rating {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-lg;
+    color: $color-text-heading;
   }
 
   &__stars {
-    color: $color-primary;
-    letter-spacing: 0.05em;
+    display: flex;
+    gap: 2px;
   }
 
-  &__g-icon {
-    color: #4285f4; // Google brand blue
-    font-size: 1rem;
+  &__star-icon {
+    width: 1.06rem; // 18px ÷ 17
+    height: 1.06rem;
+    fill: $color-primary;
   }
 
-  &__fb-icon {
-    color: #1877f2; // Facebook brand blue
-    font-size: 1rem;
+  &__count {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
   }
 
-  // Arrow buttons row — right-aligned, sits between header and scroller
+  // Arrow group — sits inside __meta on the right
   &__nav {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
     gap: $space-3;
-    margin-bottom: $space-2;
   }
 
-  // Circular arrow button — same style as home-arrivals__arrow
+  // White circle arrows with gold hover
   &__arrow {
-    width: 1.88rem;
-    height: 1.88rem;
-    border-radius: 50%;
-    border: 2px solid $color-border;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 2.59rem; // 44px ÷ 17
+    height: 2.59rem;
+    border-radius: $radius-full;
+    border: none;
+    background: $color-surface;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    @include flex-center;
     cursor: pointer;
-    color: $color-text-base;
     padding: 0;
     flex-shrink: 0;
-    transition: border-color 0.2s ease, color 0.2s ease;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+
+    svg {
+      width: 1.18rem; // 20px ÷ 17
+      height: 1.18rem;
+      stroke: $color-text-heading;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      transition: stroke 0.25s ease;
+    }
 
     &:hover,
     &:focus {
-      border-color: $color-border-dark;
-      color: $color-text-heading;
+      background: $color-surface;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
       outline: none;
     }
 
@@ -861,23 +1086,20 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
   }
 
-  // Scroll strip — same technique as home-arrivals__scroller
+  // Scroll strip — viewport-edge extension
   &__scroller {
     overflow-x: auto;
     overflow-y: visible;
     margin-right: calc(-50vw + 50%);
     padding-right: $space-6;
-    padding-top: $space-6;
+    padding-top: $space-2;
     padding-bottom: $space-3;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
 
-    // Override grid to a horizontal flex row
     .home-reviews__grid {
       display: flex;
       flex-wrap: nowrap;
@@ -885,7 +1107,6 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
       width: max-content;
     }
 
-    // Fixed-width cards that snap to start
     .home-review {
       flex: 0 0 17.65rem; // 300px ÷ 17
       width: 17.65rem;
@@ -897,74 +1118,42 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 .home-review {
   background: $color-surface;
   border-radius: $radius-lg;
-  box-shadow: $shadow-card;
   padding: $space-6;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  gap: $space-3;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 
-  &__head {
-    display: flex;
-    align-items: center;
-    gap: $space-3;
-  }
-
-  &__av {
-    flex-shrink: 0;
-    width: 2.35rem; // 40px ÷ 17
-    height: 2.35rem;
-    border-radius: $radius-full;
-    @include flex-center;
-    font-family: $font-family-heading;
-    font-size: $font-size-base;
-    font-weight: $font-weight-heading-semi;
-    color: $color-surface;
-  }
-
-  &__meta {
-    flex: 1;
-    min-width: 0;
+  &:hover {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
   }
 
   &__name {
-    font-family: $font-family-body;
-    font-size: $font-size-sm;
-    font-weight: 600;
-    color: $color-text-heading;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__date {
-    font-family: $font-family-body;
-    font-size: 0.71rem; // 12px ÷ 17
-    color: $color-text-muted;
-    margin: 0;
-  }
-
-  // Google "G" badge — top-right of card header
-  &__g {
-    flex-shrink: 0;
     font-family: $font-family-heading;
     font-weight: $font-weight-heading-semi;
     font-size: $font-size-sm;
-    color: #4285f4; // Google brand blue — not a site token
-    background: $color-surface;
-    border: 1px solid $color-border;
-    border-radius: $radius-full;
-    width: 1.65rem; // 28px ÷ 17
-    height: 1.65rem;
-    @include flex-center;
-    margin-left: auto;
+    color: $color-text-heading;
+    margin: 0 0 2px;
+  }
+
+  &__time {
+    font-family: $font-family-body;
+    font-size: 0.76rem; // ~13px ÷ 17
+    color: $color-text-muted;
+    margin: 0 0 $space-3;
   }
 
   &__stars {
-    color: $color-primary;
-    font-size: $font-size-sm;
-    letter-spacing: 0.05em;
-    margin: 0;
+    display: flex;
+    gap: 2px;
+    margin-bottom: $space-3;
+  }
+
+  &__star-icon {
+    width: 1.06rem;
+    height: 1.06rem;
+    fill: $color-primary;
   }
 
   &__text {
@@ -972,7 +1161,56 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-size: $font-size-sm;
     color: $color-text-base;
     line-height: $line-height-body;
-    margin: 0;
+    margin: 0 0 $space-2;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__more {
+    font-family: $font-family-body;
+    font-size: 0.76rem;
+    color: $color-text-muted;
+    text-decoration: none;
+    margin-bottom: $space-4;
+    display: block;
+    transition: color 0.2s ease;
+
+    &:hover { color: $color-text-base; }
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding-top: $space-4;
+    border-top: 1px solid $color-surface-alt;
+    margin-top: auto;
+    text-decoration: none;
+
+    &:hover { opacity: 0.8; }
+  }
+
+  &__google-g {
+    width: 1.41rem;
+    height: 1.41rem;
+    flex-shrink: 0;
+  }
+
+  &__source {
+    font-family: $font-family-body;
+    font-size: 0.71rem; // 12px ÷ 17
+    color: #757575;
+    line-height: 1.3;
+
+    span {
+      display: block;
+      color: #4285f4;
+      font-weight: 600;
+      font-size: 0.76rem;
+    }
   }
 }
 
@@ -982,7 +1220,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 // =============================================================================
 
 .home-values {
-  background: $color-text-heading;
+  background: url('../../../../../../image/catalog/assets/banners/otroski-koticek-trgovina-2200-1100px.jpg') center / cover no-repeat;
   padding: $space-16 0;
 
   &__inner {
@@ -998,18 +1236,20 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__tag {
     font-family: $font-family-heading;
     font-size: 1.65rem; // ~28px ÷ 17
-    font-weight: $font-weight-heading-semi;
+    font-weight: 700;
     color: $color-primary;
     margin: 0;
     letter-spacing: -0.01em;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
   }
 
   &__text {
     font-family: $font-family-body;
     font-size: $font-size-base;
-    color: rgba(245, 245, 245, 0.85);
+    color: rgba(255, 255, 255, 0.95);
     line-height: $line-height-body;
     margin: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   }
 
   &__counter {
@@ -1018,8 +1258,9 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     gap: $space-3;
     font-family: $font-family-body;
     font-size: $font-size-sm;
-    color: rgba(245, 245, 245, 0.7);
+    color: rgba(255, 255, 255, 0.85);
     margin: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 
     .fa {
       color: $color-primary;
@@ -1033,35 +1274,3 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 }
 
-// =============================================================================
-// S10 — NEWSLETTER  .home-newsletter
-// content_bottom = OC newsletter module injection point
-// =============================================================================
-
-.home-newsletter {
-  background: $color-surface-alt;
-  padding: $space-12 0;
-  border-top: 1px solid $color-border;
-
-  &__inner {
-    max-width: 35.29rem; // ~600px ÷ 17
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  &__heading {
-    font-family: $font-family-heading;
-    font-size: 1.65rem; // ~28px ÷ 17
-    font-weight: $font-weight-heading-semi;
-    color: $color-text-heading;
-    margin: 0 0 $space-3;
-  }
-
-  &__sub {
-    font-family: $font-family-body;
-    font-size: $font-size-sm;
-    color: $color-text-muted;
-    line-height: $line-height-body;
-    margin: 0 0 $space-6;
-  }
-}

@@ -19,7 +19,7 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
   }
 
   // Image link wrapper — block-level so it fills the image area
@@ -69,6 +69,9 @@
     flex: 1;
     min-width: 0; // prevent flex child overflow
     padding: $space-4 $space-4 $space-4 1.06rem; // 18px right/left
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
   }
 
   &__manufacturer {
@@ -104,7 +107,7 @@
 
   &__price {
     font-family: $font-family-heading;
-    font-weight: $font-weight-heading-semi; // 600 — max available Open Sans weight
+    font-weight: 700;
     font-size: 1.1rem;
     color: $color-primary-dark;
     margin: 0;

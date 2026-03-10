@@ -5,14 +5,11 @@
 @use '../abstracts' as *;
 
 // ============================================================
-// .site-header — sticky wrapper
+// .site-header — full header (scrolls away; compact sticky nav takes over)
 // ============================================================
 
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background-color: $color-surface;
+  background-color: #f7f7f8;
 }
 
 // ============================================================
@@ -20,7 +17,7 @@
 // ============================================================
 
 header {
-  background-color: $color-surface;
+  background-color: #f7f7f8;
   padding: $space-4 0;
 }
 
@@ -190,9 +187,11 @@ header {
   padding: 0;
   transition: color $transition-base;
 
-  .fa {
-    font-size: 1.375rem; // ~23px
-    line-height: 1;
+  .header-icon {
+    width: 1.375rem; // ~23px
+    height: 1.375rem;
+    display: block;
+    flex-shrink: 0;
   }
 
   &:hover,
@@ -286,6 +285,7 @@ header {
       height: auto;
       display: flex;
       align-items: center;
+      gap: $space-4;
       transition: color $transition-base;
 
       &:hover,
@@ -304,9 +304,8 @@ header {
       }
 
       .cart-price {
-        font-size: $font-size-sm;
+        font-size: $font-size-base;
         font-weight: $font-weight-heading-md;
-        margin-left: 0.76rem; // 13px @ 17px root
         white-space: nowrap;
       }
     }
@@ -339,7 +338,7 @@ header {
 .cart-drop {
   &__header {
     padding: $space-3 $space-4 $space-2;
-    border-bottom: 1px solid $color-border;
+    background: $color-surface-alt;
     font-family: $font-family-heading;
     font-size: 0.71rem; // ~12px
     font-weight: $font-weight-heading-semi;
@@ -349,7 +348,6 @@ header {
   }
 
   &__items {
-    list-style: none;
     padding: $space-1 0;
     margin: 0;
     max-height: 320px;
@@ -361,9 +359,6 @@ header {
     align-items: center;
     gap: $space-3;
     padding: $space-2 $space-4;
-    border-bottom: 1px solid #f0f0f0;
-
-    &:last-child { border-bottom: none; }
   }
 
   &__thumb {
@@ -442,7 +437,6 @@ header {
   }
 
   &__footer {
-    border-top: 1px solid $color-border;
     background: $color-surface-alt;
     padding: $space-3 $space-4 $space-4;
   }
@@ -529,5 +523,289 @@ header {
   .header-search {
     order: 4;
     flex: 0 0 100%;
+  }
+}
+
+// ============================================================
+// Sticky compact nav — slides in from top after scrolling
+// past the main header. JS adds .sticky-nav--visible.
+// ============================================================
+
+.sticky-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #f7f7f8;
+  border-bottom: 1px solid $color-border;
+  box-shadow: 0 2px 12px rgba(43, 46, 53, 0.08);
+  transform: translateY(-100%);
+  transition: transform 0.25s ease;
+
+  &--visible {
+    transform: translateY(0);
+  }
+}
+
+.sticky-nav__inner {
+  display: flex;
+  align-items: center;
+  height: 3.06rem; // ~52px
+  gap: $space-4;
+}
+
+.sticky-nav__cats {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  overflow: visible; // let dropdowns overflow
+
+  // Top-level links — match main nav exactly
+  > li > a {
+    height: 3.06rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: $font-family-heading;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-heading-semi;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: $color-text-heading;
+    text-decoration: none;
+    padding: 0 $space-4;
+    white-space: nowrap;
+    transition: color $transition-base;
+
+    &:hover,
+    &:focus { color: $color-primary-dark; text-decoration: none; }
+  }
+
+  // Caret — same shape as main nav
+  .nav-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 3.5px solid transparent;
+    border-right: 3.5px solid transparent;
+    border-top: 4px solid currentColor;
+    opacity: 0.45;
+    flex-shrink: 0;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  > li.dropdown:hover .nav-caret,
+  > li.dropdown.open .nav-caret {
+    opacity: 0.8;
+    transform: rotate(180deg);
+  }
+
+  // Show dropdown on hover (desktop)
+  > li.dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+
+  // Dropdown panel — same style as main nav
+  > li.dropdown .dropdown-menu {
+    top: 100%;
+    margin-top: 0;
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: 0 0 $radius-md $radius-md;
+    box-shadow: 0 12px 32px rgba(43, 46, 53, 0.1);
+    padding: $space-2 0 $space-3;
+    min-width: 250px;
+
+    // Sub-links
+    a {
+      display: block;
+      padding: $space-2 $space-4;
+      color: #565656;
+      font-family: $font-family-body;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-body;
+      text-decoration: none;
+      text-transform: none;
+      letter-spacing: 0;
+      transition: background $transition-base, color $transition-base, padding-left 0.15s ease;
+
+      &:hover {
+        background-color: $color-surface-alt;
+        color: $color-primary-dark;
+        padding-left: $space-6;
+      }
+    }
+
+    // See-all link
+    .see-all {
+      display: block;
+      padding: $space-2 $space-4;
+      margin-top: $space-1;
+      border-top: 1px solid $color-border;
+      color: $color-primary;
+      font-family: $font-family-heading;
+      font-size: $font-size-sm;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color $transition-base;
+
+      &:hover { color: $color-primary-dark; }
+    }
+  }
+}
+
+.sticky-nav__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+}
+
+.sticky-nav__action {
+  position: relative;
+
+  // Reuse main header account dropdown styles
+  .dropdown-menu {
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-hover;
+    min-width: 160px;
+    padding: $space-2 0;
+    top: calc(100% + #{$space-2});
+
+    a {
+      color: $color-text-base;
+      font-size: $font-size-sm;
+      padding: $space-2 $space-4;
+      display: block;
+
+      &:hover {
+        background-color: $color-surface-alt;
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+.sticky-nav__btn {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  background: none;
+  border: none;
+  color: $color-text-heading;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  .sticky-nav__icon {
+    width: 1.18rem;  // ~20px
+    height: 1.18rem;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .sticky-nav__cart-price {
+    font-family: $font-family-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-heading-md;
+    white-space: nowrap;
+  }
+
+  &:hover,
+  &:focus {
+    color: $color-primary;
+    text-decoration: none;
+  }
+
+  // Hide Bootstrap caret on dropdown toggle
+  .caret { display: none; }
+}
+
+// Sticky cart dropdown — same panel style as main cart
+#js-sticky-cart-wrap .dropdown-menu {
+  right: 0;
+  left: auto;
+  min-width: 320px;
+  padding: 0;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: 0 12px 32px rgba(43, 46, 53, 0.12);
+  overflow: hidden;
+  top: calc(100% + #{$space-2});
+}
+
+// Hide on mobile (hamburger nav handles navigation)
+@include respond-below('sm') {
+  .sticky-nav { display: none; }
+}
+
+// ============================================================
+// .oc-toast — floating success notification (bottom-right)
+// Replaces OC's inline .alert-dismissible inserted before #content
+// ============================================================
+
+.oc-toast {
+  position: fixed;
+  top: $space-8;
+  right: $space-6;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  max-width: 22rem;
+  background: $color-surface-dark;
+  color: $color-text-on-dark;
+  border-radius: $radius-md;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  transform: translateX(calc(100% + #{$space-8}));
+  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+
+  &--visible {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  &__body {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex: 1;
+  }
+
+  &__icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: $color-primary;
+  }
+
+  &__msg {
+    font-size: $font-size-sm;
+    line-height: 1.45;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: rgba(245, 245, 245, 0.55);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $color-text-on-dark;
+    }
   }
 }

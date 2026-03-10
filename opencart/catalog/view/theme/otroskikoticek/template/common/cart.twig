@@ -14,9 +14,9 @@
     <li>
       <div class="cart-drop">
         <div class="cart-drop__header">Košarica</div>
-        <ul class="cart-drop__items">
+        <div class="cart-drop__items">
           {% for product in products %}
-          <li class="cart-drop__item">
+          <div class="cart-drop__item">
             <a href="{{ product.href }}" class="cart-drop__thumb">
               {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}" />{% endif %}
             </a>
@@ -28,19 +28,19 @@
             </div>
             <span class="cart-drop__price">{{ product.total }}</span>
             <button type="button" onclick="cart.remove('{{ product.cart_id }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
-          </li>
+          </div>
           {% endfor %}
           {% for voucher in vouchers %}
-          <li class="cart-drop__item">
+          <div class="cart-drop__item">
             <span class="cart-drop__thumb cart-drop__thumb--empty"></span>
             <div class="cart-drop__info">
               <span class="cart-drop__name">{{ voucher.description }}</span>
             </div>
             <span class="cart-drop__price">{{ voucher.amount }}</span>
             <button type="button" onclick="voucher.remove('{{ voucher.key }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
-          </li>
+          </div>
           {% endfor %}
-        </ul>
+        </div>
         <div class="cart-drop__footer">
           {% for total in totals %}
           <div class="cart-drop__total{% if loop.last %} cart-drop__total--grand{% endif %}">

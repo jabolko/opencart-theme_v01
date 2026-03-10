@@ -1,6 +1,6 @@
 // =============================================================================
-// _footer.scss — Dark footer: founder banner + 4-col grid + bottom bar.
-// HTML: footer.twig — .site-footer > .container > .footer__banner + .footer__grid + .footer__bottom
+// _footer.scss — Dark footer: social proof row + 4-col grid + bottom bar.
+// HTML: footer.twig — .site-footer > proof row + grid + bottom bar
 // =============================================================================
 @use '../abstracts' as *;
 
@@ -10,258 +10,415 @@
 
 .site-footer {
   background-color: $color-surface-dark;
-  color: $color-text-on-dark;
-  padding: 0 0 $space-6;
-  margin-top: $space-16;
+  color: rgba(245, 245, 245, 0.65);
 }
 
 // ============================================================
-// Founder banner — photo | quote | review badge
+// Social proof row
 // ============================================================
 
-.footer__banner {
+.site-footer__proof {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.site-footer__proof-inner {
   display: flex;
   align-items: center;
-  gap: 1.88rem; // 32px @ 17px root
-  padding: 1.76rem 5.29rem; // 30px 90px @ 17px root
-  border-bottom: 1px solid rgba(249, 185, 74, 0.15);
-  position: relative;
-  overflow: hidden;
+  justify-content: space-between;
+  gap: 2.82rem; // ~48px
+  padding: 3.06rem 0; // ~52px
 }
 
-.footer__photo {
-  width: 6.35rem; // ~108px
-  height: 6.35rem;
+.site-footer__quote {
+  display: flex;
+  align-items: center;
+  gap: 1.18rem; // ~20px
+  flex: 1;
+}
+
+.site-footer__avatar {
+  width: 6.29rem; // ~107px
+  height: 6.29rem;
   border-radius: $radius-full;
+  border: 2px solid rgba(249, 185, 74, 0.3);
+  overflow: hidden;
+  flex-shrink: 0;
   object-fit: cover;
   object-position: center top;
-  flex-shrink: 0;
-  border: 3px solid $color-primary;
 }
 
-.footer__quote {
-  flex: 1 1 auto;
-  max-width: 23.53rem; // ~400px — forces 2-line wrap
-  font-family: $font-family-body;
-  font-size: 0.88rem; // ~15px
-  line-height: 1.65;
-  color: rgba(245, 245, 245, 0.82);
+.site-footer__quote-text {
   font-style: italic;
+  font-size: 1rem;
+  color: rgba(245, 245, 245, 0.75);
+  line-height: 1.7;
   margin: 0;
-  padding: 0;
-  border: none;
-}
-
-.footer__cite {
-  display: block;
-  font-style: normal;
-  font-weight: $font-weight-heading-semi;
-  font-size: 0.76rem; // ~13px
-  color: $color-primary;
-  margin-top: 0.59rem;
-}
-
-// Review card — right side of banner
-.footer__review {
-  flex-shrink: 0;
-  margin-left: auto;
-  background: rgba(0, 0, 0, 0.22);
-  border-radius: $radius-lg;
-  padding: 1.06rem 1.29rem; // ~18px 22px
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.47rem;
-  text-decoration: none;
-  min-width: 8.94rem; // ~152px
-}
-
-.footer__review-badge {
-  height: 3.41rem; // ~58px
-  width: auto;
-  opacity: 0.9;
-  filter: brightness(1.1);
-  display: block;
-}
-
-.footer__review-count {
-  font-family: $font-family-body;
-  font-size: 0.71rem; // ~12px
-  color: rgba(245, 245, 245, 0.4);
 
   strong {
     color: $color-primary;
-    font-size: $font-size-base;
-    margin-right: 0.12rem;
-  }
-}
-
-// ============================================================
-// 4-column grid
-// ============================================================
-
-.footer__grid {
-  padding-top: $space-8;
-  padding-bottom: $space-8;
-  border-bottom: 1px solid $color-border-dark;
-}
-
-.footer__heading {
-  font-family: $font-family-heading;
-  font-size: 0.59rem; // ~10px
-  font-weight: $font-weight-heading-semi;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: $color-primary;
-  margin-bottom: $space-3;
-}
-
-// Store address
-.footer__address {
-  font-style: normal;
-  font-size: $font-size-sm;
-  line-height: 1.8;
-  color: rgba(245, 245, 245, 0.65);
-  margin-bottom: $space-3;
-
-  strong {
-    display: block;
-    font-size: $font-size-sm;
+    font-style: normal;
     font-weight: $font-weight-heading-semi;
-    color: $color-text-on-dark;
-    margin-bottom: 0.18rem;
   }
 }
 
-// Hours
-.footer__hours {
-  margin-bottom: $space-3;
-}
-
-.footer__hours-row {
+// Google review badge
+.site-footer__google {
   display: flex;
-  justify-content: space-between;
-  font-family: $font-family-body;
-  font-size: 0.76rem; // ~13px
-  padding: 0.27rem 0;
-  border-bottom: 1px solid rgba(245, 245, 245, 0.07);
-  color: rgba(245, 245, 245, 0.5);
+  align-items: center;
+  gap: 0.82rem; // ~14px
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1.18rem 1.65rem; // ~20px 28px
+  border-radius: 0.82rem; // ~14px
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: border-color $transition-base;
 
-  span:first-child { color: rgba(245, 245, 245, 0.8); }
+  &:hover {
+    border-color: rgba(249, 185, 74, 0.4);
+    text-decoration: none;
+  }
 }
 
-// Contact links (phone, email)
-.footer__contact {
+.site-footer__google-g {
+  width: 1.65rem; // ~28px
+  height: 1.65rem;
+  flex-shrink: 0;
+}
+
+.site-footer__google-rating {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 1.88rem;
+  color: $color-text-on-dark;
+  line-height: 1;
+}
+
+.site-footer__google-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.site-footer__google-stars {
+  display: flex;
+  gap: 2px;
+
+  svg {
+    width: 1.06rem; // ~18px
+    height: 1.06rem;
+    fill: $color-primary;
+  }
+}
+
+.site-footer__google-count {
+  font-size: 0.71rem;
+  color: rgba(245, 245, 245, 0.65);
+}
+
+// ============================================================
+// 4-column CSS grid
+// ============================================================
+
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr 0.9fr 1.2fr;
+  gap: 2.82rem; // ~48px
+  padding: $space-12 0;
+}
+
+// Shop panel — gold left border accent
+.site-footer__shop {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: $radius-lg;
+  padding: 1.65rem 1.41rem; // ~28px 24px
+  border-left: 3px solid $color-primary;
+  margin: -$space-2 0; // visual alignment
+}
+
+.site-footer__col-title {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 0.71rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: $color-primary;
+  margin-bottom: 1.18rem; // ~20px
+
+  &--spaced { margin-top: 1.41rem; } // ~24px gap between column title groups
+}
+
+.site-footer__shop-name {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 1.06rem; // ~18px
+  color: $color-text-on-dark;
+  margin-bottom: 0.35rem;
+}
+
+.site-footer__address {
+  font-style: normal;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: rgba(245, 245, 245, 0.65);
+  margin-bottom: $space-4;
+}
+
+// Hours grid
+.site-footer__hours {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px $space-4;
+  font-size: 0.82rem;
+  margin-bottom: 1.18rem;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.site-footer__hours-day { color: rgba(245, 245, 245, 0.65); }
+
+.site-footer__hours-time {
+  text-align: right;
+  color: rgba(245, 245, 245, 0.9);
+  font-weight: 500;
+}
+
+.site-footer__hours--closed { color: rgba(245, 245, 245, 0.3); }
+
+// Contact links
+.site-footer__contact {
   display: flex;
   align-items: center;
   gap: 0.59rem; // ~10px
-  font-family: $font-family-body;
-  font-size: 0.79rem; // ~13.5px
-  color: rgba(245, 245, 245, 0.55);
-  padding: 0.29rem 0;
+  font-size: 0.85rem;
+  color: rgba(245, 245, 245, 0.9);
+  margin-bottom: 0.59rem;
   text-decoration: none;
   transition: color $transition-base;
 
-  &:hover { color: $color-primary; text-decoration: none; }
-
-  .fa {
+  &:hover {
     color: $color-primary;
-    width: 0.82rem; // ~14px
-    font-size: 0.71rem; // ~12px
+    text-decoration: none;
+  }
+
+  svg {
+    width: 1.06rem; // ~18px
+    height: 1.06rem;
+    stroke: $color-primary;
+    fill: none;
+    stroke-width: 1.5;
     flex-shrink: 0;
   }
 }
 
-// Link lists
-.footer__links {
+// Social icon circles
+.site-footer__socials {
+  display: flex;
+  gap: 0.59rem;
+  margin-top: 1.18rem;
+  padding-top: $space-4;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.site-footer__social {
+  width: 2.47rem; // ~42px
+  height: 2.47rem;
+  border-radius: $radius-full;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background $transition-base, border-color $transition-base;
+
+  &:hover {
+    background: $color-primary;
+    border-color: $color-primary;
+    text-decoration: none;
+
+    svg { fill: $color-text-heading; }
+  }
+
+  svg {
+    width: 1.06rem;
+    height: 1.06rem;
+    fill: $color-text-on-dark;
+    transition: fill $transition-base;
+  }
+}
+
+// Link columns
+.site-footer__links {
   list-style: none;
   padding: 0;
   margin: 0;
 
-  li { padding: 0.24rem 0; }
+  li { margin-bottom: 0.59rem; }
 
   a {
-    font-family: $font-family-body;
-    font-size: 0.79rem; // ~13.5px
-    color: rgba(245, 245, 245, 0.55);
+    font-size: 0.85rem;
+    color: rgba(245, 245, 245, 0.65);
     text-decoration: none;
-    transition: color $transition-base, padding-left 140ms ease;
+    transition: color $transition-base;
 
     &:hover {
       color: $color-primary;
-      padding-left: $space-1;
       text-decoration: none;
     }
   }
 }
 
-// Social buttons
-.footer__social {
-  display: flex;
-  gap: 0.59rem; // ~10px
-  margin-top: $space-4;
+// ============================================================
+// Newsletter column
+// ============================================================
+
+.site-footer__newsletter {
+  padding-left: 2.35rem; // ~40px — extra breathing room vs other cols
 }
 
-.footer__social-btn {
-  width: 2rem; // ~34px
-  height: 2rem;
-  border-radius: $radius-full;
-  background: rgba(245, 245, 245, 0.08);
+.site-footer__nl-title {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 0.71rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
   color: $color-primary;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.82rem; // ~14px
-  text-decoration: none;
-  transition: background $transition-base, color $transition-base, transform 140ms ease;
+  margin-bottom: 0.71rem;
+}
 
-  &:hover {
-    background: $color-primary;
-    color: $color-surface-dark;
-    transform: translateY(-2px);
-    text-decoration: none;
+.site-footer__nl-heading {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 1.12rem;
+  color: $color-text-on-dark;
+  line-height: 1.35;
+  margin-bottom: $space-2;
+}
+
+.site-footer__nl-desc {
+  font-size: 0.82rem;
+  color: rgba(245, 245, 245, 0.65);
+  line-height: 1.55;
+  margin-bottom: 1.18rem;
+}
+
+.site-footer__nl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.59rem;
+}
+
+.site-footer__nl-input {
+  width: 100%;
+  padding: 0.76rem 1.06rem; // ~13px 18px
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.59rem; // ~10px
+  background: rgba(255, 255, 255, 0.07);
+  font-family: $font-family-body;
+  font-size: 0.88rem;
+  color: $color-text-on-dark;
+  outline: none;
+  transition: border-color $transition-base, background $transition-base;
+
+  &::placeholder { color: rgba(245, 245, 245, 0.3); }
+
+  &:focus {
+    border-color: $color-primary;
+    background: rgba(255, 255, 255, 0.1);
   }
+}
+
+.site-footer__nl-btn {
+  width: 100%;
+  padding: 0.76rem 1.41rem; // ~13px 24px
+  background: $color-primary;
+  color: $color-text-heading;
+  border: none;
+  border-radius: 0.59rem;
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background $transition-base;
+
+  &:hover { background: $color-primary-light; }
+}
+
+.site-footer__nl-privacy {
+  font-size: 0.71rem;
+  color: rgba(245, 245, 245, 0.3);
+  line-height: 1.5;
+  margin-top: 4px;
+  margin-bottom: 0;
 }
 
 // ============================================================
 // Bottom bar
 // ============================================================
 
-.footer__bottom {
-  padding-top: $space-4;
+.site-footer__bottom {
+  padding: 1.18rem 0; // ~20px
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.footer__copy {
+.site-footer__copy {
   font-family: $font-family-body;
-  font-size: 0.71rem; // ~12px
-  color: rgba(245, 245, 245, 0.28);
-  margin-bottom: 0;
+  font-size: 0.76rem;
+  color: rgba(245, 245, 245, 0.3);
+  margin: 0;
 }
 
 // ============================================================
-// Mobile
+// Responsive
 // ============================================================
+
+@include respond-below('md') {
+  .site-footer__proof-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .site-footer__quote { flex-direction: column; }
+
+  .site-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.35rem $space-8;
+  }
+
+  .site-footer__shop { margin: 0; }
+
+  .site-footer__newsletter {
+    padding-left: 0;
+    padding-top: $space-8;
+    grid-column: 1 / -1;
+    max-width: 400px;
+  }
+
+  .site-footer__nl-form { flex-direction: row; }
+
+  .site-footer__nl-btn {
+    width: auto;
+    flex-shrink: 0;
+  }
+}
 
 @include respond-below('sm') {
-  .site-footer {
-    margin-top: $space-8;
+  .site-footer__grid {
+    grid-template-columns: 1fr;
+    gap: $space-8;
   }
 
-  .footer__banner {
-    flex-wrap: wrap;
-    gap: $space-4;
+  .site-footer__newsletter {
+    max-width: none;
+    padding-top: 0;
   }
 
-  .footer__review {
-    flex-direction: row;
-    align-items: center;
-    gap: $space-3;
-    width: 100%;
-  }
+  .site-footer__nl-form { flex-direction: column; }
 
-  .footer__col {
-    margin-bottom: $space-6;
+  .site-footer__nl-btn { width: 100%; }
 
-    &:last-child { margin-bottom: 0; }
+  .site-footer__bottom {
+    text-align: center;
   }
 }

@@ -27,3 +27,13 @@
 | 2026-03-04 | COMP-004   | `_nav.scss` rewrite — white navbar, uppercase links, gold border-bottom on hover/active | |
 | 2026-03-04 | FONTS      | `_fonts.scss` — added `latin-ext` @font-face rules for čžš support (unicode-range) | 6 woff2 files total |
 | 2026-03-04 | BUILD      | `package.json` fonts:copy updated to copy 6 woff2 files (latin + latin-ext per weight) | |
+| 2026-03-07 | PAGE-001   | Homepage S1–S3: hero, USP strip, category grid (2+3 asymmetric editorial)              | `home.twig` + `_home.scss` |
+| 2026-03-07 | PAGE-001   | Homepage S4: Latest Products carousel (horizontal scroll, JS nav, product-card BEM)    | `latest.twig` + controller override |
+| 2026-03-07 | PAGE-001   | Homepage S5–S9: brands strip, sell section, reviews carousel, sell-cycle, about, values | All sections complete |
+| 2026-03-07 | COMP-001   | `_product-card.scss` — BEM block, image 1:1, manufacturer/name/price, fav+cart actions | |
+| 2026-03-10 | PAGE-001   | Homepage polish: category card images, diagonal stripe, arrow animation, correct links  | All 5 category tiles |
+| 2026-03-10 | PAGE-001   | Product card fixes: price font-weight 700, info flex-end alignment for cards without manufacturer | |
+| 2026-03-10 | PAGE-001   | Brand logos updated: S.Oliver·Next·H&M·Gap·Zara·Adidas·Nike·+30 drugih               | |
+| 2026-03-10 | PAGE-001   | Copy updates: step labels, review count (150+), footer count (153), values weight 700  | |
+| 2026-03-10 | FIX        | Shadow clipping in home-arrivals: reduced hover shadow + full `npm run build` pipeline fix | theme.min.css was not being updated |
+| 2026-03-10 | TOKEN      | `$color-surface-section` updated #ececec → #eeeeee; tokens.md in sync               | |

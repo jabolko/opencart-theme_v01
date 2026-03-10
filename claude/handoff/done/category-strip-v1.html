@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Category Strip — Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;1,400&family=Open+Sans:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           DESIGN TOKENS
+           ======================================== */
+        :root {
+            --gold: #f9b94a;
+            --gold-light: #ffd369;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --light-grey: #f7f7f7;
+            --section-grey: #ececec;
+            --hero-grey: #eeeeee;
+            --border: #d6d9e0;
+        }
+
+        /* ========================================
+           RESET & SHARED
+           ======================================== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 17px;
+            line-height: 1.5;
+            color: var(--charcoal);
+            background: var(--white);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; display: block; }
+
+        .container {
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .hero-sim {
+            height: 40px;
+            background: var(--hero-grey);
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            text-align: center;
+            padding: 14px 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .variation-label span {
+            opacity: 0.5;
+            margin-left: 12px;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        /*
+         * Product images — transparent PNGs, floating on tile backgrounds.
+         * drop-shadow follows the clothing shape (not a box).
+         * Positioned absolutely within each tile for precise control.
+         */
+        .product-img {
+            position: absolute;
+            z-index: 1;
+            pointer-events: none;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 16px rgba(0,0,0,0.10));
+            transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        filter 0.45s ease;
+        }
+
+
+        /* ================================================================
+           V1 — ČISTA MREŽA (Clean Grid)
+           ----------------------------------------------------------------
+           The safe, proven layout. Five equal columns in a seamless grid
+           with 3px gaps. Tiles are tall vertical blocks with category
+           colour backgrounds. Real product photos anchored at bottom-
+           centre, floating over the soft backgrounds with drop-shadows.
+           Category name + price at top-left. Minimal, clean.
+           Think ARKET or COS product category grid.
+           ================================================================ */
+        .v1-section {
+            background: var(--white);
+        }
+
+        .v1-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3px;
+        }
+
+        .v1-tile {
+            position: relative;
+            background: var(--cat-bg, var(--light-grey));
+            height: 340px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .v1-tile::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0);
+            transition: background 0.3s ease;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .v1-tile:hover::before {
+            background: rgba(0,0,0,0.035);
+        }
+
+        .v1-text {
+            position: relative;
+            z-index: 3;
+            padding: 24px;
+        }
+
+        .v1-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 1.3rem;
+            color: var(--heading);
+            line-height: 1.2;
+        }
+
+        .v1-sub {
+            font-size: 0.8rem;
+            color: var(--charcoal);
+            opacity: 0.65;
+            margin-top: 4px;
+        }
+
+        .v1-arrow {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            z-index: 3;
+            font-size: 1rem;
+            color: var(--charcoal);
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+        .v1-tile:hover .v1-arrow {
+            opacity: 0.7;
+            transform: translateX(4px);
+        }
+
+        /* Product image sizing & position for V1 */
+        .v1-tile .product-img {
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 58%;
+            max-height: 68%;
+            object-position: bottom center;
+        }
+        .v1-tile:hover .product-img {
+            transform: translateX(-50%) translateY(-8px);
+            filter: drop-shadow(0 10px 24px rgba(0,0,0,0.13));
+        }
+
+        /* --- Novo prispelo: gold accent, no product image --- */
+        .v1-tile--novo {
+            background: var(--gold);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .v1-tile--novo .v1-text {
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .v1-novo-badge {
+            display: inline-block;
+            background: var(--heading);
+            color: var(--gold);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 5px 16px;
+            border-radius: 2px;
+            margin-bottom: 4px;
+        }
+        .v1-tile--novo .v1-name {
+            font-size: 1.5rem;
+        }
+        .v1-tile--novo .v1-sub {
+            color: var(--heading);
+            opacity: 0.5;
+        }
+        .v1-tile--novo .v1-arrow { display: none; }
+        .v1-tile--novo:hover {
+            background: var(--gold-light);
+        }
+        .v1-tile--novo::before { display: none; }
+
+
+        /* ================================================================
+           V2 — UREDNIŠKI (Editorial)
+           ----------------------------------------------------------------
+           Magazine-style asymmetric layout. Top row: 2 feature tiles
+           (slightly unequal widths for editorial tension). Bottom row:
+           3 tiles. Generous 16px gaps, rounded corners (12px). Light
+           grey section background creates a distinct browsing zone.
+           Products float right-side, large and dramatic. Text bottom-
+           left with gradient floor. Hover lifts the card with shadow.
+           Think Kinfolk or Cereal magazine product grid.
+           ================================================================ */
+        .v2-section {
+            background: var(--light-grey);
+            padding: 48px 0;
+        }
+
+        .v2-row-top {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .v2-row-bottom {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .v2-tile {
+            position: relative;
+            background: var(--cat-bg, var(--section-grey));
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .v2-row-top .v2-tile { height: 290px; }
+        .v2-row-bottom .v2-tile { height: 235px; }
+
+        .v2-tile:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.09);
+        }
+
+        .v2-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 28px;
+            z-index: 3;
+            background: linear-gradient(0deg, rgba(0,0,0,0.05) 0%, transparent 100%);
+        }
+
+        .v2-eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.6rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--charcoal);
+            opacity: 0.45;
+            margin-bottom: 4px;
+        }
+
+        .v2-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--heading);
+            line-height: 1.2;
+        }
+
+        .v2-sub {
+            font-size: 0.78rem;
+            color: var(--charcoal);
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+
+        .v2-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            font-size: 0.8rem;
+            color: var(--charcoal);
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        .v2-tile:hover .v2-cta {
+            opacity: 1;
+            gap: 10px;
+            color: var(--heading);
+        }
+
+        /* Product image sizing & position for V2 */
+        .v2-tile .product-img {
+            right: 24px;
+            bottom: 0;
+            width: 44%;
+            max-height: 80%;
+            object-position: bottom right;
+        }
+        .v2-row-bottom .v2-tile .product-img {
+            width: 40%;
+            max-height: 78%;
+        }
+        .v2-tile:hover .product-img {
+            transform: scale(1.04);
+        }
+
+        /* --- Novo prispelo: diagonal gold gradient --- */
+        .v2-tile--novo {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+        }
+        .v2-tile--novo .v2-content {
+            background: none;
+        }
+        .v2-tile--novo .v2-eyebrow {
+            color: var(--heading);
+            opacity: 0.4;
+        }
+        .v2-tile--novo .v2-name {
+            font-size: 1.35rem;
+        }
+        .v2-tile--novo .v2-cta {
+            color: var(--heading);
+            opacity: 0.6;
+        }
+        .v2-tile--novo:hover .v2-cta {
+            opacity: 0.9;
+        }
+        .v2-tile--novo:hover {
+            box-shadow: 0 16px 40px rgba(249, 185, 74, 0.25);
+        }
+
+
+        /* ================================================================
+           V3 — DRZNA IZLOŽBA (Bold Showcase)
+           ----------------------------------------------------------------
+           Fashion-forward split layout. "Novo prispelo" commands the left
+           40% as a tall hero tile with massive display typography, ghost
+           watermark, and dark CTA pill. The other 4 categories sit in a
+           tight 2x2 grid on the right with oversized product images and
+           uppercase category names. Gold underline slides in on hover.
+           Flush edges, no border-radius — raw editorial energy.
+           Think fashion brand "New Season" landing page.
+           ================================================================ */
+        .v3-section {
+            background: var(--white);
+        }
+
+        .v3-grid {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 3px;
+            height: 520px;
+        }
+
+        /* --- Novo hero tile (left column) --- */
+        .v3-novo {
+            background: var(--gold);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 48px 36px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.35s ease;
+        }
+        .v3-novo:hover {
+            background: var(--gold-light);
+        }
+
+        .v3-novo-badge {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.6rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--heading);
+            opacity: 0.4;
+            margin-bottom: 16px;
+        }
+
+        .v3-novo-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 3.2rem;
+            color: var(--heading);
+            line-height: 1.05;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .v3-novo-sub {
+            font-size: 0.88rem;
+            color: var(--heading);
+            opacity: 0.5;
+            margin-bottom: 32px;
+        }
+
+        .v3-novo-cta {
+            display: inline-block;
+            background: var(--heading);
+            color: var(--gold);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+            padding: 14px 36px;
+            border-radius: 9999px;
+            transition: all 0.3s ease;
+        }
+        .v3-novo:hover .v3-novo-cta {
+            background: var(--charcoal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .v3-novo-watermark {
+            position: absolute;
+            bottom: -24px;
+            right: -12px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 9rem;
+            color: var(--heading);
+            opacity: 0.04;
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* --- Right 2x2 grid --- */
+        .v3-right {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 3px;
+        }
+
+        .v3-tile {
+            position: relative;
+            background: var(--cat-bg, var(--light-grey));
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .v3-tile::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0);
+            transition: background 0.3s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .v3-tile:hover::before {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .v3-tile-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--heading);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 2;
+            position: relative;
+        }
+        .v3-tile-name::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.35s ease;
+            margin-top: 6px;
+        }
+        .v3-tile:hover .v3-tile-name::after {
+            width: 40px;
+        }
+
+        .v3-tile-sub {
+            font-size: 0.75rem;
+            color: var(--charcoal);
+            opacity: 0.55;
+            z-index: 2;
+            position: relative;
+            margin-top: 4px;
+        }
+
+        /* Product images for V3 — oversized, dramatic, centre-right */
+        .v3-tile .product-img {
+            top: 50%;
+            left: 55%;
+            transform: translate(-50%, -50%);
+            width: 68%;
+            max-height: 82%;
+            object-position: center;
+        }
+        .v3-tile:hover .product-img {
+            transform: translate(-50%, -50%) scale(1.08);
+            filter: drop-shadow(0 10px 28px rgba(0,0,0,0.14));
+        }
+
+
+        /* ================================================================
+           RESPONSIVE — Mobile (max 768px)
+           ================================================================ */
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+
+            /* --- V1 Mobile --- */
+            .v1-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .v1-tile {
+                height: 260px;
+            }
+            .v1-name { font-size: 1.15rem; }
+            .v1-tile--novo {
+                grid-column: 1 / -1;
+                height: 200px;
+            }
+
+            /* --- V2 Mobile --- */
+            .v2-section { padding: 32px 0; }
+            .v2-row-top {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            .v2-row-top .v2-tile { height: 240px; }
+            .v2-row-bottom {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .v2-row-bottom .v2-tile { height: 200px; }
+            .v2-tile--novo { grid-column: 1 / -1; }
+            .v2-name { font-size: 1.1rem; }
+
+            /* --- V3 Mobile --- */
+            .v3-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 3px;
+            }
+            .v3-novo {
+                height: 260px;
+                padding: 32px 24px;
+            }
+            .v3-novo-title { font-size: 2.4rem; }
+            .v3-novo-watermark { font-size: 6rem; }
+            .v3-tile {
+                min-height: 200px;
+                padding: 20px;
+            }
+        }
+
+        /* ================================================================
+           RESPONSIVE — Tablet (769px – 992px)
+           ================================================================ */
+        @media (max-width: 992px) and (min-width: 769px) {
+            /* V1: 3 columns, Novo spans remaining */
+            .v1-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .v1-tile--novo {
+                grid-column: 1 / -1;
+                height: 220px;
+            }
+
+            /* V2: slightly tighter */
+            .v2-row-top { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .v2-row-top .v2-tile { height: 250px; }
+            .v2-row-bottom .v2-tile { height: 210px; }
+
+            /* V3: stack vertically */
+            .v3-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .v3-novo { height: 300px; }
+            .v3-tile { min-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         Hero simulation
+         ============================================================ -->
+    <div class="hero-sim"></div>
+
+
+    <!-- ============================================================
+         V1 — ČISTA MREŽA (Clean Grid)
+         ============================================================ -->
+    <div class="variation-label">V1 — Čista mreža (Clean Grid) <span>Safe, proven</span></div>
+
+    <section class="v1-section">
+        <div class="v1-grid">
+
+            <!-- Deklice -->
+            <a href="/category/60" class="v1-tile" style="--cat-bg: #f2d4d4">
+                <div class="v1-text">
+                    <div class="v1-name">Deklice</div>
+                    <div class="v1-sub">od 2 €</div>
+                </div>
+                <span class="v1-arrow">&rarr;</span>
+                <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png" alt="Oblačila za deklice" loading="lazy">
+            </a>
+
+            <!-- Fantje -->
+            <a href="/category/61" class="v1-tile" style="--cat-bg: #d4dff2">
+                <div class="v1-text">
+                    <div class="v1-name">Fantje</div>
+                    <div class="v1-sub">od 2 €</div>
+                </div>
+                <span class="v1-arrow">&rarr;</span>
+                <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_decki.png" alt="Oblačila za fantke" loading="lazy">
+            </a>
+
+            <!-- Mamice -->
+            <a href="/category/62" class="v1-tile" style="--cat-bg: #d4e8d8">
+                <div class="v1-text">
+                    <div class="v1-name">Mamice</div>
+                    <div class="v1-sub">od 5 €</div>
+                </div>
+                <span class="v1-arrow">&rarr;</span>
+                <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png" alt="Oblačila za mamice" loading="lazy">
+            </a>
+
+            <!-- Znamke -->
+            <a href="#" class="v1-tile" style="--cat-bg: #e8e4df">
+                <div class="v1-text">
+                    <div class="v1-name">Znamke</div>
+                    <div class="v1-sub">Zara · H&amp;M · Next · Mayoral</div>
+                </div>
+                <span class="v1-arrow">&rarr;</span>
+                <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png" alt="Top znamke" loading="lazy">
+            </a>
+
+            <!-- Novo prispelo -->
+            <a href="#" class="v1-tile v1-tile--novo">
+                <div class="v1-text">
+                    <div class="v1-novo-badge">Novo</div>
+                    <div class="v1-name">Novo prispelo</div>
+                    <div class="v1-sub">Sveži kosi</div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         V2 — UREDNIŠKI (Editorial)
+         ============================================================ -->
+    <div class="hero-sim" style="margin-top: 64px;"></div>
+    <div class="variation-label">V2 — Uredniški (Editorial) <span>The interesting one</span></div>
+
+    <section class="v2-section">
+        <div class="container">
+
+            <!-- Top row: 2 feature tiles -->
+            <div class="v2-row-top">
+
+                <!-- Deklice -->
+                <a href="/category/60" class="v2-tile" style="--cat-bg: #f2d4d4">
+                    <div class="v2-content">
+                        <div class="v2-eyebrow">Oblačila</div>
+                        <div class="v2-name">Deklice</div>
+                        <div class="v2-sub">Od 2 € — vse velikosti</div>
+                        <div class="v2-cta">Razišči &rarr;</div>
+                    </div>
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png" alt="Oblačila za deklice" loading="lazy">
+                </a>
+
+                <!-- Fantje -->
+                <a href="/category/61" class="v2-tile" style="--cat-bg: #d4dff2">
+                    <div class="v2-content">
+                        <div class="v2-eyebrow">Oblačila</div>
+                        <div class="v2-name">Fantje</div>
+                        <div class="v2-sub">Od 2 € — vse velikosti</div>
+                        <div class="v2-cta">Razišči &rarr;</div>
+                    </div>
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_decki.png" alt="Oblačila za fantke" loading="lazy">
+                </a>
+
+            </div>
+
+            <!-- Bottom row: 3 tiles -->
+            <div class="v2-row-bottom">
+
+                <!-- Mamice -->
+                <a href="/category/62" class="v2-tile" style="--cat-bg: #d4e8d8">
+                    <div class="v2-content">
+                        <div class="v2-eyebrow">Za mame</div>
+                        <div class="v2-name">Mamice</div>
+                        <div class="v2-sub">Od 5 €</div>
+                        <div class="v2-cta">Razišči &rarr;</div>
+                    </div>
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png" alt="Oblačila za mamice" loading="lazy">
+                </a>
+
+                <!-- Znamke -->
+                <a href="#" class="v2-tile" style="--cat-bg: #e8e4df">
+                    <div class="v2-content">
+                        <div class="v2-eyebrow">Top znamke</div>
+                        <div class="v2-name">Znamke</div>
+                        <div class="v2-sub">Zara · H&amp;M · Next · Mayoral</div>
+                        <div class="v2-cta">Razišči &rarr;</div>
+                    </div>
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png" alt="Top znamke" loading="lazy">
+                </a>
+
+                <!-- Novo prispelo -->
+                <a href="#" class="v2-tile v2-tile--novo">
+                    <div class="v2-content">
+                        <div class="v2-eyebrow">Novo v trgovini</div>
+                        <div class="v2-name">Novo prispelo</div>
+                        <div class="v2-sub">Sveži kosi — dodani danes</div>
+                        <div class="v2-cta">Poglej novo &rarr;</div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ============================================================
+         V3 — DRZNA IZLOŽBA (Bold Showcase)
+         ============================================================ -->
+    <div class="hero-sim" style="margin-top: 64px;"></div>
+    <div class="variation-label">V3 — Drzna izložba (Bold Showcase) <span>The bold bet</span></div>
+
+    <section class="v3-section">
+        <div class="v3-grid">
+
+            <!-- Novo prispelo — hero tile, left column -->
+            <a href="#" class="v3-novo">
+                <div class="v3-novo-badge">Novo v trgovini</div>
+                <div class="v3-novo-title">Novo<br>prispelo</div>
+                <div class="v3-novo-sub">Sveži kosi — dodani danes</div>
+                <div class="v3-novo-cta">Oglejte si novo</div>
+                <div class="v3-novo-watermark" aria-hidden="true">NOVO</div>
+            </a>
+
+            <!-- 4 category tiles — right 2x2 grid -->
+            <div class="v3-right">
+
+                <!-- Deklice -->
+                <a href="/category/60" class="v3-tile" style="--cat-bg: #f2d4d4">
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png" alt="Oblačila za deklice" loading="lazy">
+                    <div class="v3-tile-name">Deklice</div>
+                    <div class="v3-tile-sub">od 2 €</div>
+                </a>
+
+                <!-- Fantje -->
+                <a href="/category/61" class="v3-tile" style="--cat-bg: #d4dff2">
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_decki.png" alt="Oblačila za fantke" loading="lazy">
+                    <div class="v3-tile-name">Fantje</div>
+                    <div class="v3-tile-sub">od 2 €</div>
+                </a>
+
+                <!-- Mamice -->
+                <a href="/category/62" class="v3-tile" style="--cat-bg: #d4e8d8">
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png" alt="Oblačila za mamice" loading="lazy">
+                    <div class="v3-tile-name">Mamice</div>
+                    <div class="v3-tile-sub">od 5 €</div>
+                </a>
+
+                <!-- Znamke -->
+                <a href="#" class="v3-tile" style="--cat-bg: #e8e4df">
+                    <img class="product-img" src="../../opencart-theme_v01/opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png" alt="Top znamke" loading="lazy">
+                    <div class="v3-tile-name">Znamke</div>
+                    <div class="v3-tile-sub">Zara · H&amp;M · Next · Mayoral</div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <div style="height: 120px; background: var(--white);"></div>
+
+
+<!--
+=== SONNET HANDOFF ===
+RECOMMENDED VARIATION: V2 — Uredniški (Editorial)
+REASON: Best balance of visual hierarchy (feature tiles for main categories, secondary row for discovery) with the warm, boutique feel the brand needs — rounded corners and lift-on-hover create tactile depth without losing Scandinavian minimalism.
+USER DECISION NEEDED: Confirm V2 or choose V1 (safer) / V3 (bolder). If V3 is chosen, confirm whether Novo should be left or top on mobile.
+TWIG: Add section after .home-hero in template/common/home.twig
+SCSS: Add .home-categories block in stylesheet/src/pages/_home.scss
+
+PRODUCT IMAGES:
+- Deklice: image/catalog/assets/homepage/otroski_koticek_deklice3.png (sweater + jeans combo)
+- Fantje: image/catalog/assets/homepage/otroski_koticek_decki.png (hoodie + overalls)
+- Mamice: image/catalog/assets/homepage/otroski_koticek_nosecnica.png (maternity tee)
+- Znamke: image/catalog/assets/homepage/otroski_koticek_pomlad.png (two jackets)
+- Novo prispelo: no product image — typographic gold tile
+- All images are transparent PNGs — use filter: drop-shadow() not box-shadow
+
+IMPLEMENTATION NOTES (V1 — if chosen):
+- CSS Grid 5 cols, gap: 3px, no border-radius, no section padding
+- Tiles use --cat-bg custom property for background colour
+- Product images: <img> position: absolute, bottom: -4px, left: 50%, transform: translateX(-50%), width: 58%, max-height: 68%, object-fit: contain
+- filter: drop-shadow(0 6px 16px rgba(0,0,0,0.10)) — follows clothing shape
+- Hover: ::before pseudo darkens tile rgba(0,0,0,0.035), product translateY(-8px) + stronger shadow
+- Arrow (→) top-right: opacity 0.3 → 0.7, translateX(4px) on hover
+- Novo tile: gold bg, centred text, badge uses heading bg with gold text, no ::before overlay
+- Novo hover: background shifts to gold-light
+- Mobile ≤768px: 2 cols, .v1-tile--novo spans grid-column: 1 / -1
+- Tablet ≤992px: 3 cols, Novo spans full width
+
+IMPLEMENTATION NOTES (V2 — recommended):
+- Two nested grids: .v2-row-top (grid-template-columns: 1.15fr 0.85fr) and .v2-row-bottom (repeat(3, 1fr))
+- Gap: 16px, margin-bottom: 16px between rows
+- Border-radius: 12px on all tiles
+- Section bg: $color-light-grey (#f7f7f7), padding: 48px 0
+- Top tiles height: 290px, bottom tiles height: 235px
+- Product images: <img> position: absolute, right: 24px, bottom: 0, width: 44% (top) / 40% (bottom), max-height: 80%, object-fit: contain
+- filter: drop-shadow(0 6px 16px rgba(0,0,0,0.10))
+- Hover: translateY(-4px) + box-shadow 0 16px 40px rgba(0,0,0,0.09), product scale(1.04)
+- Text overlay: gradient floor via .v2-content, linear-gradient(0deg, rgba(0,0,0,0.05) 0%, transparent 100%)
+- Eyebrow label: 0.6rem, letter-spacing 2.5px, uppercase, opacity 0.45
+- CTA "Razišči →" gap animates 6px→10px on hover, opacity 0.6→1
+- Novo tile: diagonal gold gradient (135deg, gold → gold-dark), no product image
+- Novo hover: gold-tinted box-shadow rgba(249,185,74,0.25)
+- Mobile ≤768px: top row → 1 col, bottom row → 2 cols, Novo spans full width
+- Tablet ≤992px: top row stays 2 cols, heights reduce slightly
+
+IMPLEMENTATION NOTES (V3 — if chosen):
+- CSS Grid 2 cols: grid-template-columns: 2fr 3fr, gap: 3px, height: 520px
+- Left column: Novo hero tile, full height, centred flex layout
+- Right column: nested 2×2 grid (1fr 1fr / 1fr 1fr), gap: 3px
+- No border-radius anywhere — raw, editorial edges
+- Novo: gold bg, 3.2rem display heading, line-height: 1.05, letter-spacing: -1px
+- Novo CTA: dark pill (heading bg, gold text, border-radius: 9999px)
+- Novo watermark "NOVO": 9rem, opacity 0.04, absolute bottom-right, pointer-events: none
+- Category tiles: uppercase names (letter-spacing: 2px), gold underline slides in (width: 0 → 40px, 2px height, 0.35s ease)
+- Product images: absolute, top: 50%, left: 55%, transform: translate(-50%,-50%), width: 68%, max-height: 82%
+- Product hover: scale(1.08) + stronger drop-shadow
+- Mobile ≤768px: single column stack, Novo on top (260px), right grid stays 2×2
+- Tablet ≤992px: single column stack, Novo 300px
+
+DESIGN TOKENS USED:
+- $color-primary (#f9b94a) — Novo tile bg, badges, gold underline (V3), CTA text colour (V3)
+- $color-primary-light (#ffd369) — Novo hover bg
+- $color-primary-dark (#e0a030) — V2 Novo gradient end
+- $color-text-heading (#2b2e35) — category names, Novo text, CTA button bg (V3), badge bg
+- $color-text-body (#565656) — subtitles, CTAs, arrows
+- $color-text-muted (#9aa0af) — not directly used (eyebrows use charcoal with opacity)
+- $color-bg-light (#f7f7f7) — V2 section background
+- $color-bg-white (#ffffff) — V1/V3 section backgrounds
+- $color-hero-grey (#eeeeee) — hero simulation strip
+- Category colours via --cat-bg custom property per tile:
+  - Deklice: #f2d4d4 (soft pink)
+  - Fantje: #d4dff2 (soft blue)
+  - Mamice: #d4e8d8 (soft green)
+  - Znamke: #e8e4df (warm beige)
+  - Novo: #f9b94a (uses $color-primary directly)
+=== END HANDOFF ===
+-->
+
+</body>
+</html>

@@ -19,7 +19,7 @@
            loading="eager">
 
       <div class="home-hero__content">
-        <p class="home-hero__eyebrow">Otroški kotiček &middot; od 2011</p>
+        <p class="home-hero__eyebrow">Otroški kotiček &middot; od 2013</p>
         <h1 class="home-hero__headline">
           <span class="home-hero__headline-gold">Nežno rabljena</span><br>
           oblačila za otroke<br>in mamice.
@@ -35,12 +35,8 @@
         </div>
         <dl class="home-hero__trust">
           <div class="home-hero__trust-item">
-            <dt class="home-hero__trust-num">14</dt>
+            <dt class="home-hero__trust-num">10<span>+</span></dt>
             <dd class="home-hero__trust-label">let izkušenj</dd>
-          </div>
-          <div class="home-hero__trust-item">
-            <dt class="home-hero__trust-num">250.000<span>+</span></dt>
-            <dd class="home-hero__trust-label">oblačil v dobrem domu</dd>
           </div>
           <div class="home-hero__trust-item">
             <dt class="home-hero__trust-num">5.000<span>+</span></dt>
@@ -54,20 +50,64 @@
 
 
   {# ─────────────────────────────────────────────────────────────
+     S2 — USP / SOCIAL PROOF STRIP
+     3 illustrated icons: quality · easy returns · sustainability
+     Images: image/catalog/assets/elements/icons/
+  ───────────────────────────────────────────────────────────── #}
+  <section class="home-usp">
+    <div class="container">
+      <ul class="home-usp__grid">
+
+        <li class="home-usp__item">
+          <img class="home-usp__icon"
+               src="{{ base }}image/catalog/assets/elements/icons/kvalitetni%20artikli.png"
+               alt="" aria-hidden="true" width="60" height="60" loading="lazy">
+          <div class="home-usp__text">
+            <p class="home-usp__title">Skrbno pregledano</p>
+            <p class="home-usp__sub">Vsak kos večkrat ročno pregledan pred prodajo</p>
+          </div>
+        </li>
+
+        <li class="home-usp__item">
+          <img class="home-usp__icon"
+               src="{{ base }}image/catalog/assets/elements/icons/Preprosta%20vracila.png"
+               alt="" aria-hidden="true" width="60" height="60" loading="lazy">
+          <div class="home-usp__text">
+            <p class="home-usp__title">Preprosto vračilo</p>
+            <p class="home-usp__sub">14 dni brez vprašanj</p>
+          </div>
+        </li>
+
+        <li class="home-usp__item">
+          <img class="home-usp__icon"
+               src="{{ base }}image/catalog/assets/elements/icons/Trajnostni%20nakup.png"
+               alt="" aria-hidden="true" width="60" height="60" loading="lazy">
+          <div class="home-usp__text">
+            <p class="home-usp__title">Trajnostni nakup</p>
+            <p class="home-usp__sub">250.000+ oblačil rešenih pred odlagališčem</p>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+
+  {# ─────────────────────────────────────────────────────────────
      S3 — CATEGORY STRIP
      Opus V2 "Uredniški" — 2+3 asymmetric editorial grid.
      Top row: Deklice (1.15fr) + Fantje (0.85fr).
      Bottom row: Mamice · Znamke · Novo prispelo (equal thirds).
      Product images: transparent PNGs, right-anchored, drop-shadow.
      Tile bg via --cat-bg CSS custom property (inline style).
-     TODO: confirm real category path= IDs in OC admin.
+     Category IDs: Deklice=226, Dečki=225, Nosečnice=63.
   ───────────────────────────────────────────────────────────── #}
   <section class="home-categories">
     <div class="container">
 
       <div class="home-categories__top">
 
-        <a href="{{ base }}index.php?route=product/category&path=60"
+        <a href="{{ base }}index.php?route=product/category&path=226"
            class="home-category"
            style="--cat-bg: #f2d4d4">
           <img class="home-category__img"
@@ -75,14 +115,13 @@
                alt="Oblačila za deklice"
                loading="lazy">
           <div class="home-category__content">
-            <span class="home-category__eyebrow">Oblačila</span>
             <span class="home-category__name">Deklice</span>
             <span class="home-category__sub">Od 2 € — vse velikosti</span>
-            <span class="home-category__cta">Razišči &rarr;</span>
+            <span class="home-category__cta">Razišči <span class="home-category__cta-arrow">&rarr;</span></span>
           </div>
         </a>
 
-        <a href="{{ base }}index.php?route=product/category&path=61"
+        <a href="{{ base }}index.php?route=product/category&path=225"
            class="home-category"
            style="--cat-bg: #d4dff2">
           <img class="home-category__img"
@@ -90,10 +129,9 @@
                alt="Oblačila za fantke"
                loading="lazy">
           <div class="home-category__content">
-            <span class="home-category__eyebrow">Oblačila</span>
-            <span class="home-category__name">Fantje</span>
+            <span class="home-category__name">Dečki</span>
             <span class="home-category__sub">Od 2 € — vse velikosti</span>
-            <span class="home-category__cta">Razišči &rarr;</span>
+            <span class="home-category__cta">Razišči <span class="home-category__cta-arrow">&rarr;</span></span>
           </div>
         </a>
 
@@ -101,43 +139,42 @@
 
       <div class="home-categories__bottom">
 
-        <a href="{{ base }}index.php?route=product/category&path=62"
-           class="home-category"
-           style="--cat-bg: #d4e8d8">
+        <a href="{{ base }}index.php?route=information/information&information_id=9"
+           class="home-category">
+          <img class="home-category__img"
+               src="{{ base }}image/catalog/assets/homepage/izprazni-omaro.png"
+               alt="Izprazni omaro"
+               loading="lazy">
+          <div class="home-category__content">
+            <span class="home-category__name">Polna omara oblačil?</span>
+            <span class="home-category__sub">Prodaj otroška oblačila in izprazni omaro</span>
+            <span class="home-category__cta">Več info <span class="home-category__cta-arrow">&rarr;</span></span>
+          </div>
+        </a>
+
+        <a href="{{ base }}index.php?route=product/manufacturer"
+           class="home-category">
+          <img class="home-category__img"
+               src="{{ base }}image/catalog/assets/homepage/otroski_koticek_deklice_2.png"
+               alt="Nakupuj po znamkah"
+               loading="lazy">
+          <div class="home-category__content">
+            <span class="home-category__name">Nakupuj po znamkah</span>
+            <span class="home-category__sub">S.Oliver · Next · H&amp;M · Okaidi · Gap · Zara · +30 drugih</span>
+            <span class="home-category__cta">Razišči <span class="home-category__cta-arrow">&rarr;</span></span>
+          </div>
+        </a>
+
+        <a href="{{ base }}index.php?route=product/category&path=63"
+           class="home-category">
           <img class="home-category__img"
                src="{{ base }}image/catalog/assets/homepage/otroski_koticek_nosecnica.png"
                alt="Oblačila za mamice"
                loading="lazy">
           <div class="home-category__content">
-            <span class="home-category__eyebrow">Za mame</span>
-            <span class="home-category__name">Mamice</span>
+            <span class="home-category__name">Nosečnice</span>
             <span class="home-category__sub">Od 5 €</span>
-            <span class="home-category__cta">Razišči &rarr;</span>
-          </div>
-        </a>
-
-        <a href="{{ base }}index.php?route=product/category&path=63"
-           class="home-category"
-           style="--cat-bg: #e8e4df">
-          <img class="home-category__img"
-               src="{{ base }}image/catalog/assets/homepage/otroski_koticek_pomlad.png"
-               alt="Top znamke"
-               loading="lazy">
-          <div class="home-category__content">
-            <span class="home-category__eyebrow">Top znamke</span>
-            <span class="home-category__name">Znamke</span>
-            <span class="home-category__sub">Zara · H&amp;M · Next · Mayoral</span>
-            <span class="home-category__cta">Razišči &rarr;</span>
-          </div>
-        </a>
-
-        <a href="{{ base }}index.php?route=product/special"
-           class="home-category home-category--novo">
-          <div class="home-category__content">
-            <span class="home-category__eyebrow">Novo v trgovini</span>
-            <span class="home-category__name">Novo prispelo</span>
-            <span class="home-category__sub">Sveži kosi — dodani danes</span>
-            <span class="home-category__cta">Poglej novo &rarr;</span>
+            <span class="home-category__cta">Razišči <span class="home-category__cta-arrow">&rarr;</span></span>
           </div>
         </a>
 
@@ -160,10 +197,10 @@
         <div class="home-arrivals__nav">
           <a href="{{ base }}index.php?route=product/special" class="home-section-link">Poglej vse &rarr;</a>
           <button class="home-arrivals__arrow home-arrivals__arrow--hidden" id="js-arrivals-prev" type="button" aria-label="Prejšnji" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
           <button class="home-arrivals__arrow" id="js-arrivals-next" type="button" aria-label="Naslednji">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </button>
         </div>
       </div>
@@ -185,29 +222,27 @@
 
       <div class="home-brands__strip">
         <img class="home-brands__logo" loading="lazy" width="120" height="40"
-             src="{{ base }}image/catalog/assets/elements/brands-black/Zara-160px-otroskikoticek.png"
-             alt="Zara">
+             src="{{ base }}image/catalog/assets/elements/brands-black/sOliver-160px-otroskikoticek.png"
+             alt="S.Oliver">
         <img class="home-brands__logo" loading="lazy" width="120" height="40"
              src="{{ base }}image/catalog/assets/elements/brands-black/Next-160px-otroskikoticek.png"
              alt="Next">
         <img class="home-brands__logo" loading="lazy" width="120" height="40"
-             src="{{ base }}image/catalog/assets/elements/brands-black/Nike-160px-otroskikoticek.png"
-             alt="Nike">
+             src="{{ base }}image/catalog/assets/elements/brands-black/H&M-160px-otroskikoticek.png"
+             alt="H&amp;M">
+        <img class="home-brands__logo" loading="lazy" width="120" height="40"
+             src="{{ base }}image/catalog/assets/elements/brands-black/Gap-160px-otroskikoticek.png"
+             alt="Gap">
+        <img class="home-brands__logo" loading="lazy" width="120" height="40"
+             src="{{ base }}image/catalog/assets/elements/brands-black/Zara-160px-otroskikoticek.png"
+             alt="Zara">
         <img class="home-brands__logo" loading="lazy" width="120" height="40"
              src="{{ base }}image/catalog/assets/elements/brands-black/Adidas-160px-otroskikoticek.png"
              alt="Adidas">
         <img class="home-brands__logo" loading="lazy" width="120" height="40"
-             src="{{ base }}image/catalog/assets/elements/brands-black/Mango-160px-otroskikoticek.png"
-             alt="Mango">
-        <img class="home-brands__logo" loading="lazy" width="120" height="40"
-             src="{{ base }}image/catalog/assets/elements/brands-black/TommyHilfiger-160px-otroskikoticek.png"
-             alt="Tommy Hilfiger">
-        <img class="home-brands__logo" loading="lazy" width="120" height="40"
-             src="{{ base }}image/catalog/assets/elements/brands-black/Champion-160px-otroskikoticek.png"
-             alt="Champion">
-        <img class="home-brands__logo" loading="lazy" width="120" height="40"
-             src="{{ base }}image/catalog/assets/elements/brands-black/Gap-160px-otroskikoticek.png"
-             alt="Gap">
+             src="{{ base }}image/catalog/assets/elements/brands-black/Nike-160px-otroskikoticek.png"
+             alt="Nike">
+        <span class="home-brands__more">+30 drugih</span>
       </div>
 
     </div>
@@ -225,7 +260,7 @@
         <div class="home-sell__text">
           <p class="home-sell__eyebrow">Za prodajalce</p>
           <h2 class="home-sell__heading">Prodaj svoja<br>oblačila</h2>
-          <p class="home-sell__body">Otroci rastejo hitro. Oblačila, ki jih ne potrebujete več, naj dobijo nov dom — in vi prejmite plačilo.</p>
+          <p class="home-sell__body">Otroci rastejo hitro. Oblačila, ki jih ne potrebujete več,<br> naj dobijo nov dom — in vi prejmite plačilo.</p>
           <a href="{{ base }}index.php?route=information/information&information_id=9"
              class="home-sell__cta">
             Kako deluje &rarr;
@@ -236,15 +271,15 @@
           <li class="home-sell__step">
             <span class="home-sell__step-n" aria-hidden="true">1</span>
             <div>
-              <strong>Zberi oblačila</strong>
+              <strong>Pripravi oblačila</strong>
               <span>Nežno rabljeni kosi, čisti in celi.</span>
             </div>
           </li>
           <li class="home-sell__step">
             <span class="home-sell__step-n" aria-hidden="true">2</span>
             <div>
-              <strong>Pošlji na naš naslov</strong>
-              <span>Pakiraš, mi skrbimo za ostalo.</span>
+              <strong>Kurir prevzame paket</strong>
+              <span>Pripraviš paket, mi skrbimo za ostalo.</span>
             </div>
           </li>
           <li class="home-sell__step">
@@ -263,153 +298,195 @@
 
   {# ─────────────────────────────────────────────────────────────
      S7 — GOOGLE REVIEWS
-     Static HTML · zero 3rd-party JS · authentic Google card style
-     Real reviews sourced from Google My Business (207 reviews, 4.9★)
-     Google Maps link uses CID from rldimm parameter.
+     Static HTML · zero 3rd-party JS · handoff: social-proof-FINAL.html
+     10 reviews · rating badge pill · line-clamp cards · Google G SVG
   ───────────────────────────────────────────────────────────── #}
+
+  {# SVG symbols — defined once, referenced with <use> #}
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="icon-star" viewBox="0 0 24 24">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </symbol>
+    <symbol id="icon-google-g" viewBox="0 0 24 24">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </symbol>
+  </svg>
+
   <section class="home-reviews">
     <div class="container">
 
       <div class="home-reviews__header">
-        <p class="home-eyebrow">Kaj pravijo stranke</p>
-        <h2 class="home-section-heading">207 ocen na Googlu</h2>
-        <p class="home-reviews__summary">
-          <span class="home-reviews__stars" aria-label="4.9 od 5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          Povprečna ocena <strong>4,9</strong>
-          &nbsp;&middot;&nbsp;
-          <i class="fa fa-google home-reviews__g-icon" aria-label="Google"></i>
-          &nbsp;&middot;&nbsp;
-          <i class="fa fa-facebook home-reviews__fb-icon" aria-label="Facebook"></i>
-        </p>
+        <h2 class="home-reviews__title"><span class="home-reviews__title-accent">Kaj pravijo</span> <span class="home-reviews__title-muted">naše stranke</span></h2>
       </div>
 
-      <div class="home-reviews__nav">
-        <button class="home-reviews__arrow home-reviews__arrow--hidden" id="js-reviews-prev" type="button" aria-label="Prejšnji" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-        </button>
-        <button class="home-reviews__arrow" id="js-reviews-next" type="button" aria-label="Naslednji">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
+      <div class="home-reviews__meta">
+        <div class="home-reviews__badge">
+          <svg class="home-reviews__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+          <span class="home-reviews__rating">4,9</span>
+          <div class="home-reviews__stars" aria-label="4.9 od 5 zvezdic">
+            <svg class="home-reviews__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            <svg class="home-reviews__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            <svg class="home-reviews__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            <svg class="home-reviews__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            <svg class="home-reviews__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+          </div>
+          <span class="home-reviews__count">150+ ocen</span>
+        </div>
+        <div class="home-reviews__nav">
+          <a href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" class="home-section-link">Poglej vse &rarr;</a>
+          <button class="home-reviews__arrow home-reviews__arrow--hidden" id="js-reviews-prev" type="button" aria-label="Prejšnji" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="home-reviews__arrow" id="js-reviews-next" type="button" aria-label="Naslednji">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
       </div>
 
       <div class="home-reviews__scroller" id="js-reviews-scroller">
         <div class="home-reviews__grid">
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #4285f4;" aria-hidden="true">A</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Ana Kovač</p>
-                <p class="home-review__date">2 tedna nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Oblačila so res super, brezhibno ohranjena. Sem našla trgovino, ki nam res ustreza — ker otroci res hitro prerastejo, je to pravi zaklad za starše!&#8221;</p>
+            <p class="home-review__name">Metka Janc</p>
+            <p class="home-review__time">pred 23 dnevi</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Zelo prijazni, zelo razumevajoči, lepe obleke imajo in kljub temu da so rabljene, so v odličnem stanju. Priporočam vsem mamicam!</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #34a853;" aria-hidden="true">M</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Maja Petrič</p>
-                <p class="home-review__date">1 mesec nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Odlično ohranjena oblačila, zelo lično in skrbno zapakirana, hitra odzivnost. Definitivno bomo še naročili.&#8221;</p>
+            <p class="home-review__name">Zala Žužek Vidic</p>
+            <p class="home-review__time">pred 1 mesecem</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Zelo pregledna spletna stran s smiselnimi filtri za hitro iskanje. Izdelke sem prejela v lepem stanju, hitreje kot pričakovano.</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #ea4335;" aria-hidden="true">T</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Tina Rozman</p>
-                <p class="home-review__date">3 tedne nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Zelo lepo ohranjena oblačila in kako skrbno in lepo zavito in poslano. Sigurno še naročim pri vas.&#8221;</p>
+            <p class="home-review__name">Manuela Pogačar</p>
+            <p class="home-review__time">pred 1 mesecem</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Odlična trgovinica, s super ohranjenimi izdelki. Trud in ljubezen do dela se vidi v vsakem paketu, ki ga prejmete. Toplo priporočam.</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #673ab7;" aria-hidden="true">S</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Sara Novak</p>
-                <p class="home-review__date">2 meseca nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Prijazno, ustrežljivo, ugodno in urejeno! Vedno se kaj najde. Priporočam vsem staršem z rastočimi otroki.&#8221;</p>
+            <p class="home-review__name">Katarina Hrženjak</p>
+            <p class="home-review__time">pred 1 mesecem</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Izkušnja z Otroškim kotičkom je vedno pozitivna. Redno spremljam ponudbo in zelo rada kupujem tukaj. Cene so odlične za kvaliteto.</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #009688;" aria-hidden="true">N</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Nina Bernik</p>
-                <p class="home-review__date">1 teden nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Paket iz Otroškega kotička me je popolnoma presenetil in navdušil! Vsako oblačilo je bilo lepo zloženo in brezhibno ohranjeno.&#8221;</p>
+            <p class="home-review__name">Petra Novak</p>
+            <p class="home-review__time">pred 2 mesecema</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Izjemno zadovoljna z nakupom. Oblačila so čista, lepo zložena in zapakirana. Cene so zelo ugodne, dostava pa hitra. Bravo!</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #ff5722;" aria-hidden="true">K</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Katja Horvat</p>
-                <p class="home-review__date">3 mesece nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Odlično ohranjena oblačila, hitra dostava. Priporočam vsem. Zara, Nike, Adidas — vse po simboličnih cenah!&#8221;</p>
+            <p class="home-review__name">Ana Kovačič</p>
+            <p class="home-review__time">pred 2 mesecema</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Že tretjič naročam in vedno znova sem navdušena. Kvaliteta oblačil presega pričakovanja, komunikacija pa je vedno hitra in prijazna.</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #3f51b5;" aria-hidden="true">P</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Petra Marinič</p>
-                <p class="home-review__date">2 tedna nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Kupila sem zimsko bundo Nike za 12 €, stanje brezhibno. Naša hčerka je bila navdušena. Zagotovo ne zadnjič pri njih!&#8221;</p>
+            <p class="home-review__name">Maja Zupančič</p>
+            <p class="home-review__time">pred 3 meseci</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Super koncept! Končno nekdo, ki razume da otroci prerastejo oblačila preden se obrabijo. Vse je bilo kot novo, res pohvalno.</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #e91e63;" aria-hidden="true">M</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Mojca Šimnic</p>
-                <p class="home-review__date">1 mesec nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Naročila sem prvič in zagotovo ne zadnjič. Oblačila brezhibna, dostava hitra. Kakovost za delček cene — to je to!&#8221;</p>
+            <p class="home-review__name">Nina Krajnc</p>
+            <p class="home-review__time">pred 3 meseci</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Najlepša hvala za hitro pošiljko! Punčka je bila navdušena nad oblekicami. Vse je bilo očiščeno in lepo zapakirano. Vrnemo se!</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
           <article class="home-review">
-            <header class="home-review__head">
-              <span class="home-review__av" style="background: #795548;" aria-hidden="true">E</span>
-              <div class="home-review__meta">
-                <p class="home-review__name">Eva Kramberger</p>
-                <p class="home-review__date">4 tedne nazaj</p>
-              </div>
-              <span class="home-review__g" aria-label="Google ocena">G</span>
-            </header>
-            <p class="home-review__stars" aria-label="5 zvezdic">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
-            <p class="home-review__text">&#8220;Naša hčerkica ima zdaj celo garderobo znanih znamk, pa smo odšteli drobiž. Hvala Otroški kotiček, ste neprecenljivi!&#8221;</p>
+            <p class="home-review__name">Tanja Horvat</p>
+            <p class="home-review__time">pred 4 meseci</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Fantastična izkušnja od začetka do konca. Stran je preprosta za uporabo, izbira pa ogromna. Prihranila sem več kot 70% v primerjavi z novimi oblačili.</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
+          </article>
+
+          <article class="home-review">
+            <p class="home-review__name">Ema Vidmar</p>
+            <p class="home-review__time">pred 5 meseci</p>
+            <div class="home-review__stars" aria-label="5 zvezdic">
+              <svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg><svg class="home-review__star-icon" aria-hidden="true"><use href="#icon-star"/></svg>
+            </div>
+            <p class="home-review__text">Kot mamica dveh otrok zelo cenim to trgovino. Oblačila so vedno v brezhibnem stanju, paketi pa pridejo hitro. Odlična alternativa novim oblačilom!</p>
+            <a class="home-review__more" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener">Preberi več</a>
+            <a class="home-review__footer" href="https://www.google.com/maps?cid=10577519604965280683" target="_blank" rel="noopener" aria-label="Preberi oceno na Google">
+              <svg class="home-review__google-g" aria-hidden="true"><use href="#icon-google-g"/></svg>
+              <div class="home-review__source">objavljeno na<span>Google</span></div>
+            </a>
           </article>
 
         </div>
@@ -420,44 +497,61 @@
 
 
   {# ─────────────────────────────────────────────────────────────
-     S8 — HOW IT WORKS
-     3-col · CSS only · for first-time buyers
+     S8 — SELL CYCLE
+     2-col · text left / circular image right
   ───────────────────────────────────────────────────────────── #}
-  <section class="home-how">
+  <section class="home-sell-cycle">
     <div class="container">
+      <div class="home-sell-cycle__grid">
 
-      <div class="home-how__header">
-        <p class="home-eyebrow">Za kupce</p>
-        <h2 class="home-section-heading">Nakup je preprost</h2>
+        <div class="home-sell-cycle__text">
+          <p class="home-eyebrow">Trgovina s srcem</p>
+          <h2 class="home-sell-cycle__heading">Kupiš, prerasteš, <span class="home-sell-cycle__accent">prodaš</span></h2>
+          <p class="home-sell-cycle__body">Poznaš občutek, ko tvoja nežno rabljena otroška oblačila kar silijo iz omare? Takrat je čas, da nam pošlješ kose, ki jih ne nosiš več. S tem narediš prostor v omari, narediš nekaj dobrega za okolje in napolniš denarnico!</p>
+          <a href="{{ base }}index.php?route=information/information&information_id=9"
+             class="home-sell-cycle__link">Izprazni svojo omaro &rarr;</a>
+        </div>
+
+        <div class="home-sell-cycle__image-wrap">
+          <img class="home-sell-cycle__image"
+               src="{{ base }}image/catalog/assets/banners/MetaTina-trgovinax2.png"
+               alt="Krogotok oblačil: kupiš, prerasteš, prodaš"
+               width="400" height="400"
+               loading="lazy">
+        </div>
+
       </div>
+    </div>
+  </section>
 
-      <div class="home-how__grid">
 
-        <div class="home-how__item">
-          <div class="home-how__icon" aria-hidden="true">
-            <i class="fa fa-search"></i>
-          </div>
-          <p class="home-how__step">Korak 01</p>
-          <h3 class="home-how__title">Izberi oblačila</h3>
-          <p class="home-how__desc">Prebrskaj stotine kosov znanih znamk, razvrščenih po spolu, velikosti in znamki.</p>
+  {# ─────────────────────────────────────────────────────────────
+     S9 — ABOUT
+     2-col · circular image cluster left / text right
+  ───────────────────────────────────────────────────────────── #}
+  <section class="home-about">
+    <div class="container">
+      <div class="home-about__grid">
+
+        <div class="home-about__image-wrap">
+          <img class="home-about__image"
+               src="{{ base }}image/catalog/assets/banners/Trgovina-balonckix2.png"
+               alt="Otroški Kotičšek — pogled v trgovino"
+               width="480" height="380"
+               loading="lazy">
         </div>
 
-        <div class="home-how__item">
-          <div class="home-how__icon" aria-hidden="true">
-            <i class="fa fa-shopping-bag"></i>
+        <div class="home-about__text">
+          <p class="home-eyebrow">#Nežno rabljeno</p>
+          <h2 class="home-about__heading">Največja <span class="home-about__accent">slovenska</span> trgovina</h2>
+          <p class="home-about__body">Zgodba Otroškega Kotička se je začela leta 2013 v kraju Mozirje. V desetih letih nam je zaupalo že več kot 5.000 družin, prodali smo več kot 200.000 artiklov!</p>
+          <p class="home-about__body">Trudimo se, da bi vsak našel nekaj za svojega malčka.</p>
+          <div class="home-about__links">
+            <a href="{{ base }}index.php?route=product/category&path=57"
+               class="home-about__link">Vsa oblačila za deklice &rarr;</a>
+            <a href="{{ base }}index.php?route=product/category&path=58"
+               class="home-about__link">Vsa oblačila za fante &rarr;</a>
           </div>
-          <p class="home-how__step">Korak 02</p>
-          <h3 class="home-how__title">Naroči</h3>
-          <p class="home-how__desc">Varno plačilo, hitra dostava. Paket pri vas v 2–3 delovnih dneh.</p>
-        </div>
-
-        <div class="home-how__item">
-          <div class="home-how__icon" aria-hidden="true">
-            <i class="fa fa-heart"></i>
-          </div>
-          <p class="home-how__step">Korak 03</p>
-          <h3 class="home-how__title">Uživaj</h3>
-          <p class="home-how__desc">Kakovostna oblačila, srečen otrok — in denarnica, ki je ostala polna.</p>
         </div>
 
       </div>
@@ -482,23 +576,6 @@
           <i class="fa fa-leaf" aria-hidden="true"></i>
           <span><strong>250.000</strong> oblačil rešenih pred odlagališčem</span>
         </p>
-      </div>
-    </div>
-  </section>
-
-
-  {# ─────────────────────────────────────────────────────────────
-     S10 — NEWSLETTER
-     content_bottom = OC newsletter module output
-     TODO: assign OC newsletter module to Homepage → content_bottom
-  ───────────────────────────────────────────────────────────── #}
-  <section class="home-newsletter">
-    <div class="container">
-      <div class="home-newsletter__inner">
-        <p class="home-eyebrow">Ostanite obveščeni</p>
-        <h2 class="home-newsletter__heading">Bodite prvi obveščeni</h2>
-        <p class="home-newsletter__sub">Prijavite se in izveste takoj, ko prispejo novi kosi vaših najljubših znamk.</p>
-        {{ content_bottom }}
       </div>
     </div>
   </section>
