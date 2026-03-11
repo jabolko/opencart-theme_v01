@@ -781,6 +781,10 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
         svg { transform: rotate(90deg); }
       }
     }
+
+    .mobile-nav__chevron svg {
+      transition: transform 0.25s ease;
+    }
   }
 
   // Wrapper around cat-name + cat-count (takes the flex-grow slot)
@@ -805,7 +809,7 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
   &__cat-count {
     display: block;
     font-family: $font-family-body;
-    font-size: 0.65rem;
+    font-size: 0.76rem;
     color: $color-text-muted;
   }
 
@@ -831,10 +835,11 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
     list-style: none;
     margin: 0;
     padding: 0;
-    background: $color-surface-alt;
-    display: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
 
-    &--open { display: block; }
+    &--open { max-height: 40rem; }
 
     li { }
 
@@ -843,15 +848,15 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
       padding: $space-2 $space-8 $space-2 $space-12;
       font-family: $font-family-body;
       font-size: $font-size-base;
+      color: $color-text-base;
       text-decoration: none;
       transition: color $transition-base;
 
       &:hover { color: $color-primary-dark; text-decoration: none; }
     }
 
-    // "Vse za [category]" — first item, slightly bolder
+    // "Vse za [category]" — first item
     .mobile-nav__sub-all {
-      font-weight: $font-weight-heading-semi;
       color: $color-text-heading;
     }
   }
