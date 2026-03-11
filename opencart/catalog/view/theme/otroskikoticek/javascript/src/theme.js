@@ -146,6 +146,241 @@
   }
 
   // ---------------------------------------------------------------------------
+  // Mobile nav drawer — hamburger → slide-in panel with accordion categories
+  // ---------------------------------------------------------------------------
+
+  function initMobileMenu() {
+    var toggle   = document.getElementById('js-mobile-menu-toggle');
+    var drawer   = document.getElementById('js-mobile-nav');
+    var overlay  = document.getElementById('js-mobile-overlay');
+    var closeBtn = document.getElementById('js-mobile-nav-close');
+    var listEl   = document.getElementById('js-mobile-nav-list');
+    if (!toggle || !drawer) { return; }
+
+    // Helper: build a circle image element from a src URL
+    function makeCatImg(src) {
+      var img = document.createElement('img');
+      img.src = src;
+      img.className = 'mobile-nav__cat-img';
+      img.alt = '';
+      img.setAttribute('aria-hidden', 'true');
+      return img;
+    }
+
+    // Clone top-level category links from #menu into the drawer nav list
+    if (listEl) {
+      var mainItems = document.querySelectorAll('#menu .navbar-nav:first-child > li');
+      var i, li, a, row, toggleBtn, subList, subLinks, subLi, subA, j, imgSrc;
+
+      for (i = 0; i < mainItems.length; i++) {
+        var origLi = mainItems[i];
+        var origA  = origLi.querySelector('a');
+        if (!origA) { continue; }
+        // Skip items with href="#" — these are hardcoded in the drawer HTML
+        if (origA.getAttribute('href') === '#') { continue; }
+
+        imgSrc = origA.getAttribute('data-img') || '';
+        var name = (origA.textContent || '').replace(/\s+/g, ' ').trim();
+
+        li = document.createElement('li');
+        li.className = 'mobile-nav__item';
+
+        var subMenu = origLi.querySelector('.dropdown-menu');
+        if (subMenu) {
+          // Category has children — pure accordion: single button row (no separate link)
+          row = document.createElement('button');
+          row.type = 'button';
+          row.className = 'mobile-nav__item-row';
+          row.setAttribute('aria-expanded', 'false');
+          row.setAttribute('aria-label', name);
+
+          if (imgSrc) { row.appendChild(makeCatImg(imgSrc)); }
+
+          var catInfo = document.createElement('span');
+          catInfo.className = 'mobile-nav__cat-info';
+
+          var nameSpan = document.createElement('span');
+          nameSpan.className = 'mobile-nav__cat-name';
+          nameSpan.textContent = name;
+          catInfo.appendChild(nameSpan);
+
+          var count = origA.getAttribute('data-count') || '';
+          if (count) {
+            var countSpan = document.createElement('span');
+            countSpan.className = 'mobile-nav__cat-count';
+            countSpan.textContent = count + ' kosov';
+            catInfo.appendChild(countSpan);
+          }
+
+          row.appendChild(catInfo);
+
+          var chevron = document.createElement('span');
+          chevron.className = 'mobile-nav__chevron';
+          chevron.setAttribute('aria-hidden', 'true');
+          chevron.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+            '<polyline points="9 18 15 12 9 6"></polyline></svg>';
+          row.appendChild(chevron);
+
+          subList = document.createElement('ul');
+          subList.className = 'mobile-nav__sub-list';
+
+          // First item: "Vse za [category name]" → category page
+          subLi = document.createElement('li');
+          subA  = document.createElement('a');
+          subA.href = origA.href;
+          subA.className = 'mobile-nav__sub-all';
+          subA.textContent = 'Vse za ' + name.toLowerCase();
+          subLi.appendChild(subA);
+          subList.appendChild(subLi);
+
+          // Subcategories from the desktop dropdown
+          subLinks = subMenu.querySelectorAll('.dropdown-inner a');
+          for (j = 0; j < subLinks.length; j++) {
+            subLi = document.createElement('li');
+            subA  = document.createElement('a');
+            subA.href = subLinks[j].href;
+            subA.textContent = (subLinks[j].textContent || '').trim();
+            subLi.appendChild(subA);
+            subList.appendChild(subLi);
+          }
+
+          li.appendChild(row);
+          li.appendChild(subList);
+
+        } else {
+          // Simple link — no children
+          a = document.createElement('a');
+          a.href = origA.href;
+          a.className = 'mobile-nav__link';
+          if (imgSrc) { a.appendChild(makeCatImg(imgSrc)); }
+          a.appendChild(document.createTextNode(name));
+          li.appendChild(a);
+        }
+
+        listEl.appendChild(li);
+      }
+    }
+
+    // Inject counts into the hardcoded Paket presenečenja drawer item
+    (function () {
+      var paketData = document.getElementById('js-paket-data');
+      var paketLi   = document.getElementById('js-mobile-paket');
+      if (!paketData || !paketLi) { return; }
+
+      function appendCount(el, cnt) {
+        if (!el || !cnt || parseInt(cnt, 10) <= 0) { return; }
+        var sp = document.createElement('span');
+        sp.className = 'mobile-nav__cat-count';
+        sp.textContent = cnt + ' kosov';
+        el.appendChild(sp);
+      }
+
+      // Total count on the accordion button — styled span below the name
+      var catInfo = paketLi.querySelector('.mobile-nav__cat-info');
+      appendCount(catInfo, paketData.getAttribute('data-total'));
+
+      // Sub-item counts — inline "(N)" format, same as regular category sub-items
+      var dekliceCnt = paketData.getAttribute('data-deklice');
+      var deckeCnt   = paketData.getAttribute('data-decke');
+      var linkD = document.getElementById('js-paket-link-deklice');
+      var linkK = document.getElementById('js-paket-link-decke');
+      if (linkD && dekliceCnt && parseInt(dekliceCnt, 10) > 0) {
+        linkD.textContent = linkD.textContent + ' (' + dekliceCnt + ')';
+      }
+      if (linkK && deckeCnt && parseInt(deckeCnt, 10) > 0) {
+        linkK.textContent = linkK.textContent + ' (' + deckeCnt + ')';
+      }
+    }());
+
+    // Populate INFO section from .nav-item-secondary dropdown (if present)
+    var infoList  = document.getElementById('js-mobile-info-list');
+    if (infoList) {
+      var infoLinks = document.querySelectorAll('#menu .nav-item-secondary .dropdown-inner a');
+      for (var k = 0; k < infoLinks.length; k++) {
+        var iLi = document.createElement('li');
+        iLi.className = 'mobile-nav__item';
+        var iA = document.createElement('a');
+        iA.href = infoLinks[k].href;
+        iA.className = 'mobile-nav__link';
+        iA.textContent = (infoLinks[k].textContent || '').trim();
+        iLi.appendChild(iA);
+        infoList.appendChild(iLi);
+      }
+    }
+
+    function openDrawer() {
+      drawer.classList.add('mobile-nav--open');
+      drawer.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('mobile-nav-open');
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove('mobile-nav--open');
+      drawer.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('mobile-nav-open');
+    }
+
+    toggle.addEventListener('click', function () {
+      if (drawer.classList.contains('mobile-nav--open')) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    if (closeBtn) { closeBtn.addEventListener('click', closeDrawer); }
+    if (overlay)  { overlay.addEventListener('click', closeDrawer); }
+
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Escape' || e.keyCode === 27) &&
+          drawer.classList.contains('mobile-nav--open')) {
+        closeDrawer();
+      }
+    });
+
+    // Delegated handler: accordion toggles + close-on-link-click
+    drawer.addEventListener('click', function (e) {
+      var target = e.target;
+      while (target && target !== drawer) {
+        // Accordion toggle — expand/collapse sub-list
+        if (target.classList && target.classList.contains('mobile-nav__item-row')) {
+          var li  = target.parentElement;           // .mobile-nav__item
+          var sub = li ? li.querySelector('.mobile-nav__sub-list') : null;
+          if (sub) {
+            var isOpen = sub.classList.contains('mobile-nav__sub-list--open');
+            sub.classList.toggle('mobile-nav__sub-list--open', !isOpen);
+            target.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+          }
+          return;
+        }
+        // Real link — close drawer and navigate
+        if (target.tagName === 'A' &&
+            target.getAttribute('href') &&
+            target.getAttribute('href') !== '#') {
+          closeDrawer();
+          return;
+        }
+        target = target.parentNode;
+      }
+    });
+
+    // Mobile search button — scroll to top and focus the main search input
+    var searchBtn = document.getElementById('js-mobile-search-btn');
+    if (searchBtn) {
+      searchBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(function () {
+          var input = document.querySelector('#search .form-control');
+          if (input) { input.focus(); }
+        }, 350);
+      });
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Init
   // ---------------------------------------------------------------------------
 
@@ -259,6 +494,7 @@
     reformatCart();
     syncStickyCart();
     updateWishlistBadge();
+    initMobileMenu();
     initArrivalsScroll();
     initReviewsScroll();
     initStickyNav();

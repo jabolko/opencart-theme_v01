@@ -502,29 +502,404 @@ header {
 }
 
 // ============================================================
-// Mobile — stack to hamburger layout
+// .mobile-menu-toggle — hamburger (hidden on desktop)
+// ============================================================
+
+.mobile-menu-toggle {
+  display: none; // desktop: invisible
+}
+
+@include respond-below('sm') {
+  .mobile-menu-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 2.12rem;  // 36px ÷ 17
+    height: 1.59rem; // 27px ÷ 17
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    order: 1;
+    flex-shrink: 0;
+  }
+
+  .mobile-menu-toggle__bar {
+    display: block;
+    height: 2px;
+    background: $color-text-on-dark;
+    border-radius: 1px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+}
+
+body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(1) {
+  transform: translateY(0.635rem) rotate(45deg);
+}
+body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(2) {
+  opacity: 0;
+}
+body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
+  transform: translateY(-0.635rem) rotate(-45deg);
+}
+
+// ============================================================
+// Mobile — single-row dark header
 // ============================================================
 
 @include respond-below('sm') {
+  .site-header,
+  header {
+    background-color: $color-surface-dark;
+  }
+
   .header-inner {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    align-items: center;
     gap: $space-3;
   }
 
   .header-logo {
+    order: 2;
     flex: 1 1 auto;
   }
 
   .header-actions {
     order: 3;
-    gap: $space-3;
+    gap: $space-4;
   }
 
-  .header-search {
-    order: 4;
-    flex: 0 0 100%;
+  // Hide search bar and account icon on mobile (both are in the drawer)
+  .header-search { display: none; }
+  .header-action.dropdown { display: none; }
+
+  // Icon color on dark background
+  .header-action__btn,
+  #wishlist-total.header-action__btn {
+    color: $color-text-on-dark;
+
+    &:hover,
+    &:focus { color: $color-primary; }
+  }
+
+  .header-action--cart #cart > .btn {
+    color: $color-text-on-dark;
+
+    &:hover,
+    &:focus,
+    &.active { color: $color-primary; }
+  }
+
+  // Hide price label — icon only
+  .cart-price { display: none; }
+
+  // Logo: invert dark SVG for the charcoal header (no light variant available)
+  #logo img {
+    filter: brightness(0) invert(1);
   }
 }
+
+// Mobile search button — hidden on desktop
+.mobile-search-btn {
+  display: none;
+}
+
+@include respond-below('sm') {
+  .mobile-search-btn {
+    display: flex;
+  }
+}
+
+// ============================================================
+// Mobile nav drawer
+// ============================================================
+
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 600;
+  width: min(90vw, 380px);
+  background: $color-surface;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.18);
+
+  &--open { transform: translateX(0); }
+
+  // Header bar — light grey bg, "MENU" heading-dark, × right
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px $space-4 2px $space-6;
+    background: $color-surface-alt;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-size: $font-size-base;
+    font-weight: $font-weight-heading-semi;
+    letter-spacing: 0.04em;
+    color: $color-text-heading;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-heading;
+    padding: $space-3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color $transition-base;
+
+    &:hover { color: $color-primary-dark; }
+
+    svg {
+      width: 1.41rem;
+      height: 1.41rem;
+      display: block;
+    }
+  }
+
+  // Section label — small uppercase, grey; --ruled variant adds top separator
+  &__section-label {
+    font-family: $font-family-heading;
+    font-size: 0.65rem; // ~11px ÷ 17
+    font-weight: $font-weight-heading-semi;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: $color-text-muted;
+    padding: $space-4 $space-4 0 $space-6;
+    flex-shrink: 0;
+
+    &--ruled {
+      margin-top: $space-2;
+      padding-top: $space-4;
+      position: relative;
+
+      &::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: $space-3;
+        right: $space-3;
+        height: 2px;
+        background: #f2f2f2;
+      }
+    }
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__item {
+  }
+
+  // Base link — flex row to hold optional circle image
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-3 $space-4 $space-3 $space-6;
+    font-family: $font-family-body;
+    font-size: 1.06rem; // ~18px ÷ 17
+    color: #4b4b4b;
+    text-decoration: none;
+    min-height: 3rem;
+    transition: color $transition-base, background $transition-base;
+
+    &:hover,
+    &:focus {
+      color: $color-primary-dark;
+      background: $color-surface-alt;
+      text-decoration: none;
+    }
+
+    // Icon-only links (RAČUN): de-emphasised, smaller font + tighter padding
+    &--icon {
+      min-height: auto;
+      font-size: $font-size-sm;
+      padding-top: $space-2;
+      padding-bottom: $space-2;
+    }
+
+    &--bold {
+      font-weight: $font-weight-heading-semi;
+    }
+  }
+
+  // Circle category thumbnail image
+  &__cat-img {
+    width: 2.94rem;  // ~50px ÷ 17
+    height: 2.94rem;
+    border-radius: $radius-full;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: $color-surface-alt;
+  }
+
+  // Inline SVG icon for RAČUN links
+  &__item-icon {
+    width: 1.41rem;  // 24px ÷ 17
+    height: 1.41rem;
+    flex-shrink: 0;
+    color: $color-text-muted;
+  }
+
+  // Accordion row — full-width <button>, entire row is the toggle
+  &__item-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border: none;
+    background: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding: 0 0 0 $space-6;
+    text-align: left;
+    font-family: inherit;
+    color: #4b4b4b;
+
+    // Expanded: rotate chevron + darken it
+    &[aria-expanded="true"] {
+      .mobile-nav__chevron {
+        color: $color-text-heading;
+
+        svg { transform: rotate(90deg); }
+      }
+    }
+  }
+
+  // Wrapper around cat-name + cat-count (takes the flex-grow slot)
+  &__cat-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: $space-3 $space-4 $space-3 $space-3;
+    min-height: 4.12rem;
+  }
+
+  // Text label inside the accordion button
+  &__cat-name {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-lg;
+    color: #4b4b4b;
+  }
+
+  // Product count below cat-name / sub-link
+  &__cat-count {
+    display: block;
+    font-family: $font-family-body;
+    font-size: 0.65rem;
+    color: $color-text-muted;
+  }
+
+  // Chevron icon wrapper — right edge of the row
+  &__chevron {
+    flex-shrink: 0;
+    padding: 0 $space-4;
+    display: flex;
+    align-items: center;
+    color: $color-text-muted;
+    transition: color $transition-base;
+
+    svg {
+      width: 1.41rem;
+      height: 1.41rem;
+      display: block;
+      transition: transform 0.2s ease;
+    }
+  }
+
+  // Sub-list (accordion body) — hidden until opened
+  &__sub-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: $color-surface-alt;
+    display: none;
+
+    &--open { display: block; }
+
+    li { }
+
+    a {
+      display: block;
+      padding: $space-2 $space-8 $space-2 $space-12;
+      font-family: $font-family-body;
+      font-size: $font-size-base;
+      text-decoration: none;
+      transition: color $transition-base;
+
+      &:hover { color: $color-primary-dark; text-decoration: none; }
+    }
+
+    // "Vse za [category]" — first item, slightly bolder
+    .mobile-nav__sub-all {
+      font-weight: $font-weight-heading-semi;
+      color: $color-text-heading;
+    }
+  }
+
+  // Info links — inset separator, no label
+  & #js-mobile-info-list {
+    padding: $space-4 0 $space-6;
+    margin-top: $space-4;
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: $space-3;
+      right: $space-3;
+      height: 2px;
+      background: #f2f2f2;
+    }
+
+    .mobile-nav__item {
+      border-bottom: none;
+    }
+
+    .mobile-nav__link {
+      min-height: auto;
+      font-size: $font-size-sm;
+      color: #4b4b4b;
+      padding: $space-1 $space-4 $space-1 $space-6;
+
+      &:hover { color: $color-text-heading; background: none; }
+    }
+  }
+}
+
+// Dark overlay behind the drawer
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 599;
+  background: rgba(0, 0, 0, 0.5);
+
+  body.mobile-nav-open & { display: block; }
+}
+
+body.mobile-nav-open { overflow: hidden; }
 
 // ============================================================
 // Sticky compact nav — slides in from top after scrolling

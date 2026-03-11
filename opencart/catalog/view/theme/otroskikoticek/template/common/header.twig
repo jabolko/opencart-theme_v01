@@ -44,6 +44,14 @@
     <div class="container">
       <div class="header-inner">
 
+        <!-- Mobile hamburger — CSS hides on desktop -->
+        <button class="mobile-menu-toggle" id="js-mobile-menu-toggle"
+                aria-label="Odpri meni" aria-expanded="false" aria-controls="js-mobile-nav">
+          <span class="mobile-menu-toggle__bar"></span>
+          <span class="mobile-menu-toggle__bar"></span>
+          <span class="mobile-menu-toggle__bar"></span>
+        </button>
+
         <!-- Logo -->
         <div class="header-logo">
           <div id="logo">
@@ -82,6 +90,11 @@
             <span class="sr-only"></span>
           </a>
 
+          <!-- Mobile search button — shown only on mobile, opens the main search field -->
+          <button type="button" class="header-action__btn mobile-search-btn" id="js-mobile-search-btn" aria-label="Iskanje">
+            <svg class="header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+
           <!-- Cart widget (OC-provided dropdown) -->
           <div class="header-action header-action--cart">{{ cart }}</div>
 
@@ -93,6 +106,72 @@
   {{ menu }}
 
 </div>
+
+<!-- Mobile nav drawer — slide in from left -->
+<div class="mobile-nav" id="js-mobile-nav" aria-hidden="true">
+
+  <div class="mobile-nav__header">
+    <span class="mobile-nav__title">MENU</span>
+    <button class="mobile-nav__close" id="js-mobile-nav-close" aria-label="Zapri meni">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+
+  <div class="mobile-nav__section-label">NAKUPUJ</div>
+  <!-- OC categories cloned here by JS (Deklice, Dečki, Nosečnice …) -->
+  <ul class="mobile-nav__list" id="js-mobile-nav-list"></ul>
+
+  <!-- Paket presenečenja — hardcoded with explicit sub-links -->
+  <ul class="mobile-nav__list">
+    <li class="mobile-nav__item" id="js-mobile-paket">
+      <button type="button" class="mobile-nav__item-row" aria-expanded="false" aria-label="Paket presenečenja">
+        <img class="mobile-nav__cat-img" src="image/catalog/assets/kategorije/paket-presenecenja-kategorije-otroski-koticek-001.jpg" alt="" aria-hidden="true" width="50" height="50" />
+        <span class="mobile-nav__cat-info">
+          <span class="mobile-nav__cat-name">Paket presenečenja</span>
+        </span>
+        <span class="mobile-nav__chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </span>
+      </button>
+      <ul class="mobile-nav__sub-list">
+        <li><a id="js-paket-link-deklice" href="{{ base }}index.php?route=product/category&path=226_247">Za deklice</a></li>
+        <li><a id="js-paket-link-decke" href="{{ base }}index.php?route=product/category&path=225_248">Za dečke</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="mobile-nav__section-label mobile-nav__section-label--ruled">PRODAJ</div>
+  <ul class="mobile-nav__list">
+    <li class="mobile-nav__item">
+      <a href="{{ base }}index.php?route=information/information&information_id=9" class="mobile-nav__link mobile-nav__link--bold">
+        <img class="mobile-nav__cat-img" src="image/catalog/assets/homepage/izprazni-omaro.png" alt="" aria-hidden="true" width="50" height="57" />
+        IZPRAZNI svojo OMARO
+      </a>
+    </li>
+  </ul>
+
+  <div class="mobile-nav__section-label mobile-nav__section-label--ruled">RAČUN</div>
+  <ul class="mobile-nav__list">
+    <li class="mobile-nav__item">
+      <a href="{{ wishlist }}" class="mobile-nav__link mobile-nav__link--icon">
+        <svg class="mobile-nav__item-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        Shranjeni artikli
+      </a>
+    </li>
+    <li class="mobile-nav__item">
+      <a href="{{ account }}" class="mobile-nav__link mobile-nav__link--icon">
+        <svg class="mobile-nav__item-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        {% if logged %}Moj račun{% else %}Prijava / Registracija{% endif %}
+      </a>
+    </li>
+  </ul>
+
+  <ul class="mobile-nav__list" id="js-mobile-info-list"></ul>
+
+</div>
+
+<!-- Dark overlay behind the drawer -->
+<div class="mobile-nav-overlay" id="js-mobile-overlay" aria-hidden="true"></div>
 
 <!-- Sticky compact nav — populated + shown by JS on scroll -->
 <div class="sticky-nav" id="js-sticky-nav" aria-hidden="true">

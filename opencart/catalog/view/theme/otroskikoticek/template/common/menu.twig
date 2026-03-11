@@ -17,7 +17,7 @@
         {% for category in categories %}
         {% if category.children %}
         <li class="dropdown">
-          <a href="{{ category.href }}" class="dropdown-toggle" data-toggle="dropdown">
+          <a href="{{ category.href }}" class="dropdown-toggle" data-toggle="dropdown"{% if category.thumb %} data-img="{{ category.thumb }}"{% endif %}{% if category.count %} data-count="{{ category.count }}"{% endif %}>
             {{ category.name }}<span class="nav-caret"></span>
           </a>
           <div class="dropdown-menu">
@@ -34,20 +34,23 @@
           </div>
         </li>
         {% else %}
-        <li><a href="{{ category.href }}">{{ category.name }}</a></li>
+        <li><a href="{{ category.href }}"{% if category.thumb %} data-img="{{ category.thumb }}"{% endif %}>{{ category.name }}</a></li>
         {% endif %}
         {% endfor %}
 
+        <!-- Paket counts for mobile drawer JS -->
+        <span id="js-paket-data" data-total="{{ paket_count_deklice + paket_count_decke }}" data-deklice="{{ paket_count_deklice }}" data-decke="{{ paket_count_decke }}" hidden aria-hidden="true"></span>
+
         <!-- Paket presenečenja — hardcoded dropdown linking both sub-categories -->
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-img="image/catalog/assets/kategorije/paket-presenecenja-kategorije-otroski-koticek-001.jpg"{% if paket_count_deklice %} data-count="{{ paket_count_deklice + paket_count_decke }}"{% endif %}>
             Paket presenečenja<span class="nav-caret"></span>
           </a>
           <div class="dropdown-menu">
             <div class="dropdown-inner">
               <ul class="list-unstyled">
-                <li><a href="{{ base }}index.php?route=product/category&path=226_247">Za deklice{% if paket_count_deklice %} ({{ paket_count_deklice }}){% endif %}</a></li>
-                <li><a href="{{ base }}index.php?route=product/category&path=225_248">Za dečke{% if paket_count_decke %} ({{ paket_count_decke }}){% endif %}</a></li>
+                <li><a href="{{ base }}index.php?route=product/category&path=226_247"{% if paket_count_deklice %} data-count="{{ paket_count_deklice }}"{% endif %}>Za deklice{% if paket_count_deklice %} ({{ paket_count_deklice }}){% endif %}</a></li>
+                <li><a href="{{ base }}index.php?route=product/category&path=225_248"{% if paket_count_decke %} data-count="{{ paket_count_decke }}"{% endif %}>Za dečke{% if paket_count_decke %} ({{ paket_count_decke }}){% endif %}</a></li>
               </ul>
             </div>
           </div>

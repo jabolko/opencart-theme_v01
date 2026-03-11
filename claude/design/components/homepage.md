@@ -1,84 +1,84 @@
 # Component Spec: Homepage
 
 ## Files
-- Template: `template/common/home.twig` (OC renders this via `common/home` controller)
-- Homepage sections: `template/extension/module/` (each OC module = one section)
-- SCSS: `stylesheet/src/layout/_home.scss` (to be created)
+- Template: `template/common/home.twig`
+- SCSS: `stylesheet/src/pages/_home.scss`
+- Latest products module controller: `opencart/catalog/controller/extension/module/latest.php`
+- Latest products module twig: `template/extension/module/latest.twig`
+
+**Status: COMPLETE** — All sections built and live as of 2026-03-10.
+Lighthouse: Perf 83 / A11y 85 / BP 100 / SEO 100
+
+---
 
 ## Strategic Context
 Second-hand children's clothing. Key trust problem: parents need to believe in quality,
 cleanliness, and safety before buying. Every section either builds that case or it doesn't belong.
 
 Three silent questions a visitor asks in the first 5 seconds:
-1. "Can I trust this?" → trust bar, founder, Google reviews
-2. "Is this for me?" → category strip, brands
+1. "Can I trust this?" → USP strip, Google reviews
+2. "Is this for me?" → category grid, brands
 3. "Why here and not Vinted?" → 14 years, curation, community, sell-back flywheel
 
 ---
 
-## Section Stack (final, ordered top → bottom)
+## Section Stack (actual built order, top → bottom)
 
-| # | Section | Block name | Priority | Status |
-|---|---------|------------|----------|--------|
-| — | Header | (done) | — | ✓ done |
-| 1 | Hero | `.home-hero` | Critical | to build |
-| 2 | Trust bar | `.home-trust` | Critical | to build |
-| 3 | Category strip | `.home-cats` | High | to build |
-| 4 | New arrivals | `.home-arrivals` | High | to build |
-| 5 | Popular brands | `.home-brands` | Medium | to build |
-| 6 | Prodaj svoja oblačila | `.home-sell` | High | to build |
-| 7 | How it works | `.home-how` | Medium | to build |
-| 8 | Google reviews | `.home-reviews` | Critical | to build |
-| 9 | Values / sustainability | `.home-values` | Medium | to build |
-| 10 | Newsletter | `.home-newsletter` | Low | to build |
-| — | Footer | (done) | — | ✓ done |
+| # | Section | Block name | Status |
+|---|---------|------------|--------|
+| — | Header | (shared component) | ✓ done |
+| S1 | Hero | `.home-hero` | ✓ done |
+| S2 | USP strip | `.home-usp` | ✓ done |
+| S3 | Category grid | `.home-categories` | ✓ done |
+| S4 | New arrivals | `.home-arrivals` | ✓ done |
+| S5 | Popular brands | `.home-brands` | ✓ done |
+| S6 | Sell your clothes | `.home-sell` | ✓ done |
+| S7 | Google reviews | `.home-reviews` | ✓ done |
+| S8 | Sell cycle explainer | `.home-sell-cycle` | ✓ done |
+| S9 | About | `.home-about` | ✓ done |
+| S10 | Values | `.home-values` | ✓ done |
+| — | Footer | (shared component) | ✓ done |
 
----
-
-## Section Specs
+Newsletter section was scoped out — not built.
 
 ---
 
-### 1 — Hero `.home-hero`
+## Section Specs (as built)
 
-**Purpose:** First impression. Communicate brand identity + value prop in under 3 seconds.
+---
+
+### S1 — Hero `.home-hero`
+
+**Purpose:** First impression. Brand identity + value prop in under 3 seconds.
 
 **Layout:** Full-width, 2-column on desktop (text left, image right). Single column on mobile.
 
-**Content:**
+**Content (actual):**
 ```
 Eyebrow:   Otroški kotiček  (small, gold, uppercase)
 Headline:  Nežno rabljena oblačila za otroke in mamice
 Tagline:   Tvoje najljubše znamke, za delček cene.
-CTA 1:     Brskaj po ponudbi  →  /catalog/category path
-CTA 2:     Prodaj oblačila    →  information_id=9 (text link, lighter)
+CTA 1:     Brskaj po ponudbi  →  category
+CTA 2:     Prodaj oblačila    →  information page (text link)
 ```
 
-**Image:** Hero photo — lifestyle, not product. Child wearing quality clothes.
-Must be provided as static asset. No CMS/slider.
-
-**Performance rules:**
-- `<img>` with `fetchpriority="high"` and `loading="eager"`
-- `<link rel="preload">` in `<head>` for the hero image
-- Explicit `width` / `height` attributes to prevent CLS
-- No JavaScript, no animation on load
+**Image:** Static hero photo asset. `fetchpriority="high"`, `loading="eager"`.
 
 **Design:**
-- Background: `$color-surface` (white) or very light warm neutral
-- Headline: Open Sans 600, large (~40px desktop)
-- Tagline: DM Sans 400, italic, muted (`$color-text-muted`)
-- No carousel, no auto-play, no JS required
+- Background: `$color-surface` (white)
+- Headline: Open Sans 600, ~2.35rem desktop
+- Tagline: DM Sans 400, muted
+- No JS, no animation on load
 
 ---
 
-### 2 — Trust bar `.home-trust`
+### S2 — USP strip `.home-usp`
 
-**Purpose:** Instant credibility. Answers "can I trust this?" with hard numbers.
-Placed directly below hero so it's visible on first scroll.
+**Purpose:** Instant credibility below the fold. Answers "can I trust this?" with hard numbers.
 
 **Layout:** Horizontal strip, 3 equal columns, full-width, light background band.
 
-**Content (3 pillars):**
+**Content (actual):**
 ```
 14 let        →  izkušenj
 250.000+      →  oblačil v dobrem domu
@@ -86,265 +86,216 @@ Placed directly below hero so it's visible on first scroll.
 ```
 
 **Design:**
-- Background: `$color-surface-alt` (#f7f7f7) or a subtle warm tint
-- Number: Open Sans 600, large (~36px), `$color-primary` (gold)
+- Background: `$color-surface-section` (`#eeeeee`)
+- Number: Open Sans 600, large, `$color-primary` (gold)
 - Label: DM Sans 400, small, `$color-text-muted`
-- Dividers between pillars: `1px solid $color-border`
 - Padding: `$space-8` vertical
-
-**Note:** No price pillar here. Hero tagline "za delček cene" already carries the price message.
-Keeping 3 pillars is cleaner than 4.
 
 ---
 
-### 3 — Category strip `.home-cats`
+### S3 — Category grid `.home-categories`
 
 **Purpose:** Get visitors to product in one click. Fastest path to conversion.
 
-**Layout:** 4–5 large clickable tiles in a row. Desktop: single row. Mobile: 2×2 grid + 1.
+**Layout:** 2+3 asymmetric editorial grid on desktop. 2-column on mobile.
 
-**Tiles:**
+**Tiles (actual):**
 ```
 1. Deklice    →  /category/deklice
 2. Fantje     →  /category/fantje
-3. Mamice     →  /category/nosecnost
-4. Znamke     →  /catalog/brands or filtered view
-5. Novo       →  /catalog/new-arrivals (optional 5th)
+3. Mamice     →  /category/mamice
+4. Znamke     →  /brands
+5. Novo       →  /new-arrivals
 ```
 
 **Content per tile:**
-- Category photo (lifestyle or flat-lay)
-- Category name (large, white, on image)
-- Optional floor price: `od 2€` (small, below name) — honest, always true
+- Category photo (lifestyle)
+- Eyebrow: short label (uppercase, gold)
+- Category name (large, white)
+- Arrow animation on hover
 
 **Design:**
-- `aspect-ratio: 4/3` on desktop tiles
+- `aspect-ratio` varies per tile (asymmetric grid)
 - `object-fit: cover` on images
-- Hover: slight scale + darker overlay
-- Text always white with `text-shadow` for legibility on any photo
+- Hover: diagonal stripe overlay + arrow animates right
+- Text always white with text-shadow for legibility
 
-**Performance:** Lazy-load all tile images (`loading="lazy"`).
+**Performance:** `loading="lazy"` on all tile images.
 
 ---
 
-### 4 — New arrivals `.home-arrivals`
+### S4 — New arrivals `.home-arrivals`
 
-**Purpose:** Demonstrates active, fresh inventory. Gives repeat visitors a reason to come back.
+**Purpose:** Demonstrates active, fresh inventory. Gives repeat visitors a reason to return.
 
-**Layout:** Section heading + horizontal product card row (8–12 cards).
-On desktop: 4-per-row grid. On mobile: horizontal scroll or 2-per-row.
+**Layout:** Section heading + horizontal scroll product card row. Extends to viewport right edge.
 
-**Content:**
+**Content (actual):**
 ```
 Eyebrow:  Sveže prispelo
 Heading:  Novi kosi čakajo nate
 CTA:      Poglej vse →
 ```
 
-**Product cards:** Pulled from OC "Latest Products" module.
-Card spec → see `claude/design/components/product-card.md`
+**Technical:**
+- Scroller: `overflow-x: auto`, `margin-right: calc(-50vw + 50%)` (right edge extends to viewport)
+- Cards: `flex: 0 0 Xrem; scroll-snap-align: start`
+- JS prev/next navigation arrows; prev hidden via `.home-arrivals__arrow--hidden` on load
+- Product cards use `.product-card` BEM block — see `claude/design/components/product-card.md`
+- Module: OC "Latest Products" (controller override adds `manufacturer` + `minimum` fields)
+- `padding-bottom: $space-8` (32px) provides clearance for hover shadow `0 8px 20px`
 
-**Price anchoring:** Product card handles this — show RRP crossed out where available.
-This is the product card's responsibility, NOT the homepage section's.
+**Performance:** `loading="lazy"` on all product card images.
 
 ---
 
-### 5 — Popular brands `.home-brands`
+### S5 — Popular brands `.home-brands`
 
-**Purpose:** Brand recognition builds instant "this is quality" trust.
-Reinforces "tvoje najljubše znamke" from the hero.
+**Purpose:** Brand recognition — "tvoje najljubše znamke" reinforced visually.
 
-**Layout:** Section heading + horizontal logo strip. No cards, just logos.
+**Layout:** Section heading + horizontal logo strip. Logos: grayscale → color on hover.
 
-**Content:**
+**Content (actual — as of 2026-03-10):**
 ```
-Heading:  Znamke, ki jih poznate
-Logos:    Zara / H&M / Next / Mayoral / Boboli / Lindex / Name It / ...
+S.Oliver / Next / H&M / Gap / Zara / Adidas / Nike / +30 drugih
 ```
+"+30 drugih" is a text badge (`.home-brands__more`) — not an image.
 
 **Design:**
-- Logos: grayscale by default, color on hover
-- Height: ~40px per logo, consistent
+- Logos: `<img>` tags, grayscale default, full color on hover (CSS `filter`)
+- Logo height: consistent ~40px
 - Background: white
-- No carousel — static row, overflow hidden on mobile (or wrap)
-
-**Performance:** SVG logos preferred. Explicit dimensions on all `<img>` tags.
+- Horizontal row, scroll on mobile
 
 ---
 
-### 6 — Prodaj svoja oblačila `.home-sell`
+### S6 — Sell your clothes `.home-sell`
 
 **Purpose:** Revenue driver + community flywheel. Sellers become buyers.
-This is a differentiator from Vinted — you take the hassle out of selling.
+Differentiator from Vinted — we remove the hassle of selling.
 
-**Layout:** Full-width band, 2-column. Left: text + CTA. Right: simple 3-step visual.
+**Layout:** Full-width green band, 2-column. Left: text + CTA. Right: 3-step visual.
 
-**Background:** Green band — `#528e6d` (nav CTA end color). White text on green.
-
-**Content:**
+**Content (actual):**
 ```
 Eyebrow:  Za prodajalce
 Heading:  Prodaj svoja oblačila
 Body:     Otroci rastejo hitro. Oblačila, ki jih ne potrebujete več,
           naj dobijo nov dom — in vi prejmite plačilo.
-CTA:      Kako deluje →  information_id=9
+CTA:      Kako deluje →
 
-3 steps (right side):
-1. Zberi oblačila    — ikona: škatla
-2. Pošlji na naslov  — ikona: pošta / dostava
-3. Prejmi plačilo    — ikona: denar / kovanec
+3 steps:
+1. Pripravi oblačila    (step label above, icon below)
+2. Kurir prevzame paket
+3. Prejmi plačilo
+   "Pripraviš paket, mi skrbimo za ostalo."
 ```
 
 **Design:**
-- Background: `#528e6d` (green)
-- Text: white
-- Eyebrow: white, 60% opacity, uppercase
-- Steps: white circles with number, text below
-- CTA: `$color-primary` (gold) pill button — high contrast on green
+- Background: `#528e6d` (green band)
+- Text: white; Eyebrow: white, uppercase, muted opacity
+- Steps: numbered circles, white text
+- CTA: `$color-primary` (gold) pill button
 
 ---
 
-### 7 — How it works `.home-how`
+### S7 — Google reviews `.home-reviews`
 
-**Purpose:** Reduce purchase anxiety for first-time buyers of second-hand clothing.
-Primarily for new visitors who've never bought online second-hand before.
+**Purpose:** Strongest social proof. Static HTML — no third-party JS embed.
 
-**Layout:** 3-column icon + text strip. Light background.
+**Layout:** Section heading + horizontal scroll review cards (`.home-reviews__scroller`).
 
-**Content:**
-```
-Heading:  Nakup je preprost
-
-Step 1:  Izberi oblačila     → icon: magnifier / browse
-         Prebrskaj stotine kosov znanih znamk.
-
-Step 2:  Naroči              → icon: cart
-         Varno plačilo, hitra dostava.
-
-Step 3:  Uživaj              → icon: heart / star
-         Kakovostna oblačila. Srečen otrok.
-```
-
-**Design:**
-- Background: `$color-surface` (white)
-- Icons: simple line icons (`fa` or inline SVG), `$color-primary`
-- Step number: subtle, small, `$color-text-muted`
-
----
-
-### 8 — Google reviews `.home-reviews`
-
-**Purpose:** Strongest social proof. Authentic presentation is critical — looks like
-actual Google reviews, not a generic marketing carousel.
-
-**Layout:** Section heading + 3–4 review cards in a row.
-
-**Content:**
+**Content (actual):**
 ```
 Eyebrow:  Kaj pravijo stranke
-Heading:  207 ocen na Googlu
-Sub:      Povprečna ocena 4,9 ★
-Link:     Preberi vse ocene →  Google My Business URL
+Count:    150+ ocen  (`.home-reviews__count`)
+Stars:    Povprečna 4,9 ★
 ```
 
-**Card anatomy (styled to look like Google):**
+**Card anatomy:**
 ```
-[ G ]  Ana K.          ★★★★★
-       2 tedna nazaj
+[ G ]  Ime Priimek     ★★★★★
+       X tednov nazaj
 
-"Odlična izkušnja! Oblačila so bila čista in točno
-kot opisano. Priporočam vsem mamicam."
-```
-
-- `[ G ]` = coloured circle with initial (authentic Google avatar look)
-- Name in bold, date in muted grey
-- Stars: gold, filled SVGs (no font icon for accuracy)
-- Review text: DM Sans, regular
-- Card: white, `border-radius: $radius-lg`, subtle `box-shadow`
-
-**Performance:** Static HTML only. Zero third-party JS. No Google widget embed.
-Paste 3–4 real reviews as static content. Link to live Google page for full list.
-
-**Why static:** Google review embeds are 3rd-party JS that blocks rendering, adds cookies,
-and scores poorly on best-practices audit. Static cards convert just as well.
-
----
-
-### 9 — Values / sustainability `.home-values`
-
-**Purpose:** The "against the current" story. Makes the customer feel good about the choice.
-Positions lower price as a smart, values-driven decision — not a compromise.
-
-**Layout:** Centered text block or 2-column (text + simple graphic/counter).
-
-**Content (draft):**
-```
-Heading:  #RabljenoJeZakon
-
-Body:     Vsako oblačilo, ki ga kupite pri nas, je oblačilo manj na odlagališču.
-          Skupaj smo podaljšali življenje že 250.000 kosom oblačil.
-          To ni samo nakup — to je odločitev.
+"Review text..."
 ```
 
 **Design:**
-- Background: `$color-section` (#ececec) or a soft warm tint
-- Heading: Open Sans 600, medium-large
-- `#RabljenoJeZakon` hashtag in gold — doubles as brand hashtag
-
-**Optional:** A simple counter "250.000 oblačil rešenih" with a leaf/recycle icon.
+- Google-styled avatar circle (coloured initial)
+- Cards: white, `border-radius: $radius-lg`, subtle `box-shadow`
+- Static HTML — 3–4 real reviews pasted as Twig content
 
 ---
 
-### 10 — Newsletter `.home-newsletter`
+### S8 — Sell cycle explainer `.home-sell-cycle`
 
-**Purpose:** Build owned audience. Low urgency — placed last before footer.
+**Purpose:** Explain the full sell-buy loop. Educate first-time sellers.
 
-**Layout:** Single centered line. Minimal.
+**Layout:** Centered section on `$color-surface-section` background.
 
 **Content:**
 ```
-Heading:  Bodite prvi obveščeni
-Body:     Prijavite se in izveste takoj, ko prispejo novi kosi vaših najljubših znamk.
-Input:    [email placeholder]  [Prijavi se]
+Eyebrow:  [contextual label — color overridden to $color-text-base inside this section]
+Heading:  [sell cycle heading, font-size: 2.35rem, same style as .home-sell__heading]
+```
+
+**Design note:**
+- `.home-eyebrow` inside `.home-sell-cycle` has color override to `$color-text-base` (`#565656`)
+  because gold eyebrow is unreadable on the section background
+- Heading matches `.home-sell__heading` style: `font-size: 2.35rem`; mobile: `1.88rem`
+
+---
+
+### S9 — About `.home-about`
+
+**Purpose:** Brand story, founder credibility, "14 let izkušenj" in narrative form.
+
+**Layout:** Section on white or light background.
+
+**Design note:**
+- `.home-eyebrow` inside `.home-about` also overridden to `$color-text-base` (same reason as S8)
+
+---
+
+### S10 — Values `.home-values`
+
+**Purpose:** Makes the customer feel good about choosing second-hand.
+Positions lower price as smart + values-driven — not a compromise.
+
+**Content:**
+```
+Heading:  #RabljenoJeZakon
+Tags:     value pill tags (`.home-values__tag`)
 ```
 
 **Design:**
-- Background: same as trust bar (`$color-surface-alt`)
-- Input: outline pill style (matches search bar)
-- Button: `$color-primary` pill
+- Background: `$color-surface-section` (`#eeeeee`)
+- `__tag`: `font-weight: 700` (increased from 600 for legibility)
+- `#RabljenoJeZakon` in gold (`$color-primary`)
 
 ---
 
-## Build Order
+## Resolved Decisions
 
-| Sprint | Sections | Why first |
-|--------|---------|-----------|
-| 1 | Hero + Trust bar | Above the fold — highest visible impact |
-| 2 | Category strip + Prodaj | Drive navigation + business flywheel |
-| 3 | Google reviews + Values | Conversion trust layer |
-| 4 | New arrivals | Requires product card component (Phase 3) |
-| 5 | Brands + How it works + Newsletter | Polish pass |
-
----
-
-## Performance Checklist (homepage-specific)
-
-- [ ] Hero `<img>` has `fetchpriority="high"` + `loading="eager"`
-- [ ] Hero image has `<link rel="preload">` in `<head>`
-- [ ] All below-fold images have `loading="lazy"`
-- [ ] All images have explicit `width` + `height` (prevents CLS)
-- [ ] Brand logos use SVG
-- [ ] Reviews section is static HTML — no third-party JS
-- [ ] No carousel/slider anywhere
-- [ ] Each section is CSS-only (no JS unless unavoidable)
+| Decision | Resolution |
+|----------|------------|
+| Newsletter section | Dropped — not built |
+| Category block name | `.home-categories` (not `.home-cats`) |
+| SCSS file location | `pages/_home.scss` (not `layout/_home.scss`) |
+| Brands list | S.Oliver, Next, H&M, Gap, Zara, Adidas, Nike + "+30 drugih" |
+| Reviews count | 150+ ocen |
+| Footer review count | 153 ocen |
+| Hover shadow | `0 8px 20px rgba(0,0,0,0.10)` (not 40px spread — was clipping) |
+| Build command | Always `npm run build` (not `scss:build`) — updates `theme.min.css` |
+| Section background | `$color-surface-section: #eeeeee` |
+| Eyebrow color (sell-cycle, about) | Overridden to `$color-text-base` — gold unreadable on `#eeeeee` |
 
 ---
 
-## Open Decisions / Placeholders
-
-- Hero image: needs final photo asset
-- Category tile photos: need assets per category
-- Brand logo list: confirm which brands to show (Zara, H&M, Next, Mayoral, Boboli, ...)
-- Google reviews: need 3–4 real review texts from Google My Business
-- Google My Business URL: needed for "Preberi vse ocene" link
-- OC module setup: which sections use OC modules vs. static Twig
+## Performance (2026-03-10)
+- Lighthouse Performance: 83/100
+- Lighthouse Accessibility: 85/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- LCP: 4.2s (Docker-latency driven — not a real-world concern)
+- CLS: 0.004 | TBT: 0ms

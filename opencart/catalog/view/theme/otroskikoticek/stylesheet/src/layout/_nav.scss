@@ -301,6 +301,9 @@ $_nav-link-h:     3.06rem; // ~52px @ 17px root
 }
 
 @include respond-below('sm') {
+  // Drawer replaces Bootstrap navbar entirely on mobile
+  #menu.navbar { display: none; }
+
   #menu .navbar-nav > li > a {
     height: auto;
     padding: $space-3 $space-4;

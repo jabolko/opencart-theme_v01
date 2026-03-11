@@ -1223,6 +1223,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   background: url('../../../../../../image/catalog/assets/banners/otroski-koticek-trgovina-2200-1100px.jpg') center / cover no-repeat;
   padding: $space-16 0;
 
+  @include respond-below('sm') {
+    padding: $space-12 0;
+  }
+
   &__inner {
     max-width: 42.35rem; // ~720px ÷ 17 — readable line length
     margin: 0 auto;
@@ -1271,6 +1275,35 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
       color: $color-surface;
       font-weight: 600;
     }
+  }
+}
+
+// =============================================================================
+// MOBILE OVERRIDES  respond-below('sm')
+// Section headers, large headings, review nav — cramped on 375px
+// =============================================================================
+
+@include respond-below('sm') {
+  .home-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $space-2;
+  }
+
+  .home-brands__heading {
+    font-size: 1.88rem; // 32px ÷ 17 (down from 2.82rem/48px)
+  }
+
+  .home-reviews__title {
+    font-size: 1.88rem; // 32px ÷ 17 (down from 2.82rem/48px)
+  }
+
+  .home-reviews__nav {
+    display: none; // touch-scroll replaces arrow buttons
+  }
+
+  .home-about__heading {
+    font-size: 1.88rem; // 32px ÷ 17 (down from 2.47rem/42px)
   }
 }
 

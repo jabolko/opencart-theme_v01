@@ -8,6 +8,8 @@ class ControllerCommonMenu extends Controller {
 
 		$this->load->model('catalog/product');
 
+		$this->load->model('tool/image');
+
 		$data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);
@@ -36,7 +38,9 @@ class ControllerCommonMenu extends Controller {
 					'name'     => $category['name'],
 					'children' => $children_data,
 					'column'   => $category['column'] ? $category['column'] : 1,
-					'href'     => $this->url->link('product/category', 'path=' . $category['category_id'])
+					'href'     => $this->url->link('product/category', 'path=' . $category['category_id']),
+					'thumb'    => $category['image'] ? $this->model_tool_image->resize($category['image'], 80, 80) : '',
+				'count'    => $this->model_catalog_product->getTotalProducts(array('filter_category_id' => $category['category_id'], 'filter_sub_category' => true))
 				);
 			}
 		}
@@ -58,14 +62,9 @@ class ControllerCommonMenu extends Controller {
 			}
 		}
 
-		// Paket presenečenja — hardcoded sub-categories need counts passed separately
-		if ($this->config->get('config_product_count')) {
-			$data['paket_count_deklice'] = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => 247, 'filter_sub_category' => true));
-			$data['paket_count_decke']   = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => 248, 'filter_sub_category' => true));
-		} else {
-			$data['paket_count_deklice'] = '';
-			$data['paket_count_decke']   = '';
-		}
+		// Paket presenečenja — always compute counts (used for mobile drawer data-count attributes)
+		$data['paket_count_deklice'] = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => 247, 'filter_sub_category' => true));
+		$data['paket_count_decke']   = $this->model_catalog_product->getTotalProducts(array('filter_category_id' => 248, 'filter_sub_category' => true));
 
 		return $this->load->view('common/menu', $data);
 	}
