@@ -17,6 +17,33 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-03-11 — Mobile nav drawer complete + header polish (hamburger, logo, padding)
+
+#### Desktop
+- Page tested: homepage
+- Lighthouse Performance: 99/100
+- Lighthouse Accessibility: 85/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- LCP: 0.9s | FCP: 0.5s | SI: 0.8s | TBT: 0ms | CLS: 0.002 | TTI: 0.9s
+- Report file: `reports/lighthouse-2026-03-11-desktop.html`
+- Delta vs previous: +16 Performance, = Accessibility, = BP, = SEO
+
+#### Mobile
+- Page tested: homepage
+- Lighthouse Performance: 82/100
+- Lighthouse Accessibility: 90/100
+- Lighthouse Best Practices: 96/100
+- Lighthouse SEO: 100/100
+- LCP: 4.3s | FCP: 2.4s | SI: 2.4s | TBT: 0ms | CLS: 0.006 | TTI: 4.4s
+- Report file: `reports/lighthouse-2026-03-11-mobile.html`
+- Delta vs previous: first mobile run
+- Notes: Desktop perf jump 83→99 (LCP 4.2s → 0.9s). Mobile A11y 90 (better than desktop 85) from
+  aria attributes added to mobile nav drawer. Mobile LCP still Docker-latency driven.
+  Known issues: aria-hidden focusable descendants, prohibited ARIA attributes, contrast failures.
+
+---
+
 ### 2026-03-10 — Homepage complete (category grid, product cards, brands, reviews, sell, about, values)
 - Page tested: homepage
 - Lighthouse Performance: 83/100

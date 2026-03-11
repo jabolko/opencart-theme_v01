@@ -8,7 +8,8 @@
 // .site-header — full header (scrolls away; compact sticky nav takes over)
 // ============================================================
 
-.site-header {
+.site-header,
+header {
   background-color: #f7f7f8;
 }
 
@@ -17,7 +18,6 @@
 // ============================================================
 
 header {
-  background-color: #f7f7f8;
   padding: $space-4 0;
 }
 
@@ -514,33 +514,35 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 2.12rem;  // 36px ÷ 17
-    height: 1.59rem; // 27px ÷ 17
-    background: none;
+    width: 1.55rem;
+    height: 1.08rem;
+    background: $color-surface-dark;
     border: none;
+    border-radius: $radius-sm;
     cursor: pointer;
-    padding: 0;
+    padding: 0.47rem 0.35rem;
     order: 1;
     flex-shrink: 0;
+    box-sizing: content-box;
   }
 
   .mobile-menu-toggle__bar {
     display: block;
-    height: 2px;
-    background: $color-text-on-dark;
-    border-radius: 1px;
+    height: 2.5px;
+    background: #fff;
+    border-radius: 2px;
     transition: transform 0.25s ease, opacity 0.25s ease;
   }
 }
 
 body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(1) {
-  transform: translateY(0.635rem) rotate(45deg);
+  transform: translateY(0.53rem) rotate(45deg);
 }
 body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(2) {
   opacity: 0;
 }
 body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
-  transform: translateY(-0.635rem) rotate(-45deg);
+  transform: translateY(-0.53rem) rotate(-45deg);
 }
 
 // ============================================================
@@ -553,6 +555,10 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
     background-color: $color-surface-dark;
   }
 
+  header {
+    padding: 0.59rem 0; // 10px ÷ 17
+  }
+
   .header-inner {
     flex-wrap: nowrap;
     align-items: center;
@@ -562,6 +568,10 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
   .header-logo {
     order: 2;
     flex: 1 1 auto;
+  }
+
+  #logo img {
+    height: 1.15rem;
   }
 
   .header-actions {
