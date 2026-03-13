@@ -37,3 +37,18 @@
 | 2026-03-10 | PAGE-001   | Copy updates: step labels, review count (150+), footer count (153), values weight 700  | |
 | 2026-03-10 | FIX        | Shadow clipping in home-arrivals: reduced hover shadow + full `npm run build` pipeline fix | theme.min.css was not being updated |
 | 2026-03-10 | TOKEN      | `$color-surface-section` updated #ececec → #eeeeee; tokens.md in sync               | |
+| 2026-03-11 | MOB-001    | `header.twig` — hamburger button, mobile nav drawer HTML, sticky nav bar, toast element | Replaces Bootstrap collapse |
+| 2026-03-11 | MOB-001    | `menu.twig` — Paket presenečenja dropdown, `js-paket-data` hidden span (data carrier outside `<ul>`) | Invalid HTML bug: span inside ul is discarded by browser |
+| 2026-03-11 | MOB-001    | `menu.php` — category `count` always computed; Paket deklice/dečke counts unconditional | Not gated by config_product_count |
+| 2026-03-11 | MOB-001    | `_header.scss` — drawer panel (90vw / 380px), dark overlay, hamburger → X animation, `__cat-info` row with image + name + count | |
+| 2026-03-11 | MOB-001    | `_nav.scss` — `#menu.navbar { display: none }` on mobile (Bootstrap nav hidden) | |
+| 2026-03-11 | MOB-001    | `_home.scss` — mobile breakpoints: section-header flex-column, brand/review/about headings scaled down | |
+| 2026-03-11 | MOB-001    | `theme.js` — `initMobileMenu()`: drawer open/close, OC category cloning, Paket count injection (total as `__cat-count` span, sub-items as inline `(N)`) | ES5 only |
+| 2026-03-11 | MOB-002    | `_header.scss` — mobile nav polish: sub-list background removed, text color darkened, `__cat-count` 0.76rem, chevron rotate transition, accordion max-height slide | |
+| 2026-03-11 | HEAD-001   | `_header.scss` — hamburger 1.55×1.08rem, white bars 2.5px, `$color-surface-dark` bg, mobile logo 1.15rem, mobile header padding 10px | |
+| 2026-03-11 | SCSS-CLEAN | `_header.scss` — merged duplicate `.site-header` + `header` background declaration | |
+| 2026-03-11 | SCSS-CLEAN | `_home.scss` — removed redundant `width` alongside `flex-basis` on scroller cards; removed ignored `overflow-y: visible` | |
+| 2026-03-11 | PERF       | Lighthouse desktop 99/85/100/100 (+16 Perf); mobile first run 82/90/96/100 | Reports in `reports/` |
+| 2026-03-13 | MOB-003    | `home.twig` + `_home.scss` — mobile hero: picture element for mobile image, center-aligned text, larger h1 (2.35rem), text shadows on eyebrow/headline/tagline, ghost btn underline + heart icon, CTAs centered | |
+| 2026-03-13 | MOB-004    | `_home.scss` — mobile USP: icon grid hidden, trust stats strip (10+/5.000+/14 dni) shown in one row, full-width no padding | |
+| 2026-03-13 | MOB-005    | `_header.scss` — mobile header `position: fixed`, `body` padding-top compensation, oc-toast repositioned below header with white bg | |

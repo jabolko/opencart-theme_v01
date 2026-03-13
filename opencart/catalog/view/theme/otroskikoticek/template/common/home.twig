@@ -11,12 +11,17 @@
   <section class="home-hero">
     <div class="home-hero__frame">
 
-      <img class="home-hero__img"
-           src="{{ base }}image/catalog/assets/hero/otroski-koticek-slider05_00121.jpg"
-           alt="Otroški kotiček – nežno rabljena otroška oblačila"
-           width="1550" height="603"
-           fetchpriority="high"
-           loading="eager">
+      <picture>
+        <source media="(max-width: 767px)"
+                srcset="{{ base }}image/catalog/assets/hero/otroski-koticek-slider_mobile_850x750.jpg"
+                width="850" height="750">
+        <img class="home-hero__img"
+             src="{{ base }}image/catalog/assets/hero/otroski-koticek-slider05_00121.jpg"
+             alt="Otroški kotiček – nežno rabljena otroška oblačila"
+             width="1550" height="603"
+             fetchpriority="high"
+             loading="eager">
+      </picture>
 
       <div class="home-hero__content">
         <p class="home-hero__eyebrow">Otroški kotiček &middot; od 2013</p>
@@ -26,10 +31,11 @@
         </h1>
         <p class="home-hero__tagline">Tvoje najljubše znamke, za delček cene.</p>
         <div class="home-hero__ctas">
-          <a href="{{ base }}index.php?route=product/category" class="home-hero__btn-primary">
+          <a href="{{ base }}index.php?route=product/category&path=226" class="home-hero__btn-primary">
             Brskaj po ponudbi
           </a>
           <a href="{{ base }}index.php?route=information/information&information_id=9" class="home-hero__btn-ghost">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             Prodaj oblačila
           </a>
         </div>
@@ -51,11 +57,12 @@
 
   {# ─────────────────────────────────────────────────────────────
      S2 — USP / SOCIAL PROOF STRIP
-     3 illustrated icons: quality · easy returns · sustainability
-     Images: image/catalog/assets/elements/icons/
+     Desktop: 3 illustrated icons.
+     Mobile: 3 trust stats in one row (icon grid hidden).
   ───────────────────────────────────────────────────────────── #}
   <section class="home-usp">
     <div class="container">
+
       <ul class="home-usp__grid">
 
         <li class="home-usp__item">
@@ -89,6 +96,22 @@
         </li>
 
       </ul>
+
+      <dl class="home-usp__trust">
+        <div class="home-usp__trust-item">
+          <dt class="home-usp__trust-num">10<span>+</span></dt>
+          <dd class="home-usp__trust-label">let izkušenj</dd>
+        </div>
+        <div class="home-usp__trust-item">
+          <dt class="home-usp__trust-num">5.000<span>+</span></dt>
+          <dd class="home-usp__trust-label">zadovoljnih strank</dd>
+        </div>
+        <div class="home-usp__trust-item">
+          <dt class="home-usp__trust-num">14<span> dni</span></dt>
+          <dd class="home-usp__trust-label">preprosto vračilo</dd>
+        </div>
+      </dl>
+
     </div>
   </section>
 

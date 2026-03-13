@@ -43,7 +43,13 @@ header {
 }
 
 #logo a {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+}
+
+#logo picture {
+  display: flex;
+  align-items: center;
 }
 
 #logo img {
@@ -555,7 +561,17 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
     background-color: $color-surface-dark;
   }
 
+  body {
+    padding-top: 2.35rem; // compensate for fixed header height (~40px)
+  }
+
   header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    width: 100%;
     padding: 0.59rem 0; // 10px ÷ 17
   }
 
@@ -603,10 +619,6 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
   // Hide price label — icon only
   .cart-price { display: none; }
 
-  // Logo: invert dark SVG for the charcoal header (no light variant available)
-  #logo img {
-    filter: brightness(0) invert(1);
-  }
 }
 
 // Mobile search button — hidden on desktop
@@ -1197,5 +1209,17 @@ body.mobile-nav-open { overflow: hidden; }
     &:hover {
       color: $color-text-on-dark;
     }
+  }
+
+  @include respond-below('sm') {
+    top: 4.5rem;    // clear gap below fixed header
+    right: $space-3;
+    left: $space-3;
+    max-width: none;
+    z-index: 550;   // above fixed header (500), below drawer (600)
+    background: $color-surface;
+    color: $color-text-heading;
+    border: 1px solid $color-border;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   }
 }

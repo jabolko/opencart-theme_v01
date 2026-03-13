@@ -55,7 +55,12 @@
         <!-- Logo -->
         <div class="header-logo">
           <div id="logo">
-            <a href="{{ home }}"><img src="image/catalog/assets/logo/Logo-250x32px-normal.svg" width="250" height="33" title="{{ name }}" alt="{{ name }}" /></a>
+            <a href="{{ home }}">
+              <picture>
+                <source media="(max-width: 767px)" srcset="image/catalog/assets/logo/Logo-150x20px-invert.svg">
+                <img src="image/catalog/assets/logo/Logo-250x32px-normal.svg" width="250" height="33" title="{{ name }}" alt="{{ name }}" />
+              </picture>
+            </a>
           </div>
         </div>
 
