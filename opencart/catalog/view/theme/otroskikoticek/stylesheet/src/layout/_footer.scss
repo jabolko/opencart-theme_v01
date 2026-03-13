@@ -47,6 +47,12 @@
   object-position: center top;
 }
 
+.site-footer__quote-break {
+  @include respond-below('sm') {
+    display: none;
+  }
+}
+
 .site-footer__quote-text {
   font-style: italic;
   font-size: 1rem;
@@ -248,6 +254,11 @@
   }
 }
 
+// Accordion arrow — hidden globally, shown only on mobile
+.site-footer__col-arrow {
+  display: none;
+}
+
 // Link columns
 .site-footer__links {
   list-style: none;
@@ -404,9 +415,15 @@
 }
 
 @include respond-below('sm') {
+  .site-footer__proof-inner {
+    padding: $space-4 0;
+    gap: $space-4;
+  }
+
   .site-footer__grid {
     grid-template-columns: 1fr;
     gap: $space-8;
+    padding: $space-4 0;
   }
 
   .site-footer__newsletter {
@@ -420,5 +437,40 @@
 
   .site-footer__bottom {
     text-align: center;
+  }
+
+  // Accordion toggles — mobile only
+  .site-footer__col-title--toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 0;
+    padding-bottom: $space-3;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .site-footer__col-arrow {
+    display: block;
+    width: 1.06rem;
+    height: 1.06rem;
+    stroke: $color-primary;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+  }
+
+  .site-footer__col-title--toggle[aria-expanded="true"] .site-footer__col-arrow {
+    transform: rotate(180deg);
+  }
+
+  // Collapsed by default — links hidden; toggle adds --open modifier via JS
+  .site-footer__col-title--toggle + .site-footer__links {
+    display: none;
+    margin-top: $space-3;
+  }
+
+  .site-footer__col-title--toggle[aria-expanded="true"] + .site-footer__links {
+    display: block;
   }
 }

@@ -62,7 +62,7 @@ $_sell-green: #528e6d;
 // =============================================================================
 
 .home-hero {
-  background: #eeeeee;
+  background: $color-surface-section;
 
   // Frame: matches image width exactly (1550px = $breakpoints.xl)
   &__frame {
@@ -131,7 +131,7 @@ $_sell-green: #528e6d;
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #ffffff;
+    color: $color-text-on-dark;
     text-shadow: 0 0 5px rgb(0 0 0);
     margin: 0 0 $space-3;
 
@@ -145,7 +145,7 @@ $_sell-green: #528e6d;
     font-size: clamp(2.12rem, 3.8vw, 3.29rem); // 36px → 56px ÷ 17
     font-weight: $font-weight-heading-semi;
     line-height: 1.08;
-    color: #ffffff;
+    color: $color-text-on-dark;
     text-shadow: 0 0 12px #000;
     letter-spacing: -0.01em;
     margin: 0 0 $space-3;
@@ -165,7 +165,7 @@ $_sell-green: #528e6d;
     font-family: $font-family-body;
     font-style: italic;
     font-size: $font-size-base;
-    color: #ffffff;
+    color: $color-text-on-dark;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.40);
     line-height: $line-height-body;
     margin: 0 0 $space-6;
@@ -222,7 +222,7 @@ $_sell-green: #528e6d;
 
     &:hover,
     &:focus {
-      color: #ffffff;
+      color: $color-text-on-dark;
       border-bottom-color: rgba(255, 255, 255, 0.85);
       text-decoration: none;
     }
@@ -277,7 +277,7 @@ $_sell-green: #528e6d;
 // =============================================================================
 
 .home-usp {
-  background: #eeeeee;
+  background: $color-surface-section;
   padding: $space-6 0;
 
   &__grid {
@@ -375,7 +375,7 @@ $_sell-green: #528e6d;
     font-weight: 600;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: #565656;
+    color: $color-text-base;
     margin: 0;
   }
 }
@@ -391,11 +391,11 @@ $_sell-green: #528e6d;
 $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
 .home-categories {
-  background: rgba(247, 247, 248, 1);
+  background: $color-surface-alt;
   padding: $space-12 0;
 
   @include respond-below('sm') {
-    padding: 1.88rem 0; // 32px ÷ 17
+    padding: $space-8 0;
   }
 }
 
@@ -428,7 +428,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   // Tablet: equal columns, slightly shorter
   @include respond-below('md') {
     grid-template-columns: 1fr 1fr;
-    gap: 0.71rem; // 12px ÷ 17
+    gap: $space-3;
 
     .home-category { height: 14.71rem; } // 250px ÷ 17
   }
@@ -436,9 +436,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   // Mobile: single column stack
   @include respond-below('sm') {
     grid-template-columns: 1fr;
-    margin-bottom: 0.71rem;
+    gap: $space-2;
+    margin-bottom: $space-2;
 
-    .home-category { height: 14.12rem; } // 240px ÷ 17
+    .home-category { height: 8.24rem; } // 140px ÷ 17
   }
 }
 
@@ -468,16 +469,28 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   @include respond-below('md') {
-    gap: 0.71rem;
+    gap: $space-3;
 
     .home-category { height: 12.35rem; } // 210px ÷ 17
   }
 
-  // Mobile: 2 columns; Novo spans full width via --novo modifier
+  // Mobile: 2 columns; name at top, image vertically centred, sub hidden
   @include respond-below('sm') {
     grid-template-columns: repeat(2, 1fr);
+    gap: $space-2;
 
     .home-category { height: 11.76rem; } // 200px ÷ 17
+
+    .home-category__content {
+      top: 0;
+      bottom: auto;
+      background: none;
+      padding: $space-4 $space-4 0 $space-4;
+    }
+
+    .home-category__name { font-size: 1.06rem; } // ~18px ÷ 17
+
+    .home-category__sub { display: none; }
   }
 }
 
@@ -506,8 +519,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   // Novo spans full row on mobile so it reads as primary CTA
+  // Brands tile hidden on mobile — brands section (S5) covers it
   @include respond-below('sm') {
     &--novo { grid-column: 1 / -1; }
+    &--brands { display: none; }
   }
 
   // Transparent PNG — drop-shadow follows clothing silhouette (not a box)
@@ -529,6 +544,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
       max-height: 78%;
     }
 
+    @include respond-below('sm') {
+      bottom: 0.59rem; // 10px ÷ 17
+    }
+
     .home-category:hover & {
       transform: scale(1.04);
     }
@@ -545,6 +564,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0%, transparent 100%);
 
     .home-category--novo & { background: none; }
+
+    @include respond-below('sm') {
+      padding-right: 35%; // tiles are narrow on mobile — tighten image clearance
+    }
   }
 
   // Eyebrow label above name (e.g. "Oblačila", "Top znamke")
@@ -597,6 +620,12 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
       color: $color-text-heading;
       opacity: 0.5;
     }
+
+    @include respond-below('sm') {
+      font-size: $font-size-sm;
+      color: $color-text-muted;
+      opacity: 1;
+    }
   }
 
   // Arrow CTA — dim at rest, fully visible on tile hover
@@ -645,13 +674,27 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 // =============================================================================
 
 .home-arrivals {
-  background: #eeeeee;
+  background: $color-surface-section;
   padding-top: $space-6; // 24px
   padding-bottom: $space-8;
   overflow-x: clip;
 
+  @include respond-below('sm') {
+    padding-bottom: 0;
+  }
+
   .home-section-header {
     margin-bottom: 0;
+
+    @include respond-below('sm') {
+      flex-wrap: wrap;
+      align-items: center;
+
+      .home-section-heading {
+        order: 1;
+        width: 100%;
+      }
+    }
   }
 
   .home-section-heading {
@@ -663,6 +706,13 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex;
     align-items: center;
     gap: $space-3;
+
+    @include respond-below('sm') {
+      order: 2;
+      width: 100%;
+      justify-content: space-between;
+      margin-top: $space-2;
+    }
   }
 
   // Circular arrow button
@@ -701,6 +751,16 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     &--hidden {
       opacity: 0;
       pointer-events: none;
+    }
+
+    @include respond-below('sm') {
+      width: $space-8;
+      height: $space-8;
+
+      svg {
+        width: 0.88rem; // 15px ÷ 17
+        height: 0.88rem;
+      }
     }
   }
 
@@ -798,6 +858,15 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-size: $font-size-base;
     color: $color-text-muted;
     white-space: nowrap;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color $transition-base;
+
+    &:hover,
+    &:focus {
+      color: $color-text-heading;
+      text-decoration: underline;
+    }
   }
 }
 
@@ -855,7 +924,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__cta {
     @include cta-gold-pill;
     display: inline-block;
-    padding: 0.76rem 1.88rem;
+    padding: 0.76rem $space-8;
     font-family: $font-family-body;
     font-size: $font-size-base;
     font-weight: 600;
@@ -919,6 +988,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   background: $color-surface;
   padding: $space-12 0;
 
+  @include respond-below('sm') {
+    padding-bottom: $space-2;
+  }
+
   .home-eyebrow {
     color: $color-text-base; // #565656
   }
@@ -927,7 +1000,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-family: $font-family-heading;
     font-size: 2.35rem; // ~40px ÷ 17 — matches home-sell__heading
     font-weight: $font-weight-heading-semi;
-    color: $color-text-heading;
+    color: $color-text-base;
     line-height: $line-height-heading;
     margin: 0 0 $space-4;
 
@@ -939,11 +1012,21 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $space-8;
-    align-items: center;
+    row-gap: 0;
+    column-gap: $space-8;
+
+    @include respond-to('md') {
+      .home-sell-cycle__text-head  { grid-column: 1; grid-row: 1; align-self: end; }
+      .home-sell-cycle__image-wrap { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+      .home-sell-cycle__text-body  { grid-column: 1; grid-row: 2; align-self: start; }
+    }
 
     @include respond-below('md') {
       grid-template-columns: 1fr;
+
+      .home-sell-cycle__text-head  { order: 1; }
+      .home-sell-cycle__image-wrap { order: 2; }
+      .home-sell-cycle__text-body  { order: 3; }
     }
   }
 
@@ -974,6 +1057,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__image {
     max-width: 100%;
     height: auto;
+
+    @include respond-below('md') {
+      margin-bottom: $space-4;
+    }
   }
 }
 
@@ -992,11 +1079,21 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $space-8;
-    align-items: center;
+    row-gap: 0;
+    column-gap: $space-8;
+
+    @include respond-to('md') {
+      .home-about__image-wrap { grid-column: 1; grid-row: 1 / 3; align-self: center; }
+      .home-about__text-head  { grid-column: 2; grid-row: 1; align-self: end; }
+      .home-about__text-body  { grid-column: 2; grid-row: 2; align-self: start; }
+    }
 
     @include respond-below('md') {
       grid-template-columns: 1fr;
+
+      .home-about__image-wrap { order: 2; }
+      .home-about__text-head  { order: 1; }
+      .home-about__text-body  { order: 3; }
     }
   }
 
@@ -1007,13 +1104,17 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__image {
     max-width: 100%;
     height: auto;
+
+    @include respond-below('md') {
+      margin-bottom: $space-4;
+    }
   }
 
   &__heading {
     font-family: $font-family-heading;
     font-size: 2.47rem; // 42px ÷ 17
     font-weight: $font-weight-heading-semi;
-    color: $color-text-heading;
+    color: $color-text-base;
     line-height: $line-height-heading;
     margin: 0 0 $space-4;
   }
@@ -1056,6 +1157,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   padding: $space-12 0;
   overflow-x: clip;
 
+  @include respond-below('sm') {
+    padding-bottom: $space-6; // 24px ÷ 17
+  }
+
   &__header {
     text-align: center;
     margin-bottom: $space-4;
@@ -1079,6 +1184,10 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     align-items: center;
     justify-content: space-between;
     margin-bottom: $space-4;
+
+    @include respond-below('sm') {
+      justify-content: center;
+    }
   }
 
   // Rating pill — Google G + score + stars + count
@@ -1164,6 +1273,26 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
     &--hidden {
       opacity: 0;
       pointer-events: none;
+    }
+  }
+
+  // "Poglej vse ocene" link — mobile only, below scroller (desktop uses nav)
+  &__viewall {
+    display: none;
+
+    @include respond-below('sm') {
+      display: block;
+      text-align: center;
+      margin-top: $space-4;
+      font-family: $font-family-body;
+      font-size: $font-size-base;
+      color: $color-text-heading;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color $transition-base;
+
+      &:hover,
+      &:focus { color: $color-primary-dark; }
     }
   }
 
@@ -1329,6 +1458,7 @@ $_cat-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   &__text {
     font-family: $font-family-body;
     font-size: $font-size-base;
+    font-weight: 600;
     color: rgba(255, 255, 255, 0.95);
     line-height: $line-height-body;
     margin: 0;

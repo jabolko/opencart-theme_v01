@@ -176,7 +176,7 @@
         </a>
 
         <a href="{{ base }}index.php?route=product/manufacturer"
-           class="home-category">
+           class="home-category home-category--brands">
           <img class="home-category__img"
                src="{{ base }}image/catalog/assets/homepage/otroski_koticek_deklice_2.png"
                alt="Nakupuj po znamkah"
@@ -265,7 +265,7 @@
         <img class="home-brands__logo" loading="lazy" width="120" height="40"
              src="{{ base }}image/catalog/assets/elements/brands-black/Nike-160px-otroskikoticek.png"
              alt="Nike">
-        <span class="home-brands__more">+30 drugih</span>
+        <a href="{{ base }}index.php?route=product/manufacturer" class="home-brands__more">+30 drugih &rarr;</a>
       </div>
 
     </div>
@@ -515,6 +515,10 @@
         </div>
       </div>
 
+      <a href="https://www.google.com/maps?cid=10577519604965280683"
+         target="_blank" rel="noopener"
+         class="home-reviews__viewall">Poglej vse ocene &rarr;</a>
+
     </div>
   </section>
 
@@ -527,9 +531,12 @@
     <div class="container">
       <div class="home-sell-cycle__grid">
 
-        <div class="home-sell-cycle__text">
+        <div class="home-sell-cycle__text-head">
           <p class="home-eyebrow">Trgovina s srcem</p>
           <h2 class="home-sell-cycle__heading">Kupiš, prerasteš, <span class="home-sell-cycle__accent">prodaš</span></h2>
+        </div>
+
+        <div class="home-sell-cycle__text-body">
           <p class="home-sell-cycle__body">Poznaš občutek, ko tvoja nežno rabljena otroška oblačila kar silijo iz omare? Takrat je čas, da nam pošlješ kose, ki jih ne nosiš več. S tem narediš prostor v omari, narediš nekaj dobrega za okolje in napolniš denarnico!</p>
           <a href="{{ base }}index.php?route=information/information&information_id=9"
              class="home-sell-cycle__link">Izprazni svojo omaro &rarr;</a>
@@ -564,10 +571,13 @@
                loading="lazy">
         </div>
 
-        <div class="home-about__text">
+        <div class="home-about__text-head">
           <p class="home-eyebrow">#Nežno rabljeno</p>
           <h2 class="home-about__heading">Največja <span class="home-about__accent">slovenska</span> trgovina</h2>
-          <p class="home-about__body">Zgodba Otroškega Kotička se je začela leta 2013 v kraju Mozirje. V desetih letih nam je zaupalo že več kot 5.000 družin, prodali smo več kot 200.000 artiklov!</p>
+        </div>
+
+        <div class="home-about__text-body">
+          <p class="home-about__body">Zgodba Otroškega Kotička se je začela leta 2013 v kraju Mozirje. V 10+ letih nam je zaupalo že več kot 5.000 družin, prodali smo več kot 250.000 artiklov!</p>
           <p class="home-about__body">Trudimo se, da bi vsak našel nekaj za svojega malčka.</p>
           <div class="home-about__links">
             <a href="{{ base }}index.php?route=product/category&path=57"

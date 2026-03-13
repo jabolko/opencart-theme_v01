@@ -4,7 +4,15 @@
 **Phase 3 — Page Templates**
 
 ## In Progress
-Nothing in progress — homepage complete, awaiting next session.
+Nothing in progress — homepage mobile pass complete, awaiting next session.
+
+## Recently Completed (2026-03-13)
+- Mobile homepage pass — all sections adjusted for <768px
+  - home-categories: top row 140px, bottom row 2-col, brands tile hidden, name font 1.06rem, image bottom 0.59rem, content pinned top, sub hidden
+  - home-arrivals: arrows 32px, header two-row (heading line 1 / link+arrows line 2), padding-bottom removed
+  - home-brands: `__more` converted to `<a>` link with underline style pointing to manufacturers page
+  - home-reviews: badge centered, "Poglej vse ocene" link below scroller (mobile only), padding-bottom 24px
+  - home-sell-cycle + home-about: `__text` split into `__text-head` + `__text-body`; CSS grid explicit placement on desktop, `order` on mobile → image appears between heading and body text on mobile
 
 ## Recently Completed (2026-03-10)
 - PAGE-001 — Homepage fully complete (all 9 sections, S1–S9)

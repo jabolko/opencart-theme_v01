@@ -21,8 +21,8 @@
                alt="Meta, ustanoviteljica Otroškega kotička"
                width="107" height="107">
           <p class="site-footer__quote-text">
-            &#8220;Otroški kotiček &#8211; nežno rabljena otroška oblačila,<br>
-            izbrana z ljubeznijo in mislijo na vašo družino.&#8221;<br>
+            &#8220;Otroški kotiček &#8211; nežno rabljena otroška oblačila,<br class="site-footer__quote-break">
+            izbrana z ljubeznijo in mislijo na vašo družino.&#8221;<br class="site-footer__quote-break">
             &#8212; <strong>Meta</strong>
           </p>
         </div>
@@ -91,7 +91,11 @@
 
       {# Col 2: Informacije #}
       <div>
-        <p class="site-footer__col-title">Informacije</p>
+        <p class="site-footer__col-title site-footer__col-title--toggle"
+           role="button" tabindex="0" aria-expanded="false">
+          Informacije
+          <svg class="site-footer__col-arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </p>
         <ul class="site-footer__links">
           <li><a href="{{ base }}index.php?route=information/information&information_id=16">Varnost podatkov</a></li>
           <li><a href="{{ base }}index.php?route=information/information&information_id=5">Pogoji sodelovanja</a></li>
@@ -105,14 +109,22 @@
 
       {# Col 3: Odkrijte + Moj račun #}
       <div>
-        <p class="site-footer__col-title">Odkrijte</p>
+        <p class="site-footer__col-title site-footer__col-title--toggle"
+           role="button" tabindex="0" aria-expanded="false">
+          Odkrijte
+          <svg class="site-footer__col-arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </p>
         <ul class="site-footer__links">
           <li><a href="{{ base }}index.php?route=information/information&information_id=9">Prodaj oblačila</a></li>
           <li><a href="{{ base }}index.php?route=information/information&information_id=11">Mnenja strank</a></li>
           <li><a href="#">O nas</a></li>
           <li><a href="{{ contact }}">Kontakt</a></li>
         </ul>
-        <p class="site-footer__col-title site-footer__col-title--spaced">Moj račun</p>
+        <p class="site-footer__col-title site-footer__col-title--spaced site-footer__col-title--toggle"
+           role="button" tabindex="0" aria-expanded="false">
+          Moj račun
+          <svg class="site-footer__col-arrow" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </p>
         <ul class="site-footer__links">
           <li><a href="{{ account }}">Moj račun</a></li>
           <li><a href="{{ order }}">Moje naročilo</a></li>

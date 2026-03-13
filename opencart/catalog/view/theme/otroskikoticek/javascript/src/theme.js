@@ -381,6 +381,36 @@
   }
 
   // ---------------------------------------------------------------------------
+  // Footer accordion — collapsible link groups on mobile (<768px)
+  // Toggles aria-expanded on .site-footer__col-title--toggle <p> elements;
+  // CSS adjacent-sibling (+) selector shows/hides the following <ul>.
+  // ---------------------------------------------------------------------------
+
+  function initFooterAccordion() {
+    var toggles = document.querySelectorAll('.site-footer__col-title--toggle');
+    if (!toggles.length) { return; }
+
+    function handleToggle(el) {
+      var isOpen = el.getAttribute('aria-expanded') === 'true';
+      el.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    }
+
+    var i;
+    for (i = 0; i < toggles.length; i++) {
+      (function (el) {
+        el.addEventListener('click', function () { handleToggle(el); });
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.keyCode === 13 ||
+              e.key === ' '     || e.keyCode === 32) {
+            e.preventDefault();
+            handleToggle(el);
+          }
+        });
+      }(toggles[i]));
+    }
+  }
+
+  // ---------------------------------------------------------------------------
   // Init
   // ---------------------------------------------------------------------------
 
@@ -495,6 +525,7 @@
     syncStickyCart();
     updateWishlistBadge();
     initMobileMenu();
+    initFooterAccordion();
     initArrivalsScroll();
     initReviewsScroll();
     initStickyNav();
