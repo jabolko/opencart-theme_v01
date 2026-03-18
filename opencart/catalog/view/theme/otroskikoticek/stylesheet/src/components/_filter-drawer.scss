@@ -1,0 +1,348 @@
+// =============================================================================
+// _filter-drawer.scss — Bottom-sheet filter panel (mobile-first)
+// Matches handoff: category-page-v1.html bottom sheet design
+// Triggered by #filter-open button on category page
+// =============================================================================
+@use '../abstracts' as *;
+
+// =============================================================================
+// OVERLAY
+// =============================================================================
+.filter-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 600;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+body.filter-open { overflow: hidden; }
+
+// =============================================================================
+// BOTTOM SHEET  .filter-sheet
+// =============================================================================
+.filter-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 88vh;
+  background: $color-surface;
+  border-radius: 1.41rem 1.41rem 0 0; // 24px ÷ 17
+  z-index: 601;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+
+  &--open { transform: translateY(0); }
+
+  // Drag handle
+  &__handle {
+    display: flex;
+    justify-content: center;
+    padding: 0.71rem 0 0.24rem; // 12px 4px ÷ 17
+  }
+
+  &__handle-bar {
+    width: 2.12rem; // 36px ÷ 17
+    height: 0.24rem; // 4px ÷ 17
+    border-radius: 2px;
+    background: $color-border;
+  }
+
+  // Header
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 1.18rem 4px;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: $color-text-heading;
+  }
+
+  &__close {
+    width: 2.12rem; // 36px ÷ 17
+    height: 2.12rem;
+    border-radius: 50%;
+    background: $color-surface-alt;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+
+    &:hover { background: $color-border; }
+
+    svg {
+      width: 1.06rem; // 18px ÷ 17
+      height: 1.06rem;
+      display: block;
+      stroke: $color-text-base;
+      stroke-width: 2;
+      fill: none;
+    }
+  }
+
+  // Scrollable body
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: $space-4 1.18rem; // 16px 20px
+  }
+
+  // Footer
+  &__footer {
+    padding: $space-4 1.18rem; // 16px 20px
+    border-top: 1px solid $color-border;
+    display: flex;
+    gap: 0.59rem; // 10px ÷ 17
+    flex-shrink: 0;
+  }
+
+  &__apply {
+    flex: 1;
+    padding: 0.82rem; // 14px ÷ 17
+    border-radius: 0.82rem; // 14px ÷ 17
+    border: none;
+    background: $color-primary;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:active { background: $color-primary-dark; }
+  }
+
+  &__reset {
+    padding: 0.82rem 1.18rem; // 14px 20px ÷ 17
+    border-radius: 0.82rem;
+    border: none;
+    background: $color-surface-alt;
+    color: $color-text-base;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover { background: $color-border; }
+  }
+}
+
+// =============================================================================
+// FILTER SECTION  .filter-section  (collapsible group inside sheet)
+// =============================================================================
+.filter-section {
+  border-bottom: 1px solid $color-border;
+  padding-bottom: $space-4;
+  margin-bottom: $space-4;
+
+  &:last-child { border-bottom: none; margin-bottom: 0; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-2 0;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    h3 {
+      font-family: $font-family-heading;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: $color-text-heading;
+      margin: 0;
+    }
+
+    svg {
+      width: 0.94rem; // 16px ÷ 17
+      height: 0.94rem;
+      stroke: #565656;
+      fill: none;
+      stroke-width: 4;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  // Collapsed state
+  &.is-collapsed {
+    .filter-section__header svg { transform: rotate(-90deg); }
+    .filter-section__body { max-height: 0; overflow: hidden; }
+  }
+
+  &__body {
+    overflow: visible;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem; // 2px ÷ 17
+    padding: $space-1 0;
+  }
+}
+
+// =============================================================================
+// FILTER ITEM  .filter-item  (checkbox row or link)
+// =============================================================================
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.59rem; // 10px ÷ 17
+  padding: 0.25rem $space-2;
+  margin: 0;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-decoration: none;
+
+  &:hover { background: $color-surface-alt; }
+
+  // Custom checkbox
+  &__checkbox {
+    width: 1.06rem; // 18px ÷ 17
+    height: 1.06rem;
+    border: 2px solid $color-border;
+    border-radius: 0.29rem; // 5px ÷ 17
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+
+    &:checked {
+      background: $color-primary;
+      border-color: $color-primary-dark;
+    }
+
+    &:checked::after {
+      content: '';
+      position: absolute;
+      left: 0.29rem; // 5px ÷ 17
+      top: 0.12rem; // 2px ÷ 17
+      width: 0.29rem; // 5px ÷ 17
+      height: 0.53rem; // 9px ÷ 17
+      border: solid $color-text-heading;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    &:focus-visible {
+      border-color: $color-primary;
+      box-shadow: 0 0 0 2px rgba($color-primary, 0.25);
+      outline: none;
+    }
+  }
+
+  &__label {
+    font-size: 0.84rem;
+    color: $color-text-base;
+    flex: 1;
+  }
+
+  // Link variant (for categories)
+  &--link {
+    font-family: $font-family-body;
+    font-size: 0.84rem;
+    color: $color-text-base;
+    padding: 0.35rem $space-2;
+
+    &:hover { color: $color-text-heading; }
+  }
+
+  // Active category
+  &--active {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    color: $color-primary-dark;
+    background: rgba($color-primary, 0.08);
+  }
+
+  // Subcategory (indented)
+  &--sub {
+    padding-left: $space-6;
+    font-size: 0.80rem;
+  }
+}
+
+// =============================================================================
+// ACTIVE FILTER CHIPS  .active-filters (inside filter sheet)
+// =============================================================================
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem; // 6px ÷ 17
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border;
+  margin-bottom: $space-4;
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.29rem; // 5px ÷ 17
+    padding: 0.29rem 0.59rem; // 5px 10px ÷ 17
+    border: none;
+    border-radius: $radius-md;
+    background: rgba($color-primary, 0.08);
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.72rem;
+    color: $color-primary-dark;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover { background: rgba($color-primary, 0.18); }
+
+    svg { flex-shrink: 0; stroke: currentColor; pointer-events: none; }
+  }
+
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.29rem 0.59rem;
+    border: none;
+    border-radius: $radius-md;
+    background: none;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.72rem;
+    color: $color-text-muted;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+      color: $color-text-heading;
+      background: $color-surface-alt;
+    }
+  }
+}
+
+// =============================================================================
+// HIDE DEFAULT OC FILTER PANEL MARKUP
+// =============================================================================
+#product-category .panel,
+#product-category > .container > .list-group { display: none; }

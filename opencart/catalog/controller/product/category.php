@@ -15,16 +15,22 @@ class ControllerProductCategory extends Controller {
 			$filter = '';
 		}
 
+		if (isset($this->request->get['filter_manufacturer'])) {
+			$filter_manufacturer = $this->request->get['filter_manufacturer'];
+		} else {
+			$filter_manufacturer = '';
+		}
+
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'p.sort_order';
+			$sort = 'p.date_added';
 		}
 
 		if (isset($this->request->get['order'])) {
 			$order = $this->request->get['order'];
 		} else {
-			$order = 'ASC';
+			$order = 'DESC';
 		}
 
 		if (isset($this->request->get['page'])) {
@@ -119,6 +125,10 @@ class ControllerProductCategory extends Controller {
 				$url .= '&filter=' . $this->request->get['filter'];
 			}
 
+			if (isset($this->request->get['filter_manufacturer'])) {
+				$url .= '&filter_manufacturer=' . $this->request->get['filter_manufacturer'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -157,6 +167,16 @@ class ControllerProductCategory extends Controller {
 				'start'              => ($page - 1) * $limit,
 				'limit'              => $limit
 			);
+
+			// Manufacturer filter — supports multiple IDs comma-separated
+			if ($filter_manufacturer) {
+				$manufacturer_ids = array_map('intval', explode(',', $filter_manufacturer));
+				if (count($manufacturer_ids) == 1) {
+					$filter_data['filter_manufacturer_id'] = $manufacturer_ids[0];
+				} else {
+					$filter_data['filter_manufacturer_ids'] = $manufacturer_ids;
+				}
+			}
 
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
@@ -210,10 +230,83 @@ class ControllerProductCategory extends Controller {
 				);
 			}
 
+			// Get manufacturers for products in this category
+			$manufacturer_query = $this->db->query("SELECT DISTINCT m.manufacturer_id, m.name FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id) WHERE p2c.category_id = '" . (int)$category_id . "' AND p.status = '1' AND p.manufacturer_id > 0 AND m.name != '' ORDER BY m.name ASC");
+
+			$data['manufacturers'] = array();
+			$data['filter_manufacturer'] = $filter_manufacturer;
+			$filter_manufacturer_ids = $filter_manufacturer ? array_map('intval', explode(',', $filter_manufacturer)) : array();
+
+			foreach ($manufacturer_query->rows as $mfr) {
+				$data['manufacturers'][] = array(
+					'manufacturer_id' => $mfr['manufacturer_id'],
+					'name'            => html_entity_decode($mfr['name'], ENT_QUOTES, 'UTF-8'),
+					'selected'        => in_array((int)$mfr['manufacturer_id'], $filter_manufacturer_ids)
+				);
+			}
+
+			// Build active filter chips
+			$data['active_filters'] = array();
+
+			// Active OC filters (size etc.)
+			if ($filter) {
+				$filter_ids = explode(',', $filter);
+				foreach ($filter_ids as $filter_id) {
+					$filter_info = $this->db->query("SELECT fd.name FROM " . DB_PREFIX . "filter f LEFT JOIN " . DB_PREFIX . "filter_description fd ON (f.filter_id = fd.filter_id) WHERE f.filter_id = '" . (int)$filter_id . "' AND fd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+					if ($filter_info->num_rows) {
+						// Build URL without this filter
+						$remaining = array_diff($filter_ids, array($filter_id));
+						$remove_url = 'path=' . $this->request->get['path'];
+						if ($remaining) {
+							$remove_url .= '&filter=' . implode(',', $remaining);
+						}
+						if ($filter_manufacturer) {
+							$remove_url .= '&filter_manufacturer=' . $filter_manufacturer;
+						}
+
+						$data['active_filters'][] = array(
+							'name'       => $filter_info->row['name'],
+							'type'       => 'filter',
+							'remove_url' => $this->url->link('product/category', $remove_url)
+						);
+					}
+				}
+			}
+
+			// Active manufacturer filters
+			if ($filter_manufacturer) {
+				$mfr_ids = explode(',', $filter_manufacturer);
+				foreach ($manufacturer_query->rows as $mfr) {
+					if (in_array($mfr['manufacturer_id'], $mfr_ids)) {
+						$remaining_mfrs = array_diff($mfr_ids, array($mfr['manufacturer_id']));
+						$remove_url = 'path=' . $this->request->get['path'];
+						if ($filter) {
+							$remove_url .= '&filter=' . $filter;
+						}
+						if ($remaining_mfrs) {
+							$remove_url .= '&filter_manufacturer=' . implode(',', $remaining_mfrs);
+						}
+
+						$data['active_filters'][] = array(
+							'name'       => html_entity_decode($mfr['name'], ENT_QUOTES, 'UTF-8'),
+							'type'       => 'manufacturer',
+							'remove_url' => $this->url->link('product/category', $remove_url)
+						);
+					}
+				}
+			}
+
+			// Clear all URL (no filters)
+			$data['clear_filters_url'] = $this->url->link('product/category', 'path=' . $this->request->get['path']);
+
 			$url = '';
 
 			if (isset($this->request->get['filter'])) {
 				$url .= '&filter=' . $this->request->get['filter'];
+			}
+
+			if (isset($this->request->get['filter_manufacturer'])) {
+				$url .= '&filter_manufacturer=' . $this->request->get['filter_manufacturer'];
 			}
 
 			if (isset($this->request->get['limit'])) {
@@ -223,9 +316,9 @@ class ControllerProductCategory extends Controller {
 			$data['sorts'] = array();
 
 			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_default'),
-				'value' => 'p.sort_order-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.sort_order&order=ASC' . $url)
+				'text'  => 'Zadnje dodano',
+				'value' => 'p.date_added-DESC',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.date_added&order=DESC' . $url)
 			);
 
 			$data['sorts'][] = array(
@@ -284,6 +377,10 @@ class ControllerProductCategory extends Controller {
 				$url .= '&filter=' . $this->request->get['filter'];
 			}
 
+			if (isset($this->request->get['filter_manufacturer'])) {
+				$url .= '&filter_manufacturer=' . $this->request->get['filter_manufacturer'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -312,6 +409,10 @@ class ControllerProductCategory extends Controller {
 				$url .= '&filter=' . $this->request->get['filter'];
 			}
 
+			if (isset($this->request->get['filter_manufacturer'])) {
+				$url .= '&filter_manufacturer=' . $this->request->get['filter_manufacturer'];
+			}
+
 			if (isset($this->request->get['sort'])) {
 				$url .= '&sort=' . $this->request->get['sort'];
 			}
@@ -331,6 +432,8 @@ class ControllerProductCategory extends Controller {
 			$pagination->url = $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url . '&page={page}');
 
 			$data['pagination'] = $pagination->render();
+
+			$data['product_total'] = $product_total;
 
 			$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));
 
@@ -372,6 +475,10 @@ class ControllerProductCategory extends Controller {
 
 			if (isset($this->request->get['filter'])) {
 				$url .= '&filter=' . $this->request->get['filter'];
+			}
+
+			if (isset($this->request->get['filter_manufacturer'])) {
+				$url .= '&filter_manufacturer=' . $this->request->get['filter_manufacturer'];
 			}
 
 			if (isset($this->request->get['sort'])) {

@@ -1,31 +1,359 @@
 // =============================================================================
-// _category.scss — Category listing page. Scoped to body#product-category.
-// See claude/design/components/category-page.md
+// _category.scss — Category listing page
+// Mobile-first. Desktop layered via respond-to().
 // =============================================================================
 @use '../abstracts' as *;
 
 // =============================================================================
-// PRODUCT GRID  .product-grid
-// Responsive CSS Grid — wraps .product-card items on the category page.
-// 4 cols desktop → 2 cols tablet → 2 cols mobile (cards are compact enough).
+// PAGE WRAPPER  .cat-page
 // =============================================================================
+.cat-page {
+  background: $color-surface-alt;
+  padding-bottom: $space-12;
+  overflow-x: hidden;
 
+  .container {
+    max-width: 100%;
+    padding-left: $space-3;
+    padding-right: $space-3;
+
+    @include respond-below('sm') {
+      padding-top: 3.20rem; // clear fixed mobile header (54px)
+    }
+
+    @include respond-to('sm') {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+}
+
+// =============================================================================
+// BREADCRUMB  .cat-breadcrumb
+// =============================================================================
+.cat-breadcrumb {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  padding: $space-3 0 0;
+  font-size: 0.76rem;
+  color: $color-text-muted;
+
+  @include respond-below('sm') {
+    padding-top: 0.29rem; // 5px mobile
+  }
+
+  li { display: inline-flex; align-items: center; gap: $space-1; }
+
+  a {
+    color: $color-text-base;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover { color: $color-primary-dark; }
+  }
+
+  &__sep { color: $color-text-muted; }
+  &__current { color: $color-text-muted; }
+
+  @include respond-to('md') {
+    padding-top: $space-4;
+  }
+}
+
+// =============================================================================
+// CATEGORY HEADER  .cat-header
+// =============================================================================
+.cat-header {
+  padding: $space-4 0 0;
+
+  @include respond-below('sm') {
+    padding-top: 0.24rem; // 4px mobile
+  }
+
+  &__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: $color-text-heading;
+    line-height: 1.15;
+  }
+
+  &__toggle {
+    display: none; // hidden on desktop
+
+    @include respond-below('sm') {
+      display: inline;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: $font-family-body;
+      font-size: 0.76rem;
+      color: $color-text-muted;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: color 0.2s ease;
+
+      &:hover { color: $color-text-heading; }
+    }
+  }
+
+  &__desc {
+    font-size: $font-size-sm;
+    color: $color-text-base;
+    margin-top: $space-1;
+    line-height: 1.55;
+    max-width: 640px;
+
+    @include respond-below('sm') {
+      display: none;
+
+      &--open { display: block; }
+    }
+  }
+
+  @include respond-to('md') {
+    padding: $space-6 0 0;
+
+    &__title { font-size: 2rem; }
+    &__desc { margin-top: $space-2; }
+  }
+}
+
+// =============================================================================
+// SUBCATEGORY PILLS  .cat-subcats
+// =============================================================================
+.cat-subcats {
+  padding: $space-4 0 0;
+
+  @include respond-below('sm') {
+    display: none;
+  }
+
+  &__scroll {
+    display: flex;
+    gap: $space-2;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: $space-1;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: $space-2 $space-4;
+    border-radius: $radius-lg;
+    background: $color-surface;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.78rem;
+    color: $color-text-heading;
+    white-space: nowrap;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: background 0.25s ease, color 0.25s ease;
+
+    &:hover {
+      background: rgba($color-primary, 0.08);
+      color: $color-primary-dark;
+    }
+
+    &.is-active {
+      background: $color-primary;
+      color: $color-text-heading;
+    }
+  }
+
+  @include respond-to('md') {
+    padding-top: $space-6;
+
+    &__pill {
+      padding: $space-2 1.06rem; // 18px
+      font-size: 0.82rem;
+    }
+  }
+}
+
+// =============================================================================
+// TOOLBAR  .cat-toolbar
+// =============================================================================
+.cat-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4 0 $space-3;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+  }
+
+  &__filter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem; // 6px ÷ 17
+    flex: 1;
+    padding: 0.53rem $space-4; // 9px 16px ÷ 17
+    border: none;
+    border-radius: $radius-md;
+    background: $color-surface;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.80rem;
+    color: $color-text-heading;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover { background: rgba($color-primary, 0.08); }
+
+    svg { flex-shrink: 0; }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 $space-2;
+  }
+
+  &__count {
+    font-size: 0.78rem;
+    color: $color-text-muted;
+  }
+
+  &__sort-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &__sort-plain {
+    appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    padding: 0 1.06rem 0 0; // space for chevron
+    font-family: $font-family-body;
+    font-size: 0.78rem;
+    color: $color-text-muted;
+    cursor: pointer;
+    outline: none;
+  }
+
+  &__sort-icon {
+    position: absolute;
+    right: 0;
+    pointer-events: none;
+    color: $color-text-muted;
+  }
+
+  @include respond-to('md') {
+    padding: $space-6 0 $space-4;
+  }
+}
+
+// =============================================================================
+// PRODUCT GRID  .product-grid
+// =============================================================================
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: $space-3; // 12px
-  margin-top: $space-6;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.59rem; // 10px
 
-  @include respond-below('lg') {
+  @include respond-to('sm') {
+    gap: $space-3;
+  }
+
+  @include respond-to('md') {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @include respond-below('md') {
-    grid-template-columns: repeat(2, 1fr);
-    gap: $space-3; // 12px
+  @include respond-to('lg') {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-4;
+  }
+}
+
+// =============================================================================
+// PAGINATION  .cat-pagination
+// =============================================================================
+.cat-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-8 0 $space-4;
+
+  &__results {
+    font-size: 0.76rem;
+    color: $color-text-muted;
   }
 
-  @include respond-below('sm') {
-    gap: 0.59rem; // 10px ÷ 17
+  // Override OC default pagination styling
+  &__links {
+    max-width: 100%;
+    overflow-x: auto;
+
+    .pagination {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: $space-1;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        a,
+        span {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 2.12rem;
+          height: 2.12rem;
+          padding: 0 $space-2;
+          border-radius: $radius-md;
+          font-family: $font-family-heading;
+          font-weight: $font-weight-heading-semi;
+          font-size: 0.82rem;
+          color: $color-text-base;
+          text-decoration: none;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        a:hover {
+          background: $color-surface;
+          color: $color-text-heading;
+        }
+
+        &.active span {
+          background: $color-primary;
+          color: $color-text-heading;
+        }
+      }
+    }
   }
+}
+
+// =============================================================================
+// HIDE OC defaults we replaced
+// =============================================================================
+#product-category {
+  // Hide Bootstrap row/col layout remnants
+  .breadcrumb { display: none; }
 }

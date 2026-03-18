@@ -561,10 +561,6 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
     background-color: $color-surface-dark;
   }
 
-  body {
-    padding-top: 2.35rem; // compensate for fixed header height (~40px)
-  }
-
   header {
     position: fixed;
     top: 0;

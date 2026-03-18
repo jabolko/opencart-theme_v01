@@ -153,6 +153,11 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
 
+		if (!empty($data['filter_manufacturer_ids'])) {
+			$imploded = implode(',', array_map('intval', $data['filter_manufacturer_ids']));
+			$sql .= " AND p.manufacturer_id IN (" . $imploded . ")";
+		}
+
 		$sql .= " GROUP BY p.product_id";
 
 		$sort_data = array(
@@ -510,6 +515,11 @@ class ModelCatalogProduct extends Model {
 
 		if (!empty($data['filter_manufacturer_id'])) {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
+		}
+
+		if (!empty($data['filter_manufacturer_ids'])) {
+			$imploded = implode(',', array_map('intval', $data['filter_manufacturer_ids']));
+			$sql .= " AND p.manufacturer_id IN (" . $imploded . ")";
 		}
 
 		$query = $this->db->query($sql);

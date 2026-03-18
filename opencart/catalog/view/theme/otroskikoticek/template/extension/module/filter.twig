@@ -1,0 +1,340 @@
+{# ── Filter bottom sheet (opened by #filter-open) ── #}
+{% if filter_groups %}
+
+{# Overlay #}
+<div class="filter-overlay" id="js-filter-overlay"></div>
+
+{# Bottom sheet #}
+<div class="filter-sheet" id="js-filter-sheet" aria-hidden="true">
+
+  {# Handle bar #}
+  <div class="filter-sheet__handle"><div class="filter-sheet__handle-bar"></div></div>
+
+  {# Header #}
+  <div class="filter-sheet__header">
+    <span class="filter-sheet__title">Filtri</span>
+    <button class="filter-sheet__close" id="js-filter-close" type="button" aria-label="Zapri filtre">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  {# Scrollable body #}
+  <div class="filter-sheet__body">
+
+    {# Active filter chips (populated by JS) #}
+    <div class="active-filters" id="js-active-filters" style="display:none"></div>
+
+    {# Categories section (populated by JS from .cat-subcats on the page) #}
+    <div class="filter-section is-collapsed" id="js-filter-categories" style="display:none">
+      <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
+        <h3>Kategorije</h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="filter-section__body">
+        <div class="filter-section__list" id="js-filter-categories-list"></div>
+      </div>
+    </div>
+
+    {# OC filter groups (e.g. Starost / Velikost) #}
+    {% for filter_group in filter_groups %}
+    <div class="filter-section">
+      <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
+        <h3>{{ filter_group.name }}</h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="filter-section__body">
+        <div class="filter-section__list">
+          {% for filter in filter_group.filter %}
+          <label class="filter-item">
+            {% if filter.filter_id in filter_category %}
+            <input type="checkbox" class="filter-item__checkbox" name="filter[]" value="{{ filter.filter_id }}" checked="checked" />
+            {% else %}
+            <input type="checkbox" class="filter-item__checkbox" name="filter[]" value="{{ filter.filter_id }}" />
+            {% endif %}
+            <span class="filter-item__label">{{ filter.name }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    {# Manufacturer / brand section (populated by JS from page data) #}
+    <div class="filter-section" id="js-filter-manufacturers" style="display:none">
+      <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
+        <h3>Znamke</h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="filter-section__body">
+        <div class="filter-section__list" id="js-filter-manufacturers-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  {# Footer #}
+  <div class="filter-sheet__footer">
+    <button type="button" class="filter-sheet__reset" id="js-filter-reset">Ponastavi</button>
+    <button type="button" class="filter-sheet__apply" id="js-filter-apply">Pokaži rezultate</button>
+  </div>
+
+</div>
+
+<script type="text/javascript"><!--
+(function() {
+  var sheet    = document.getElementById('js-filter-sheet');
+  var overlay  = document.getElementById('js-filter-overlay');
+  var openBtn  = document.getElementById('filter-open');
+  var closeBtn = document.getElementById('js-filter-close');
+  var applyBtn = document.getElementById('js-filter-apply');
+  var resetBtn = document.getElementById('js-filter-reset');
+  if (!sheet) { return; }
+
+  // Populate categories — top-level parents + their direct children
+  var catSection  = document.getElementById('js-filter-categories');
+  var catList     = document.getElementById('js-filter-categories-list');
+  var heading     = document.querySelector('.cat-header__title');
+  var menuItems   = document.querySelectorAll('#menu .navbar-nav:first-child > li');
+  var currentName = heading ? heading.textContent.trim().toLowerCase() : '';
+
+  // Also check breadcrumb for parent match (when inside a subcategory)
+  var breadcrumbs = document.querySelectorAll('.cat-breadcrumb li a');
+  var parentNames = [];
+  for (var b = 0; b < breadcrumbs.length; b++) {
+    parentNames.push(breadcrumbs[b].textContent.trim().toLowerCase());
+  }
+
+  if (catList && menuItems.length > 0) {
+    catSection.style.display = '';
+
+    for (var i = 0; i < menuItems.length; i++) {
+      var topLink = menuItems[i].querySelector(':scope > a');
+      if (!topLink) { continue; }
+      var href = topLink.getAttribute('href');
+      if (!href || href === '#') { continue; }
+
+      var topText = topLink.textContent.replace(/\s+/g, ' ').trim();
+      var topLower = topText.toLowerCase();
+      var isCurrentParent = topLower === currentName || parentNames.indexOf(topLower) !== -1;
+
+      // Top-level parent link
+      var a = document.createElement('a');
+      a.href = href;
+      a.className = 'filter-item filter-item--link' + (topLower === currentName ? ' filter-item--active' : '');
+      a.textContent = topText;
+      catList.appendChild(a);
+
+      // Show direct children only under the active parent
+      if (isCurrentParent) {
+        var childLinks = menuItems[i].querySelectorAll('.dropdown-inner a');
+        for (var j = 0; j < childLinks.length; j++) {
+          var childText = childLinks[j].textContent.trim();
+          var child = document.createElement('a');
+          child.href = childLinks[j].href;
+          child.className = 'filter-item filter-item--link filter-item--sub';
+          if (childText.toLowerCase() === currentName) {
+            child.className += ' filter-item--active';
+          }
+          child.textContent = childText;
+          catList.appendChild(child);
+        }
+      }
+    }
+  }
+
+  // Populate manufacturers from JSON data on the page
+  var mfrSection = document.getElementById('js-filter-manufacturers');
+  var mfrList    = document.getElementById('js-filter-manufacturers-list');
+  var mfrDataEl  = document.getElementById('js-manufacturer-data');
+
+  if (mfrList && mfrDataEl) {
+    try {
+      var manufacturers = JSON.parse(mfrDataEl.textContent);
+      if (manufacturers.length > 0) {
+        mfrSection.style.display = '';
+        for (var m = 0; m < manufacturers.length; m++) {
+          var mfr = manufacturers[m];
+          var label = document.createElement('label');
+          label.className = 'filter-item';
+
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'filter-item__checkbox';
+          cb.name = 'manufacturer[]';
+          cb.value = mfr.manufacturer_id;
+          if (mfr.selected) { cb.checked = true; }
+
+          var span = document.createElement('span');
+          span.className = 'filter-item__label';
+          span.textContent = mfr.name;
+
+          label.appendChild(cb);
+          label.appendChild(span);
+          mfrList.appendChild(label);
+        }
+      }
+    } catch(e) {}
+  }
+
+  // Populate active filter chips
+  var chipsEl = document.getElementById('js-active-filters');
+  var activeDataEl = document.getElementById('js-active-filters-data');
+  var clearUrlEl = document.getElementById('js-clear-filters-url');
+
+  if (chipsEl && activeDataEl) {
+    try {
+      var activeFilters = JSON.parse(activeDataEl.textContent);
+      var clearUrl = clearUrlEl ? JSON.parse(clearUrlEl.textContent) : '#';
+      if (activeFilters.length > 0) {
+        chipsEl.style.display = '';
+        for (var c = 0; c < activeFilters.length; c++) {
+          (function(af) {
+            var chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'active-filters__chip';
+            chip.innerHTML = af.name + ' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+            chip.addEventListener('click', function() {
+              // Find and uncheck the matching checkbox
+              var selector = af.type === 'manufacturer'
+                ? 'input[name="manufacturer[]"]'
+                : 'input[name="filter[]"]';
+              var boxes = sheet.querySelectorAll(selector);
+              for (var b = 0; b < boxes.length; b++) {
+                var label = boxes[b].parentElement.querySelector('.filter-item__label');
+                if (label && label.textContent.trim() === af.name) {
+                  boxes[b].checked = false;
+                }
+              }
+              // Remove this chip
+              chip.remove();
+              // Hide chips container if empty
+              if (!chipsEl.querySelector('.active-filters__chip')) {
+                chipsEl.style.display = 'none';
+              }
+            });
+            chipsEl.appendChild(chip);
+          })(activeFilters[c]);
+        }
+        var clearLink = document.createElement('button');
+        clearLink.type = 'button';
+        clearLink.className = 'active-filters__clear';
+        clearLink.textContent = 'Počisti vse';
+        clearLink.addEventListener('click', function() {
+          // Uncheck all filter and manufacturer checkboxes
+          var allChecked = sheet.querySelectorAll('input[name="filter[]"], input[name="manufacturer[]"]');
+          for (var x = 0; x < allChecked.length; x++) {
+            allChecked[x].checked = false;
+          }
+          // Remove chips
+          chipsEl.style.display = 'none';
+          chipsEl.innerHTML = '';
+        });
+        chipsEl.appendChild(clearLink);
+      }
+    } catch(e) {}
+  }
+
+  function openSheet() {
+    sheet.classList.add('filter-sheet--open');
+    sheet.setAttribute('aria-hidden', 'false');
+    overlay.classList.add('filter-overlay--visible');
+    document.body.classList.add('filter-open');
+  }
+
+  function closeSheet() {
+    sheet.classList.remove('filter-sheet--open');
+    sheet.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('filter-overlay--visible');
+    document.body.classList.remove('filter-open');
+  }
+
+  var catOpenBtn = document.getElementById('categories-open');
+
+  var allSections = sheet.querySelectorAll('.filter-section');
+  var chipsWrap   = document.getElementById('js-active-filters');
+
+  function showAllSections() {
+    for (var s = 0; s < allSections.length; s++) { allSections[s].style.display = ''; }
+    if (chipsWrap) { chipsWrap.style.removeProperty('display'); }
+  }
+
+  if (openBtn) {
+    openBtn.addEventListener('click', function() {
+      showAllSections();
+      openSheet();
+    });
+  }
+  if (catOpenBtn) {
+    catOpenBtn.addEventListener('click', function() {
+      // Show only categories section
+      for (var s = 0; s < allSections.length; s++) {
+        if (allSections[s].id === 'js-filter-categories') {
+          allSections[s].style.display = '';
+          allSections[s].classList.remove('is-collapsed');
+        } else {
+          allSections[s].style.display = 'none';
+        }
+      }
+      if (chipsWrap) { chipsWrap.style.display = 'none'; }
+      openSheet();
+    });
+  }
+  if (closeBtn) { closeBtn.addEventListener('click', closeSheet); }
+  if (overlay)  { overlay.addEventListener('click', closeSheet); }
+
+  // Collapse/expand sections
+  var headers = sheet.querySelectorAll('.filter-section__header');
+  for (var h = 0; h < headers.length; h++) {
+    headers[h].style.cursor = 'pointer';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.key === 'Escape' || e.keyCode === 27) && sheet.classList.contains('filter-sheet--open')) {
+      closeSheet();
+    }
+  });
+
+  if (applyBtn) {
+    applyBtn.addEventListener('click', function() {
+      var url = '{{ action|escape('js') }}';
+
+      // OC filters
+      var checkedFilters = sheet.querySelectorAll('input[name="filter[]"]:checked');
+      var filterIds = [];
+      for (var i = 0; i < checkedFilters.length; i++) {
+        filterIds.push(checkedFilters[i].value);
+      }
+      if (filterIds.length > 0) {
+        url += '&filter=' + filterIds.join(',');
+      }
+
+      // Manufacturer filter
+      var checkedMfrs = sheet.querySelectorAll('input[name="manufacturer[]"]:checked');
+      var mfrIds = [];
+      for (var i = 0; i < checkedMfrs.length; i++) {
+        mfrIds.push(checkedMfrs[i].value);
+      }
+      if (mfrIds.length > 0) {
+        url += '&filter_manufacturer=' + mfrIds.join(',');
+      }
+
+      location = url;
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      location = '{{ action|escape('js') }}';
+    });
+  }
+})();
+//--></script>
+{% endif %}

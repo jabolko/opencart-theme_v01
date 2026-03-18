@@ -1,98 +1,100 @@
 {{ header }}
-<div id="product-category" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h2>{{ heading_title }}</h2>
-      {% if thumb or description %}
-      <div class="row"> {% if thumb %}
-        <div class="col-sm-2"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" class="img-thumbnail" /></div>
-        {% endif %}
-        {% if description %}
-        <div class="col-sm-10">{{ description }}</div>
-        {% endif %}</div>
-      <hr>
-      {% endif %}
-      {% if categories %}
-      <h3>{{ text_refine }}</h3>
-      {% if categories|length <= 5 %}
-      <div class="row">
-        <div class="col-sm-3">
-          <ul>
-            {% for category in categories %}
-            <li><a href="{{ category.href }}">{{ category.name }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-      {% else %}
-      <div class="row">{% for category in categories|batch((categories|length / 4)|round(1, 'ceil')) %}
-        <div class="col-sm-3">
-          <ul>
-            {% for child in category %}
-            <li><a href="{{ child.href }}">{{ child.name }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
-        {% endfor %}</div>
-      <br/>
-      {% endif %}
-      {% endif %}
-      {% if products %}
-      <div class="row">
-        <div class="col-md-2 col-sm-6 hidden-xs">
-          <div class="btn-group btn-group-sm">
-            <button type="button" id="list-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_list }}"><i class="fa fa-th-list"></i></button>
-            <button type="button" id="grid-view" class="btn btn-default" data-toggle="tooltip" title="{{ button_grid }}"><i class="fa fa-th"></i></button>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-          <div class="form-group"><a href="{{ compare }}" id="compare-total" class="btn btn-link">{{ text_compare }}</a></div>
-        </div>
-        <div class="col-md-4 col-xs-6">
-          <div class="form-group input-group input-group-sm">
-            <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
-            <select id="input-sort" class="form-control" onchange="location = this.value;">
-              {% for sorts in sorts %}
-              {% if sorts.value == '%s-%s'|format(sort, order) %}
-              <option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
-              {% else %}
-              <option value="{{ sorts.href }}">{{ sorts.text }}</option>
-              {% endif %}
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="col-md-3 col-xs-6">
-          <div class="form-group input-group input-group-sm">
-            <label class="input-group-addon" for="input-limit">{{ text_limit }}</label>
-            <select id="input-limit" class="form-control" onchange="location = this.value;">
-              {% for limits in limits %}
-              {% if limits.value == limit %}
-              <option value="{{ limits.href }}" selected="selected">{{ limits.text }}</option>
-              {% else %}
-              <option value="{{ limits.href }}">{{ limits.text }}</option>
-              {% endif %}
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="product-grid">
-        {% for product in products %}
-        <article class="product-card">
+<div id="product-category" class="cat-page">
+  <div class="container">
 
+    {# ── Breadcrumb ── #}
+    <ul class="cat-breadcrumb">
+      {% for breadcrumb in breadcrumbs %}
+      <li>
+        {% if not loop.last %}
+        <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+        <span class="cat-breadcrumb__sep">/</span>
+        {% else %}
+        <span class="cat-breadcrumb__current">{{ breadcrumb.text }}</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+
+    {# ── Category header ── #}
+    <div class="cat-header">
+      <div class="cat-header__row">
+        <h1 class="cat-header__title">{{ heading_title }}</h1>
+        {% if description %}
+        <button type="button" class="cat-header__toggle" id="js-desc-toggle">Pokaži opis</button>
+        {% endif %}
+      </div>
+      {% if description %}
+      <div class="cat-header__desc" id="js-desc-body">{{ description }}</div>
+      {% endif %}
+    </div>
+    <script type="text/javascript"><!--
+    (function(){
+      var btn = document.getElementById('js-desc-toggle');
+      var desc = document.getElementById('js-desc-body');
+      if (!btn || !desc) return;
+      btn.addEventListener('click', function(){
+        var open = desc.classList.toggle('cat-header__desc--open');
+        btn.textContent = open ? 'Skrij opis' : 'Pokaži opis';
+      });
+    })();
+    //--></script>
+
+    {# ── Subcategory pills ── #}
+    {% if categories %}
+    <div class="cat-subcats">
+      <div class="cat-subcats__scroll">
+        {% for category in categories %}
+        <a href="{{ category.href }}" class="cat-subcats__pill">{{ category.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if products %}
+    {# ── Toolbar ── #}
+    <div class="cat-toolbar">
+      <div class="cat-toolbar__row">
+        <button class="cat-toolbar__filter" type="button" id="categories-open">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+          Kategorije
+        </button>
+        <button class="cat-toolbar__filter" type="button" id="filter-open">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/>
+            <line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/>
+            <line x1="17" y1="16" x2="23" y2="16"/>
+          </svg>
+          Filtri
+        </button>
+      </div>
+      <div class="cat-toolbar__meta">
+        <span class="cat-toolbar__count">{{ product_total }} artiklov</span>
+        <div class="cat-toolbar__sort-wrap">
+          <select id="input-sort-meta" class="cat-toolbar__sort-plain" onchange="location = this.value;">
+            {% for sorts in sorts %}
+            {% if sorts.value == '%s-%s'|format(sort, order) %}
+            <option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+            {% else %}
+            <option value="{{ sorts.href }}">{{ sorts.text }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          <svg class="cat-toolbar__sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    {# ── Product grid ── #}
+    <div class="product-grid">
+      {% for product in products %}
+      <article class="product-card">
+
+        <div class="product-card__media">
           <a href="{{ product.href }}" class="product-card__img-wrap">
             <div class="product-card__img">
               <div class="product-card__labels">
@@ -101,60 +103,77 @@
               <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
             </div>
           </a>
+          <button class="product-card__fav"
+                  type="button"
+                  onclick="wishlist.add('{{ product.product_id }}');"
+                  aria-label="{{ button_wishlist }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
 
-          <div class="product-card__body">
-            <div class="product-card__info">
-              {% if product.manufacturer is defined and product.manufacturer %}
-              <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
+        <div class="product-card__body">
+          {% if product.manufacturer is defined and product.manufacturer %}
+          <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
+          {% endif %}
+          <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
+          <div class="product-card__footer">
+            <p class="product-card__price">
+              {% if product.special %}
+                <span class="product-card__price-new">{{ product.special }}</span>
+                <span class="product-card__price-old">{{ product.price }}</span>
+              {% else %}
+                {{ product.price }}
               {% endif %}
-              <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
-              <p class="product-card__price">
-                {% if product.special %}
-                  <span class="product-card__price-new">{{ product.special }}</span>
-                  <span class="product-card__price-old">{{ product.price }}</span>
-                {% else %}
-                  {{ product.price }}
-                {% endif %}
-              </p>
-            </div>
-            <div class="product-card__actions">
-              <button class="product-card__fav"
-                      type="button"
-                      onclick="wishlist.add('{{ product.product_id }}');"
-                      aria-label="{{ button_wishlist }}">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-              </button>
-              <div class="product-card__divider" aria-hidden="true"></div>
-              <button class="product-card__cart"
-                      type="button"
-                      onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
-                      aria-label="{{ button_cart }}">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="9" cy="21" r="1"/>
-                  <circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-                </svg>
-              </button>
-            </div>
+            </p>
+            <button class="product-card__cart"
+                    type="button"
+                    onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
+                    aria-label="{{ button_cart }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+              </svg>
+            </button>
           </div>
+        </div>
 
-        </article>
-        {% endfor %}
-      </div>
-      <div class="row">
-        <div class="col-sm-6 text-left">{{ pagination }}</div>
-        <div class="col-sm-6 text-right">{{ results }}</div>
-      </div>
-      {% endif %}
-      {% if not categories and not products %}
-      <p>{{ text_empty }}</p>
-      <div class="buttons">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
-      </div>
-      {% endif %}
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {# ── Pagination ── #}
+    <div class="cat-pagination">
+      <div class="cat-pagination__links">{{ pagination }}</div>
+      <div class="cat-pagination__results">{{ results }}</div>
+    </div>
+
+    {% endif %}
+
+    {% if not categories and not products %}
+    <p>{{ text_empty }}</p>
+    <div class="buttons">
+      <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+    </div>
+    {% endif %}
+
+    {# Manufacturer data for filter sheet #}
+    {% if manufacturers is defined and manufacturers %}
+    <script type="application/json" id="js-manufacturer-data">{{ manufacturers|json_encode|raw }}</script>
+    {% endif %}
+
+    {# Active filters data for filter sheet chips #}
+    {% if active_filters is defined and active_filters %}
+    <script type="application/json" id="js-active-filters-data">{{ active_filters|json_encode|raw }}</script>
+    <script type="application/json" id="js-clear-filters-url">"{{ clear_filters_url }}"</script>
+    {% endif %}
+
+    {{ column_left }}
+    {{ content_top }}
+    {{ content_bottom }}
+
+  </div>
 </div>
-{{ footer }} 
+{{ footer }}
