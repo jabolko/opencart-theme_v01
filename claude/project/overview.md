@@ -1,7 +1,7 @@
 # Project Overview
 
 ## Store Identity
-- **Store name:** Otroski Koticek (Otroški Kotíček — "Children's Corner")
+- **Store name:** Otroški Kotiček
 - **Language:** Slovenian (sl)
 - **Market:** Slovenia
 - **Audience:** Parents shopping for children's products (ages 0–12)

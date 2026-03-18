@@ -19,7 +19,8 @@
 │                                          │  Total: X       │
 │  [Coupon code input]  [Apply]            │                 │
 │                                          │  [Checkout btn] │
-│                                          │  [Continue btn] │
+│                                          │  [Continue btn]
+│                                          | [Coupon code input]  [Apply] |
 └──────────────────────────────────------- ┴─────────────────┘
 ```
 
@@ -44,7 +45,7 @@
 
 ## Checkout Button
 - Full-width primary button
-- Text: "Nadaljuj na plačilo" (Continue to payment)
+- Text: "Varno zaključi nakup" (Continue to payment)
 
 ## Continue Shopping
 - Secondary/ghost button or text link

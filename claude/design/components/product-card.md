@@ -1,4 +1,4 @@
-# Component Spec: Product Card
+ # Component Spec: Product Card
 
 ## SCSS Partial
 `stylesheet/src/components/_product-card.scss`

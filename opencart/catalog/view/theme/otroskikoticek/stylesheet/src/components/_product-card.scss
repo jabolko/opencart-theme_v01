@@ -7,10 +7,13 @@
 
 // =============================================================================
 // PRODUCT CARD  .product-card
-// Structure: image-wrap → img area (1:1) / body → info (left) + actions (right)
+// Structure: img-wrap (1:1) → fav (overlay) → body (manufacturer / name / footer)
+// Footer: price (left) + cart button (right)
 // =============================================================================
 
 .product-card {
+  display: flex;
+  flex-direction: column;
   background: $color-surface;
   border-radius: 0.94rem; // 16px ÷ 17
   overflow: hidden;
@@ -22,13 +25,18 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
   }
 
+  // Media container — wraps image + fav overlay
+  &__media {
+    position: relative;
+  }
+
   // Image link wrapper — block-level so it fills the image area
   &__img-wrap {
     display: block;
     text-decoration: none;
   }
 
-  // Image area: 1:1 square, white bg, product centred with padding
+  // Image area: 1:1 square, white bg, product centred
   &__img {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -58,29 +66,47 @@
     z-index: 3;
   }
 
-  // Info + action row
-  &__body {
+  // Favourite button — positioned bottom-right over the image
+  &__fav {
+    position: absolute;
+    top: 0.59rem; // 10px ÷ 17
+    right: 0.59rem;
+    z-index: 4;
+    width: 2.24rem; // 38px ÷ 17
+    height: 2.24rem;
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(86, 86, 86, 0.53);
+    padding: 0;
+    transition: color 0.25s ease;
+
+    &:hover,
+    &:focus {
+      color: #e74c3c;
+      outline: none;
+    }
   }
 
-  // Left: manufacturer / name / price
-  &__info {
-    flex: 1;
-    min-width: 0; // prevent flex child overflow
-    padding: $space-4 $space-4 $space-4 1.06rem; // 18px right/left
+  // Body — stacks manufacturer, name, footer vertically; content pinned to bottom
+  &__body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    flex: 1;
+    padding: $space-3 0.59rem $space-4 $space-4; // right: 10px ÷ 17
   }
 
   &__manufacturer {
     font-family: $font-family-heading;
     font-size: 0.80rem;
     font-weight: $font-weight-heading-semi;
-    color: $color-text-base;
+    color: $color-text-heading;
     text-transform: uppercase;
-    letter-spacing: 1.8px;
     margin: 0 0 0.12rem; // 2px ÷ 17
   }
 
@@ -89,7 +115,7 @@
     font-family: $font-family-heading;
     font-weight: $font-weight-heading-semi;
     font-size: 0.82rem;
-    color: $color-text-heading;
+    color: $color-text-base;
     line-height: 1.3;
     text-decoration: none;
     margin: 0 0 $space-2;
@@ -103,6 +129,13 @@
     &:focus {
       color: $color-primary-dark;
     }
+  }
+
+  // Footer row — price left, cart button right
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   &__price {
@@ -126,47 +159,7 @@
     margin-left: $space-1;
   }
 
-  // Right: fav + divider + cart — stacked vertically
-  &__actions {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0.71rem 0.82rem; // 12px 14px ÷ 17
-    flex-shrink: 0;
-  }
-
-  &__fav {
-    width: 2.24rem; // 38px ÷ 17
-    height: 2.24rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    border-radius: $radius-md;
-    cursor: pointer;
-    color: $color-border;
-    padding: 0;
-    transition: color 0.25s ease, background 0.25s ease;
-
-    &:hover,
-    &:focus {
-      color: #e74c3c;
-      background: rgba(231, 76, 60, 0.05);
-      outline: none;
-    }
-  }
-
-  &__divider {
-    width: 1.18rem; // 20px ÷ 17
-    height: 1px;
-    background: $color-border;
-    margin: $space-1 0;
-    flex-shrink: 0;
-  }
-
-  // Cart button — gold bg on hover (desktop only), tooltip via ::after
+  // Cart button — sits right of price in footer
   &__cart {
     width: 2.24rem; // 38px ÷ 17
     height: 2.24rem;
@@ -179,6 +172,7 @@
     cursor: pointer;
     color: $color-text-base;
     padding: 0;
+    flex-shrink: 0;
     position: relative;
     transition: color 0.25s ease, background 0.25s ease;
 

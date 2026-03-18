@@ -2,19 +2,29 @@
   {% for product in products %}
   <article class="product-card">
 
-    <a href="{{ product.href }}" class="product-card__img-wrap">
-      <div class="product-card__img">
-        <div class="product-card__labels"></div>
-        <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
-      </div>
-    </a>
+    <div class="product-card__media">
+      <a href="{{ product.href }}" class="product-card__img-wrap">
+        <div class="product-card__img">
+          <div class="product-card__labels"></div>
+          <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
+        </div>
+      </a>
+      <button class="product-card__fav"
+              type="button"
+              onclick="wishlist.add('{{ product.product_id }}');"
+              aria-label="{{ button_wishlist }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+    </div>
 
     <div class="product-card__body">
-      <div class="product-card__info">
-        {% if product.manufacturer %}
-        <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
-        {% endif %}
-        <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
+      {% if product.manufacturer %}
+      <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
+      {% endif %}
+      <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
+      <div class="product-card__footer">
         {% if product.price %}
         <p class="product-card__price">
           {% if product.special %}
@@ -25,17 +35,6 @@
           {% endif %}
         </p>
         {% endif %}
-      </div>
-      <div class="product-card__actions">
-        <button class="product-card__fav"
-                type="button"
-                onclick="wishlist.add('{{ product.product_id }}');"
-                aria-label="{{ button_wishlist }}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
-        </button>
-        <div class="product-card__divider" aria-hidden="true"></div>
         <button class="product-card__cart"
                 type="button"
                 onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"

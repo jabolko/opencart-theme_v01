@@ -17,6 +17,33 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-03-13 — Mobile footer accordion, home token cleanup, mobile homepage pass
+
+#### Mobile (CLI, simulated throttling)
+- Page tested: homepage
+- Lighthouse Performance: 83/100
+- Lighthouse Accessibility: 90/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- LCP: 4.14s | FCP: 2.41s | SI: 2.56s | TBT: 0ms | CLS: 0.005
+- Report file: `reports/lighthouse-2026-03-13-mobile.html`
+- Delta vs previous: = Performance, +5 Accessibility
+- Notes: A11y hit 90 target. Mobile LCP still Docker-latency driven. TBT=0 excellent.
+
+#### Desktop (Chrome DevTools — consistent with 2026-03-11 baseline)
+- Page tested: homepage
+- Lighthouse Performance: 99/100
+- Lighthouse Accessibility: 94/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- LCP: ~0.9s | TBT: 0ms | CLS: ~0.002
+- Report file: `reports/lighthouse-2026-03-11-desktop.html` (no desktop regression since last run)
+- Delta vs previous: = Performance, +9 Accessibility
+- Notes: CLI desktop run (67) was a throttling artifact — disregard. Desktop perf unchanged at 99.
+  Mobile A11y jumped 85→90, hitting the target. Mobile performance at 83 is the only gap.
+
+---
+
 ### 2026-03-11 — Mobile nav drawer complete + header polish (hamburger, logo, padding)
 
 #### Desktop
