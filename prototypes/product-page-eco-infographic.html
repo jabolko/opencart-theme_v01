@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Infographic — 5 Variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --green: #528e6d;
+            --green-dark: #3d7356;
+            --green-light: #e8f2ec;
+            --red: #d55e6f;
+            --red-light: rgba(213, 94, 111, 0.1);
+            --blue: #568cbe;
+            --blue-light: rgba(86, 140, 190, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ================================================================
+           V1 — PROGRESS BARS
+           Horizontal bars showing impact scale, infographic style
+           ================================================================ */
+        .v1-eco {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .v1-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v1-eco__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--heading);
+            margin-bottom: 20px;
+        }
+
+        .v1-eco__item {
+            margin-bottom: 18px;
+        }
+
+        .v1-eco__item:last-child { margin-bottom: 0; }
+
+        .v1-eco__item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .v1-eco__item-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--heading);
+        }
+
+        .v1-eco__item-stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .v1-eco__bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--surface-alt);
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .v1-eco__bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .v1-eco__bar-fill--people { width: 85%; background: var(--red); }
+        .v1-eco__bar-fill--co2 { width: 10%; background: var(--green); }
+        .v1-eco__bar-fill--water { width: 65%; background: var(--blue); }
+
+        .v1-eco__item-desc {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        /* ================================================================
+           V2 — DONUT CHART GRID
+           Three circular progress indicators in a row
+           ================================================================ */
+        .v2-eco {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .v2-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v2-eco__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--heading);
+            margin-bottom: 20px;
+        }
+
+        .v2-eco__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .v2-eco__col { text-align: center; }
+
+        .v2-eco__ring {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 8px;
+            position: relative;
+        }
+
+        .v2-eco__ring svg {
+            width: 80px;
+            height: 80px;
+            transform: rotate(-90deg);
+        }
+
+        .v2-eco__ring circle {
+            fill: none;
+            stroke-width: 5;
+            cx: 40;
+            cy: 40;
+            r: 35;
+        }
+
+        .v2-eco__ring .ring-bg { stroke: var(--surface-alt); }
+        .v2-eco__ring .ring-fill { stroke-linecap: round; }
+
+        .v2-eco__ring-stat {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--heading);
+            line-height: 1;
+        }
+
+        .v2-eco__ring-stat small {
+            display: block;
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        .v2-eco__col-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--heading);
+            line-height: 1.3;
+        }
+
+        /* ================================================================
+           V3 — TIMELINE / CONNECTED DOTS
+           Vertical timeline with connecting line, infographic feel
+           ================================================================ */
+        .v3-eco {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .v3-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v3-eco__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--heading);
+            margin-bottom: 20px;
+        }
+
+        .v3-eco__items {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        /* Vertical connecting line */
+        .v3-eco__items::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--red), var(--green), var(--blue));
+            border-radius: 1px;
+        }
+
+        .v3-eco__item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .v3-eco__item:last-child { padding-bottom: 0; }
+
+        .v3-eco__dot {
+            position: absolute;
+            left: -28px;
+            top: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid var(--white);
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+        }
+
+        .v3-eco__dot--people { background: var(--red); }
+        .v3-eco__dot--co2 { background: var(--green); }
+        .v3-eco__dot--water { background: var(--blue); }
+
+        .v3-eco__item-stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .v3-eco__item-stat--people { color: var(--red); }
+        .v3-eco__item-stat--co2 { color: var(--green); }
+        .v3-eco__item-stat--water { color: var(--blue); }
+
+        .v3-eco__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--heading);
+            margin-bottom: 3px;
+        }
+
+        .v3-eco__item-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ================================================================
+           V4 — COMPARISON BLOCKS
+           "New vs Used" visual comparison with icons
+           ================================================================ */
+        .v4-eco {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .v4-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v4-eco__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--heading);
+            margin-bottom: 10px;
+        }
+
+        .v4-eco__row {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .v4-eco__bad {
+            flex: 1;
+            padding: 14px;
+            background: rgba(213, 94, 111, 0.04);
+            border-right: 1px solid var(--border);
+        }
+
+        .v4-eco__good {
+            flex: 1;
+            padding: 14px;
+            background: rgba(82, 142, 109, 0.04);
+        }
+
+        .v4-eco__label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .v4-eco__label--bad { color: var(--red); }
+        .v4-eco__label--good { color: var(--green); }
+
+        .v4-eco__label svg {
+            width: 12px; height: 12px;
+            stroke: currentColor; fill: none; stroke-width: 2.5;
+        }
+
+        .v4-eco__stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--heading);
+            margin-bottom: 2px;
+        }
+
+        .v4-eco__desc {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        /* ================================================================
+           V5 — ICON MATRIX
+           Dense infographic with icon rows and data points
+           ================================================================ */
+        .v5-eco {
+            background: var(--charcoal-dark);
+            border-radius: 12px;
+            padding: 24px 18px;
+        }
+
+        .v5-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .v5-eco__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--white);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .v5-eco__item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .v5-eco__item:first-child { border-top: none; }
+
+        .v5-eco__number {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 80px;
+            text-align: right;
+        }
+
+        .v5-eco__number--people { color: #e88595; }
+        .v5-eco__number--co2 { color: #7dbe9a; }
+        .v5-eco__number--water { color: #7db8e0; }
+
+        .v5-eco__number small {
+            display: block;
+            font-size: 10px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.4);
+            margin-top: 2px;
+        }
+
+        .v5-eco__divider {
+            width: 2px;
+            height: 36px;
+            border-radius: 1px;
+            flex-shrink: 0;
+        }
+
+        .v5-eco__divider--people { background: var(--red); }
+        .v5-eco__divider--co2 { background: var(--green); }
+        .v5-eco__divider--water { background: var(--blue); }
+
+        .v5-eco__body { flex: 1; }
+
+        .v5-eco__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2px;
+        }
+
+        .v5-eco__item-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.45;
+        }
+
+        /* People icons row */
+        .v5-eco__people-row {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 6px;
+        }
+
+        .v5-eco__people-row svg {
+            width: 10px; height: 10px;
+            fill: none; stroke-width: 2;
+        }
+
+        .v5-eco__people-row svg.active { stroke: #e88595; }
+        .v5-eco__people-row svg.inactive { stroke: rgba(255,255,255,0.15); }
+    </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     V1 — PROGRESS BARS
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V1 — Progress Bars <span>Horizontal fill bars showing impact scale. Data visualization feel.</span></div>
+    <div class="v1-eco">
+        <div class="v1-eco__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v1-eco__title">Vpliv tekstilne industrije</h3>
+
+        <div class="v1-eco__item">
+            <div class="v1-eco__item-header">
+                <span class="v1-eco__item-label">Poceni delovna sila</span>
+                <span class="v1-eco__item-stat" style="color:var(--red)">&lt; 0,50 €/uro</span>
+            </div>
+            <div class="v1-eco__bar"><div class="v1-eco__bar-fill v1-eco__bar-fill--people"></div></div>
+            <div class="v1-eco__item-desc">Delavci v tretjem svetu delajo v razmerah, ki veljajo za suženjsko delo</div>
+        </div>
+
+        <div class="v1-eco__item">
+            <div class="v1-eco__item-header">
+                <span class="v1-eco__item-label">Emisije CO₂</span>
+                <span class="v1-eco__item-stat" style="color:var(--green)">10% vseh emisij</span>
+            </div>
+            <div class="v1-eco__bar"><div class="v1-eco__bar-fill v1-eco__bar-fill--co2" style="width:100%"></div></div>
+            <div class="v1-eco__item-desc">Več kot vsi mednarodni leti in pomorski promet skupaj</div>
+        </div>
+
+        <div class="v1-eco__item">
+            <div class="v1-eco__item-header">
+                <span class="v1-eco__item-label">Poraba vode</span>
+                <span class="v1-eco__item-stat" style="color:var(--blue)">93 mrd m³</span>
+            </div>
+            <div class="v1-eco__bar"><div class="v1-eco__bar-fill v1-eco__bar-fill--water"></div></div>
+            <div class="v1-eco__item-desc">Enako kot potrebuje 200 milijonov ljudi letno</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V2 — DONUT RINGS
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V2 — Donut Rings <span>Circular progress indicators. Classic infographic element.</span></div>
+    <div class="v2-eco">
+        <div class="v2-eco__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v2-eco__title">Tvoja izbira šteje</h3>
+        <div class="v2-eco__grid">
+            <div class="v2-eco__col">
+                <div class="v2-eco__ring">
+                    <svg viewBox="0 0 80 80">
+                        <circle class="ring-bg" />
+                        <circle class="ring-fill" stroke="#d55e6f" stroke-dasharray="187 220" />
+                    </svg>
+                    <div class="v2-eco__ring-stat">0,50€<small>na uro</small></div>
+                </div>
+                <div class="v2-eco__col-title">Poceni delovna sila</div>
+            </div>
+            <div class="v2-eco__col">
+                <div class="v2-eco__ring">
+                    <svg viewBox="0 0 80 80">
+                        <circle class="ring-bg" />
+                        <circle class="ring-fill" stroke="#528e6d" stroke-dasharray="22 220" />
+                    </svg>
+                    <div class="v2-eco__ring-stat">10%<small>emisij</small></div>
+                </div>
+                <div class="v2-eco__col-title">Toplogredni plini</div>
+            </div>
+            <div class="v2-eco__col">
+                <div class="v2-eco__ring">
+                    <svg viewBox="0 0 80 80">
+                        <circle class="ring-bg" />
+                        <circle class="ring-fill" stroke="#568cbe" stroke-dasharray="143 220" />
+                    </svg>
+                    <div class="v2-eco__ring-stat">93<small>mrd m³</small></div>
+                </div>
+                <div class="v2-eco__col-title">Poraba vode letno</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V3 — TIMELINE / CONNECTED DOTS
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V3 — Timeline <span>Vertical connected dots with gradient line. Story-telling infographic.</span></div>
+    <div class="v3-eco">
+        <div class="v3-eco__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v3-eco__title">Vpliv tekstilne industrije</h3>
+        <div class="v3-eco__items">
+            <div class="v3-eco__item">
+                <div class="v3-eco__dot v3-eco__dot--people"></div>
+                <div class="v3-eco__item-stat v3-eco__item-stat--people">&lt; 0,50 €</div>
+                <div class="v3-eco__item-title">Plačilo na uro v tretjem svetu</div>
+                <p class="v3-eco__item-text">Večina novih oblačil je narejena v razmerah, ki veljajo za suženjsko delo. Tudi otroci.</p>
+            </div>
+            <div class="v3-eco__item">
+                <div class="v3-eco__dot v3-eco__dot--co2"></div>
+                <div class="v3-eco__item-stat v3-eco__item-stat--co2">10%</div>
+                <div class="v3-eco__item-title">Vseh svetovnih emisij CO₂</div>
+                <p class="v3-eco__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj.</p>
+            </div>
+            <div class="v3-eco__item">
+                <div class="v3-eco__dot v3-eco__dot--water"></div>
+                <div class="v3-eco__item-stat v3-eco__item-stat--water">93 mrd m³</div>
+                <div class="v3-eco__item-title">Vode porabljene letno</div>
+                <p class="v3-eco__item-text">Enako kot potrebuje 200 milijonov ljudi — celotna populacija Nemčije, Francije in Španije.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V4 — COMPARISON (NEW vs USED)
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V4 — New vs Used <span>Side-by-side comparison. Red=problem, green=solution. Clear contrast.</span></div>
+    <div class="v4-eco">
+        <div class="v4-eco__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v4-eco__title">Novo vs. nežno rabljeno</h3>
+
+        <div class="v4-eco__row">
+            <div class="v4-eco__bad">
+                <div class="v4-eco__label v4-eco__label--bad">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Novo oblačilo
+                </div>
+                <div class="v4-eco__stat">&lt; 0,50 €</div>
+                <div class="v4-eco__desc">plačilo delavcu na uro v tretjem svetu</div>
+            </div>
+            <div class="v4-eco__good">
+                <div class="v4-eco__label v4-eco__label--good">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Nežno rabljeno
+                </div>
+                <div class="v4-eco__stat">0 €</div>
+                <div class="v4-eco__desc">brez izkoriščanja delovne sile</div>
+            </div>
+        </div>
+
+        <div class="v4-eco__row">
+            <div class="v4-eco__bad">
+                <div class="v4-eco__label v4-eco__label--bad">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Novo oblačilo
+                </div>
+                <div class="v4-eco__stat">10%</div>
+                <div class="v4-eco__desc">vseh emisij CO₂ na svetu</div>
+            </div>
+            <div class="v4-eco__good">
+                <div class="v4-eco__label v4-eco__label--good">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Nežno rabljeno
+                </div>
+                <div class="v4-eco__stat">0%</div>
+                <div class="v4-eco__desc">nič novih emisij</div>
+            </div>
+        </div>
+
+        <div class="v4-eco__row">
+            <div class="v4-eco__bad">
+                <div class="v4-eco__label v4-eco__label--bad">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Novo oblačilo
+                </div>
+                <div class="v4-eco__stat">93 mrd</div>
+                <div class="v4-eco__desc">m³ vode porabljene letno</div>
+            </div>
+            <div class="v4-eco__good">
+                <div class="v4-eco__label v4-eco__label--good">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    Nežno rabljeno
+                </div>
+                <div class="v4-eco__stat">0 m³</div>
+                <div class="v4-eco__desc">vode prihranimo</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V5 — DARK DATA DASHBOARD
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V5 — Data Dashboard <span>Dark background, bold numbers + color dividers. Data-first, visual impact.</span></div>
+    <div class="v5-eco">
+        <div class="v5-eco__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v5-eco__title">Vpliv tekstilne industrije</h3>
+
+        <div class="v5-eco__item">
+            <div class="v5-eco__number v5-eco__number--people">0,50€<small>plačilo / uro</small></div>
+            <div class="v5-eco__divider v5-eco__divider--people"></div>
+            <div class="v5-eco__body">
+                <div class="v5-eco__item-title">Poceni delovna sila</div>
+                <div class="v5-eco__item-text">Delavci v tretjem svetu — tudi otroci — delajo za manj kot pol evra na uro</div>
+            </div>
+        </div>
+
+        <div class="v5-eco__item">
+            <div class="v5-eco__number v5-eco__number--co2">10%<small>emisij CO₂</small></div>
+            <div class="v5-eco__divider v5-eco__divider--co2"></div>
+            <div class="v5-eco__body">
+                <div class="v5-eco__item-title">Emisije toplogrednih plinov</div>
+                <div class="v5-eco__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj</div>
+            </div>
+        </div>
+
+        <div class="v5-eco__item">
+            <div class="v5-eco__number v5-eco__number--water">93<small>mrd m³ vode</small></div>
+            <div class="v5-eco__divider v5-eco__divider--water"></div>
+            <div class="v5-eco__body">
+                <div class="v5-eco__item-title">Poraba vode</div>
+                <div class="v5-eco__item-text">Enako kot potrebuje 200 milijonov ljudi letno</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

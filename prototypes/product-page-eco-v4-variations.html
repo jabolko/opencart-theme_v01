@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New vs Used — 5 Sub-variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --green: #528e6d;
+            --green-dark: #3d7356;
+            --green-light: #e8f2ec;
+            --red: #d55e6f;
+            --red-light: rgba(213, 94, 111, 0.05);
+            --green-wash: rgba(82, 142, 109, 0.05);
+            --blue: #568cbe;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ================================================================
+           V1 — FULL CONTEXT COMPARISON
+           Side-by-side with explanatory text below each pair
+           ================================================================ */
+        .v1 {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .v1__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v1__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--heading);
+            margin-bottom: 18px;
+        }
+
+        .v1__block {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .v1__block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .v1__block-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--heading);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .v1__block-title svg {
+            width: 16px; height: 16px;
+            fill: none; stroke-width: 2;
+        }
+
+        .v1__block-title--people svg { stroke: var(--red); }
+        .v1__block-title--co2 svg { stroke: var(--green); }
+        .v1__block-title--water svg { stroke: var(--blue); }
+
+        .v1__row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .v1__side {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 8px;
+        }
+
+        .v1__side--bad { background: var(--red-light); }
+        .v1__side--good { background: var(--green-wash); }
+
+        .v1__side-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .v1__side-label--bad { color: var(--red); }
+        .v1__side-label--good { color: var(--green); }
+
+        .v1__side-label svg {
+            width: 10px; height: 10px;
+            stroke: currentColor; fill: none; stroke-width: 2.5;
+        }
+
+        .v1__side-stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--heading);
+        }
+
+        .v1__context {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ================================================================
+           V2 — STACKED WITH PROGRESS BAR
+           Each topic as row: context + red/green bar comparison
+           ================================================================ */
+        .v2 {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .v2__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v2__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--heading);
+            margin-bottom: 18px;
+        }
+
+        .v2__item {
+            margin-bottom: 18px;
+        }
+
+        .v2__item:last-child { margin-bottom: 0; }
+
+        .v2__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+            margin-bottom: 4px;
+        }
+
+        .v2__item-context {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .v2__bars {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .v2__bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .v2__bar-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            width: 55px;
+            flex-shrink: 0;
+            text-align: right;
+        }
+
+        .v2__bar-label--bad { color: var(--red); }
+        .v2__bar-label--good { color: var(--green); }
+
+        .v2__bar {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--surface-alt);
+        }
+
+        .v2__bar-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .v2__bar-fill--bad { background: var(--red); }
+        .v2__bar-fill--good { background: var(--green); }
+
+        .v2__bar-stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            color: var(--heading);
+            width: 55px;
+            flex-shrink: 0;
+        }
+
+        /* ================================================================
+           V3 — CARD PER TOPIC WITH FLIP CONTEXT
+           Each topic as its own mini card with "did you know" text
+           ================================================================ */
+        .v3 {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .v3__header {
+            margin-bottom: 4px;
+        }
+
+        .v3__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .v3__card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .v3__card-top {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .v3__side {
+            flex: 1;
+            text-align: center;
+            padding: 10px 8px;
+            border-radius: 8px;
+        }
+
+        .v3__side--bad { background: var(--red-light); }
+        .v3__side--good { background: var(--green-wash); }
+
+        .v3__side-icon {
+            margin-bottom: 4px;
+        }
+
+        .v3__side-icon svg {
+            width: 14px; height: 14px;
+            fill: none; stroke-width: 2.5;
+        }
+
+        .v3__side--bad .v3__side-icon svg { stroke: var(--red); }
+        .v3__side--good .v3__side-icon svg { stroke: var(--green); }
+
+        .v3__side-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 2px;
+        }
+
+        .v3__side--bad .v3__side-label { color: var(--red); }
+        .v3__side--good .v3__side-label { color: var(--green); }
+
+        .v3__side-stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--heading);
+            line-height: 1.1;
+        }
+
+        .v3__side-unit {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .v3__card-context {
+            font-size: 12px;
+            color: var(--charcoal);
+            line-height: 1.55;
+            padding: 10px 12px;
+            background: var(--surface-alt);
+            border-radius: 8px;
+        }
+
+        .v3__card-context strong {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: var(--heading);
+        }
+
+        /* ================================================================
+           V4 — SINGLE DARK CARD, TABULAR
+           Dense comparison table on dark background
+           ================================================================ */
+        .v4 {
+            background: var(--charcoal-dark);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .v4__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .v4__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--white);
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .v4__table-header {
+            display: flex;
+            padding: 0 0 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 4px;
+        }
+
+        .v4__th {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .v4__th:first-child { flex: 1.2; color: rgba(255,255,255,0.4); }
+        .v4__th:nth-child(2) { flex: 1; text-align: center; color: var(--red); }
+        .v4__th:nth-child(3) { flex: 1; text-align: center; color: var(--green); }
+
+        .v4__row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .v4__row:last-child { border-bottom: none; }
+
+        .v4__cell {
+            font-size: 12px;
+        }
+
+        .v4__cell:first-child {
+            flex: 1.2;
+            color: rgba(255,255,255,0.7);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        .v4__cell:nth-child(2) {
+            flex: 1;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .v4__cell:nth-child(3) {
+            flex: 1;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--green);
+        }
+
+        .v4__context {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .v4__context p {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.55;
+            margin-bottom: 6px;
+        }
+
+        .v4__context p:last-child { margin-bottom: 0; }
+
+        .v4__context svg {
+            width: 12px; height: 12px;
+            stroke: currentColor; fill: none; stroke-width: 2;
+            vertical-align: -2px;
+            margin-right: 3px;
+        }
+
+        .v4__context .ctx-people { color: rgba(213, 94, 111, 0.6); }
+        .v4__context .ctx-co2 { color: rgba(82, 142, 109, 0.6); }
+        .v4__context .ctx-water { color: rgba(86, 140, 190, 0.6); }
+
+        /* ================================================================
+           V5 — BEFORE/AFTER SLIDER FEEL
+           Visual split with arrow in the middle
+           ================================================================ */
+        .v5 {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .v5__header {
+            padding: 18px 18px 14px;
+        }
+
+        .v5__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+        }
+
+        .v5__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--heading);
+        }
+
+        .v5__item {
+            display: flex;
+            border-top: 1px solid var(--border);
+        }
+
+        .v5__bad {
+            flex: 1;
+            padding: 14px 14px;
+            background: var(--red-light);
+            position: relative;
+        }
+
+        .v5__good {
+            flex: 1;
+            padding: 14px 14px;
+            background: var(--green-wash);
+        }
+
+        .v5__divider {
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        .v5__divider svg {
+            width: 12px; height: 12px;
+            stroke: var(--muted); fill: none; stroke-width: 2.5;
+        }
+
+        .v5__label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .v5__bad .v5__label { color: var(--red); }
+        .v5__good .v5__label { color: var(--green); }
+
+        .v5__stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--heading);
+            margin-bottom: 2px;
+        }
+
+        .v5__desc {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .v5__footer {
+            padding: 12px 18px 16px;
+            font-size: 12px;
+            color: var(--charcoal);
+            line-height: 1.55;
+        }
+
+        .v5__footer strong {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: var(--heading);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     V1 — FULL CONTEXT COMPARISON
+     Side-by-side + explanatory paragraph per topic
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V1 — Full Context <span>Side-by-side stats + explanatory paragraph below each. Complete story.</span></div>
+    <div class="v1">
+        <div class="v1__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v1__title">Novo vs. nežno rabljeno</h3>
+
+        <div class="v1__block">
+            <div class="v1__block-title v1__block-title--people">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                Delovna sila
+            </div>
+            <div class="v1__row">
+                <div class="v1__side v1__side--bad">
+                    <div class="v1__side-label v1__side-label--bad"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Novo</div>
+                    <div class="v1__side-stat">&lt; 0,50 €/h</div>
+                </div>
+                <div class="v1__side v1__side--good">
+                    <div class="v1__side-label v1__side-label--good"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Rabljeno</div>
+                    <div class="v1__side-stat">0 €</div>
+                </div>
+            </div>
+            <p class="v1__context">Večina novih oblačil je narejena v državah tretjega sveta, kjer delavci — tudi otroci — za uro dela prejmejo manj kot pol evra. Z nakupom rabljenega tega ne podpirate.</p>
+        </div>
+
+        <div class="v1__block">
+            <div class="v1__block-title v1__block-title--co2">
+                <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg>
+                Emisije CO₂
+            </div>
+            <div class="v1__row">
+                <div class="v1__side v1__side--bad">
+                    <div class="v1__side-label v1__side-label--bad"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Novo</div>
+                    <div class="v1__side-stat">10%</div>
+                </div>
+                <div class="v1__side v1__side--good">
+                    <div class="v1__side-label v1__side-label--good"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Rabljeno</div>
+                    <div class="v1__side-stat">0%</div>
+                </div>
+            </div>
+            <p class="v1__context">Do 10% vseh svetovnih emisij toplogrednih plinov nastane pri izdelavi oblačil — več kot pri vseh mednarodnih letih in pomorskem prometu skupaj.</p>
+        </div>
+
+        <div class="v1__block">
+            <div class="v1__block-title v1__block-title--water">
+                <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
+                Poraba vode
+            </div>
+            <div class="v1__row">
+                <div class="v1__side v1__side--bad">
+                    <div class="v1__side-label v1__side-label--bad"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Novo</div>
+                    <div class="v1__side-stat">93 mrd m³</div>
+                </div>
+                <div class="v1__side v1__side--good">
+                    <div class="v1__side-label v1__side-label--good"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Rabljeno</div>
+                    <div class="v1__side-stat">0 m³</div>
+                </div>
+            </div>
+            <p class="v1__context">Tekstilna industrija letno porabi enako količino vode kot potrebuje 200 milijonov ljudi — celotna populacija Nemčije, Francije in Španije.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V2 — BARS WITH CONTEXT
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V2 — Bars + Context <span>Comparison bars with full explanatory text per topic.</span></div>
+    <div class="v2">
+        <div class="v2__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v2__title">Novo vs. nežno rabljeno</h3>
+
+        <div class="v2__item">
+            <div class="v2__item-title">Delovna sila</div>
+            <div class="v2__item-context">Večina novih oblačil je narejena v tretjem svetu, kjer delavci — tudi otroci — za uro dela prejmejo manj kot pol evra v razmerah suženjskega dela.</div>
+            <div class="v2__bars">
+                <div class="v2__bar-row">
+                    <span class="v2__bar-label v2__bar-label--bad">Novo</span>
+                    <div class="v2__bar"><div class="v2__bar-fill v2__bar-fill--bad" style="width:90%"></div></div>
+                    <span class="v2__bar-stat">&lt; 0,50 €</span>
+                </div>
+                <div class="v2__bar-row">
+                    <span class="v2__bar-label v2__bar-label--good">Rabljeno</span>
+                    <div class="v2__bar"><div class="v2__bar-fill v2__bar-fill--good" style="width:0%"></div></div>
+                    <span class="v2__bar-stat">0 €</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="v2__item">
+            <div class="v2__item-title">Emisije CO₂</div>
+            <div class="v2__item-context">Do 10% vseh svetovnih emisij nastane pri izdelavi oblačil — več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+            <div class="v2__bars">
+                <div class="v2__bar-row">
+                    <span class="v2__bar-label v2__bar-label--bad">Novo</span>
+                    <div class="v2__bar"><div class="v2__bar-fill v2__bar-fill--bad" style="width:100%"></div></div>
+                    <span class="v2__bar-stat">10%</span>
+                </div>
+                <div class="v2__bar-row">
+                    <span class="v2__bar-label v2__bar-label--good">Rabljeno</span>
+                    <div class="v2__bar"><div class="v2__bar-fill v2__bar-fill--good" style="width:0%"></div></div>
+                    <span class="v2__bar-stat">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="v2__item">
+            <div class="v2__item-title">Poraba vode</div>
+            <div class="v2__item-context">Tekstilna industrija letno porabi 93 milijard m³ vode — enako kot potrebuje 200 milijonov ljudi. Celotna populacija Nemčije, Francije in Španije.</div>
+            <div class="v2__bars">
+                <div class="v2__bar-row">
+                    <span class="v2__bar-label v2__bar-label--bad">Novo</span>
+                    <div class="v2__bar"><div class="v2__bar-fill v2__bar-fill--bad" style="width:75%"></div></div>
+                    <span class="v2__bar-stat">93 mrd m³</span>
+                </div>
+                <div class="v2__bar-row">
+                    <span class="v2__bar-label v2__bar-label--good">Rabljeno</span>
+                    <div class="v2__bar"><div class="v2__bar-fill v2__bar-fill--good" style="width:0%"></div></div>
+                    <span class="v2__bar-stat">0 m³</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V3 — CARD PER TOPIC
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V3 — Topic Cards <span>One card per topic. Numbers on top, "did you know" context below.</span></div>
+    <div class="v3">
+        <div class="v3__header">
+            <div class="v3__eyebrow">Zakaj nežno rabljeno?</div>
+        </div>
+
+        <div class="v3__card">
+            <div class="v3__card-top">
+                <div class="v3__side v3__side--bad">
+                    <div class="v3__side-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                    <div class="v3__side-label">Novo oblačilo</div>
+                    <div class="v3__side-stat">&lt; 0,50 €</div>
+                    <div class="v3__side-unit">plačilo / uro</div>
+                </div>
+                <div class="v3__side v3__side--good">
+                    <div class="v3__side-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="v3__side-label">Nežno rabljeno</div>
+                    <div class="v3__side-stat">0 €</div>
+                    <div class="v3__side-unit">izkoriščanja</div>
+                </div>
+            </div>
+            <div class="v3__card-context"><strong>Ali ste vedeli?</strong> Delavci v tretjem svetu — tudi otroci — za uro dela prejmejo manj kot pol evra. Delajo v razmerah, ki veljajo za suženjsko delo.</div>
+        </div>
+
+        <div class="v3__card">
+            <div class="v3__card-top">
+                <div class="v3__side v3__side--bad">
+                    <div class="v3__side-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                    <div class="v3__side-label">Novo oblačilo</div>
+                    <div class="v3__side-stat">10%</div>
+                    <div class="v3__side-unit">emisij CO₂</div>
+                </div>
+                <div class="v3__side v3__side--good">
+                    <div class="v3__side-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="v3__side-label">Nežno rabljeno</div>
+                    <div class="v3__side-stat">0%</div>
+                    <div class="v3__side-unit">novih emisij</div>
+                </div>
+            </div>
+            <div class="v3__card-context"><strong>Ali ste vedeli?</strong> Do 10% vseh svetovnih emisij toplogrednih plinov nastane pri izdelavi oblačil — več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+        </div>
+
+        <div class="v3__card">
+            <div class="v3__card-top">
+                <div class="v3__side v3__side--bad">
+                    <div class="v3__side-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                    <div class="v3__side-label">Novo oblačilo</div>
+                    <div class="v3__side-stat">93 mrd</div>
+                    <div class="v3__side-unit">m³ vode / leto</div>
+                </div>
+                <div class="v3__side v3__side--good">
+                    <div class="v3__side-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div class="v3__side-label">Nežno rabljeno</div>
+                    <div class="v3__side-stat">0 m³</div>
+                    <div class="v3__side-unit">prihranimo</div>
+                </div>
+            </div>
+            <div class="v3__card-context"><strong>Ali ste vedeli?</strong> Tekstilna industrija letno porabi enako količino vode kot potrebuje 200 milijonov ljudi — celotna populacija Nemčije, Francije in Španije skupaj.</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V4 — DARK TABLE + FOOTNOTES
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V4 — Dark Table <span>Clean comparison table + contextual footnotes. Dense but readable.</span></div>
+    <div class="v4">
+        <div class="v4__eyebrow">Zakaj nežno rabljeno?</div>
+        <h3 class="v4__title">Novo vs. nežno rabljeno</h3>
+
+        <div class="v4__table-header">
+            <span class="v4__th"></span>
+            <span class="v4__th">Novo</span>
+            <span class="v4__th">Rabljeno</span>
+        </div>
+
+        <div class="v4__row">
+            <span class="v4__cell">Delovna sila</span>
+            <span class="v4__cell">&lt; 0,50 €/h</span>
+            <span class="v4__cell">0 €</span>
+        </div>
+        <div class="v4__row">
+            <span class="v4__cell">Emisije CO₂</span>
+            <span class="v4__cell">do 10%</span>
+            <span class="v4__cell">0%</span>
+        </div>
+        <div class="v4__row">
+            <span class="v4__cell">Poraba vode</span>
+            <span class="v4__cell">93 mrd m³</span>
+            <span class="v4__cell">0 m³</span>
+        </div>
+
+        <div class="v4__context">
+            <p class="ctx-people"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Delavci v tretjem svetu — tudi otroci — delajo v razmerah suženjskega dela za manj kot pol evra na uro.</p>
+            <p class="ctx-co2"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg>Tekstilna industrija ustvari več emisij kot vsi mednarodni leti in pomorski promet skupaj.</p>
+            <p class="ctx-water"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>93 milijard m³ vode letno — enako kot potrebuje 200 milijonov ljudi.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V5 — SPLIT WITH ARROW DIVIDER
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V5 — Split + Arrow <span>Visual red/green split with arrow divider. Before/after energy.</span></div>
+    <div class="v5">
+        <div class="v5__header">
+            <div class="v5__eyebrow">Zakaj nežno rabljeno?</div>
+            <h3 class="v5__title">Novo vs. nežno rabljeno</h3>
+        </div>
+
+        <div class="v5__item">
+            <div class="v5__bad">
+                <div class="v5__label">Novo oblačilo</div>
+                <div class="v5__stat">&lt; 0,50 €</div>
+                <div class="v5__desc">plačilo na uro</div>
+                <div class="v5__divider"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
+            </div>
+            <div class="v5__good">
+                <div class="v5__label">Nežno rabljeno</div>
+                <div class="v5__stat">0 €</div>
+                <div class="v5__desc">brez izkoriščanja</div>
+            </div>
+        </div>
+
+        <div class="v5__item">
+            <div class="v5__bad">
+                <div class="v5__label">Novo oblačilo</div>
+                <div class="v5__stat">10%</div>
+                <div class="v5__desc">emisij CO₂</div>
+                <div class="v5__divider"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
+            </div>
+            <div class="v5__good">
+                <div class="v5__label">Nežno rabljeno</div>
+                <div class="v5__stat">0%</div>
+                <div class="v5__desc">nič novih emisij</div>
+            </div>
+        </div>
+
+        <div class="v5__item">
+            <div class="v5__bad">
+                <div class="v5__label">Novo oblačilo</div>
+                <div class="v5__stat">93 mrd m³</div>
+                <div class="v5__desc">vode letno</div>
+                <div class="v5__divider"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
+            </div>
+            <div class="v5__good">
+                <div class="v5__label">Nežno rabljeno</div>
+                <div class="v5__stat">0 m³</div>
+                <div class="v5__desc">vode prihranimo</div>
+            </div>
+        </div>
+
+        <div class="v5__footer">
+            <strong>Vsak nakup rabljenega oblačila pomeni:</strong> nobene poceni delovne sile, nič novih emisij CO₂ in nič porabljene vode. Skupaj naredimo razliko.
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

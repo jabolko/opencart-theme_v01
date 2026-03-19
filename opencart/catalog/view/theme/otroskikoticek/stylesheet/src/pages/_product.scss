@@ -1,7 +1,623 @@
 // =============================================================================
-// _product.scss — Single product page. Scoped to body#product-product.
-// See claude/design/components/product-page.md
+// _product.scss — Product detail page (PDP) — V1 Hero Attribute Banner
+// Mobile-first. Desktop layered via respond-to().
 // =============================================================================
 @use '../abstracts' as *;
 
-// Styles go here
+// =============================================================================
+// PAGE WRAPPER  .pdp-page
+// =============================================================================
+.pdp-page {
+  background: $color-surface-alt;
+  padding-bottom: $space-12;
+
+  .container {
+    max-width: 100%;
+    padding-left: $space-3;
+    padding-right: $space-3;
+
+    @include respond-below('sm') {
+      padding-top: 3.20rem; // clear fixed mobile header
+    }
+
+    @include respond-to('sm') {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+}
+
+// =============================================================================
+// BREADCRUMB  .pdp-breadcrumb
+// =============================================================================
+.pdp-breadcrumb {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+  padding: $space-2 0;
+  font-size: 0.72rem;
+  color: $color-text-muted;
+
+  li { display: inline-flex; align-items: center; gap: $space-1; }
+
+  a {
+    color: $color-text-base;
+    text-decoration: none;
+    &:hover { color: $color-primary-dark; }
+  }
+
+  &__sep { color: $color-text-muted; }
+  &__current { color: $color-text-muted; }
+}
+
+// =============================================================================
+// IMAGE GALLERY  .pdp-gallery (swipeable, dot indicators)
+// =============================================================================
+.pdp-gallery {
+  position: relative;
+  overflow: hidden;
+  border-radius: $radius-lg;
+  background: $color-surface;
+
+  &__track {
+    display: flex;
+    transition: transform 0.35s ease;
+  }
+
+  &__slide {
+    flex: 0 0 100%;
+    min-width: 0;
+
+    a { display: block; }
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  }
+
+  &__dots {
+    position: absolute;
+    bottom: 0.71rem; // 12px
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem; // 6px
+  }
+
+  &__dot {
+    width: 0.47rem; // 8px
+    height: 0.47rem;
+    border-radius: 50%;
+    background: $color-border;
+    transition: background 0.25s ease;
+
+    &.is-active { background: $color-primary; }
+  }
+
+  &__fav {
+    position: absolute;
+    bottom: 0.71rem; // 12px
+    right: 0.71rem;
+    width: 2.12rem; // 36px
+    height: 2.12rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.2s ease, transform 0.1s ease;
+
+    &:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 1);
+    }
+
+    svg {
+      width: 1.47rem; // 25px
+      height: 1.47rem;
+      stroke: $color-text-base;
+      fill: none;
+    }
+  }
+}
+
+// =============================================================================
+// PRODUCT INFO  .pdp-info
+// =============================================================================
+.pdp-info {
+  padding: $space-4;
+  border-radius: $radius-lg;
+  margin-top: $space-3;
+
+  &__brand {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.18rem; // 20px
+    color: $color-text-heading;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.12rem;
+
+    &:hover { color: $color-primary-dark; }
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.88rem; // 15px
+    color: $color-text-base;
+    line-height: 1.3;
+    margin-bottom: $space-2;
+  }
+
+  &__scarcity {
+    font-size: 0.71rem; // 12px
+    color: $color-error;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    margin-bottom: $space-2;
+  }
+
+  &__price {
+    display: flex;
+    align-items: baseline;
+    gap: $space-2;
+    margin-bottom: $space-4;
+  }
+
+  &__price-current {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.29rem; // 22px
+    color: $color-text-heading;
+  }
+
+  &__price-new {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.29rem;
+    color: $color-text-heading;
+  }
+
+  &__price-old {
+    font-size: 0.82rem;
+    color: $color-text-muted;
+    text-decoration: line-through;
+  }
+
+  &__minimum {
+    font-size: 0.76rem;
+    color: $color-warning;
+    margin-top: $space-2;
+  }
+}
+
+// =============================================================================
+// CART BUTTON  .pdp-cart-btn
+// =============================================================================
+.pdp-cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  width: 100%;
+  padding: 0.82rem; // 14px
+  border: none;
+  border-radius: $radius-md;
+  background: $color-primary;
+  color: $color-text-heading;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 0.94rem; // 16px
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover { background: $color-primary-light; }
+  &:active {
+    background: $color-primary-dark;
+    transform: scale(0.98);
+  }
+
+  svg { flex-shrink: 0; }
+}
+
+// =============================================================================
+// GUARANTEE STRIP  .pdp-guarantee
+// =============================================================================
+.pdp-guarantee {
+  display: flex;
+  justify-content: center;
+  gap: $space-4;
+  padding: $space-3 0 0;
+  font-size: 0.65rem; // 11px
+  color: $color-text-muted;
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-md;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 0.24rem; // 4px
+  }
+
+  svg {
+    stroke: $color-success;
+    fill: none;
+  }
+}
+
+// =============================================================================
+// OPTIONS  .pdp-options
+// =============================================================================
+.pdp-options {
+  margin-bottom: $space-4;
+
+  &__group {
+    margin-bottom: $space-3;
+
+    label {
+      display: block;
+      font-family: $font-family-heading;
+      font-weight: $font-weight-heading-semi;
+      font-size: 0.82rem;
+      color: $color-text-heading;
+      margin-bottom: $space-1;
+    }
+
+    &.has-error label { color: $color-error; }
+  }
+
+  &__select,
+  &__input,
+  &__textarea {
+    width: 100%;
+    padding: 0.59rem $space-3;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-md;
+    font-family: $font-family-body;
+    font-size: 0.88rem;
+    color: $color-text-heading;
+    background: $color-surface;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      border-color: $color-primary;
+      outline: none;
+    }
+  }
+
+  &__select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23565656' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.71rem center;
+    padding-right: 2rem;
+  }
+
+  &__radios,
+  &__checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__radio,
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-1 0;
+    font-size: 0.84rem;
+    color: $color-text-base;
+    cursor: pointer;
+  }
+}
+
+// =============================================================================
+// SECTIONS (Opis, Podrobnosti)  .pdp-section
+// =============================================================================
+.pdp-section {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  padding: $space-4;
+  margin-top: $space-3;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: $space-2;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.82rem;
+    color: $color-text-heading;
+  }
+
+  &__model {
+    font-size: 0.65rem;
+    color: $color-border;
+    font-family: $font-family-body;
+  }
+
+  &__text {
+    font-size: 0.82rem; // 14px
+    color: $color-text-base;
+    line-height: 1.6;
+
+    p { margin-bottom: $space-2; }
+    img { max-width: 100%; height: auto; }
+  }
+}
+
+// =============================================================================
+// DETAILS TABLE  .pdp-details
+// =============================================================================
+.pdp-details {
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.35rem 0; // 6px
+    font-size: 0.82rem; // 14px
+
+    span:first-child { color: $color-text-muted; }
+
+    span:last-child {
+      font-family: $font-family-heading;
+      font-weight: $font-weight-heading-semi;
+      color: $color-text-heading;
+    }
+
+    a {
+      color: $color-text-heading;
+      text-decoration: none;
+      &:hover { color: $color-primary-dark; }
+    }
+  }
+}
+
+// =============================================================================
+// SECONDARY ACTIONS  .pdp-secondary
+// =============================================================================
+.pdp-secondary {
+  padding: $space-4 0;
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: $font-family-body;
+    font-size: 0.82rem;
+    color: $color-text-muted;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease;
+
+    &:hover { color: $color-text-heading; }
+    svg { flex-shrink: 0; }
+  }
+}
+
+// =============================================================================
+// SELL CTA  .pdp-sell
+// =============================================================================
+$sell-green: #528e6d;
+$sell-green-dark: #3d7356;
+
+.pdp-sell {
+  display: block;
+  background: linear-gradient(135deg, #e8f2ec 0%, #d4e8dc 100%);
+  border-radius: $radius-lg;
+  padding: $space-6 $space-4;
+  margin-top: $space-3;
+  text-align: center;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease;
+
+  &:active { transform: scale(0.98); }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -1.18rem;
+    right: -1.18rem;
+    width: 4.71rem; // 80px
+    height: 4.71rem;
+    background: rgba($sell-green, 0.08);
+    border-radius: 50%;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -0.88rem;
+    left: -0.88rem;
+    width: 3.53rem; // 60px
+    height: 3.53rem;
+    background: rgba($sell-green, 0.06);
+    border-radius: 50%;
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $space-2;
+    position: relative;
+    z-index: 1;
+
+    svg {
+      stroke: $sell-green;
+      fill: none;
+    }
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: $sell-green-dark;
+    margin-bottom: 0.24rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__text {
+    font-size: 0.76rem;
+    color: $color-text-base;
+    line-height: 1.5;
+    margin-bottom: $space-3;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.53rem 1.18rem;
+    background: $sell-green;
+    color: $color-surface;
+    border-radius: $radius-full;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.76rem;
+    position: relative;
+    z-index: 1;
+
+    svg { stroke: currentColor; fill: none; }
+  }
+}
+
+// =============================================================================
+// RELATED PRODUCTS  .pdp-related
+// =============================================================================
+.pdp-related {
+  padding-top: $space-6;
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.12rem;
+    color: $color-text-heading;
+    margin-bottom: $space-4;
+  }
+}
+
+.product-grid--related {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.59rem;
+}
+
+// =============================================================================
+// MAGNIFIC POPUP OVERRIDES
+// =============================================================================
+.mfp-bg {
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.mfp-image-holder .mfp-close,
+.mfp-iframe-holder .mfp-close {
+  width: 2.35rem;
+  height: 2.35rem;
+  line-height: 2.35rem;
+  top: 0.59rem;
+  right: 0.59rem;
+  font-size: 1.76rem;
+  color: $color-surface;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+
+  &:hover { opacity: 1; }
+}
+
+// Hide default Magnific Popup arrows
+.mfp-arrow {
+  display: none !important; // stylelint-disable-line
+}
+
+// Custom nav buttons (appended via JS callback)
+.mfp-nav-btn {
+  position: absolute;
+  bottom: 1.18rem;
+  width: 2.82rem;
+  height: 2.82rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  z-index: 1046;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  svg { stroke: currentColor; }
+
+  &--prev { left: $space-4; }
+  &--next { right: $space-4; }
+}
+
+.mfp-counter {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.6);
+  right: 0;
+  left: 0;
+  text-align: center;
+  top: auto;
+  bottom: 0.94rem;
+  width: 100%;
+}
+
+.mfp-figure::after {
+  box-shadow: none;
+  background: transparent;
+}
+
+.mfp-figure small {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.71rem;
+}
+
+.mfp-bottom-bar {
+  margin-top: -1.76rem;
+}
+
+// =============================================================================
+// HIDE OC DEFAULTS
+// =============================================================================
+#product-product {
+  .breadcrumb { display: none; }
+}

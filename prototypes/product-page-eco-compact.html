@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Compact — 5 Variations (Light) | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --green: #528e6d;
+            --green-dark: #3d7356;
+            --green-light: #e8f2ec;
+            --red: #d55e6f;
+            --blue: #568cbe;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Shared info button + expandable panel */
+        .eco-info-btn {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: none;
+            border: 1.5px solid var(--border);
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            transition: border-color 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .eco-info-btn:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+        .eco-expand {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .eco-expand.is-open {
+            max-height: 500px;
+        }
+
+        .eco-expand__inner {
+            padding-top: 14px;
+        }
+
+        .eco-expand__item {
+            padding: 10px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .eco-expand__item:first-child { border-top: none; }
+
+        .eco-expand__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--heading);
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .eco-expand__item-title svg {
+            width: 14px; height: 14px;
+            fill: none; stroke-width: 2;
+        }
+
+        .eco-expand__item-title .ic-people { stroke: var(--red); }
+        .eco-expand__item-title .ic-co2 { stroke: var(--green); }
+        .eco-expand__item-title .ic-water { stroke: var(--blue); }
+
+        .eco-expand__item-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        /* Shared expand content block (same for all variations) */
+        .eco-detail-block {
+            border-radius: 8px;
+            background: var(--white);
+            padding: 0 14px;
+        }
+
+
+        /* ================================================================
+           V1 — GRID + GREEN FOOTER + INFO
+           ================================================================ */
+        .v1-eco {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .v1-eco__top {
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .v1-eco__grid {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        .v1-eco__col { text-align: center; flex: 1; }
+
+        .v1-eco__number {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            line-height: 1.1;
+            margin-bottom: 2px;
+        }
+
+        .v1-eco__number--people { color: var(--red); }
+        .v1-eco__number--co2 { color: var(--green); }
+        .v1-eco__number--water { color: var(--blue); }
+
+        .v1-eco__label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            font-size: 10px;
+            color: var(--muted);
+            line-height: 1.3;
+        }
+
+        .v1-eco__footer {
+            background: var(--green-light);
+            padding: 10px 16px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--green-dark);
+            line-height: 1.4;
+        }
+
+        /* ================================================================
+           V2 — INLINE STATS + DIVIDER + STATEMENT
+           ================================================================ */
+        .v2-eco {
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .v2-eco__row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .v2-eco__stats {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        .v2-eco__stat { text-align: center; flex: 1; }
+
+        .v2-eco__num {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.1;
+        }
+
+        .v2-eco__num--people { color: var(--red); }
+        .v2-eco__num--co2 { color: var(--green); }
+        .v2-eco__num--water { color: var(--blue); }
+
+        .v2-eco__sub {
+            font-size: 9px;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .v2-eco__divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0;
+        }
+
+        .v2-eco__statement {
+            text-align: center;
+            font-size: 12px;
+            color: var(--green-dark);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            line-height: 1.45;
+        }
+
+        /* ================================================================
+           V3 — DOTS + STATEMENT
+           ================================================================ */
+        .v3-eco {
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .v3-eco__header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .v3-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .v3-eco__items {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 14px;
+        }
+
+        .v3-eco__item { text-align: center; }
+
+        .v3-eco__dot {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+        }
+
+        .v3-eco__dot--people { background: rgba(213, 94, 111, 0.12); }
+        .v3-eco__dot--co2 { background: rgba(82, 142, 109, 0.12); }
+        .v3-eco__dot--water { background: rgba(86, 140, 190, 0.12); }
+
+        .v3-eco__dot svg { width: 18px; height: 18px; fill: none; stroke-width: 1.8; }
+
+        .v3-eco__dot--people svg { stroke: var(--red); }
+        .v3-eco__dot--co2 svg { stroke: var(--green); }
+        .v3-eco__dot--water svg { stroke: var(--blue); }
+
+        .v3-eco__item-num {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--heading);
+        }
+
+        .v3-eco__item-label { font-size: 9px; color: var(--muted); }
+
+        .v3-eco__statement {
+            font-size: 12px;
+            color: var(--green-dark);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            line-height: 1.45;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ================================================================
+           V4 — BAR + LEGEND + STATEMENT
+           ================================================================ */
+        .v4-eco {
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .v4-eco__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .v4-eco__eyebrow {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .v4-eco__bar {
+            display: flex;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            gap: 3px;
+            margin-bottom: 10px;
+        }
+
+        .v4-eco__seg--people { flex: 3; background: var(--red); border-radius: 3px; }
+        .v4-eco__seg--co2 { flex: 2; background: var(--green); border-radius: 3px; }
+        .v4-eco__seg--water { flex: 4; background: var(--blue); border-radius: 3px; }
+
+        .v4-eco__legend {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .v4-eco__leg { text-align: center; flex: 1; }
+
+        .v4-eco__leg-num {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+        }
+
+        .v4-eco__leg-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            margin-right: 3px;
+            vertical-align: 1px;
+        }
+
+        .v4-eco__leg-label { font-size: 9px; color: var(--muted); }
+
+        .v4-eco__statement {
+            text-align: center;
+            font-size: 12px;
+            color: var(--green-dark);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            line-height: 1.45;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ================================================================
+           V5 — ICONS + NUMBERS + GREEN BAND
+           ================================================================ */
+        .v5-eco {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .v5-eco__top {
+            display: flex;
+            align-items: center;
+            padding: 14px 8px;
+        }
+
+        .v5-eco__cols {
+            display: flex;
+            flex: 1;
+        }
+
+        .v5-eco__col {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .v5-eco__col + .v5-eco__col::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 1px;
+            background: var(--border);
+        }
+
+        .v5-eco__icon { margin-bottom: 4px; }
+
+        .v5-eco__icon svg { width: 16px; height: 16px; fill: none; stroke-width: 2; }
+
+        .v5-eco__icon--people svg { stroke: var(--red); }
+        .v5-eco__icon--co2 svg { stroke: var(--green); }
+        .v5-eco__icon--water svg { stroke: var(--blue); }
+
+        .v5-eco__num {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--heading);
+            line-height: 1.1;
+        }
+
+        .v5-eco__sub { font-size: 9px; color: var(--muted); margin-top: 2px; }
+
+        .v5-eco__bottom {
+            background: var(--green-light);
+            padding: 10px 16px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--green-dark);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+<!-- V1 — GRID + GREEN FOOTER + INFO -->
+<div class="variation">
+    <div class="variation-label">V1 — Dashboard + Green Footer <span>Stats grid, green statement bar, info icon expands details.</span></div>
+    <div class="v1-eco">
+        <div class="v1-eco__top">
+            <div class="v1-eco__grid">
+                <div class="v1-eco__col">
+                    <div class="v1-eco__number v1-eco__number--people">&lt;0,50€</div>
+                    <div class="v1-eco__label">plačilo / uro</div>
+                </div>
+                <div class="v1-eco__col">
+                    <div class="v1-eco__number v1-eco__number--co2">10%</div>
+                    <div class="v1-eco__label">emisij CO₂</div>
+                </div>
+                <div class="v1-eco__col">
+                    <div class="v1-eco__number v1-eco__number--water">93 mrd</div>
+                    <div class="v1-eco__label">m³ vode</div>
+                </div>
+            </div>
+            <button class="eco-info-btn" onclick="this.closest('.v1-eco').querySelector('.eco-expand').classList.toggle('is-open')">i</button>
+        </div>
+        <div class="eco-expand">
+            <div class="eco-detail-block">
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-people" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Poceni delovna sila</div>
+                    <div class="eco-expand__item-text">Večina novih oblačil je narejena v tretjem svetu, kjer delavci — tudi otroci — za uro dela prejmejo manj kot pol evra. Delajo v razmerah, ki veljajo za suženjsko delo.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-co2" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg> Emisije toplogrednih plinov</div>
+                    <div class="eco-expand__item-text">Do 10% vseh svetovnih emisij nastane pri izdelavi oblačil — več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-water" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg> Poraba vode</div>
+                    <div class="eco-expand__item-text">Tekstilna industrija letno porabi 93 milijard m³ vode — enako kot potrebuje 200 milijonov ljudi. Celotna populacija Nemčije, Francije in Španije.</div>
+                </div>
+            </div>
+        </div>
+        <div class="v1-eco__footer">Nežno rabljeno ne izkorišča delovne sile, ne ustvarja emisij in ne porablja vode.</div>
+    </div>
+</div>
+
+<!-- V2 — STATS + DIVIDER + STATEMENT -->
+<div class="variation">
+    <div class="variation-label">V2 — Stats + Statement <span>Numbers row with info toggle, divider, green text.</span></div>
+    <div class="v2-eco">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-family:'Open Sans',sans-serif;font-weight:700;font-size:13px;color:var(--heading);">Vpliv tekstilne industrije</span>
+            <button class="eco-info-btn" onclick="this.closest('.v2-eco').querySelector('.eco-expand').classList.toggle('is-open')">i</button>
+        </div>
+        <div class="v2-eco__stats" style="margin-bottom:0;">
+            <div class="v2-eco__stat">
+                <div class="v2-eco__num v2-eco__num--people">&lt;0,50€</div>
+                <div class="v2-eco__sub">plačilo delavcu na uro<br>v tretjem svetu — tudi otroci</div>
+            </div>
+            <div class="v2-eco__stat">
+                <div class="v2-eco__num v2-eco__num--co2">10%</div>
+                <div class="v2-eco__sub">vseh emisij CO₂<br>na svetu</div>
+            </div>
+            <div class="v2-eco__stat">
+                <div class="v2-eco__num v2-eco__num--water">93 mrd</div>
+                <div class="v2-eco__sub">m³ vode porabljene<br>letno</div>
+            </div>
+        </div>
+        <div class="eco-expand">
+            <div class="eco-expand__inner">
+                <div class="eco-detail-block">
+                    <div class="eco-expand__item">
+                        <div class="eco-expand__item-title"><svg class="ic-people" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Poceni delovna sila</div>
+                        <div class="eco-expand__item-text">Delavci v tretjem svetu — tudi otroci — za uro dela prejmejo manj kot pol evra v razmerah suženjskega dela.</div>
+                    </div>
+                    <div class="eco-expand__item">
+                        <div class="eco-expand__item-title"><svg class="ic-co2" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg> Emisije CO₂</div>
+                        <div class="eco-expand__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+                    </div>
+                    <div class="eco-expand__item">
+                        <div class="eco-expand__item-title"><svg class="ic-water" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg> Poraba vode</div>
+                        <div class="eco-expand__item-text">Enako kot potrebuje 200 milijonov ljudi — populacija Nemčije, Francije in Španije.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="v2-eco__divider"></div>
+        <div class="v2-eco__statement">Nežno rabljeno ne izkorišča delovne sile, ne ustvarja emisij in ne porablja vode.</div>
+    </div>
+</div>
+
+<!-- V3 — DOTS + STATEMENT -->
+<div class="variation">
+    <div class="variation-label">V3 — Dots + Statement <span>Colored icon circles, info button in header.</span></div>
+    <div class="v3-eco">
+        <div class="v3-eco__header">
+            <span class="v3-eco__eyebrow">Vpliv tekstilne industrije</span>
+            <button class="eco-info-btn" onclick="this.closest('.v3-eco').querySelector('.eco-expand').classList.toggle('is-open')">i</button>
+        </div>
+        <div class="v3-eco__items">
+            <div class="v3-eco__item">
+                <div class="v3-eco__dot v3-eco__dot--people"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <div class="v3-eco__item-num">&lt;0,50€</div>
+                <div class="v3-eco__item-label">na uro</div>
+            </div>
+            <div class="v3-eco__item">
+                <div class="v3-eco__dot v3-eco__dot--co2"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg></div>
+                <div class="v3-eco__item-num">10%</div>
+                <div class="v3-eco__item-label">emisij</div>
+            </div>
+            <div class="v3-eco__item">
+                <div class="v3-eco__dot v3-eco__dot--water"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></div>
+                <div class="v3-eco__item-num">93 mrd</div>
+                <div class="v3-eco__item-label">m³ vode</div>
+            </div>
+        </div>
+        <div class="eco-expand">
+            <div class="eco-detail-block" style="margin-bottom:12px;">
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-people" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Poceni delovna sila</div>
+                    <div class="eco-expand__item-text">Delavci v tretjem svetu — tudi otroci — za uro dela prejmejo manj kot pol evra v razmerah suženjskega dela.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-co2" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg> Emisije CO₂</div>
+                    <div class="eco-expand__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-water" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg> Poraba vode</div>
+                    <div class="eco-expand__item-text">Enako kot potrebuje 200 milijonov ljudi — populacija Nemčije, Francije in Španije.</div>
+                </div>
+            </div>
+        </div>
+        <div class="v3-eco__statement">Nežno rabljeno ne izkorišča delovne sile, ne ustvarja emisij in ne porablja vode.</div>
+    </div>
+</div>
+
+<!-- V4 — BAR + LEGEND + STATEMENT -->
+<div class="variation">
+    <div class="variation-label">V4 — Segmented Bar <span>Color bar, legend, info expand, green statement.</span></div>
+    <div class="v4-eco">
+        <div class="v4-eco__header">
+            <span class="v4-eco__eyebrow">Vpliv tekstilne industrije</span>
+            <button class="eco-info-btn" onclick="this.closest('.v4-eco').querySelector('.eco-expand').classList.toggle('is-open')">i</button>
+        </div>
+        <div class="v4-eco__bar">
+            <div class="v4-eco__seg--people"></div>
+            <div class="v4-eco__seg--co2"></div>
+            <div class="v4-eco__seg--water"></div>
+        </div>
+        <div class="v4-eco__legend">
+            <div class="v4-eco__leg">
+                <div class="v4-eco__leg-num"><span class="v4-eco__leg-dot" style="background:var(--red)"></span>&lt;0,50€</div>
+                <div class="v4-eco__leg-label">plačilo / uro</div>
+            </div>
+            <div class="v4-eco__leg">
+                <div class="v4-eco__leg-num"><span class="v4-eco__leg-dot" style="background:var(--green)"></span>10%</div>
+                <div class="v4-eco__leg-label">emisij CO₂</div>
+            </div>
+            <div class="v4-eco__leg">
+                <div class="v4-eco__leg-num"><span class="v4-eco__leg-dot" style="background:var(--blue)"></span>93 mrd</div>
+                <div class="v4-eco__leg-label">m³ vode</div>
+            </div>
+        </div>
+        <div class="eco-expand">
+            <div class="eco-detail-block" style="margin-bottom:12px;">
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-people" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Poceni delovna sila</div>
+                    <div class="eco-expand__item-text">Delavci v tretjem svetu — tudi otroci — za uro dela prejmejo manj kot pol evra v razmerah suženjskega dela.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-co2" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg> Emisije CO₂</div>
+                    <div class="eco-expand__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-water" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg> Poraba vode</div>
+                    <div class="eco-expand__item-text">Enako kot potrebuje 200 milijonov ljudi — populacija Nemčije, Francije in Španije.</div>
+                </div>
+            </div>
+        </div>
+        <div class="v4-eco__statement">Nežno rabljeno ne izkorišča delovne sile, ne ustvarja emisij in ne porablja vode.</div>
+    </div>
+</div>
+
+<!-- V5 — ICONS + NUMBERS + GREEN BAND -->
+<div class="variation">
+    <div class="variation-label">V5 — Numbers + Green Band <span>Smallest. Icons + stats, green strip, info expands below.</span></div>
+    <div class="v5-eco">
+        <div class="v5-eco__top">
+            <div class="v5-eco__cols">
+                <div class="v5-eco__col">
+                    <div class="v5-eco__icon v5-eco__icon--people"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                    <div class="v5-eco__num">&lt;0,50€</div>
+                    <div class="v5-eco__sub">plačilo / uro</div>
+                </div>
+                <div class="v5-eco__col">
+                    <div class="v5-eco__icon v5-eco__icon--co2"><svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg></div>
+                    <div class="v5-eco__num">10%</div>
+                    <div class="v5-eco__sub">emisij CO₂</div>
+                </div>
+                <div class="v5-eco__col">
+                    <div class="v5-eco__icon v5-eco__icon--water"><svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg></div>
+                    <div class="v5-eco__num">93 mrd</div>
+                    <div class="v5-eco__sub">m³ vode</div>
+                </div>
+            </div>
+            <button class="eco-info-btn" onclick="this.closest('.v5-eco').querySelector('.eco-expand').classList.toggle('is-open')">i</button>
+        </div>
+        <div class="eco-expand">
+            <div class="eco-detail-block">
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-people" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Poceni delovna sila</div>
+                    <div class="eco-expand__item-text">Delavci v tretjem svetu — tudi otroci — za uro dela prejmejo manj kot pol evra v razmerah suženjskega dela.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-co2" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1.82-4.37C10.93 20 15 18 17 13V8z"/></svg> Emisije CO₂</div>
+                    <div class="eco-expand__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj.</div>
+                </div>
+                <div class="eco-expand__item">
+                    <div class="eco-expand__item-title"><svg class="ic-water" viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg> Poraba vode</div>
+                    <div class="eco-expand__item-text">Enako kot potrebuje 200 milijonov ljudi — populacija Nemčije, Francije in Španije.</div>
+                </div>
+            </div>
+        </div>
+        <div class="v5-eco__bottom">Nežno rabljeno ne izkorišča delovne sile, ne ustvarja emisij in ne porablja vode.</div>
+    </div>
+</div>
+
+</body>
+</html>

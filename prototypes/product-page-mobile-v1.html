@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page — 5 Mobile Layouts | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================================
+           SHARED FOUNDATION
+           ================================================================ */
+        :root {
+            --gold: #f9b94a;
+            --gold-light: #ffd369;
+            --gold-dark: #e0a030;
+            --gold-wash: rgba(249, 185, 74, 0.08);
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --success: #7d9478;
+            --error: #d55e6f;
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+        }
+
+        /* Variation wrapper */
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 12px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.05em;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 12px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Shared image area */
+        .product-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            background: var(--surface-alt);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-img-placeholder {
+            color: var(--muted);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* Shared thumbs strip */
+        .thumbs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            overflow-x: auto;
+        }
+
+        .thumb {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            background: var(--surface-alt);
+            border: 2px solid transparent;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .thumb.active { border-color: var(--gold); }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Shared CTA button */
+        .btn-cart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--gold);
+            color: var(--heading);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-cart svg { width: 20px; height: 20px; }
+
+        /* Shared wishlist */
+        .wishlist-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            text-decoration: none;
+            margin-top: 12px;
+        }
+
+        .wishlist-link svg { width: 16px; height: 16px; }
+
+        /* Condition badge */
+        .badge-condition {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0.02em;
+        }
+
+        .badge-condition--excellent {
+            background: rgba(125, 148, 120, 0.12);
+            color: var(--success);
+        }
+
+        /* Scarcity line */
+        .scarcity {
+            font-size: 12px;
+            color: var(--error);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        /* Accordion */
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+            cursor: pointer;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--heading);
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            transition: background 0.15s ease;
+            border-radius: 6px;
+            margin: 0 -8px;
+            padding: 14px 8px;
+        }
+
+        .accordion-header:active {
+            background: rgba(0, 0, 0, 0.05);
+            transform: scale(0.98);
+        }
+
+        .accordion-header svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--muted);
+            fill: none;
+            stroke-width: 2;
+            transition: transform 0.25s;
+        }
+
+        .accordion-body {
+            padding: 0 0 14px;
+            font-size: 14px;
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        /* Sticky CTA */
+        .sticky-cta {
+            position: sticky;
+            bottom: 0;
+            background: var(--white);
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+        }
+
+        /* Guarantee strip */
+        .guarantee-strip {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 8px 16px;
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+        }
+
+        .guarantee-strip span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .guarantee-strip svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--success);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Price block shared */
+        .price-old {
+            font-size: 14px;
+            color: var(--muted);
+            text-decoration: line-through;
+        }
+
+        .price-new {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--heading);
+        }
+
+        .price-savings {
+            display: inline-flex;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(125, 148, 120, 0.12);
+            color: var(--success);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+
+        /* ================================================================
+           V1 — HERO ATTRIBUTE BANNER
+           "Brand, size, gender answered in 4 lines, zero scroll"
+           ================================================================ */
+        .v1-content { padding: 16px; }
+
+        .v1-brand {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--heading);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 2px;
+        }
+
+        .v1-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--charcoal);
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+
+        .v1-subtitle {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 4px;
+        }
+
+        .v1-subtitle strong {
+            color: var(--charcoal);
+            font-weight: 500;
+        }
+
+        .v1-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        .v1-section {
+            padding: 0 16px 16px;
+        }
+
+        .v1-section__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--heading);
+            padding: 14px 0 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .v1-section__text {
+            font-size: 14px;
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+
+        .v1-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+        .v1-detail-row span:first-child {
+            color: var(--muted);
+        }
+
+        .v1-detail-row span:last-child {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: var(--heading);
+        }
+
+
+        /* ================================================================
+           V2 — PILL STRIP
+           "Horizontal scannable tag row below the title"
+           ================================================================ */
+        .v2-content { padding: 16px; }
+
+        .v2-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--heading);
+            line-height: 1.25;
+            margin-bottom: 12px;
+        }
+
+        .v2-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .v2-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .v2-pill--brand {
+            background: var(--gold-wash);
+            color: var(--gold-dark);
+        }
+
+        .v2-pill--size {
+            background: rgba(86, 107, 111, 0.08);
+            color: #566b6f;
+        }
+
+        .v2-pill--gender {
+            background: rgba(213, 94, 111, 0.08);
+            color: #c45a6a;
+        }
+
+        .v2-pill--condition {
+            background: rgba(125, 148, 120, 0.12);
+            color: var(--success);
+        }
+
+        .v2-pill svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .v2-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+
+        /* ================================================================
+           V3 — QUICK-FACTS CARD
+           "2x2 attribute grid on surface-alt background"
+           ================================================================ */
+        .v3-content { padding: 16px; }
+
+        .v3-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--heading);
+            margin-bottom: 16px;
+        }
+
+        .v3-facts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .v3-fact {
+            background: var(--surface-alt);
+            padding: 12px 14px;
+        }
+
+        .v3-fact__label {
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 4px;
+        }
+
+        .v3-fact__value {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--heading);
+        }
+
+        .v3-fact__sub {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .v3-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+
+        /* ================================================================
+           V4 — ICON ROW
+           "Ultra-compact single-line attributes with icons"
+           ================================================================ */
+        .v4-content { padding: 16px; }
+
+        .v4-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--heading);
+            margin-bottom: 8px;
+        }
+
+        .v4-icon-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 0;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: var(--charcoal);
+        }
+
+        .v4-icon-row svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--muted);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        .v4-divider {
+            width: 1px;
+            height: 16px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .v4-icon-row strong {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: var(--heading);
+        }
+
+        .v4-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin: 12px 0 16px;
+        }
+
+        .v4-desc {
+            font-size: 14px;
+            color: var(--charcoal);
+            line-height: 1.6;
+            padding: 12px 14px;
+            background: var(--surface-alt);
+            border-radius: var(--radius);
+            margin-bottom: 16px;
+        }
+
+
+        /* ================================================================
+           V5 — TABBED DETAIL PANEL
+           "Swipeable attribute tabs below CTA"
+           ================================================================ */
+        .v5-content { padding: 16px; }
+
+        .v5-brand {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .v5-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--heading);
+            margin-bottom: 6px;
+        }
+
+        .v5-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin: 8px 0 16px;
+        }
+
+        .v5-tabs-nav {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .v5-tab {
+            flex: 1;
+            padding: 10px 0;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--muted);
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+        }
+
+        .v5-tab.active {
+            color: var(--heading);
+            border-bottom-color: var(--gold);
+        }
+
+        .v5-tab-content {
+            padding: 16px 0;
+        }
+
+        .v5-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .v5-detail-row:last-child { border-bottom: none; }
+
+        .v5-detail-label { color: var(--muted); }
+        .v5-detail-value {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: var(--heading);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════════
+     V1 — HERO ATTRIBUTE BANNER
+     Brand, size, gender answered in 4 lines. Zero scrolling.
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V1 — Hero Attribute Banner <span>Brand + size + gender as co-headline. Description in accordion.</span></div>
+
+    <div class="product-img">
+        <img src="../opencart/image/cache/izdelki/021326/021326-otroski-koticek-051-750x750.jpg" alt="Pulover">
+        <div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:center;gap:6px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+        </div>
+    </div>
+
+    <div class="v1-content">
+        <div class="v1-brand">H&M</div>
+        <h1 class="v1-title">Pulover št. 122/128</h1>
+        <div style="margin-bottom:8px;"><span class="scarcity">● Samo 1 na voljo</span></div>
+        <div class="v1-price-row">
+            <span class="price-new">4,90 €</span>
+            <span class="price-old">14,90 €</span>
+            <span class="price-savings">−67%</span>
+        </div>
+
+        <button class="btn-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            V košarico
+        </button>
+
+        <div class="guarantee-strip">
+            <span><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 14 dni za vračilo</span>
+            <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Preverjeno stanje</span>
+        </div>
+    </div>
+
+    <div class="v1-accordion" style="padding:0 16px 16px;">
+        <div class="v1-section">
+            <h3 class="v1-section__title">Opis</h3>
+            <p class="v1-section__text">Udoben bombažni pulover, znotraj rahlo kosmaten. Brez madežev in poškodb. Primeren za vsakodnevno nošenje.</p>
+        </div>
+
+        <div class="v1-section">
+            <h3 class="v1-section__title">Podrobnosti</h3>
+            <div class="v1-section__details">
+                <div class="v1-detail-row"><span>Znamka</span> <span>H&M</span></div>
+                <div class="v1-detail-row"><span>Velikost</span> <span>7-8 L / 128</span></div>
+                <div class="v1-detail-row"><span>Spol</span> <span>Deklica</span></div>
+                <div class="v1-detail-row"><span>Model</span> <span>1077160</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V2 — PILL STRIP
+     Horizontal color-coded attribute pills. Scannable at a glance.
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V2 — Pill Strip <span>Color-coded attribute tags. Everything visible, no scroll needed.</span></div>
+
+    <div class="product-img">
+        <img src="../opencart/image/cache/izdelki/021326/021326-otroski-koticek-051-750x750.jpg" alt="Pulover">
+        <div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:center;gap:6px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+        </div>
+    </div>
+
+    <div class="v2-content">
+        <h1 class="v2-title">H&M Pulover št. 122/128</h1>
+
+        <div class="v2-pills">
+            <span class="v2-pill v2-pill--brand">
+                <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                H&M
+            </span>
+            <span class="v2-pill v2-pill--size">
+                <svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+                128 · 7-8 let
+            </span>
+            <span class="v2-pill v2-pill--gender">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 00-16 0"/></svg>
+                Deklice
+            </span>
+            <span class="v2-pill v2-pill--condition">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                Odlično
+            </span>
+        </div>
+
+        <div class="v2-price-row">
+            <span class="price-new">4,90 €</span>
+            <span class="price-old">14,90 €</span>
+            <span class="price-savings">−67%</span>
+        </div>
+
+        <div style="margin-bottom:12px;"><span class="scarcity">● Samo 1 na voljo</span></div>
+
+        <button class="btn-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            V košarico
+        </button>
+
+        <div class="guarantee-strip">
+            <span><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 14 dni za vračilo</span>
+            <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Preverjeno</span>
+        </div>
+
+        <div class="accordion-header">Opis <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="accordion-body">Udoben bombažni pulover, znotraj rahlo kosmaten.</div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V3 — QUICK-FACTS CARD
+     2x2 structured attribute grid on a card.
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V3 — Quick-Facts Card <span>2×2 attribute grid. Parents scan all 4 facts in one glance.</span></div>
+
+    <div class="product-img">
+        <img src="../opencart/image/cache/izdelki/021326/021326-otroski-koticek-051-750x750.jpg" alt="Pulover">
+        <div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:center;gap:6px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+        </div>
+    </div>
+
+    <div class="v3-content">
+        <h1 class="v3-title">Pulover št. 122/128</h1>
+
+        <div class="v3-facts">
+            <div class="v3-fact">
+                <div class="v3-fact__label">Znamka</div>
+                <div class="v3-fact__value">H&M</div>
+            </div>
+            <div class="v3-fact">
+                <div class="v3-fact__label">Velikost</div>
+                <div class="v3-fact__value">128</div>
+                <div class="v3-fact__sub">7-8 let</div>
+            </div>
+            <div class="v3-fact">
+                <div class="v3-fact__label">Spol</div>
+                <div class="v3-fact__value">Deklice</div>
+            </div>
+            <div class="v3-fact">
+                <div class="v3-fact__label">Stanje</div>
+                <div class="v3-fact__value" style="color:var(--success)">Odlično</div>
+            </div>
+        </div>
+
+        <div class="v3-price-row">
+            <span class="price-new">4,90 €</span>
+            <span class="price-old">14,90 €</span>
+            <span class="price-savings">−67%</span>
+        </div>
+
+        <div style="margin-bottom:12px;"><span class="scarcity">● Samo 1 na voljo</span></div>
+
+        <button class="btn-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            V košarico
+        </button>
+
+        <div class="guarantee-strip">
+            <span><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 14 dni za vračilo</span>
+            <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Preverjeno</span>
+        </div>
+
+        <div class="accordion-header">Opis <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <div class="accordion-body">Udoben bombažni pulover, znotraj rahlo kosmaten. Brez madežev in poškodb.</div>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V4 — ICON ROW
+     Ultra-compact. Three attributes on one line with small icons.
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V4 — Icon Row <span>Minimal footprint. Attributes as icon+text in one horizontal line.</span></div>
+
+    <div class="product-img">
+        <img src="../opencart/image/cache/izdelki/021326/021326-otroski-koticek-051-750x750.jpg" alt="Pulover">
+        <div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:center;gap:6px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+        </div>
+    </div>
+
+    <div class="v4-content">
+        <h1 class="v4-title">Pulover št. 122/128</h1>
+
+        <div class="v4-icon-row">
+            <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <strong>H&M</strong>
+            <div class="v4-divider"></div>
+            <svg viewBox="0 0 24 24"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
+            <strong>128</strong> <span style="color:var(--muted)">· 7-8 let</span>
+            <div class="v4-divider"></div>
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 00-16 0"/></svg>
+            <strong>Deklice</strong>
+        </div>
+
+        <div class="v4-desc">
+            Udoben bombažni pulover, znotraj rahlo kosmaten. Brez madežev in poškodb. Primeren za vsakodnevno nošenje.
+        </div>
+
+        <div class="v4-price-row">
+            <span class="price-new">4,90 €</span>
+            <span class="price-old">14,90 €</span>
+            <span class="price-savings">−67%</span>
+        </div>
+
+        <div style="margin-bottom:12px;"><span class="scarcity">● Samo 1 na voljo</span></div>
+
+        <button class="btn-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            V košarico
+        </button>
+
+        <div class="guarantee-strip">
+            <span><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 14 dni za vračilo</span>
+            <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Preverjeno</span>
+        </div>
+
+        <a href="#" class="wishlist-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Na seznam želja
+        </a>
+    </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V5 — TABBED DETAIL PANEL
+     Attributes organized in tabs below the CTA.
+     ════════════════════════════════════════════════════════════════ -->
+<div class="variation">
+    <div class="variation-label">V5 — Tabbed Detail Panel <span>Clean top section + structured tabs for details, size, description.</span></div>
+
+    <div class="product-img">
+        <img src="../opencart/image/cache/izdelki/021326/021326-otroski-koticek-051-750x750.jpg" alt="Pulover">
+        <div style="position:absolute;bottom:12px;left:12px;right:12px;display:flex;justify-content:center;gap:6px;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--gold);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--border);"></span>
+        </div>
+    </div>
+
+    <div class="v5-content">
+        <div class="v5-brand">H&M</div>
+        <h1 class="v5-title">Pulover št. 122/128</h1>
+        <div style="font-size:14px;color:var(--muted);margin-bottom:4px;">128 · 7-8 let · Deklice</div>
+
+        <div class="v5-price-row">
+            <span class="price-new">4,90 €</span>
+            <span class="price-old">14,90 €</span>
+            <span class="price-savings">−67%</span>
+        </div>
+
+        <div style="margin-bottom:12px;"><span class="scarcity">● Samo 1 na voljo</span></div>
+
+        <button class="btn-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            V košarico
+        </button>
+
+        <div class="guarantee-strip">
+            <span><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> 14 dni za vračilo</span>
+            <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Preverjeno</span>
+        </div>
+
+        <div class="v5-tabs-nav">
+            <button class="v5-tab active">Podrobnosti</button>
+            <button class="v5-tab">Velikost</button>
+            <button class="v5-tab">Opis</button>
+        </div>
+
+        <div class="v5-tab-content">
+            <div class="v5-detail-row">
+                <span class="v5-detail-label">Znamka</span>
+                <span class="v5-detail-value">H&M</span>
+            </div>
+            <div class="v5-detail-row">
+                <span class="v5-detail-label">Spol</span>
+                <span class="v5-detail-value">Deklice</span>
+            </div>
+            <div class="v5-detail-row">
+                <span class="v5-detail-label">Stanje</span>
+                <span class="v5-detail-value" style="color:var(--success)">Odlično</span>
+            </div>
+            <div class="v5-detail-row">
+                <span class="v5-detail-label">Material</span>
+                <span class="v5-detail-value">100% bombaž</span>
+            </div>
+            <div class="v5-detail-row">
+                <span class="v5-detail-label">Šifra</span>
+                <span class="v5-detail-value">021326</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
