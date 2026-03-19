@@ -442,6 +442,87 @@ class ControllerProductProduct extends Controller {
 				);
 			}
 
+			// "More from this brand" — similar products by brand + size + gender
+			$data['similar_products'] = array();
+			$data['similar_title'] = '';
+
+			$product_id = (int)$this->request->get['product_id'];
+			$language_id = (int)$this->config->get('config_language_id');
+
+			// Get this product's attribute values
+			$attr_query = $this->db->query("SELECT attribute_id, text FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . $product_id . "' AND language_id = '" . $language_id . "'");
+
+			$velikost = '';
+			$spol = '';
+			$znamka = '';
+
+			foreach ($attr_query->rows as $attr) {
+				if ($attr['attribute_id'] == 72) $velikost = $attr['text'];
+				if ($attr['attribute_id'] == 73) $spol = $attr['text'];
+				if ($attr['attribute_id'] == 75) $znamka = $attr['text'];
+			}
+
+			// Build query: match by manufacturer (if set) OR attributes, same size + gender
+			$similar_sql = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id AND pd.language_id = '" . $language_id . "') LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "'";
+
+			// Match manufacturer if product has one
+			if ($product_info['manufacturer_id'] > 0) {
+				$similar_sql .= " AND p.manufacturer_id = '" . (int)$product_info['manufacturer_id'] . "'";
+				$data['similar_title'] = 'Več od ' . $product_info['manufacturer'];
+			}
+
+			// Match Velikost attribute
+			if ($velikost) {
+				$similar_sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = 72 AND text = '" . $this->db->escape($velikost) . "' AND language_id = '" . $language_id . "')";
+			}
+
+			// Match Spol attribute
+			if ($spol) {
+				$similar_sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = 73 AND text = '" . $this->db->escape($spol) . "' AND language_id = '" . $language_id . "')";
+			}
+
+			// If no manufacturer, set a generic title
+			if (!$data['similar_title']) {
+				$data['similar_title'] = 'Podobni artikli';
+			}
+
+			$similar_sql .= " ORDER BY p.date_added DESC LIMIT 10";
+			$similar_results = $this->db->query($similar_sql);
+
+			foreach ($similar_results->rows as $result) {
+				$sim_product = $this->model_catalog_product->getProduct($result['product_id']);
+				if (!$sim_product) continue;
+
+				if ($sim_product['image']) {
+					$sim_image = $this->model_tool_image->resize($sim_product['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
+				} else {
+					$sim_image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
+				}
+
+				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+					$sim_price = $this->currency->format($this->tax->calculate($sim_product['price'], $sim_product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				} else {
+					$sim_price = false;
+				}
+
+				if (!is_null($sim_product['special']) && (float)$sim_product['special'] >= 0) {
+					$sim_special = $this->currency->format($this->tax->calculate($sim_product['special'], $sim_product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+				} else {
+					$sim_special = false;
+				}
+
+				$data['similar_products'][] = array(
+					'product_id'   => $sim_product['product_id'],
+					'thumb'        => $sim_image,
+					'name'         => $sim_product['name'],
+					'manufacturer' => $sim_product['manufacturer'],
+					'price'        => $sim_price,
+					'special'      => $sim_special,
+					'minimum'      => $sim_product['minimum'] > 0 ? $sim_product['minimum'] : 1,
+					'href'         => $this->url->link('product/product', 'product_id=' . $sim_product['product_id'])
+				);
+			}
+
 			$data['tags'] = array();
 
 			if ($product_info['tag']) {

@@ -522,7 +522,7 @@ header {
     justify-content: space-between;
     width: 1.55rem;
     height: 1.08rem;
-    background: $color-surface-dark;
+    background: #444444;
     border: none;
     border-radius: $radius-sm;
     cursor: pointer;
@@ -558,7 +558,7 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
 @include respond-below('sm') {
   .site-header,
   header {
-    background-color: $color-surface-dark;
+    background-color: #444444;
   }
 
   header {

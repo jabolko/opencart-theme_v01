@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Section — 5 Variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --green: #528e6d;
+            --green-dark: #3d7356;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ================================================================
+           V1 — DATA DASHBOARD (matching eco section style)
+           Big number + divider + text rows
+           ================================================================ */
+        .v1-trust {
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .v1-trust__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--heading);
+            margin-bottom: 14px;
+        }
+
+        .v1-trust__item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .v1-trust__item:first-of-type { border-top: none; }
+
+        .v1-trust__number {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 80px;
+            text-align: right;
+            color: var(--gold-dark);
+        }
+
+        .v1-trust__number small {
+            display: block;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .v1-trust__divider {
+            width: 2px;
+            height: 36px;
+            border-radius: 1px;
+            background: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .v1-trust__body { flex: 1; }
+
+        .v1-trust__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--heading);
+            margin-bottom: 2px;
+        }
+
+        .v1-trust__item-text {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .v1-trust__statement {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--green-dark);
+            line-height: 1.45;
+        }
+
+        /* ================================================================
+           V2 — ICON ROWS (matching eco but with check/shield/return icons)
+           ================================================================ */
+        .v2-trust {
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .v2-trust__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--heading);
+            margin-bottom: 14px;
+        }
+
+        .v2-trust__item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .v2-trust__item:first-of-type { border-top: none; }
+
+        .v2-trust__icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v2-trust__icon--check { background: rgba(249, 185, 74, 0.12); }
+        .v2-trust__icon--shield { background: rgba(82, 142, 109, 0.12); }
+        .v2-trust__icon--return { background: rgba(86, 140, 190, 0.12); }
+
+        .v2-trust__icon svg { width: 18px; height: 18px; fill: none; stroke-width: 2; }
+
+        .v2-trust__icon--check svg { stroke: var(--gold-dark); }
+        .v2-trust__icon--shield svg { stroke: var(--green); }
+        .v2-trust__icon--return svg { stroke: #568cbe; }
+
+        .v2-trust__body { flex: 1; }
+
+        .v2-trust__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+            margin-bottom: 3px;
+        }
+
+        .v2-trust__item-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ================================================================
+           V3 — SINGLE STAT + EXPAND (10x check as hero number)
+           ================================================================ */
+        .v3-trust {
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .v3-trust__hero {
+            margin-bottom: 6px;
+        }
+
+        .v3-trust__hero-number {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: var(--gold-dark);
+            line-height: 1;
+        }
+
+        .v3-trust__hero-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--heading);
+        }
+
+        .v3-trust__subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin-bottom: 14px;
+            padding: 0 8px;
+        }
+
+        .v3-trust__steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .v3-trust__step {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(249, 185, 74, 0.08);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 10px;
+            color: var(--gold-dark);
+        }
+
+        .v3-trust__step svg {
+            width: 10px; height: 10px;
+            stroke: var(--gold-dark); fill: none; stroke-width: 2.5;
+        }
+
+        .v3-trust__return {
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--green-dark);
+        }
+
+        .v3-trust__return svg {
+            width: 16px; height: 16px;
+            stroke: var(--green); fill: none; stroke-width: 2;
+        }
+
+        /* ================================================================
+           V4 — CHECKLIST STYLE
+           Simple checkmarks, compact
+           ================================================================ */
+        .v4-trust {
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .v4-trust__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--heading);
+            margin-bottom: 14px;
+        }
+
+        .v4-trust__item {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .v4-trust__item:first-of-type { border-top: none; }
+
+        .v4-trust__check {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: rgba(249, 185, 74, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .v4-trust__check svg {
+            width: 12px; height: 12px;
+            stroke: var(--gold-dark); fill: none; stroke-width: 3;
+        }
+
+        .v4-trust__item-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+            margin-bottom: 2px;
+        }
+
+        .v4-trust__item-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        /* ================================================================
+           V5 — QUOTE STYLE (personal guarantee feel)
+           ================================================================ */
+        .v5-trust {
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 3px solid var(--gold);
+        }
+
+        .v5-trust__quote {
+            font-size: 14px;
+            color: var(--heading);
+            line-height: 1.6;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .v5-trust__quote strong {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-style: normal;
+            color: var(--gold-dark);
+        }
+
+        .v5-trust__detail {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.55;
+            margin-bottom: 14px;
+            padding-left: 12px;
+            border-left: 2px solid var(--border);
+        }
+
+        .v5-trust__return {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .v5-trust__return-icon {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(82, 142, 109, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v5-trust__return-icon svg {
+            width: 16px; height: 16px;
+            stroke: var(--green); fill: none; stroke-width: 2;
+        }
+
+        .v5-trust__return-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+        }
+
+        .v5-trust__return-text {
+            font-size: 11px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+
+<!-- V1 — DATA DASHBOARD (matching eco style) -->
+<div class="variation">
+    <div class="variation-label">V1 — Data Dashboard <span>Same layout as eco section. Big gold numbers + dividers + text.</span></div>
+    <div class="v1-trust">
+        <h3 class="v1-trust__title">Naša garancija kakovosti</h3>
+
+        <div class="v1-trust__item">
+            <div class="v1-trust__number">10x<small>pregledano</small></div>
+            <div class="v1-trust__divider"></div>
+            <div class="v1-trust__body">
+                <div class="v1-trust__item-title">Vsak artikel pregledamo 10-krat</div>
+                <div class="v1-trust__item-text">Od sprejema do pakiranja — pri etiketiranju, fotografiranju, sortiranju in uvrščanju na police</div>
+            </div>
+        </div>
+
+        <div class="v1-trust__item">
+            <div class="v1-trust__number">14<small>dni za vračilo</small></div>
+            <div class="v1-trust__divider"></div>
+            <div class="v1-trust__body">
+                <div class="v1-trust__item-title">Brez pojasnila</div>
+                <div class="v1-trust__item-text">Če s čim nisi zadovoljna, nam artikel vrni v 14 dneh — brez vprašanj</div>
+            </div>
+        </div>
+
+        <div class="v1-trust__statement">Zagotavljam ti, da je vsak artikel res samo nežno rabljen.</div>
+    </div>
+</div>
+
+<!-- V2 — ICON ROWS -->
+<div class="variation">
+    <div class="variation-label">V2 — Icon Rows <span>Colored circle icons + text. Clean, trustworthy, informative.</span></div>
+    <div class="v2-trust">
+        <h3 class="v2-trust__title">Naša garancija kakovosti</h3>
+
+        <div class="v2-trust__item">
+            <div class="v2-trust__icon v2-trust__icon--check">
+                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="v2-trust__body">
+                <div class="v2-trust__item-title">10x pregledano</div>
+                <div class="v2-trust__item-text">Vsak kos pregledamo vsaj 10-krat — od sprejema, pregleda, etiketiranja, fotografiranja do pakiranja.</div>
+            </div>
+        </div>
+
+        <div class="v2-trust__item">
+            <div class="v2-trust__icon v2-trust__icon--shield">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="v2-trust__body">
+                <div class="v2-trust__item-title">Res samo nežno rabljeno</div>
+                <div class="v2-trust__item-text">Zagotavljam ti, da je vsak artikel res samo nežno rabljen. Brez madežev, lukenj ali poškodb.</div>
+            </div>
+        </div>
+
+        <div class="v2-trust__item">
+            <div class="v2-trust__icon v2-trust__icon--return">
+                <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+            </div>
+            <div class="v2-trust__body">
+                <div class="v2-trust__item-title">14 dni za vračilo</div>
+                <div class="v2-trust__item-text">Če s čim nisi zadovoljna, nam artikel brez pojasnila vrni v 14 dneh.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- V3 — HERO NUMBER + PILLS -->
+<div class="variation">
+    <div class="variation-label">V3 — Hero Number + Pills <span>Big "10x" as hero stat. Process steps as pills. Return as green footer.</span></div>
+    <div class="v3-trust">
+        <div class="v3-trust__hero">
+            <div class="v3-trust__hero-number">10×</div>
+            <div class="v3-trust__hero-label">pregledamo vsak artikel</div>
+        </div>
+        <p class="v3-trust__subtitle">Zagotavljam ti, da je vsak artikel res samo nežno rabljen. Vsak kos gre čez 10 kontrol:</p>
+
+        <div class="v3-trust__steps">
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Sprejem</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Pregled</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Etiketiranje</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Police</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Sortiranje</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Popis</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Foto</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Skladišče</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Naročilo</span>
+            <span class="v3-trust__step"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Pakiranje</span>
+        </div>
+
+        <div class="v3-trust__return">
+            <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+            14 dni za vračilo brez pojasnila
+        </div>
+    </div>
+</div>
+
+<!-- V4 — CHECKLIST -->
+<div class="variation">
+    <div class="variation-label">V4 — Checklist <span>Simple gold checkmarks. Scans fast, builds confidence point by point.</span></div>
+    <div class="v4-trust">
+        <h3 class="v4-trust__title">Naša garancija kakovosti</h3>
+
+        <div class="v4-trust__item">
+            <div class="v4-trust__check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+                <div class="v4-trust__item-title">Vsak artikel pregledamo 10-krat</div>
+                <div class="v4-trust__item-text">Pri sprejemu, natančnem pregledu, etiketiranju, uvrščanju na police, sortiranju, popisu, fotografiranju, skladiščenju, sprejemu naročila in pakiranju.</div>
+            </div>
+        </div>
+
+        <div class="v4-trust__item">
+            <div class="v4-trust__check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+                <div class="v4-trust__item-title">Res samo nežno rabljeno</div>
+                <div class="v4-trust__item-text">Zagotavljam ti, da je vsak artikel brez madežev, lukenj in poškodb.</div>
+            </div>
+        </div>
+
+        <div class="v4-trust__item">
+            <div class="v4-trust__check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+                <div class="v4-trust__item-title">14 dni za vračilo</div>
+                <div class="v4-trust__item-text">Če s čim nisi zadovoljna, nam artikel brez pojasnila vrni v 14 dneh.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- V5 — QUOTE STYLE -->
+<div class="variation">
+    <div class="variation-label">V5 — Personal Quote <span>Gold left border, italic quote feel. Personal guarantee from the founder.</span></div>
+    <div class="v5-trust">
+        <p class="v5-trust__quote">"Zagotavljam ti, da je vsak artikel res samo <strong>nežno rabljen</strong>. Vsak kos pregledamo vsaj <strong>10-krat</strong>."</p>
+
+        <p class="v5-trust__detail">Od sprejema do pakiranja — pri natančnem pregledu, etiketiranju, uvrščanju na police, sortiranju, popisu, fotografiranju, skladiščenju, sprejemu naročila in pakiranju.</p>
+
+        <div class="v5-trust__return">
+            <div class="v5-trust__return-icon">
+                <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+            </div>
+            <div>
+                <div class="v5-trust__return-title">14 dni za vračilo</div>
+                <div class="v5-trust__return-text">Brez pojasnila. Brez vprašanj.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -17,6 +17,23 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-03-19 — Product page mobile: V1 layout, gallery, sell CTA, eco/trust tabs, similar products
+
+#### Mobile (CLI, simulated throttling)
+- Page tested: product (product_id=66109)
+- Lighthouse Performance: 77/100
+- Lighthouse Accessibility: 86/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 3.5s | LCP: 4.4s | SI: 3.5s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-2026-03-19-product-mobile.html`
+- Delta vs category: -8 Performance, +2 Accessibility
+- Notes: TBT=0 and CLS=0 excellent. LCP higher than category due to larger product image.
+  Server TTFB 830ms (Docker). Similar products query added zero measurable load time.
+  Only opportunities: server response (Docker) and unused Bootstrap CSS (Phase 4).
+
+---
+
 ### 2026-03-18 — Category page: mobile filter bottom sheet, manufacturer filter, sort default
 
 #### Mobile (CLI, simulated throttling)

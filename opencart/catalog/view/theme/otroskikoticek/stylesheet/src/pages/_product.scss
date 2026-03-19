@@ -9,7 +9,7 @@
 // =============================================================================
 .pdp-page {
   background: $color-surface-alt;
-  padding-bottom: $space-12;
+  padding-bottom: $space-2; // 8px
 
   .container {
     max-width: 100%;
@@ -24,6 +24,17 @@
       padding-left: 15px;
       padding-right: 15px;
     }
+  }
+}
+
+// =============================================================================
+// DESKTOP LAYOUT  .pdp-layout (gallery | info)
+// =============================================================================
+.pdp-layout {
+  @include respond-to('md') {
+    display: flex;
+    gap: $space-8;
+    align-items: flex-start;
   }
 }
 
@@ -96,6 +107,61 @@
     transition: background 0.25s ease;
 
     &.is-active { background: $color-primary; }
+  }
+
+  // Desktop: main image + thumbnails below
+  @include respond-to('md') {
+    flex: 0 0 55%;
+    max-width: 55%;
+    overflow: visible;
+
+    &__track {
+      display: block; // single image visible
+      border-radius: $radius-lg;
+      overflow: hidden;
+    }
+
+    &__slide {
+      display: none;
+
+      &:first-child { display: block; }
+    }
+
+    // Show active slide via JS
+    &__slide.is-active-desktop { display: block; }
+
+    &__dots { display: none; }
+
+    &__thumbs-desktop {
+      display: flex;
+      gap: $space-2;
+      padding-top: $space-3;
+      flex-wrap: wrap;
+    }
+
+    &__thumb-desktop {
+      width: 4.12rem; // 70px
+      height: 4.12rem;
+      border-radius: $radius-md;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      padding: 0;
+      background: $color-surface;
+      transition: border-color 0.2s ease;
+
+      &.is-active { border-color: $color-primary; }
+      &:hover { border-color: $color-border; }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+
+    &__fav { bottom: auto; top: 0.71rem; }
   }
 
   &__fav {
@@ -199,6 +265,18 @@
     color: $color-warning;
     margin-top: $space-2;
   }
+
+  @include respond-to('md') {
+    flex: 1;
+    min-width: 0;
+    padding: $space-6;
+    margin-top: 0;
+
+    &__brand { font-size: 1.65rem; } // 28px
+    &__title { font-size: 1.06rem; } // 18px
+    &__price-current,
+    &__price-new { font-size: 1.88rem; } // 32px
+  }
 }
 
 // =============================================================================
@@ -229,6 +307,12 @@
   }
 
   svg { flex-shrink: 0; }
+
+  @include respond-to('md') {
+    padding: 0.94rem; // 16px
+    font-size: 1rem;
+    border-radius: $radius-lg;
+  }
 }
 
 // =============================================================================
@@ -361,6 +445,11 @@
     p { margin-bottom: $space-2; }
     img { max-width: 100%; height: auto; }
   }
+
+  @include respond-to('md') {
+    &__title { font-size: 0.94rem; } // 16px
+    &__text { font-size: 0.88rem; } // 15px
+  }
 }
 
 // =============================================================================
@@ -386,6 +475,10 @@
       text-decoration: none;
       &:hover { color: $color-primary-dark; }
     }
+  }
+
+  @include respond-to('md') {
+    &__row { font-size: 0.88rem; } // 15px
   }
 }
 
@@ -506,6 +599,199 @@ $sell-green-dark: #3d7356;
 
     svg { stroke: currentColor; fill: none; }
   }
+}
+
+// =============================================================================
+// ECO IMPACT  .pdp-eco
+// =============================================================================
+$eco-red: #d55e6f;
+$eco-blue: #568cbe;
+
+// =============================================================================
+// IMPACT TABS  .pdp-impact (eco + trust)
+// =============================================================================
+.pdp-impact {
+  padding: $space-4;
+  border-radius: $radius-lg;
+  margin-top: $space-3;
+
+  &__tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid $color-border;
+    margin-bottom: $space-4;
+  }
+
+  &__tab {
+    flex: 1;
+    padding: $space-2 $space-3;
+    text-align: center;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.76rem;
+    color: $color-text-muted;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    line-height: 1.3;
+
+    &:hover { color: $color-text-heading; }
+
+    &.is-active {
+      color: $color-text-heading;
+      border-bottom-color: $color-primary;
+    }
+  }
+
+  &__panel {
+    display: none;
+
+    &.is-active { display: block; }
+  }
+}
+
+.pdp-eco {
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.82rem; // 14px
+    padding: 0.82rem 0;
+  }
+
+  &__number {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.65rem; // 28px
+    line-height: 1;
+    flex-shrink: 0;
+    width: 4.71rem; // 80px
+    text-align: right;
+
+    small {
+      display: block;
+      font-size: 0.59rem; // 10px
+      font-weight: $font-weight-heading-md;
+      color: $color-text-base;
+      margin-top: 0.12rem;
+    }
+  }
+
+  &__unit {
+    font-size: 0.88rem; // smaller than the number
+    font-weight: $font-weight-heading-semi;
+  }
+
+  &__number--people { color: $eco-red; }
+  &__number--co2 { color: $sell-green; }
+  &__number--water { color: $eco-blue; }
+
+  &__divider {
+    width: 2px;
+    height: 2.12rem; // 36px
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  &__divider--people { background: $eco-red; }
+  &__divider--co2 { background: $sell-green; }
+  &__divider--water { background: $eco-blue; }
+
+  &__body { flex: 1; }
+
+  &__item-title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.71rem; // 12px
+    color: $color-text-heading;
+    margin-bottom: 0.12rem;
+  }
+
+  &__item-text {
+    font-size: 0.65rem; // 11px
+    color: $color-text-base;
+    line-height: 1.45;
+  }
+
+  &__statement {
+    padding-top: $space-3;
+    text-align: center;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.76rem; // 13px
+    color: $sell-green-dark;
+    line-height: 1.45;
+  }
+}
+
+// Desktop: similar products wider cards, still horizontal scroll
+.product-card--scroll {
+  @include respond-to('md') {
+    flex: 0 0 12.94rem; // 220px
+  }
+}
+
+// Desktop: related products 4 columns
+.product-grid--related {
+  @include respond-to('md') {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-4;
+  }
+}
+
+// =============================================================================
+// SIMILAR PRODUCTS  .pdp-similar (horizontal scroll)
+// =============================================================================
+.pdp-similar {
+  padding: 1.41rem 0 $space-4; // 24px top, 16px bottom
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3rem;
+    background: linear-gradient(to left, $color-surface-alt, transparent);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.29rem; // 22px
+    color: $color-text-heading;
+    margin-bottom: $space-3;
+  }
+
+  &__scroller {
+    display: flex;
+    gap: 0.59rem; // 10px
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: $space-4; // 16px — clearance for card hover shadow
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__spacer {
+    flex-shrink: 0;
+    width: 3rem;
+    min-height: 1px;
+  }
+}
+
+.product-card--scroll {
+  flex: 0 0 9.41rem; // 160px
+  scroll-snap-align: start;
 }
 
 // =============================================================================

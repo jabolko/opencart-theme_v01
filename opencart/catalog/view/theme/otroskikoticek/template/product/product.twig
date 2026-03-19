@@ -16,12 +16,15 @@
       {% endfor %}
     </ul>
 
+    {# ── Desktop: two-column layout (gallery | info) ── #}
+    <div class="pdp-layout">
+
     {# ── Image gallery (swipe carousel on mobile, dot indicators) ── #}
     <div class="pdp-gallery" id="js-pdp-gallery">
       <div class="pdp-gallery__track" id="js-pdp-track">
         {% if thumb %}
         <div class="pdp-gallery__slide">
-          <a href="{{ popup }}"><img src="{{ thumb }}" alt="{{ heading_title }}" loading="eager" /></a>
+          <a href="{{ popup }}"><img src="{{ popup }}" alt="{{ heading_title }}" loading="eager" /></a>
         </div>
         {% endif %}
         {% if images %}
@@ -45,6 +48,20 @@
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </button>
+
+      {# Desktop thumbnail strip #}
+      {% if images %}
+      <div class="pdp-gallery__thumbs-desktop">
+        <button class="pdp-gallery__thumb-desktop is-active" data-index="0" type="button">
+          <img src="{{ thumb }}" alt="{{ heading_title }}" width="70" height="70" />
+        </button>
+        {% for image in images %}
+        <button class="pdp-gallery__thumb-desktop" data-index="{{ loop.index }}" type="button">
+          <img src="{{ image.thumb }}" alt="{{ heading_title }}" width="70" height="70" />
+        </button>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
 
     {# ── Product info ── #}
@@ -152,60 +169,189 @@
           Preverjeno stanje
         </span>
       </div>
+
+      {# ── Opis (always open) ── #}
+      {% if description %}
+      <div class="pdp-section">
+        <h3 class="pdp-section__title">Opis</h3>
+        <div class="pdp-section__text">{{ description }}</div>
+      </div>
+      {% endif %}
+
+      {# ── Podrobnosti (always open) ── #}
+      <div class="pdp-section">
+        <div class="pdp-section__header">
+          <h3 class="pdp-section__title">Podrobnosti</h3>
+          <span class="pdp-section__model">{{ model }}</span>
+        </div>
+        <div class="pdp-details">
+          {% if manufacturer %}
+          <div class="pdp-details__row">
+            <span>Znamka</span>
+            <span><a href="{{ manufacturers }}">{{ manufacturer }}</a></span>
+          </div>
+          {% endif %}
+          {% if attribute_groups %}
+          {% for attribute_group in attribute_groups %}
+          {% for attribute in attribute_group.attribute %}
+          {% if attribute.name != 'Opis' and attribute.name != 'Znamka' %}
+          <div class="pdp-details__row">
+            <span>{{ attribute.name }}</span>
+            <span>{{ attribute.text }}</span>
+          </div>
+          {% endif %}
+          {% endfor %}
+          {% endfor %}
+          {% endif %}
+          <div class="pdp-details__row">
+            <span>Zaloga</span>
+            <span>{{ stock }}</span>
+          </div>
+        </div>
+      </div>
+
+      {# ── Sell CTA ── #}
+      <a href="{{ base }}index.php?route=information/information&information_id=4" class="pdp-sell">
+        <div class="pdp-sell__icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        </div>
+        <h3 class="pdp-sell__title">Polna omara oblačil?</h3>
+        <p class="pdp-sell__text">Prodaj svoja otroška oblačila in izprazni omaro.</p>
+        <span class="pdp-sell__cta">
+          Prodaj pri nas
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </a>
+
+      {# ── Eco + Trust tabbed section ── #}
+      <div class="pdp-impact">
+      <div class="pdp-impact__tabs">
+        <button class="pdp-impact__tab is-active" data-target="js-impact-eco" type="button">Vpliv tekstilne industrije</button>
+        <button class="pdp-impact__tab" data-target="js-impact-trust" type="button">Naša garancija kakovosti</button>
+      </div>
+
+      {# Eco panel #}
+      <div class="pdp-impact__panel is-active" id="js-impact-eco">
+        <div class="pdp-eco__item">
+          <div class="pdp-eco__number pdp-eco__number--people">0,50<span class="pdp-eco__unit">€</span><small>plačilo / uro</small></div>
+          <div class="pdp-eco__divider pdp-eco__divider--people"></div>
+          <div class="pdp-eco__body">
+            <div class="pdp-eco__item-title">Poceni delovna sila</div>
+            <div class="pdp-eco__item-text">Delavci v tretjem svetu — tudi otroci — delajo za manj kot pol evra na uro</div>
+          </div>
+        </div>
+
+        <div class="pdp-eco__item">
+          <div class="pdp-eco__number pdp-eco__number--co2">10<span class="pdp-eco__unit">%</span><small>emisij CO₂</small></div>
+          <div class="pdp-eco__divider pdp-eco__divider--co2"></div>
+          <div class="pdp-eco__body">
+            <div class="pdp-eco__item-title">Emisije toplogrednih plinov</div>
+            <div class="pdp-eco__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj</div>
+          </div>
+        </div>
+
+        <div class="pdp-eco__item">
+          <div class="pdp-eco__number pdp-eco__number--water">93<span class="pdp-eco__unit">mrd</span><small>m³ vode</small></div>
+          <div class="pdp-eco__divider pdp-eco__divider--water"></div>
+          <div class="pdp-eco__body">
+            <div class="pdp-eco__item-title">Poraba vode</div>
+            <div class="pdp-eco__item-text">Enako kot potrebuje 200 milijonov ljudi letno</div>
+          </div>
+        </div>
+
+        <p class="pdp-eco__statement">Nežno rabljeno ne izkorišča delovne sile, ne ustvarja emisij in ne porablja vode.</p>
+      </div>
+
+      {# Trust panel #}
+      <div class="pdp-impact__panel" id="js-impact-trust">
+        <div class="pdp-eco__item">
+          <div class="pdp-eco__number" style="color:#e0a030;">10x<small>pregledano</small></div>
+          <div class="pdp-eco__divider" style="background:#f9b94a;"></div>
+          <div class="pdp-eco__body">
+            <div class="pdp-eco__item-title">Vsak artikel pregledamo 10-krat</div>
+            <div class="pdp-eco__item-text">Od sprejema do pakiranja — pri etiketiranju, fotografiranju, sortiranju in uvrščanju na police</div>
+          </div>
+        </div>
+
+        <div class="pdp-eco__item">
+          <div class="pdp-eco__number" style="color:#e0a030;">14<small>dni za vračilo</small></div>
+          <div class="pdp-eco__divider" style="background:#f9b94a;"></div>
+          <div class="pdp-eco__body">
+            <div class="pdp-eco__item-title">Brez pojasnila</div>
+            <div class="pdp-eco__item-text">Če s čim nisi zadovoljna, nam artikel vrni v 14 dneh — brez vprašanj</div>
+          </div>
+        </div>
+
+        <p class="pdp-eco__statement">Zagotavljam ti, da je vsak artikel res samo nežno rabljen.</p>
+      </div>
     </div>
 
-    {# ── Opis (always open) ── #}
-    {% if description %}
-    <div class="pdp-section">
-      <h3 class="pdp-section__title">Opis</h3>
-      <div class="pdp-section__text">{{ description }}</div>
+    <script type="text/javascript"><!--
+    (function(){
+      var tabs = document.querySelectorAll('.pdp-impact__tab');
+      var panels = document.querySelectorAll('.pdp-impact__panel');
+      for (var i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', function(){
+          for (var j = 0; j < tabs.length; j++) { tabs[j].classList.remove('is-active'); }
+          for (var j = 0; j < panels.length; j++) { panels[j].classList.remove('is-active'); }
+          this.classList.add('is-active');
+          var panel = document.getElementById(this.getAttribute('data-target'));
+          if (panel) panel.classList.add('is-active');
+        });
+      }
+    })();
+    //--></script>
+
+    </div>{# /.pdp-info #}
+    </div>{# /.pdp-layout #}
+
+    {# ── Similar products (more from this brand) ── #}
+    {% if similar_products %}
+    <div class="pdp-similar">
+      <h2 class="pdp-similar__title">{{ similar_title }}</h2>
+      <div class="pdp-similar__scroller">
+        {% for product in similar_products %}
+        <article class="product-card product-card--scroll">
+          <div class="product-card__media">
+            <a href="{{ product.href }}" class="product-card__img-wrap">
+              <div class="product-card__img">
+                <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy" />
+              </div>
+            </a>
+            <button class="product-card__fav" type="button" onclick="wishlist.add('{{ product.product_id }}');" aria-label="{{ button_wishlist }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="product-card__body">
+            {% if product.manufacturer %}
+            <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
+            {% endif %}
+            <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
+            <div class="product-card__footer">
+              <p class="product-card__price">
+                {% if product.special %}
+                <span class="product-card__price-new">{{ product.special }}</span>
+                <span class="product-card__price-old">{{ product.price }}</span>
+                {% else %}
+                {{ product.price }}
+                {% endif %}
+              </p>
+              <button class="product-card__cart" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');" aria-label="{{ button_cart }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+        <div class="pdp-similar__spacer"></div>
+      </div>
     </div>
     {% endif %}
-
-    {# ── Podrobnosti (always open) ── #}
-    <div class="pdp-section">
-      <div class="pdp-section__header">
-        <h3 class="pdp-section__title">Podrobnosti</h3>
-        <span class="pdp-section__model">{{ model }}</span>
-      </div>
-      <div class="pdp-details">
-        {% if manufacturer %}
-        <div class="pdp-details__row">
-          <span>Znamka</span>
-          <span><a href="{{ manufacturers }}">{{ manufacturer }}</a></span>
-        </div>
-        {% endif %}
-        {% if attribute_groups %}
-        {% for attribute_group in attribute_groups %}
-        {% for attribute in attribute_group.attribute %}
-        {% if attribute.name != 'Opis' and attribute.name != 'Znamka' %}
-        <div class="pdp-details__row">
-          <span>{{ attribute.name }}</span>
-          <span>{{ attribute.text }}</span>
-        </div>
-        {% endif %}
-        {% endfor %}
-        {% endfor %}
-        {% endif %}
-        <div class="pdp-details__row">
-          <span>Zaloga</span>
-          <span>{{ stock }}</span>
-        </div>
-      </div>
-    </div>
-
-    {# ── Sell CTA ── #}
-    <a href="{{ base }}index.php?route=information/information&information_id=4" class="pdp-sell">
-      <div class="pdp-sell__icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
-      </div>
-      <h3 class="pdp-sell__title">Polna omara oblačil?</h3>
-      <p class="pdp-sell__text">Prodaj svoja otroška oblačila in izprazni omaro.</p>
-      <span class="pdp-sell__cta">
-        Prodaj pri nas
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </span>
-    </a>
 
     {# ── Related products ── #}
     {% if products %}
@@ -325,6 +471,36 @@
   for (var i = 0; i < links.length; i++) {
     links[i].addEventListener('click', function(e) {
       if (swiped) { e.preventDefault(); e.stopPropagation(); }
+    });
+  }
+})();
+//--></script>
+
+{# ── Desktop thumbnail click (swap main image) ── #}
+<script type="text/javascript"><!--
+(function(){
+  var slides = document.querySelectorAll('.pdp-gallery__slide');
+  var thumbs = document.querySelectorAll('.pdp-gallery__thumb-desktop');
+  if (thumbs.length < 2) return;
+
+  // Mark first slide active
+  if (slides.length > 0) slides[0].classList.add('is-active-desktop');
+
+  for (var i = 0; i < thumbs.length; i++) {
+    thumbs[i].addEventListener('click', function() {
+      var idx = parseInt(this.getAttribute('data-index'));
+      // Update thumbs
+      for (var j = 0; j < thumbs.length; j++) thumbs[j].classList.remove('is-active');
+      this.classList.add('is-active');
+      // Update slides
+      for (var j = 0; j < slides.length; j++) {
+        slides[j].classList.remove('is-active-desktop');
+        slides[j].style.display = 'none';
+      }
+      if (slides[idx]) {
+        slides[idx].classList.add('is-active-desktop');
+        slides[idx].style.display = 'block';
+      }
     });
   }
 })();
