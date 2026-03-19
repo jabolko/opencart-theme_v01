@@ -1,43 +1,41 @@
+{# ── Category bottom sheet (opened by #categories-open) ── #}
 {# ── Filter bottom sheet (opened by #filter-open) ── #}
-{% if filter_groups %}
 
-{# Overlay #}
+{# Shared overlay #}
 <div class="filter-overlay" id="js-filter-overlay"></div>
 
-{# Bottom sheet #}
-<div class="filter-sheet" id="js-filter-sheet" aria-hidden="true">
-
-  {# Handle bar #}
+{# ====== CATEGORY SHEET ====== #}
+<div class="filter-sheet" id="js-cat-sheet" aria-hidden="true">
   <div class="filter-sheet__handle"><div class="filter-sheet__handle-bar"></div></div>
+  <div class="filter-sheet__header">
+    <span class="filter-sheet__title">Kategorije</span>
+    <button class="filter-sheet__close js-sheet-close" type="button" aria-label="Zapri kategorije">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div class="filter-sheet__body">
+    <div class="filter-section__list" id="js-cat-list"></div>
+  </div>
+</div>
 
-  {# Header #}
+{# ====== FILTER SHEET ====== #}
+{% if filter_groups %}
+<div class="filter-sheet" id="js-filter-sheet" aria-hidden="true">
+  <div class="filter-sheet__handle"><div class="filter-sheet__handle-bar"></div></div>
   <div class="filter-sheet__header">
     <span class="filter-sheet__title">Filtri</span>
-    <button class="filter-sheet__close" id="js-filter-close" type="button" aria-label="Zapri filtre">
+    <button class="filter-sheet__close js-sheet-close" type="button" aria-label="Zapri filtre">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
   </div>
 
-  {# Scrollable body #}
   <div class="filter-sheet__body">
-
     {# Active filter chips (populated by JS) #}
     <div class="active-filters" id="js-active-filters" style="display:none"></div>
-
-    {# Categories section (populated by JS from .cat-subcats on the page) #}
-    <div class="filter-section is-collapsed" id="js-filter-categories" style="display:none">
-      <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
-        <h3>Kategorije</h3>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </div>
-      <div class="filter-section__body">
-        <div class="filter-section__list" id="js-filter-categories-list"></div>
-      </div>
-    </div>
 
     {# OC filter groups (e.g. Starost / Velikost) #}
     {% for filter_group in filter_groups %}
@@ -77,7 +75,6 @@
         <div class="filter-section__list" id="js-filter-manufacturers-list"></div>
       </div>
     </div>
-
   </div>
 
   {# Footer #}
@@ -85,72 +82,137 @@
     <button type="button" class="filter-sheet__reset" id="js-filter-reset">Ponastavi</button>
     <button type="button" class="filter-sheet__apply" id="js-filter-apply">Pokaži rezultate</button>
   </div>
-
 </div>
+{% endif %}
 
 <script type="text/javascript"><!--
 (function() {
-  var sheet    = document.getElementById('js-filter-sheet');
-  var overlay  = document.getElementById('js-filter-overlay');
-  var openBtn  = document.getElementById('filter-open');
-  var closeBtn = document.getElementById('js-filter-close');
-  var applyBtn = document.getElementById('js-filter-apply');
-  var resetBtn = document.getElementById('js-filter-reset');
-  if (!sheet) { return; }
+  var overlay    = document.getElementById('js-filter-overlay');
+  var catSheet   = document.getElementById('js-cat-sheet');
+  var filterSheet = document.getElementById('js-filter-sheet');
+  var catOpenBtn = document.getElementById('categories-open');
+  var filterOpenBtn = document.getElementById('filter-open');
+  var applyBtn   = document.getElementById('js-filter-apply');
+  var resetBtn   = document.getElementById('js-filter-reset');
+  var activeSheet = null;
 
-  // Populate categories — top-level parents + their direct children
-  var catSection  = document.getElementById('js-filter-categories');
-  var catList     = document.getElementById('js-filter-categories-list');
-  var heading     = document.querySelector('.cat-header__title');
-  var menuItems   = document.querySelectorAll('#menu .navbar-nav:first-child > li');
-  var currentName = heading ? heading.textContent.trim().toLowerCase() : '';
-
-  // Also check breadcrumb for parent match (when inside a subcategory)
-  var breadcrumbs = document.querySelectorAll('.cat-breadcrumb li a');
-  var parentNames = [];
-  for (var b = 0; b < breadcrumbs.length; b++) {
-    parentNames.push(breadcrumbs[b].textContent.trim().toLowerCase());
+  function openSheet(sheet) {
+    if (!sheet) return;
+    activeSheet = sheet;
+    sheet.classList.add('filter-sheet--open');
+    sheet.setAttribute('aria-hidden', 'false');
+    overlay.classList.add('filter-overlay--visible');
+    document.body.classList.add('filter-open');
   }
 
-  if (catList && menuItems.length > 0) {
-    catSection.style.display = '';
+  function closeSheet() {
+    if (activeSheet) {
+      activeSheet.classList.remove('filter-sheet--open');
+      activeSheet.setAttribute('aria-hidden', 'true');
+      activeSheet = null;
+    }
+    overlay.classList.remove('filter-overlay--visible');
+    document.body.classList.remove('filter-open');
+  }
 
-    for (var i = 0; i < menuItems.length; i++) {
-      var topLink = menuItems[i].querySelector(':scope > a');
-      if (!topLink) { continue; }
-      var href = topLink.getAttribute('href');
-      if (!href || href === '#') { continue; }
+  // Close buttons (shared class)
+  var closeBtns = document.querySelectorAll('.js-sheet-close');
+  for (var i = 0; i < closeBtns.length; i++) {
+    closeBtns[i].addEventListener('click', closeSheet);
+  }
+  if (overlay) { overlay.addEventListener('click', closeSheet); }
 
-      var topText = topLink.textContent.replace(/\s+/g, ' ').trim();
-      var topLower = topText.toLowerCase();
-      var isCurrentParent = topLower === currentName || parentNames.indexOf(topLower) !== -1;
+  document.addEventListener('keydown', function(e) {
+    if ((e.key === 'Escape' || e.keyCode === 27) && activeSheet) { closeSheet(); }
+  });
 
-      // Top-level parent link
-      var a = document.createElement('a');
-      a.href = href;
-      a.className = 'filter-item filter-item--link' + (topLower === currentName ? ' filter-item--active' : '');
-      a.textContent = topText;
-      catList.appendChild(a);
+  // ── CATEGORY SHEET: populate from controller JSON (3-level tree) ──
+  var catList   = document.getElementById('js-cat-list');
+  var treeDataEl = document.getElementById('js-category-tree');
 
-      // Show direct children only under the active parent
-      if (isCurrentParent) {
-        var childLinks = menuItems[i].querySelectorAll('.dropdown-inner a');
-        for (var j = 0; j < childLinks.length; j++) {
-          var childText = childLinks[j].textContent.trim();
-          var child = document.createElement('a');
-          child.href = childLinks[j].href;
-          child.className = 'filter-item filter-item--link filter-item--sub';
-          if (childText.toLowerCase() === currentName) {
-            child.className += ' filter-item--active';
+  if (catList && treeDataEl) {
+    try {
+      var tree = JSON.parse(treeDataEl.textContent);
+      for (var i = 0; i < tree.length; i++) {
+        var top = tree[i];
+        var hasChildren = top.children && top.children.length > 0;
+        var isInTree = top.current_parent; // we are somewhere inside this parent's tree
+
+        // Level 1: top parent row (link + expand chevron)
+        var row = document.createElement('div');
+        row.className = 'cat-tree-row';
+
+        var a = document.createElement('a');
+        a.href = top.href;
+        // Mark active if current category OR if we are inside this parent's tree
+        a.className = 'filter-item filter-item--link' + ((top.active || isInTree) ? ' filter-item--active' : '');
+        a.textContent = top.name;
+        row.appendChild(a);
+
+        if (hasChildren) {
+          var chevron = document.createElement('button');
+          chevron.type = 'button';
+          chevron.className = 'cat-tree-toggle' + (isInTree ? ' cat-tree-toggle--open' : '');
+          chevron.setAttribute('aria-label', 'Razširi ' + top.name);
+          chevron.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#565656" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+          row.appendChild(chevron);
+        }
+
+        catList.appendChild(row);
+
+        // Level 2: children container (collapsible)
+        if (hasChildren) {
+          var childWrap = document.createElement('div');
+          childWrap.className = 'cat-tree-children' + (isInTree ? '' : ' cat-tree-children--hidden');
+
+          for (var j = 0; j < top.children.length; j++) {
+            var l2 = top.children[j];
+            var l2a = document.createElement('a');
+            l2a.href = l2.href;
+            l2a.className = 'filter-item filter-item--link filter-item--sub' + (l2.active ? ' filter-item--active' : '');
+            l2a.textContent = l2.name;
+            childWrap.appendChild(l2a);
+
+            // Level 3: children under active level-2
+            if (l2.current_parent && l2.children) {
+              for (var k = 0; k < l2.children.length; k++) {
+                var l3 = l2.children[k];
+                var l3a = document.createElement('a');
+                l3a.href = l3.href;
+                l3a.className = 'filter-item filter-item--link filter-item--sub-2' + (l3.active ? ' filter-item--active' : '');
+                l3a.textContent = l3.name;
+                childWrap.appendChild(l3a);
+              }
+            }
           }
-          child.textContent = childText;
-          catList.appendChild(child);
+
+          catList.appendChild(childWrap);
+
+          // Toggle expand/collapse on chevron click
+          (function(btn, wrap) {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              var isOpen = !wrap.classList.contains('cat-tree-children--hidden');
+              if (isOpen) {
+                wrap.classList.add('cat-tree-children--hidden');
+                btn.classList.remove('cat-tree-toggle--open');
+              } else {
+                wrap.classList.remove('cat-tree-children--hidden');
+                btn.classList.add('cat-tree-toggle--open');
+              }
+            });
+          })(chevron, childWrap);
         }
       }
-    }
+    } catch(e) {}
   }
 
-  // Populate manufacturers from JSON data on the page
+  if (catOpenBtn) {
+    catOpenBtn.addEventListener('click', function() { openSheet(catSheet); });
+  }
+
+  // ── FILTER SHEET: manufacturers ──
   var mfrSection = document.getElementById('js-filter-manufacturers');
   var mfrList    = document.getElementById('js-filter-manufacturers-list');
   var mfrDataEl  = document.getElementById('js-manufacturer-data');
@@ -184,15 +246,13 @@
     } catch(e) {}
   }
 
-  // Populate active filter chips
-  var chipsEl = document.getElementById('js-active-filters');
+  // ── FILTER SHEET: active filter chips ──
+  var chipsEl    = document.getElementById('js-active-filters');
   var activeDataEl = document.getElementById('js-active-filters-data');
-  var clearUrlEl = document.getElementById('js-clear-filters-url');
 
-  if (chipsEl && activeDataEl) {
+  if (chipsEl && activeDataEl && filterSheet) {
     try {
       var activeFilters = JSON.parse(activeDataEl.textContent);
-      var clearUrl = clearUrlEl ? JSON.parse(clearUrlEl.textContent) : '#';
       if (activeFilters.length > 0) {
         chipsEl.style.display = '';
         for (var c = 0; c < activeFilters.length; c++) {
@@ -202,20 +262,17 @@
             chip.className = 'active-filters__chip';
             chip.innerHTML = af.name + ' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
             chip.addEventListener('click', function() {
-              // Find and uncheck the matching checkbox
               var selector = af.type === 'manufacturer'
                 ? 'input[name="manufacturer[]"]'
                 : 'input[name="filter[]"]';
-              var boxes = sheet.querySelectorAll(selector);
+              var boxes = filterSheet.querySelectorAll(selector);
               for (var b = 0; b < boxes.length; b++) {
-                var label = boxes[b].parentElement.querySelector('.filter-item__label');
-                if (label && label.textContent.trim() === af.name) {
+                var lbl = boxes[b].parentElement.querySelector('.filter-item__label');
+                if (lbl && lbl.textContent.trim() === af.name) {
                   boxes[b].checked = false;
                 }
               }
-              // Remove this chip
               chip.remove();
-              // Hide chips container if empty
               if (!chipsEl.querySelector('.active-filters__chip')) {
                 chipsEl.style.display = 'none';
               }
@@ -228,12 +285,8 @@
         clearLink.className = 'active-filters__clear';
         clearLink.textContent = 'Počisti vse';
         clearLink.addEventListener('click', function() {
-          // Uncheck all filter and manufacturer checkboxes
-          var allChecked = sheet.querySelectorAll('input[name="filter[]"], input[name="manufacturer[]"]');
-          for (var x = 0; x < allChecked.length; x++) {
-            allChecked[x].checked = false;
-          }
-          // Remove chips
+          var allChecked = filterSheet.querySelectorAll('input[name="filter[]"], input[name="manufacturer[]"]');
+          for (var x = 0; x < allChecked.length; x++) { allChecked[x].checked = false; }
           chipsEl.style.display = 'none';
           chipsEl.innerHTML = '';
         });
@@ -242,99 +295,31 @@
     } catch(e) {}
   }
 
-  function openSheet() {
-    sheet.classList.add('filter-sheet--open');
-    sheet.setAttribute('aria-hidden', 'false');
-    overlay.classList.add('filter-overlay--visible');
-    document.body.classList.add('filter-open');
+  if (filterOpenBtn) {
+    filterOpenBtn.addEventListener('click', function() { openSheet(filterSheet); });
   }
 
-  function closeSheet() {
-    sheet.classList.remove('filter-sheet--open');
-    sheet.setAttribute('aria-hidden', 'true');
-    overlay.classList.remove('filter-overlay--visible');
-    document.body.classList.remove('filter-open');
-  }
-
-  var catOpenBtn = document.getElementById('categories-open');
-
-  var allSections = sheet.querySelectorAll('.filter-section');
-  var chipsWrap   = document.getElementById('js-active-filters');
-
-  function showAllSections() {
-    for (var s = 0; s < allSections.length; s++) { allSections[s].style.display = ''; }
-    if (chipsWrap) { chipsWrap.style.removeProperty('display'); }
-  }
-
-  if (openBtn) {
-    openBtn.addEventListener('click', function() {
-      showAllSections();
-      openSheet();
-    });
-  }
-  if (catOpenBtn) {
-    catOpenBtn.addEventListener('click', function() {
-      // Show only categories section
-      for (var s = 0; s < allSections.length; s++) {
-        if (allSections[s].id === 'js-filter-categories') {
-          allSections[s].style.display = '';
-          allSections[s].classList.remove('is-collapsed');
-        } else {
-          allSections[s].style.display = 'none';
-        }
-      }
-      if (chipsWrap) { chipsWrap.style.display = 'none'; }
-      openSheet();
-    });
-  }
-  if (closeBtn) { closeBtn.addEventListener('click', closeSheet); }
-  if (overlay)  { overlay.addEventListener('click', closeSheet); }
-
-  // Collapse/expand sections
-  var headers = sheet.querySelectorAll('.filter-section__header');
-  for (var h = 0; h < headers.length; h++) {
-    headers[h].style.cursor = 'pointer';
-  }
-
-  document.addEventListener('keydown', function(e) {
-    if ((e.key === 'Escape' || e.keyCode === 27) && sheet.classList.contains('filter-sheet--open')) {
-      closeSheet();
-    }
-  });
-
+  // ── Apply / Reset ──
   if (applyBtn) {
     applyBtn.addEventListener('click', function() {
       var url = '{{ action|escape('js') }}';
 
-      // OC filters
-      var checkedFilters = sheet.querySelectorAll('input[name="filter[]"]:checked');
+      var checkedFilters = filterSheet.querySelectorAll('input[name="filter[]"]:checked');
       var filterIds = [];
-      for (var i = 0; i < checkedFilters.length; i++) {
-        filterIds.push(checkedFilters[i].value);
-      }
-      if (filterIds.length > 0) {
-        url += '&filter=' + filterIds.join(',');
-      }
+      for (var i = 0; i < checkedFilters.length; i++) { filterIds.push(checkedFilters[i].value); }
+      if (filterIds.length > 0) { url += '&filter=' + filterIds.join(','); }
 
-      // Manufacturer filter
-      var checkedMfrs = sheet.querySelectorAll('input[name="manufacturer[]"]:checked');
+      var checkedMfrs = filterSheet.querySelectorAll('input[name="manufacturer[]"]:checked');
       var mfrIds = [];
-      for (var i = 0; i < checkedMfrs.length; i++) {
-        mfrIds.push(checkedMfrs[i].value);
-      }
-      if (mfrIds.length > 0) {
-        url += '&filter_manufacturer=' + mfrIds.join(',');
-      }
+      for (var i = 0; i < checkedMfrs.length; i++) { mfrIds.push(checkedMfrs[i].value); }
+      if (mfrIds.length > 0) { url += '&filter_manufacturer=' + mfrIds.join(','); }
 
       location = url;
     });
   }
 
   if (resetBtn) {
-    resetBtn.addEventListener('click', function() {
-      location = '{{ action|escape('js') }}';
-    });
+    resetBtn.addEventListener('click', function() { location = '{{ action|escape('js') }}'; });
   }
 })();
 //--></script>
-{% endif %}

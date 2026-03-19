@@ -48,11 +48,37 @@
         <a href="{{ category.href }}" class="cat-subcats__pill">{{ category.name }}</a>
         {% endfor %}
       </div>
+      <div class="cat-subcats__arrow">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+      </div>
     </div>
     {% endif %}
 
+    <script type="text/javascript"><!--
+    (function(){
+      var wrap = document.querySelector('.cat-subcats');
+      var scroll = document.querySelector('.cat-subcats__scroll');
+      var arrow = document.querySelector('.cat-subcats__arrow');
+      if (!wrap || !scroll) return;
+      function check() {
+        var atStart = scroll.scrollLeft <= 10;
+        var atEnd = scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 10;
+        wrap.classList.toggle('is-scrolled-start', atStart);
+        wrap.classList.toggle('is-scrolled-middle', !atStart);
+        wrap.classList.toggle('is-scrolled-end', atEnd);
+      }
+      scroll.addEventListener('scroll', check, { passive: true });
+      check();
+      if (arrow) {
+        arrow.addEventListener('click', function() {
+          scroll.scrollBy({ left: 200, behavior: 'smooth' });
+        });
+      }
+    })();
+    //--></script>
+
     {% if products %}
-    {# ── Toolbar ── #}
+    {# ── Toolbar (mobile only) ── #}
     <div class="cat-toolbar">
       <div class="cat-toolbar__row">
         <button class="cat-toolbar__filter" type="button" id="categories-open">
@@ -89,66 +115,157 @@
       </div>
     </div>
 
-    {# ── Product grid ── #}
-    <div class="product-grid">
-      {% for product in products %}
-      <article class="product-card">
+    {# ── Desktop layout: sidebar + products ── #}
+    <div class="cat-layout">
 
-        <div class="product-card__media">
-          <a href="{{ product.href }}" class="product-card__img-wrap">
-            <div class="product-card__img">
-              <div class="product-card__labels">
-                {# TODO: add label logic once OC custom fields are wired #}
-              </div>
-              <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="lazy">
-            </div>
-          </a>
-          <button class="product-card__fav"
-                  type="button"
-                  onclick="wishlist.add('{{ product.product_id }}');"
-                  aria-label="{{ button_wishlist }}">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      {# ── Desktop filter sidebar ── #}
+      <aside class="filter-sidebar" id="js-filter-sidebar">
+
+        {# Active filter chips (desktop) #}
+        <div class="active-filters active-filters--desktop" id="js-desktop-chips"></div>
+
+        {# Category tree (populated by JS from same JSON) #}
+        <div class="filter-section is-collapsed" id="js-sidebar-categories">
+          <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
+            <h3>Kategorije</h3>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
             </svg>
-          </button>
-        </div>
-
-        <div class="product-card__body">
-          {% if product.manufacturer is defined and product.manufacturer %}
-          <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
-          {% endif %}
-          <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
-          <div class="product-card__footer">
-            <p class="product-card__price">
-              {% if product.special %}
-                <span class="product-card__price-new">{{ product.special }}</span>
-                <span class="product-card__price-old">{{ product.price }}</span>
-              {% else %}
-                {{ product.price }}
-              {% endif %}
-            </p>
-            <button class="product-card__cart"
-                    type="button"
-                    onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
-                    aria-label="{{ button_cart }}">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="9" cy="21" r="1"/>
-                <circle cx="20" cy="21" r="1"/>
-                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
-              </svg>
-            </button>
+          </div>
+          <div class="filter-section__body">
+            <div class="filter-section__list" id="js-sidebar-cat-list"></div>
           </div>
         </div>
 
-      </article>
-      {% endfor %}
-    </div>
+        {# OC filter groups (Starost / Velikost) rendered server-side for desktop sidebar #}
+        {% if sidebar_filter_groups is defined %}
+        {% for filter_group in sidebar_filter_groups %}
+        <div class="filter-section">
+          <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
+            <h3>{{ filter_group.name }}</h3>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="filter-section__body">
+            <div class="filter-section__list">
+              {% for filter in filter_group.filter %}
+              <label class="filter-item">
+                {% if filter.filter_id in sidebar_filter_category %}
+                <input type="checkbox" class="filter-item__checkbox" name="filter[]" value="{{ filter.filter_id }}" checked="checked" />
+                {% else %}
+                <input type="checkbox" class="filter-item__checkbox" name="filter[]" value="{{ filter.filter_id }}" />
+                {% endif %}
+                <span class="filter-item__label">{{ filter.name }}</span>
+                <span class="filter-item__count">{{ filter.count }}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
 
-    {# ── Pagination ── #}
-    <div class="cat-pagination">
-      <div class="cat-pagination__links">{{ pagination }}</div>
-      <div class="cat-pagination__results">{{ results }}</div>
-    </div>
+        {# Manufacturer filter (populated by JS) #}
+        <div class="filter-section" id="js-sidebar-manufacturers" style="display:none">
+          <div class="filter-section__header" onclick="this.parentElement.classList.toggle('is-collapsed')">
+            <h3>Znamke</h3>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <div class="filter-section__body">
+            <div class="filter-section__list" id="js-sidebar-mfr-list"></div>
+          </div>
+        </div>
+
+        {# Reset link for desktop sidebar #}
+        <div class="filter-sidebar__actions" id="js-sidebar-actions" style="display:none">
+          <a class="filter-sidebar__reset" id="js-sidebar-reset">Ponastavi filtre</a>
+        </div>
+      </aside>
+
+      {# ── Products area ── #}
+      <div class="cat-products">
+        {# Desktop toolbar (count + sort) #}
+        <div class="cat-toolbar-desktop">
+          <span class="cat-toolbar__count">{{ product_total }} artiklov</span>
+          <div class="cat-toolbar__sort-wrap">
+            <select id="input-sort-desktop" class="cat-toolbar__sort-plain" onchange="location = this.value;">
+              {% for sorts in sorts %}
+              {% if sorts.value == '%s-%s'|format(sort, order) %}
+              <option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+              {% else %}
+              <option value="{{ sorts.href }}">{{ sorts.text }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+            <svg class="cat-toolbar__sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+
+        {# ── Product grid ── #}
+        <div class="product-grid">
+          {% for product in products %}
+          <article class="product-card">
+
+            <div class="product-card__media">
+              <a href="{{ product.href }}" class="product-card__img-wrap">
+                <div class="product-card__img">
+                  <div class="product-card__labels">
+                    {# TODO: add label logic once OC custom fields are wired #}
+                  </div>
+                  <img src="{{ product.thumb }}" alt="{{ product.name }}" loading="{{ loop.index <= 4 ? 'eager' : 'lazy' }}">
+                </div>
+              </a>
+              <button class="product-card__fav"
+                      type="button"
+                      onclick="wishlist.add('{{ product.product_id }}');"
+                      aria-label="{{ button_wishlist }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-card__body">
+              {% if product.manufacturer is defined and product.manufacturer %}
+              <p class="product-card__manufacturer">{{ product.manufacturer }}</p>
+              {% endif %}
+              <a href="{{ product.href }}" class="product-card__name">{{ product.name }}</a>
+              <div class="product-card__footer">
+                <p class="product-card__price">
+                  {% if product.special %}
+                    <span class="product-card__price-new">{{ product.special }}</span>
+                    <span class="product-card__price-old">{{ product.price }}</span>
+                  {% else %}
+                    {{ product.price }}
+                  {% endif %}
+                </p>
+                <button class="product-card__cart"
+                        type="button"
+                        onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"
+                        aria-label="{{ button_cart }}">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="9" cy="21" r="1"/>
+                    <circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+          </article>
+          {% endfor %}
+        </div>
+
+        {# ── Pagination ── #}
+        <div class="cat-pagination">
+          <div class="cat-pagination__links">{{ pagination }}</div>
+          <div class="cat-pagination__results">{{ results }}</div>
+        </div>
+      </div>
+    </div>{# /.cat-layout #}
 
     {% endif %}
 
@@ -167,9 +284,301 @@
     {# Active filters data for filter sheet chips #}
     {% if active_filters is defined and active_filters %}
     <script type="application/json" id="js-active-filters-data">{{ active_filters|json_encode|raw }}</script>
-    <script type="application/json" id="js-clear-filters-url">"{{ clear_filters_url }}"</script>
     {% endif %}
 
+    {# Base URL for filter apply/reset (always rendered) #}
+    <script type="application/json" id="js-clear-filters-url">"{{ clear_filters_url }}"</script>
+
+    {# Category tree for category sheet (3 levels from controller) #}
+    {% if category_tree is defined %}
+    <script type="application/json" id="js-category-tree">{{ category_tree|json_encode|raw }}</script>
+    {% endif %}
+
+    {# Desktop sidebar JS — populate categories + manufacturers + chips #}
+    <script type="text/javascript"><!--
+    (function(){
+      var clearUrlEl = document.getElementById('js-clear-filters-url');
+      var baseUrl = clearUrlEl ? JSON.parse(clearUrlEl.textContent) : location.href.split('&')[0];
+
+      // ── Sidebar categories from JSON tree ──
+      var catList = document.getElementById('js-sidebar-cat-list');
+      var treeEl  = document.getElementById('js-category-tree');
+      if (catList && treeEl) {
+        try {
+          var tree = JSON.parse(treeEl.textContent);
+          for (var i = 0; i < tree.length; i++) {
+            var top = tree[i];
+            var hasChildren = top.children && top.children.length > 0;
+            var isInTree = top.current_parent;
+
+            var row = document.createElement('div');
+            row.className = 'cat-tree-row';
+            var a = document.createElement('a');
+            a.href = top.href;
+            a.className = 'filter-item filter-item--link' + ((top.active || isInTree) ? ' filter-item--active' : '');
+            a.textContent = top.name;
+            row.appendChild(a);
+
+            if (hasChildren) {
+              var chevron = document.createElement('button');
+              chevron.type = 'button';
+              chevron.className = 'cat-tree-toggle' + (isInTree ? ' cat-tree-toggle--open' : '');
+              chevron.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#565656" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+              row.appendChild(chevron);
+            }
+            catList.appendChild(row);
+
+            if (hasChildren) {
+              var childWrap = document.createElement('div');
+              childWrap.className = 'cat-tree-children' + (isInTree ? '' : ' cat-tree-children--hidden');
+              for (var j = 0; j < top.children.length; j++) {
+                var l2 = top.children[j];
+                var l2a = document.createElement('a');
+                l2a.href = l2.href;
+                l2a.className = 'filter-item filter-item--link filter-item--sub' + (l2.active ? ' filter-item--active' : '');
+                l2a.textContent = l2.name;
+                childWrap.appendChild(l2a);
+                if (l2.current_parent && l2.children) {
+                  for (var k = 0; k < l2.children.length; k++) {
+                    var l3 = l2.children[k];
+                    var l3a = document.createElement('a');
+                    l3a.href = l3.href;
+                    l3a.className = 'filter-item filter-item--link filter-item--sub-2' + (l3.active ? ' filter-item--active' : '');
+                    l3a.textContent = l3.name;
+                    childWrap.appendChild(l3a);
+                  }
+                }
+              }
+              catList.appendChild(childWrap);
+              if (hasChildren) {
+                (function(btn, wrap) {
+                  btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    wrap.classList.toggle('cat-tree-children--hidden');
+                    btn.classList.toggle('cat-tree-toggle--open');
+                  });
+                })(chevron, childWrap);
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // ── Sidebar manufacturers from JSON ──
+      var mfrSection = document.getElementById('js-sidebar-manufacturers');
+      var mfrList    = document.getElementById('js-sidebar-mfr-list');
+      var mfrDataEl  = document.getElementById('js-manufacturer-data');
+      var mfrVisibleLimit = 8;
+      if (mfrList && mfrDataEl) {
+        try {
+          var mfrs = JSON.parse(mfrDataEl.textContent);
+          if (mfrs.length > 0) {
+            mfrSection.style.display = '';
+            for (var m = 0; m < mfrs.length; m++) {
+              var mfr = mfrs[m];
+              var label = document.createElement('label');
+              label.className = 'filter-item';
+              if (m >= mfrVisibleLimit && !mfr.selected) {
+                label.classList.add('filter-item--hidden');
+              }
+              var cb = document.createElement('input');
+              cb.type = 'checkbox'; cb.className = 'filter-item__checkbox';
+              cb.name = 'sidebar_manufacturer[]'; cb.value = mfr.manufacturer_id;
+              if (mfr.selected) cb.checked = true;
+              var span = document.createElement('span');
+              span.className = 'filter-item__label';
+              span.textContent = mfr.name;
+              var count = document.createElement('span');
+              count.className = 'filter-item__count';
+              count.textContent = mfr.count;
+              label.appendChild(cb); label.appendChild(span); label.appendChild(count);
+              mfrList.appendChild(label);
+            }
+            // Add "show more" toggle if there are hidden items
+            var hiddenCount = mfrs.length - mfrVisibleLimit;
+            if (hiddenCount > 0) {
+              var toggle = document.createElement('button');
+              toggle.type = 'button';
+              toggle.className = 'filter-show-more';
+              toggle.textContent = 'Pokaži vse (' + mfrs.length + ')';
+              var expanded = false;
+              toggle.addEventListener('click', function() {
+                expanded = !expanded;
+                var items = mfrList.querySelectorAll('.filter-item--hidden');
+                for (var i = 0; i < items.length; i++) {
+                  if (expanded) {
+                    items[i].classList.remove('filter-item--hidden');
+                    items[i].classList.add('filter-item--was-hidden');
+                  }
+                }
+                if (!expanded) {
+                  var wasHidden = mfrList.querySelectorAll('.filter-item--was-hidden');
+                  for (var i = 0; i < wasHidden.length; i++) {
+                    wasHidden[i].classList.add('filter-item--hidden');
+                    wasHidden[i].classList.remove('filter-item--was-hidden');
+                  }
+                }
+                toggle.textContent = expanded ? 'Pokaži manj' : 'Pokaži vse (' + mfrs.length + ')';
+              });
+              mfrList.appendChild(toggle);
+            }
+          }
+        } catch(e) {}
+      }
+
+      // ── Sidebar active chips (click = remove filter + navigate) ──
+      var chipsEl = document.getElementById('js-desktop-chips');
+      var activeDataEl = document.getElementById('js-active-filters-data');
+      if (chipsEl && activeDataEl) {
+        try {
+          var filters = JSON.parse(activeDataEl.textContent);
+          if (filters.length > 0) {
+            for (var c = 0; c < filters.length; c++) {
+              (function(af) {
+                var chip = document.createElement('a');
+                chip.className = 'active-filters__chip';
+                chip.href = af.remove_url;
+                chip.innerHTML = af.name + ' <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+                chipsEl.appendChild(chip);
+              })(filters[c]);
+            }
+            var clearBtn = document.createElement('a');
+            clearBtn.className = 'active-filters__clear';
+            clearBtn.textContent = 'Počisti vse';
+            clearBtn.href = baseUrl;
+            chipsEl.appendChild(clearBtn);
+          }
+        } catch(e) {}
+      }
+
+      // ── Sidebar auto-apply on checkbox change (desktop only) ──
+      var sidebar = document.getElementById('js-filter-sidebar');
+      var sidebarReset = document.getElementById('js-sidebar-reset');
+      var sidebarActions = document.getElementById('js-sidebar-actions');
+      function sidebarApplyFilters() {
+        var url = baseUrl;
+        var checkedFilters = sidebar.querySelectorAll('input[name="filter[]"]:checked');
+        var filterIds = [];
+        for (var i = 0; i < checkedFilters.length; i++) filterIds.push(checkedFilters[i].value);
+        if (filterIds.length > 0) url += '&filter=' + filterIds.join(',');
+        var checkedMfrs = sidebar.querySelectorAll('input[name="sidebar_manufacturer[]"]:checked');
+        var mfrIds = [];
+        for (var i = 0; i < checkedMfrs.length; i++) mfrIds.push(checkedMfrs[i].value);
+        if (mfrIds.length > 0) url += '&filter_manufacturer=' + mfrIds.join(',');
+        location = url;
+      }
+
+      if (sidebar) {
+        // Auto-navigate on any checkbox change
+        sidebar.addEventListener('change', function(e) {
+          if (e.target.type === 'checkbox') {
+            sidebarApplyFilters();
+          }
+        });
+
+        // Show reset link if any filters are active
+        var hasActive = sidebar.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+        if (hasActive && sidebarActions) {
+          sidebarActions.style.display = '';
+        }
+      }
+      if (sidebarReset) {
+        sidebarReset.href = baseUrl;
+      }
+
+      // ── Smart sticky sidebar ──
+      // When sidebar is taller than viewport, dynamically adjust sticky top
+      // so user can see both top and bottom of sidebar while scrolling
+      if (sidebar && window.matchMedia('(min-width: 992px)').matches) {
+        var lastScroll = window.pageYOffset;
+        var stickyTop = 16; // initial top offset in px
+        var gap = 16; // bottom gap in px
+
+        function updateSticky() {
+          var sidebarH = sidebar.offsetHeight;
+          var viewH = window.innerHeight;
+          var scrollY = window.pageYOffset;
+          var scrollDelta = scrollY - lastScroll;
+
+          if (sidebarH <= viewH - gap * 2) {
+            // Sidebar fits in viewport — simple stick at top
+            sidebar.style.top = gap + 'px';
+          } else {
+            // Sidebar taller than viewport — smart sticky
+            var maxTop = gap;
+            var minTop = -(sidebarH - viewH + gap);
+
+            if (scrollDelta > 0) {
+              // Scrolling down — show sidebar bottom
+              stickyTop = Math.max(stickyTop - scrollDelta, minTop);
+            } else {
+              // Scrolling up — show sidebar top
+              stickyTop = Math.min(stickyTop - scrollDelta, maxTop);
+            }
+            sidebar.style.top = stickyTop + 'px';
+          }
+
+          lastScroll = scrollY;
+        }
+
+        window.addEventListener('scroll', updateSticky, { passive: true });
+        window.addEventListener('resize', updateSticky, { passive: true });
+        updateSticky();
+      }
+    })();
+    //--></script>
+
+    {# Floating filter FAB (mobile) #}
+    {% if products %}
+    <div class="cat-fab" id="js-cat-fab">
+      <button class="cat-fab__btn cat-fab__btn--primary" type="button" id="fab-filters" aria-label="Filtri">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
+          <line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/>
+          <line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/>
+          <line x1="17" y1="16" x2="23" y2="16"/>
+        </svg>
+      </button>
+    </div>
+    <script type="text/javascript"><!--
+    (function(){
+      var fab = document.getElementById('js-cat-fab');
+      var fabFilter = document.getElementById('fab-filters');
+      if (!fab) return;
+
+      var toolbarFilterBtn = document.getElementById('filter-open');
+      if (fabFilter && toolbarFilterBtn) {
+        fabFilter.addEventListener('click', function() { toolbarFilterBtn.click(); });
+      }
+
+      // Show FAB between toolbar and pagination
+      var toolbar = document.querySelector('.cat-toolbar');
+      var pagination = document.querySelector('.cat-pagination');
+      if (toolbar) {
+        var shown = false;
+        function checkScroll() {
+          var toolbarRect = toolbar.getBoundingClientRect();
+          var pastToolbar = toolbarRect.bottom < 0;
+          var pastPagination = pagination ? pagination.getBoundingClientRect().top < window.innerHeight : false;
+          var shouldShow = pastToolbar && !pastPagination;
+          if (shouldShow && !shown) {
+            fab.classList.add('cat-fab--visible');
+            shown = true;
+          } else if (!shouldShow && shown) {
+            fab.classList.remove('cat-fab--visible');
+            shown = false;
+          }
+        }
+        window.addEventListener('scroll', checkScroll, { passive: true });
+        checkScroll();
+      }
+    })();
+    //--></script>
+    {% endif %}
+
+    {# column_left renders mobile bottom sheets (filter.twig) #}
     {{ column_left }}
     {{ content_top }}
     {{ content_bottom }}

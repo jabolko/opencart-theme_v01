@@ -33,7 +33,7 @@ body.filter-open { overflow: hidden; }
   bottom: 0;
   left: 0;
   right: 0;
-  max-height: 88vh;
+  max-height: 94vh;
   background: $color-surface;
   border-radius: 1.41rem 1.41rem 0 0; // 24px ÷ 17
   z-index: 601;
@@ -262,12 +262,23 @@ body.filter-open { overflow: hidden; }
     flex: 1;
   }
 
+  &__count {
+    font-size: 0.72rem;
+    color: $color-text-muted;
+    flex-shrink: 0;
+  }
+
+  &--hidden {
+    display: none;
+  }
+
   // Link variant (for categories)
   &--link {
     font-family: $font-family-body;
-    font-size: 0.84rem;
+    font-size: 0.88rem;
     color: $color-text-base;
-    padding: 0.35rem $space-2;
+    padding: 0.47rem $space-2;
+    line-height: 1.4;
 
     &:hover { color: $color-text-heading; }
   }
@@ -280,10 +291,59 @@ body.filter-open { overflow: hidden; }
     background: rgba($color-primary, 0.08);
   }
 
-  // Subcategory (indented)
+  // Subcategory level 2 (indented)
   &--sub {
     padding-left: $space-6;
-    font-size: 0.80rem;
+    font-size: 0.84rem;
+  }
+
+  // Subcategory level 3 (deeper indent)
+  &--sub-2 {
+    padding-left: $space-8;
+    font-size: 0.82rem;
+  }
+}
+
+// =============================================================================
+// CATEGORY TREE  .cat-tree-* (inside category sheet)
+// =============================================================================
+.cat-tree-row {
+  display: flex;
+  align-items: center;
+
+  .filter-item { flex: 1; }
+}
+
+.cat-tree-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: $radius-md;
+  transition: background 0.15s ease;
+
+  &:hover { background: $color-surface-alt; }
+
+  svg { transition: transform 0.25s ease; }
+
+  &--open svg { transform: rotate(180deg); }
+}
+
+.cat-tree-children {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+  max-height: 60rem; // large enough for any list
+  opacity: 1;
+
+  &--hidden {
+    max-height: 0;
+    opacity: 0;
   }
 }
 
@@ -338,6 +398,35 @@ body.filter-open { overflow: hidden; }
       color: $color-text-heading;
       background: $color-surface-alt;
     }
+  }
+}
+
+// =============================================================================
+// SHOW MORE TOGGLE  .filter-show-more
+// =============================================================================
+.filter-show-more {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: $space-2 $space-2;
+  margin-top: $space-1;
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 0.76rem;
+  color: $color-primary-dark;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover { color: $color-text-heading; }
+}
+
+// Desktop sidebar chips variant
+.active-filters--desktop {
+  display: none;
+
+  @include respond-to('md') {
+    display: flex;
   }
 }
 

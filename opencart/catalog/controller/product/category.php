@@ -238,10 +238,15 @@ class ControllerProductCategory extends Controller {
 			$filter_manufacturer_ids = $filter_manufacturer ? array_map('intval', explode(',', $filter_manufacturer)) : array();
 
 			foreach ($manufacturer_query->rows as $mfr) {
+				$mfr_count_data = array(
+					'filter_category_id'  => $category_id,
+					'filter_manufacturer_id' => (int)$mfr['manufacturer_id']
+				);
 				$data['manufacturers'][] = array(
 					'manufacturer_id' => $mfr['manufacturer_id'],
 					'name'            => html_entity_decode($mfr['name'], ENT_QUOTES, 'UTF-8'),
-					'selected'        => in_array((int)$mfr['manufacturer_id'], $filter_manufacturer_ids)
+					'selected'        => in_array((int)$mfr['manufacturer_id'], $filter_manufacturer_ids),
+					'count'           => $this->model_catalog_product->getTotalProducts($mfr_count_data)
 				);
 			}
 
@@ -267,7 +272,7 @@ class ControllerProductCategory extends Controller {
 						$data['active_filters'][] = array(
 							'name'       => $filter_info->row['name'],
 							'type'       => 'filter',
-							'remove_url' => $this->url->link('product/category', $remove_url)
+							'remove_url' => html_entity_decode($this->url->link('product/category', $remove_url), ENT_QUOTES, 'UTF-8')
 						);
 					}
 				}
@@ -290,14 +295,100 @@ class ControllerProductCategory extends Controller {
 						$data['active_filters'][] = array(
 							'name'       => html_entity_decode($mfr['name'], ENT_QUOTES, 'UTF-8'),
 							'type'       => 'manufacturer',
-							'remove_url' => $this->url->link('product/category', $remove_url)
+							'remove_url' => html_entity_decode($this->url->link('product/category', $remove_url), ENT_QUOTES, 'UTF-8')
 						);
 					}
 				}
 			}
 
 			// Clear all URL (no filters)
-			$data['clear_filters_url'] = $this->url->link('product/category', 'path=' . $this->request->get['path']);
+			$data['clear_filters_url'] = html_entity_decode($this->url->link('product/category', 'path=' . $this->request->get['path']), ENT_QUOTES, 'UTF-8');
+
+			// Filter groups for desktop sidebar (same data as filter module)
+			$data['sidebar_filter_groups'] = array();
+			$sidebar_fg = $this->model_catalog_category->getCategoryFilters($category_id);
+			if ($sidebar_fg) {
+				foreach ($sidebar_fg as $fg) {
+					$fg_filters = array();
+					foreach ($fg['filter'] as $f) {
+						$filter_count_data = array(
+							'filter_category_id' => $category_id,
+							'filter_filter'      => $f['filter_id']
+						);
+						$fg_filters[] = array(
+							'filter_id' => $f['filter_id'],
+							'name'      => $f['name'],
+							'count'     => $this->model_catalog_product->getTotalProducts($filter_count_data)
+						);
+					}
+					$data['sidebar_filter_groups'][] = array(
+						'name'   => $fg['name'],
+						'filter' => $fg_filters
+					);
+				}
+			}
+			$data['sidebar_filter_category'] = $filter ? explode(',', $filter) : array();
+
+			// Build 3-level category tree for the category sheet
+			// Level 1: top-level parents (Deklice, Dečki, Nosečnice)
+			// Level 2: direct children of active parent
+			// Level 3: direct children of active level-2 category
+			$current_path = isset($this->request->get['path']) ? $this->request->get['path'] : '';
+			$path_parts = explode('_', $current_path);
+
+			$top_parent_id = (int)$path_parts[0]; // e.g. 226 for Deklice
+			$level2_id = isset($path_parts[1]) ? (int)$path_parts[1] : 0; // e.g. 228 for Jakne in Bunde
+			$level3_id = isset($path_parts[2]) ? (int)$path_parts[2] : 0; // e.g. Brezrokavniki
+
+			$data['category_tree'] = array();
+
+			// Get top-level categories (parent_id = 0)
+			$top_cats = $this->model_catalog_category->getCategories(0);
+
+			foreach ($top_cats as $top) {
+				$top_id = (int)$top['category_id'];
+				$top_path = (string)$top_id;
+				$top_node = array(
+					'name'     => $top['name'],
+					'href'     => html_entity_decode($this->url->link('product/category', 'path=' . $top_path), ENT_QUOTES, 'UTF-8'),
+					'active'   => ($top_id == $category_id),
+					'current_parent' => ($top_id == $top_parent_id),
+					'children' => array()
+				);
+
+				// Always include level-2 children for all parents (JS handles expand/collapse)
+				$level2_cats = $this->model_catalog_category->getCategories($top_id);
+				foreach ($level2_cats as $l2) {
+					$l2_id = (int)$l2['category_id'];
+					$l2_path = $top_path . '_' . $l2_id;
+					$l2_node = array(
+						'name'     => $l2['name'],
+						'href'     => html_entity_decode($this->url->link('product/category', 'path=' . $l2_path), ENT_QUOTES, 'UTF-8'),
+						'active'   => ($l2_id == $category_id),
+						'current_parent' => ($l2_id == $level2_id && $top_id == $top_parent_id),
+						'children' => array()
+					);
+
+					// Show level-3 children only under the active level-2
+					if ($l2_id == $level2_id && $top_id == $top_parent_id) {
+						$level3_cats = $this->model_catalog_category->getCategories($l2_id);
+						foreach ($level3_cats as $l3) {
+							$l3_id = (int)$l3['category_id'];
+							$l3_path = $l2_path . '_' . $l3_id;
+							$l2_node['children'][] = array(
+								'name'     => $l3['name'],
+								'href'     => html_entity_decode($this->url->link('product/category', 'path=' . $l3_path), ENT_QUOTES, 'UTF-8'),
+								'active'   => ($l3_id == $category_id),
+								'children' => array()
+							);
+						}
+					}
+
+					$top_node['children'][] = $l2_node;
+				}
+
+				$data['category_tree'][] = $top_node;
+			}
 
 			$url = '';
 
@@ -322,53 +413,15 @@ class ControllerProductCategory extends Controller {
 			);
 
 			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_name_asc'),
-				'value' => 'pd.name-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=pd.name&order=ASC' . $url)
-			);
-
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_name_desc'),
-				'value' => 'pd.name-DESC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=pd.name&order=DESC' . $url)
-			);
-
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_price_asc'),
+				'text'  => 'Najnižji ceni',
 				'value' => 'p.price-ASC',
 				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=ASC' . $url)
 			);
 
 			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_price_desc'),
+				'text'  => 'Najvišji ceni',
 				'value' => 'p.price-DESC',
 				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=DESC' . $url)
-			);
-
-			if ($this->config->get('config_review_status')) {
-				$data['sorts'][] = array(
-					'text'  => $this->language->get('text_rating_desc'),
-					'value' => 'rating-DESC',
-					'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=rating&order=DESC' . $url)
-				);
-
-				$data['sorts'][] = array(
-					'text'  => $this->language->get('text_rating_asc'),
-					'value' => 'rating-ASC',
-					'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=rating&order=ASC' . $url)
-				);
-			}
-
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_model_asc'),
-				'value' => 'p.model-ASC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.model&order=ASC' . $url)
-			);
-
-			$data['sorts'][] = array(
-				'text'  => $this->language->get('text_model_desc'),
-				'value' => 'p.model-DESC',
-				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.model&order=DESC' . $url)
 			);
 
 			$url = '';

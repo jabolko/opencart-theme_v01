@@ -10,7 +10,10 @@
 .cat-page {
   background: $color-surface-alt;
   padding-bottom: $space-12;
-  overflow-x: hidden;
+
+  @include respond-below('md') {
+    overflow-x: hidden;
+  }
 
   .container {
     max-width: 100%;
@@ -134,9 +137,72 @@
 // =============================================================================
 .cat-subcats {
   padding: $space-4 0 0;
+  position: relative;
 
   @include respond-below('sm') {
     display: none;
+  }
+
+  // Fade gradients on edges when overflowing
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: $space-4; // account for wrapper padding-top
+    bottom: 0;
+    width: 2.35rem;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, $color-surface-alt, transparent);
+    opacity: 0;
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, $color-surface-alt, transparent);
+  }
+
+  &.is-scrolled-start::before { opacity: 0; }
+  &.is-scrolled-middle::before { opacity: 1; }
+  &.is-scrolled-end::after { opacity: 0; }
+
+  // SVG chevron arrow
+  &__arrow {
+    position: absolute;
+    right: 0;
+    top: calc(50% + #{$space-4} / 2); // offset for wrapper padding-top
+    transform: translateY(-50%);
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-surface;
+    border-radius: 50%;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      stroke: $color-text-base;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  }
+
+  &.is-scrolled-end &__arrow {
+    opacity: 0;
+    pointer-events: none;
   }
 
   &__scroll {
@@ -146,6 +212,7 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     padding-bottom: $space-1;
+    padding-right: 2rem; // space for fade
 
     &::-webkit-scrollbar { display: none; }
   }
@@ -208,18 +275,26 @@
     justify-content: center;
     gap: 0.35rem; // 6px ÷ 17
     flex: 1;
-    padding: 0.53rem $space-4; // 9px 16px ÷ 17
-    border: none;
+    padding: 0.65rem $space-4; // 11px 16px
+    border: 1.5px solid $color-border;
     border-radius: $radius-md;
     background: $color-surface;
     font-family: $font-family-heading;
     font-weight: $font-weight-heading-semi;
-    font-size: 0.80rem;
+    font-size: 0.85rem;
     color: $color-text-heading;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease;
 
-    &:hover { background: rgba($color-primary, 0.08); }
+    &:hover {
+      background: rgba($color-primary, 0.08);
+      border-color: $color-primary;
+    }
+
+    &:active {
+      transform: scale(0.96);
+      background: rgba($color-primary, 0.12);
+    }
 
     svg { flex-shrink: 0; }
   }
@@ -263,7 +338,83 @@
   }
 
   @include respond-to('md') {
-    padding: $space-6 0 $space-4;
+    display: none; // hidden on desktop — replaced by .cat-toolbar-desktop
+  }
+}
+
+// =============================================================================
+// DESKTOP LAYOUT  .cat-layout (sidebar + products)
+// =============================================================================
+.cat-layout {
+  @include respond-to('md') {
+    display: flex;
+    gap: $space-8;
+  }
+}
+
+.cat-products {
+  flex: 1;
+  min-width: 0;
+}
+
+// =============================================================================
+// DESKTOP TOOLBAR  .cat-toolbar-desktop
+// =============================================================================
+.cat-toolbar-desktop {
+  display: none;
+
+  @include respond-to('md') {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.47rem $space-4 $space-4; // 8px 16px 16px
+  }
+}
+
+// =============================================================================
+// FILTER SIDEBAR  .filter-sidebar (desktop only)
+// =============================================================================
+.filter-sidebar {
+  display: none;
+
+  @include respond-to('md') {
+    display: block;
+    width: 16.47rem; // 280px ÷ 17
+    flex-shrink: 0;
+    padding-top: 2.35rem; // 40px ÷ 17 — align with product grid
+    position: sticky;
+    align-self: flex-start;
+    // top value set dynamically by JS for smart sticky behavior
+  }
+
+  // Reuse .filter-section styles already in _filter-drawer.scss
+  // Add scrollable body variant for long lists
+  .filter-section__body--scroll {
+    max-height: 16.47rem; // 280px
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: $color-border transparent;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb {
+      background: $color-border;
+      border-radius: 2px;
+    }
+  }
+
+  &__actions {
+    padding: $space-4 0;
+  }
+
+  &__reset {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: 0.76rem;
+    color: $color-text-muted;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover { color: $color-text-heading; }
   }
 }
 
@@ -313,7 +464,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: $space-1;
+      gap: 0.24rem; // 4px — tight on mobile
       list-style: none;
       padding: 0;
       margin: 0;
@@ -324,8 +475,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          min-width: 2.12rem;
-          height: 2.12rem;
+          min-width: 2.35rem; // 40px — easy tap target
+          height: 2.35rem;
           padding: 0 $space-2;
           border-radius: $radius-md;
           font-family: $font-family-heading;
@@ -333,7 +484,7 @@
           font-size: 0.82rem;
           color: $color-text-base;
           text-decoration: none;
-          transition: background 0.2s ease, color 0.2s ease;
+          transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
         }
 
         a:hover {
@@ -341,12 +492,75 @@
           color: $color-text-heading;
         }
 
+        // Tap feedback on mobile
+        a:active {
+          transform: scale(0.92);
+          background: rgba($color-primary, 0.15);
+        }
+
         &.active span {
           background: $color-primary;
           color: $color-text-heading;
         }
       }
+
+      @include respond-to('sm') {
+        gap: $space-1;
+      }
     }
+  }
+}
+
+// =============================================================================
+// FLOATING ACTION BUTTONS  .cat-fab (mobile)
+// =============================================================================
+.cat-fab {
+  position: fixed;
+  bottom: $space-6;
+  right: $space-4;
+  z-index: 500;
+  display: flex;
+  gap: 0.47rem; // 8px
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(1rem);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.29rem; // 56px
+    height: 3.29rem;
+    border-radius: 50%;
+    border: none;
+    background: $color-surface;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    color: $color-text-heading;
+
+    &:active {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+      transform: scale(0.95);
+    }
+
+    &--primary {
+      background: $color-primary;
+      color: $color-text-heading;
+
+      &:active { background: $color-primary-dark; }
+    }
+  }
+
+  @include respond-to('md') {
+    display: none; // hide on desktop
   }
 }
 
