@@ -17,6 +17,21 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-03-18 — Category page: mobile filter bottom sheet, manufacturer filter, sort default
+
+#### Mobile (CLI, simulated throttling)
+- Page tested: category (Deklice, path=226)
+- Lighthouse Performance: 82/100
+- Lighthouse Accessibility: 84/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- Report file: `reports/lighthouse-2026-03-18-category-mobile.html`
+- Delta vs previous (homepage): -1 Performance, -6 Accessibility
+- Notes: First category page Lighthouse run. A11y lower than homepage — likely from filter sheet
+  markup and OC default elements. BP and SEO perfect. Desktop run pending.
+
+---
+
 ### 2026-03-13 — Mobile footer accordion, home token cleanup, mobile homepage pass
 
 #### Mobile (CLI, simulated throttling)

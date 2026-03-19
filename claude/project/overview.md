@@ -19,14 +19,20 @@ distinct, fast, accessible, and conversion-optimized storefront.
 
 ## Scope — Out
 - Admin panel UI (left untouched)
-- OpenCart PHP controllers and models (theme only)
 - Payment gateway integrations
 - Custom OpenCart extensions/modules
 
+## Scope — Modified (controllers/models touched for theme needs)
+- `catalog/controller/product/category.php` — default sort, manufacturer filter, active filter chips
+- `catalog/model/catalog/product.php` — manufacturer multi-select filter support
+- `catalog/controller/extension/module/latest.php` — added manufacturer + minimum fields
+
 ## Success Criteria
 - [ ] Lighthouse Performance score >= 90 on mobile
-- [ ] Lighthouse Accessibility score >= 90
+- [x] Lighthouse Accessibility score >= 90 (hit on homepage 2026-03-13)
 - [ ] All pages render correctly on Chrome, Firefox, Safari, Edge
 - [ ] Mobile breakpoint: 375px (iPhone SE) — no horizontal scroll
 - [ ] Cart and checkout flow works end-to-end
 - [ ] Page weight under 500KB on category page (uncompressed)
+- [x] Lighthouse Best Practices 100 (homepage + category)
+- [x] Lighthouse SEO 100 (homepage + category)

@@ -6,8 +6,8 @@
 - Latest products module controller: `opencart/catalog/controller/extension/module/latest.php`
 - Latest products module twig: `template/extension/module/latest.twig`
 
-**Status: COMPLETE** — All sections built and live as of 2026-03-10.
-Lighthouse: Perf 83 / A11y 85 / BP 100 / SEO 100
+**Status: COMPLETE** — All sections built and live as of 2026-03-10. Mobile pass complete 2026-03-13.
+Lighthouse (2026-03-13): Mobile Perf 83 / A11y 90 / BP 100 / SEO 100 | Desktop Perf 99 / A11y 94 / BP 100 / SEO 100
 
 ---
 
@@ -292,10 +292,15 @@ Tags:     value pill tags (`.home-values__tag`)
 
 ---
 
-## Performance (2026-03-10)
-- Lighthouse Performance: 83/100
-- Lighthouse Accessibility: 85/100
-- Lighthouse Best Practices: 100/100
-- Lighthouse SEO: 100/100
-- LCP: 4.2s (Docker-latency driven — not a real-world concern)
-- CLS: 0.004 | TBT: 0ms
+## Performance
+
+### Latest: 2026-03-13 (after mobile pass)
+**Mobile** (CLI, simulated): Perf 83 / A11y 90 / BP 100 / SEO 100
+- LCP: 4.14s | FCP: 2.41s | TBT: 0ms | CLS: 0.005
+
+**Desktop** (DevTools): Perf 99 / A11y 94 / BP 100 / SEO 100
+- LCP: ~0.9s | TBT: 0ms | CLS: ~0.002
+
+### Previous: 2026-03-10
+- Perf 83 / A11y 85 / BP 100 / SEO 100
+- LCP: 4.2s (Docker-latency driven) | CLS: 0.004 | TBT: 0ms

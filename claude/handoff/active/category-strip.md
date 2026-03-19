@@ -6,10 +6,10 @@
 |---|---|
 | Design | COMPLETE |
 | Prototype file | `prototypes/category-strip-v1.html` |
-| Chosen variation | — AWAITING USER DECISION — |
-| Implementation | PENDING |
-| Implemented by | — |
-| Date completed | — |
+| Chosen variation | Custom — asymmetric 2+3 editorial grid with real product photos |
+| Implementation | COMPLETE |
+| Implemented by | Sonnet (Claude Code) |
+| Date completed | 2026-03-07 |
 
 ---
 

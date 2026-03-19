@@ -7,15 +7,24 @@ Paste this entire file at the start of every Opus design session, then add your 
 ## Current Build State
 > This section is kept up to date by Sonnet. Check it before starting a new design session.
 
-| Section | Status | Prototype |
-|---------|--------|-----------|
-| S1+S2 Hero + Trust bar | DONE | — |
-| S3 Category strip | DONE — V2 "Uredniški" implemented | `prototypes/category-strip-v1.html` |
-| S4 Latest products grid | TODO | — |
-| S5 Brand logos strip | TODO | — |
-| S6 How it works (3-step) | TODO | — |
-| S7 Testimonials / reviews | TODO | — |
-| S8 Newsletter signup | TODO | — |
+| Page / Section | Status | Prototype |
+|----------------|--------|-----------|
+| **Homepage** | **COMPLETE** | — |
+| S1 Hero | DONE | — |
+| S2 USP strip | DONE | — |
+| S3 Category grid | DONE — asymmetric 2+3 editorial grid | `prototypes/category-strip-v1.html` |
+| S4 Latest products | DONE — horizontal scroll carousel | — |
+| S5 Brand logos | DONE — grayscale→color on hover | — |
+| S6 Sell your clothes | DONE — green band, 3-step | — |
+| S7 Google reviews | DONE — horizontal scroll cards | — |
+| S8 Sell cycle | DONE | — |
+| S9 About | DONE | — |
+| S10 Values | DONE — #RabljenoJeZakon | — |
+| **Category page** | **IN PROGRESS** | `claude/handoff/active/category-page-v1.html` |
+| Mobile filter bottom sheet | DONE | — |
+| Desktop layout | TODO | — |
+| **Product page** | TODO | — |
+| **Cart page** | TODO | — |
 
 ---
 
@@ -54,8 +63,7 @@ You design only — you don't write SCSS, you don't write PHP, you don't touch O
 | Muted text | `#9aa0af` | Labels, meta, helper text |
 | White surface | `#ffffff` | Page background |
 | Light grey | `#f7f7f7` | Cards, input fields, alternating section bg |
-| Section grey | `#ececec` | Homepage section bands |
-| Hero grey | `#eeeeee` | Hero section background |
+| Section grey | `#eeeeee` | Section bands (homepage, category) |
 | Border | `#d6d9e0` | Dividers, card borders |
 | Dark border | `#4a4a4a` | Borders on dark surfaces |
 
@@ -96,16 +104,30 @@ Use Google Fonts CDN in prototypes (it's fine for HTML files):
 
 Primary CTAs use a pill shape: `border-radius: 9999px; padding: 14px 32px`
 
-## Current Page Structure (Homepage — what's already built)
+## Current Page Structure (what's already built)
 
+### Homepage (COMPLETE — all sections live)
 ```
-S1+S2  .home-hero          Hero image (1550px frame) + trust stats — DONE
-S3     .home-categories    Category strip — IN DESIGN
-S4     .home-latest        Latest products grid — NOT STARTED
-S5     .home-brands        Brand logos strip — NOT STARTED
-S6     .home-how-it-works  3-step process — NOT STARTED
-S7     .home-testimonials  Customer reviews — NOT STARTED
-S8     .home-newsletter    Email signup — NOT STARTED
+S1   .home-hero          Hero image + text overlay — DONE
+S2   .home-usp           Trust stats strip (14 let / 250.000+ / 5.000+) — DONE
+S3   .home-categories    Category grid (2+3 asymmetric editorial) — DONE
+S4   .home-arrivals      Latest products horizontal scroll — DONE
+S5   .home-brands        Brand logos strip (grayscale→color) — DONE
+S6   .home-sell          Sell your clothes (green band, 3-step) — DONE
+S7   .home-reviews       Google reviews horizontal scroll — DONE
+S8   .home-sell-cycle    Sell cycle explainer — DONE
+S9   .home-about         About / founder story — DONE
+S10  .home-values        #RabljenoJeZakon tags — DONE
+```
+
+### Category Page (IN PROGRESS — mobile filter done)
+```
+.cat-breadcrumb          Breadcrumb trail — DONE
+.cat-header              H1 + description toggle — DONE
+.cat-subcats             Sub-category pills (desktop) — DONE
+.cat-toolbar             Sort + Kategorije/Filtri buttons — DONE
+.filter-sheet            Bottom sheet filter (mobile) — DONE
+.product-grid            Product card grid — DONE
 ```
 
 ## Hero Section (already implemented — for reference)

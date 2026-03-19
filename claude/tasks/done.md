@@ -52,3 +52,12 @@
 | 2026-03-13 | MOB-003    | `home.twig` + `_home.scss` — mobile hero: picture element for mobile image, center-aligned text, larger h1 (2.35rem), text shadows on eyebrow/headline/tagline, ghost btn underline + heart icon, CTAs centered | |
 | 2026-03-13 | MOB-004    | `_home.scss` — mobile USP: icon grid hidden, trust stats strip (10+/5.000+/14 dni) shown in one row, full-width no padding | |
 | 2026-03-13 | MOB-005    | `_header.scss` — mobile header `position: fixed`, `body` padding-top compensation, oc-toast repositioned below header with white bg | |
+| 2026-03-17 | PAGE-002   | `category.twig` — category page template with toolbar (sort + filter buttons), product grid, breadcrumb, description toggle | |
+| 2026-03-17 | PAGE-002   | `_category.scss` — full category page SCSS: toolbar, grid, breadcrumb, subcats, description, responsive | Mobile-first |
+| 2026-03-17 | PAGE-002   | `_filter-drawer.scss` — bottom sheet filter UI: overlay, sheet, sections, checkboxes, chips | New component |
+| 2026-03-17 | PAGE-002   | `filter.twig` — custom filter template: bottom sheet with categories, OC filter groups, manufacturer filter, active chips | Replaces OC default panel |
+| 2026-03-17 | PAGE-002   | `column_left.twig` — custom override removing Bootstrap `hidden-xs col-sm-3` wrapper | Filter visible on mobile |
+| 2026-03-17 | PAGE-002   | `category.php` controller — default sort `p.date_added DESC`, manufacturer filter, active chips, clear URL | |
+| 2026-03-17 | PAGE-002   | `product.php` model — `filter_manufacturer_ids` support in `getProducts()` + `getTotalProducts()` | Multi-select via IN() |
+| 2026-03-18 | PAGE-002   | Category page dual filter buttons (Kategorije + Filtri), sort inline with count, mobile toolbar polish | |
+| 2026-03-18 | PERF       | Lighthouse category mobile: Perf 82 / A11y 84 / BP 100 / SEO 100 | First category run |
