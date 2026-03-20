@@ -24,13 +24,23 @@
       <div class="pdp-gallery__track" id="js-pdp-track">
         {% if thumb %}
         <div class="pdp-gallery__slide">
-          <a href="{{ popup }}"><img src="{{ popup }}" alt="{{ heading_title }}" loading="eager" /></a>
+          <a href="{{ popup }}">
+            <picture>
+              <source media="(min-width: 768px)" srcset="{{ popup }}">
+              <img src="{{ thumb }}" alt="{{ heading_title }}" loading="eager" />
+            </picture>
+          </a>
         </div>
         {% endif %}
         {% if images %}
         {% for image in images %}
         <div class="pdp-gallery__slide">
-          <a href="{{ image.popup }}"><img src="{{ image.popup }}" alt="{{ heading_title }}" loading="lazy" /></a>
+          <a href="{{ image.popup }}">
+            <picture>
+              <source media="(min-width: 768px)" srcset="{{ image.popup }}">
+              <img src="{{ image.thumb }}" alt="{{ heading_title }}" loading="lazy" />
+            </picture>
+          </a>
         </div>
         {% endfor %}
         {% endif %}
@@ -164,14 +174,15 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           14 dni za vračilo
         </span>
-        <span class="pdp-guarantee__desktop-only">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Preverjeno stanje
-        </span>
         <span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
           Brezplačna poštnina nad 55€
         </span>
+        <a href="https://g.page/otroskikoticek" target="_blank" rel="noopener" class="pdp-guarantee__google">
+          <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span class="pdp-guarantee__stars">★★★★★</span>
+          <strong>4.9</strong> (150+)
+        </a>
       </div>
 
       {# ── Opis (always open) ── #}
@@ -209,6 +220,14 @@
           {% endif %}
         </div>
       </div>
+
+      {# ── Google review pill (mobile only) ── #}
+      <a href="https://g.page/otroskikoticek" target="_blank" rel="noopener" class="pdp-google-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span class="pdp-google-pill__score">4.9</span>
+        <span class="pdp-google-pill__stars">★★★★★</span>
+        <span class="pdp-google-pill__count">150+ ocen</span>
+      </a>
 
       {# ── Contact CTA ── #}
       <div class="pdp-contact">

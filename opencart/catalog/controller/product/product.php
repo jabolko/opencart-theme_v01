@@ -468,35 +468,52 @@ class ControllerProductProduct extends Controller {
 				if ($attr['attribute_id'] == 75) $znamka = $attr['text'];
 			}
 
-			// Build query: match by manufacturer (if set) OR attributes, same size + gender
-			$similar_sql = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id AND pd.language_id = '" . $language_id . "') LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "'";
+			// Base WHERE clause for similar products
+			$similar_base = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "'";
 
-			// Match manufacturer if product has one
-			if ($product_info['manufacturer_id'] > 0) {
-				$similar_sql .= " AND p.manufacturer_id = '" . (int)$product_info['manufacturer_id'] . "'";
-				$data['similar_title'] = 'Več od ' . $product_info['manufacturer'];
-			}
-
-			// Match Velikost attribute
+			// Size + gender conditions (reused in both queries)
+			$size_cond = '';
+			$gender_cond = '';
 			if ($velikost) {
-				$similar_sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = 72 AND text = '" . $this->db->escape($velikost) . "' AND language_id = '" . $language_id . "')";
+				$size_cond = " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = 72 AND text = '" . $this->db->escape($velikost) . "' AND language_id = '" . $language_id . "')";
 			}
-
-			// Match Spol attribute
 			if ($spol) {
-				$similar_sql .= " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = 73 AND text = '" . $this->db->escape($spol) . "' AND language_id = '" . $language_id . "')";
+				$gender_cond = " AND p.product_id IN (SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE attribute_id = 73 AND text = '" . $this->db->escape($spol) . "' AND language_id = '" . $language_id . "')";
 			}
 
-			// If no manufacturer, set a generic title
-			if (!$data['similar_title']) {
+			// Step 1: brand + size + gender
+			$found_ids = array();
+			$brand_count = 0;
+			if ($product_info['manufacturer_id'] > 0) {
+				$sql1 = $similar_base . " AND p.manufacturer_id = '" . (int)$product_info['manufacturer_id'] . "'" . $size_cond . $gender_cond . " ORDER BY p.date_added DESC LIMIT 10";
+				$results1 = $this->db->query($sql1);
+				foreach ($results1->rows as $row) {
+					$found_ids[] = (int)$row['product_id'];
+				}
+				$brand_count = count($found_ids);
+			}
+
+			// Step 2: backfill with size + gender (any brand) if fewer than 10
+			if (count($found_ids) < 10) {
+				$remaining = 10 - count($found_ids);
+				$exclude = $found_ids ? " AND p.product_id NOT IN (" . implode(',', $found_ids) . ")" : '';
+				$sql2 = $similar_base . $size_cond . $gender_cond . $exclude . " ORDER BY p.date_added DESC LIMIT " . $remaining;
+				$results2 = $this->db->query($sql2);
+				foreach ($results2->rows as $row) {
+					$found_ids[] = (int)$row['product_id'];
+				}
+			}
+
+			// Title: "Več od [Brand]" only if all 10 are from the same brand
+			if ($brand_count >= 10) {
+				$data['similar_title'] = 'Več od ' . $product_info['manufacturer'];
+			} else {
 				$data['similar_title'] = 'Podobni artikli';
 			}
 
-			$similar_sql .= " ORDER BY p.date_added DESC LIMIT 10";
-			$similar_results = $this->db->query($similar_sql);
-
-			foreach ($similar_results->rows as $result) {
-				$sim_product = $this->model_catalog_product->getProduct($result['product_id']);
+			// Build product data from found IDs
+			foreach ($found_ids as $sim_id) {
+				$sim_product = $this->model_catalog_product->getProduct($sim_id);
 				if (!$sim_product) continue;
 
 				if ($sim_product['image']) {

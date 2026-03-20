@@ -88,7 +88,7 @@
     // Force reflow to restart animation
     void toast.offsetWidth;
     toast.classList.add('oc-toast--visible');
-    toastTimer = setTimeout(function () { hideToast(); }, 4000);
+    toastTimer = setTimeout(function () { hideToast(); }, 2500);
   }
 
   function hideToast() {
@@ -627,10 +627,7 @@
     });
 
     // Close toast on button click
-    var toastCloseBtn = document.querySelector('.oc-toast__close');
-    if (toastCloseBtn) {
-      toastCloseBtn.addEventListener('click', function () { hideToast(); });
-    }
+    // Toast auto-dismisses — no close button needed
 
     if (window.MutationObserver) {
       var observer = new MutationObserver(function (mutations) {

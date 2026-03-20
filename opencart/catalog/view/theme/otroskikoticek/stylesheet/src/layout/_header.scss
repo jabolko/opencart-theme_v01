@@ -1306,116 +1306,56 @@ body.mobile-nav-open { overflow: hidden; }
 .oc-toast {
   position: fixed;
   top: $space-4;
-  right: $space-4;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
   z-index: 9999;
   display: flex;
   align-items: center;
-  gap: 0.59rem; // 10px
-  padding: 0.82rem $space-4; // 14px 16px
-  max-width: 22rem;
-  min-width: 17.65rem; // 300px
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  color: $color-text-heading;
-  border-radius: 0.82rem; // 14px
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  gap: $space-2;
+  padding: 0.59rem 1.06rem; // 10px 18px
+  background: $color-text-heading;
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: $radius-full;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  font-family: $font-family-heading;
+  font-weight: $font-weight-heading-semi;
+  font-size: 0.76rem; // 13px
+  white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transform: translateX(100px);
 
   &--visible {
     pointer-events: auto;
-    animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: toastDropDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   &--dismissing {
-    animation: toastSlideOut 0.3s ease forwards;
+    animation: toastFloatUp 0.3s ease forwards;
   }
 
-  // Vertical color bar
-  &__bar {
-    width: 3px;
-    height: 1.65rem; // 28px
-    border-radius: 2px;
+  &__dot {
+    width: 0.47rem; // 8px
+    height: 0.47rem;
+    border-radius: 50%;
     background: $color-success;
     flex-shrink: 0;
   }
 
-  &__body {
-    flex: 1;
-  }
-
-  &__title {
-    font-family: $font-family-heading;
-    font-weight: 700;
-    font-size: 0.88rem; // 15px
-    color: $color-success;
+  &__msg {
     line-height: 1.3;
   }
 
-  &__msg {
-    font-size: 0.82rem; // 14px
-    color: $color-text-base;
-    line-height: 1.4;
-  }
-
-  &__close {
-    width: 1.41rem; // 24px
-    height: 1.41rem;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.05);
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-    flex-shrink: 0;
-    transition: background 0.15s ease;
-
-    svg {
-      stroke: $color-text-muted;
-    }
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-  }
-
   @include respond-below('sm') {
-    top: 4.5rem;
-    right: $space-3;
-    left: $space-3;
-    max-width: none;
-    min-width: 0;
-
-    &.oc-toast--visible {
-      animation: toastDropDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    &.oc-toast--dismissing {
-      animation: toastFloatUp 0.3s ease forwards;
-    }
+    top: 4.5rem; // below fixed header
   }
-}
-
-@keyframes toastSlideIn {
-  from { transform: translateX(100px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes toastSlideOut {
-  from { transform: translateX(0); opacity: 1; }
-  to { transform: translateX(100px); opacity: 0; }
 }
 
 @keyframes toastDropDown {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
 }
 
 @keyframes toastFloatUp {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-20px); opacity: 0; }
+  from { transform: translateX(-50%) translateY(0); opacity: 1; }
+  to { transform: translateX(-50%) translateY(-20px); opacity: 0; }
 }
