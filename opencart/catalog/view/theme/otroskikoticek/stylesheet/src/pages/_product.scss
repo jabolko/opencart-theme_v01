@@ -47,8 +47,13 @@
   flex-wrap: wrap;
   gap: $space-1;
   padding: $space-2 0;
-  font-size: 0.72rem;
+  font-size: 0.76rem; // 13px mobile
   color: $color-text-muted;
+
+  @include respond-to('md') {
+    font-size: 0.82rem; // 14px desktop
+    padding: $space-3 0;
+  }
 
   li { display: inline-flex; align-items: center; gap: $space-1; }
 
@@ -108,6 +113,9 @@
 
     &.is-active { background: $color-primary; }
   }
+
+  // Hidden on mobile, shown on desktop
+  &__thumbs-desktop { display: none; }
 
   // Desktop: main image + thumbnails below
   @include respond-to('md') {
@@ -338,6 +346,12 @@
     stroke: $color-success;
     fill: none;
   }
+
+  span.pdp-guarantee__desktop-only {
+    @include respond-below('sm') {
+      display: none;
+    }
+  }
 }
 
 // =============================================================================
@@ -405,6 +419,108 @@
     font-size: 0.84rem;
     color: $color-text-base;
     cursor: pointer;
+  }
+}
+
+// =============================================================================
+// CONTACT CTA  .pdp-contact
+// =============================================================================
+.pdp-contact {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 0;
+  position: relative;
+
+  &__text {
+    flex: 1;
+    font-size: 0.76rem; // 13px
+    color: $color-text-muted;
+
+    a {
+      color: $color-text-heading;
+      font-family: $font-family-heading;
+      font-weight: $font-weight-heading-semi;
+      text-decoration: none;
+
+      &:hover { color: $color-primary-dark; }
+    }
+  }
+
+  &__info {
+    width: 1.29rem; // 22px
+    height: 1.29rem;
+    border-radius: 50%;
+    border: 1.5px solid $color-border;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    color: $color-text-muted;
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.71rem; // 12px
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover { border-color: $color-text-base; color: $color-text-base; }
+  }
+
+  &__popup {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 0.47rem);
+    right: 0;
+    background: $color-surface;
+    border-radius: $radius-md;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    padding: 0.82rem $space-4;
+    min-width: 11.76rem; // 200px
+    z-index: 10;
+    font-size: 0.76rem;
+    color: $color-text-base;
+
+    &.is-open { display: block; }
+
+    // Arrow pointing down
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -0.35rem;
+      right: $space-4;
+      width: 0.71rem;
+      height: 0.71rem;
+      background: $color-surface;
+      transform: rotate(45deg);
+      box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  &__popup-title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.76rem;
+    color: $color-text-heading;
+    margin-bottom: $space-2;
+  }
+
+  &__popup-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.18rem 0;
+    font-size: 0.71rem;
+
+    span:last-child {
+      font-family: $font-family-heading;
+      font-weight: $font-weight-heading-semi;
+      color: $color-text-heading;
+    }
+  }
+
+  &__popup-closed {
+    color: $color-text-muted;
   }
 }
 
@@ -526,6 +642,10 @@ $sell-green-dark: #3d7356;
   -webkit-tap-highlight-color: transparent;
   transition: transform 0.1s ease;
 
+  @include respond-below('sm') {
+    padding: $space-3 $space-4;
+  }
+
   &:active { transform: scale(0.98); }
 
   &::before {
@@ -550,19 +670,6 @@ $sell-green-dark: #3d7356;
     border-radius: 50%;
   }
 
-  &__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: $space-2;
-    position: relative;
-    z-index: 1;
-
-    svg {
-      stroke: $sell-green;
-      fill: none;
-    }
-  }
 
   &__title {
     font-family: $font-family-heading;
@@ -601,6 +708,23 @@ $sell-green-dark: #3d7356;
   }
 }
 
+// Desktop: sell CTA — text left, button right
+.pdp-sell {
+  @include respond-to('md') {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    padding: $space-4 $space-6;
+    gap: $space-4;
+
+    &__content { flex: 1; }
+    &__title { margin-bottom: 0.12rem; }
+    &__text { margin-bottom: 0; }
+    &__cta { flex-shrink: 0; }
+  }
+}
+
 // =============================================================================
 // ECO IMPACT  .pdp-eco
 // =============================================================================
@@ -611,39 +735,38 @@ $eco-blue: #568cbe;
 // IMPACT TABS  .pdp-impact (eco + trust)
 // =============================================================================
 .pdp-impact {
-  padding: $space-4;
-  border-radius: $radius-lg;
-  margin-top: $space-3;
+  margin-top: 1.41rem; // 24px
 
   &__tabs {
     display: flex;
-    gap: 0;
-    border-bottom: 2px solid $color-border;
+    gap: 0.35rem; // 6px
+    padding: 0.24rem; // 4px
+    background: $color-surface;
+    border-radius: $radius-md;
     margin-bottom: $space-4;
   }
 
   &__tab {
     flex: 1;
-    padding: $space-2 $space-3;
+    padding: $space-2 $space-2;
     text-align: center;
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
+    border-radius: $radius-md;
     font-family: $font-family-heading;
     font-weight: 700;
-    font-size: 0.76rem;
-    color: $color-text-muted;
+    font-size: 0.71rem; // 12px
+    color: rgba($color-text-base, 0.86);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-    transition: color 0.2s ease, border-color 0.2s ease;
+    transition: color 0.25s ease, background 0.25s ease;
     line-height: 1.3;
 
-    &:hover { color: $color-text-heading; }
+    &:hover { color: $color-text-heading; background: $color-surface-alt; }
 
     &.is-active {
       color: $color-text-heading;
-      border-bottom-color: $color-primary;
+      background: $color-surface-alt;
     }
   }
 
@@ -659,14 +782,14 @@ $eco-blue: #568cbe;
   &__item {
     display: flex;
     align-items: center;
-    gap: 0.82rem; // 14px
-    padding: 0.82rem 0;
+    gap: 0.71rem; // 12px
+    padding: 0.18rem 0; // ~3px
   }
 
   &__number {
     font-family: $font-family-heading;
     font-weight: 700;
-    font-size: 1.65rem; // 28px
+    font-size: 1.29rem; // 22px
     line-height: 1;
     flex-shrink: 0;
     width: 4.71rem; // 80px
@@ -686,20 +809,13 @@ $eco-blue: #568cbe;
     font-weight: $font-weight-heading-semi;
   }
 
-  &__number--people { color: $eco-red; }
-  &__number--co2 { color: $sell-green; }
-  &__number--water { color: $eco-blue; }
+  &__number--people { color: $color-text-base; }
+  &__number--co2 { color: $color-text-base; }
+  &__number--water { color: $color-text-base; }
 
-  &__divider {
-    width: 2px;
-    height: 2.12rem; // 36px
-    border-radius: 1px;
-    flex-shrink: 0;
-  }
+  // Trust tab keeps gold colors
+  &__number--trust { color: $color-primary-dark; }
 
-  &__divider--people { background: $eco-red; }
-  &__divider--co2 { background: $sell-green; }
-  &__divider--water { background: $eco-blue; }
 
   &__body { flex: 1; }
 

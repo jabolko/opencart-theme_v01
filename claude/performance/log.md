@@ -17,6 +17,33 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-03-20 — Product page complete: desktop layout, toast alerts, cart sheet, contact CTA, shipping bar
+
+#### Mobile (CLI, simulated throttling)
+- Page tested: product (product_id=66103)
+- Lighthouse Performance: 72/100
+- Lighthouse Accessibility: 87/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 3.5s | LCP: 5.5s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-2026-03-20-product-mobile.html`
+- Delta vs previous: -5 Performance (larger images), +1 Accessibility
+- Notes: TBT=0, CLS=0 excellent. LCP 5.5s from full-res popup images + Docker TTFB.
+  Mobile Perf 72 lower due to using popup-size images in gallery (sharp but heavier).
+  Consider serving medium-res for mobile gallery, popup only for lightbox.
+
+#### Desktop (preset desktop)
+- Page tested: product (product_id=66103)
+- Lighthouse Performance: 98/100
+- Lighthouse Accessibility: 82/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 0.7s | LCP: 1.1s | TBT: 0ms | CLS: 0.001
+- Report file: `reports/lighthouse-2026-03-20-product-desktop.html`
+- Notes: Desktop near-perfect. A11y 82 needs Phase 5 attention.
+
+---
+
 ### 2026-03-19 — Product page mobile: V1 layout, gallery, sell CTA, eco/trust tabs, similar products
 
 #### Mobile (CLI, simulated throttling)

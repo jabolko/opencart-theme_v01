@@ -19,3 +19,59 @@
 .input-group-btn > .btn {
   font-size: $font-size-base;
 }
+
+// =============================================================================
+// ALERT OVERRIDES — restyle Bootstrap alerts to match our design system
+// =============================================================================
+.alert {
+  border: none;
+  border-radius: $radius-md;
+  font-family: $font-family-body;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: $space-3 $space-4;
+  margin-bottom: $space-3;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+
+  i { margin-top: 0.12rem; }
+
+  .close {
+    opacity: 0.5;
+    font-size: 1.18rem;
+    margin-left: auto;
+    padding: 0;
+    line-height: 1;
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 1; }
+  }
+}
+
+.alert-success {
+  background: rgba($color-success, 0.1);
+  color: $color-success;
+}
+
+.alert-danger {
+  background: rgba($color-error, 0.1);
+  color: $color-error;
+}
+
+.alert-info {
+  background: rgba($color-primary, 0.08);
+  color: $color-primary-dark;
+}
+
+.alert-warning {
+  background: rgba($color-warning, 0.1);
+  color: $color-warning;
+}
+
+// Error text under form fields
+.text-danger {
+  font-size: 0.76rem;
+  color: $color-error;
+  margin-top: $space-1;
+}

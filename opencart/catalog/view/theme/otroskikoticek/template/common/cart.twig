@@ -1,5 +1,5 @@
 <div id="cart" class="btn-group btn-block">
-  <button type="button" data-toggle="dropdown" data-loading-text="{{ text_loading }}" class="btn btn-inverse btn-block btn-lg dropdown-toggle">
+  <button type="button" data-toggle="dropdown" data-loading-text="{{ text_loading }}" class="btn btn-inverse btn-block btn-lg dropdown-toggle" id="js-cart-btn">
     <span class="cart-icon-wrap">
       <svg class="icon-cart" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="9" cy="21" r="1"></circle>
@@ -9,11 +9,14 @@
     </span>
     <span id="cart-total" class="sr-only">{{ text_items }}</span>
   </button>
-  <ul class="dropdown-menu pull-right">
+
+  {# Desktop dropdown (hidden on mobile via CSS) #}
+  <ul class="dropdown-menu pull-right cart-desktop-drop">
     {% if products or vouchers %}
     <li>
       <div class="cart-drop">
         <div class="cart-drop__header">Košarica</div>
+        <div class="cart-drop__shipping" id="js-desktop-cart-shipping"></div>
         <div class="cart-drop__items">
           {% for product in products %}
           <div class="cart-drop__item">
@@ -43,10 +46,12 @@
         </div>
         <div class="cart-drop__footer">
           {% for total in totals %}
-          <div class="cart-drop__total{% if loop.last %} cart-drop__total--grand{% endif %}">
-            <span>{{ total.title }}</span>
+          {% if loop.last %}
+          <div class="cart-drop__total cart-drop__total--grand">
+            <span>Skupaj z DDV</span>
             <span>{{ total.text }}</span>
           </div>
+          {% endif %}
           {% endfor %}
           <a href="{{ checkout }}" class="cart-drop__cta">{{ text_checkout }} →</a>
           <a href="{{ cart }}" class="cart-drop__view">{{ text_cart }}</a>
@@ -62,3 +67,146 @@
     {% endif %}
   </ul>
 </div>
+
+{# Mobile cart bottom sheet #}
+<div class="cart-sheet-overlay" id="js-cart-overlay"></div>
+<div class="cart-sheet" id="js-cart-sheet" aria-hidden="true">
+  <div class="cart-sheet__handle"><div class="cart-sheet__handle-bar"></div></div>
+  <div class="cart-sheet__header">
+    <span class="cart-sheet__title">Košarica</span>
+    <button class="cart-sheet__close" id="js-cart-sheet-close" type="button" aria-label="Zapri">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  {# Free shipping progress #}
+  <div class="cart-sheet__shipping" id="js-cart-shipping"></div>
+
+  <div class="cart-sheet__body" id="js-cart-sheet-body">
+    {% if products or vouchers %}
+    <div class="cart-drop__items">
+      {% for product in products %}
+      <div class="cart-drop__item">
+        <a href="{{ product.href }}" class="cart-drop__thumb">
+          {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}" />{% endif %}
+        </a>
+        <div class="cart-drop__info">
+          <a href="{{ product.href }}" class="cart-drop__name">{{ product.name }}</a>
+          {% if product.option %}
+          <span class="cart-drop__option">{% for option in product.option %}{{ option.name }}: {{ option.value }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+          {% endif %}
+        </div>
+        <span class="cart-drop__price">{{ product.total }}</span>
+        <button type="button" onclick="cart.remove('{{ product.cart_id }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="cart-drop__empty"><p>{{ text_empty }}</p></div>
+    {% endif %}
+  </div>
+
+  {% if products or vouchers %}
+  <div class="cart-sheet__footer">
+    {% for total in totals %}
+    {% if loop.last %}
+    <div class="cart-drop__total cart-drop__total--grand">
+      <span>Skupaj z DDV</span>
+      <span>{{ total.text }}</span>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <a href="{{ checkout }}" class="cart-drop__cta">{{ text_checkout }} →</a>
+    <a href="{{ cart }}" class="cart-drop__view">{{ text_cart }}</a>
+  </div>
+  {% endif %}
+</div>
+
+<script type="text/javascript"><!--
+(function(){
+  var isMobile = window.matchMedia('(max-width: 767px)');
+  var cartBtn = document.getElementById('js-cart-btn');
+  var sheet = document.getElementById('js-cart-sheet');
+  var overlay = document.getElementById('js-cart-overlay');
+  var closeBtn = document.getElementById('js-cart-sheet-close');
+
+  function openSheet() {
+    sheet.classList.add('cart-sheet--open');
+    sheet.setAttribute('aria-hidden', 'false');
+    overlay.classList.add('cart-sheet-overlay--visible');
+    document.body.classList.add('filter-open');
+  }
+
+  function closeSheet() {
+    sheet.classList.remove('cart-sheet--open');
+    sheet.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('cart-sheet-overlay--visible');
+    document.body.classList.remove('filter-open');
+    // Clean up any Bootstrap backdrop remnants
+    $('.dropdown-backdrop').remove();
+    $('#cart').removeClass('open');
+  }
+
+  if (cartBtn) {
+    // On mobile, prevent Bootstrap dropdown entirely and use our sheet
+    $(cartBtn).on('click', function(e) {
+      if (isMobile.matches) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        // Close Bootstrap dropdown if it somehow opened + remove backdrop
+        $(cartBtn).parent().removeClass('open');
+        $('.dropdown-backdrop').remove();
+        openSheet();
+        return false;
+      }
+    });
+
+    // Also block Bootstrap's dropdown event on mobile
+    $(cartBtn).parent().on('show.bs.dropdown', function(e) {
+      if (isMobile.matches) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closeSheet);
+  if (overlay) overlay.addEventListener('click', closeSheet);
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.key === 'Escape' || e.keyCode === 27) && sheet.classList.contains('cart-sheet--open')) closeSheet();
+  });
+
+  // Free shipping progress bar — shared for mobile sheet + desktop dropdown
+  window.updateCartShipping = function() {
+    var targets = [
+      document.getElementById('js-cart-shipping'),
+      document.getElementById('js-desktop-cart-shipping')
+    ];
+    var threshold = 55;
+
+    for (var t = 0; t < targets.length; t++) {
+      var el = targets[t];
+      if (!el) continue;
+      var container = el.closest('.cart-sheet') || el.closest('.cart-drop') || el.parentElement;
+      var grandEl = container ? container.querySelector('.cart-drop__total--grand span:last-child') : null;
+      if (grandEl) {
+        var totalText = grandEl.textContent.replace(/[^\d,.]/g, '').replace(',', '.');
+        var cartTotal = parseFloat(totalText) || 0;
+        var remaining = Math.max(0, threshold - cartTotal);
+        var pct = Math.min(100, (cartTotal / threshold) * 100);
+
+        if (cartTotal > 0 && remaining > 0) {
+          el.innerHTML = '<div class="cart-sheet__shipping-text">Do brezplačne poštnine ti manjka še <strong>' + remaining.toFixed(2).replace('.', ',') + ' €</strong></div><div class="cart-sheet__shipping-bar"><div class="cart-sheet__shipping-fill" style="width:' + pct + '%"></div></div>';
+        } else if (cartTotal >= threshold) {
+          el.innerHTML = '<div class="cart-sheet__shipping-text cart-sheet__shipping-text--free">Poštnina je brezplačna!</div>';
+        } else {
+          el.innerHTML = '';
+        }
+      }
+    }
+  };
+
+  window.updateCartShipping();
+})();
+//--></script>

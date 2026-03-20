@@ -1,6 +1,6 @@
 {{ header }}
 <div id="product-product" class="pdp-page">
-  <div class="container">
+  <div id="content" class="container">
 
     {# ── Breadcrumb ── #}
     <ul class="pdp-breadcrumb">
@@ -164,9 +164,13 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           14 dni za vračilo
         </span>
-        <span>
+        <span class="pdp-guarantee__desktop-only">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Preverjeno stanje
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          Brezplačna poštnina nad 55€
         </span>
       </div>
 
@@ -203,20 +207,36 @@
           {% endfor %}
           {% endfor %}
           {% endif %}
-          <div class="pdp-details__row">
-            <span>Zaloga</span>
-            <span>{{ stock }}</span>
-          </div>
         </div>
       </div>
 
+      {# ── Contact CTA ── #}
+      <div class="pdp-contact">
+        <span class="pdp-contact__text">Imaš vprašanje? <span style="margin-left:4px">Pokliči nas: <a href="tel:+38640611233">040 611 233</a></span></span>
+        <button class="pdp-contact__info" id="js-hours-toggle" type="button" aria-label="Delovni čas">?</button>
+        <div class="pdp-contact__popup" id="js-hours-popup">
+          <div class="pdp-contact__popup-title">Delovni čas</div>
+          <div class="pdp-contact__popup-row"><span>Tor – Pet</span><span>10:00 – 18:00</span></div>
+          <div class="pdp-contact__popup-row"><span>Sobota</span><span>9:00 – 12:00</span></div>
+          <div class="pdp-contact__popup-row"><span class="pdp-contact__popup-closed">Pon, Ned</span><span class="pdp-contact__popup-closed">Zaprto</span></div>
+        </div>
+      </div>
+      <script type="text/javascript"><!--
+      (function(){
+        var btn = document.getElementById('js-hours-toggle');
+        var popup = document.getElementById('js-hours-popup');
+        if (!btn || !popup) return;
+        btn.addEventListener('click', function(e) { e.stopPropagation(); popup.classList.toggle('is-open'); });
+        document.addEventListener('click', function(e) { if (!popup.contains(e.target)) popup.classList.remove('is-open'); });
+      })();
+      //--></script>
+
       {# ── Sell CTA ── #}
       <a href="{{ base }}index.php?route=information/information&information_id=4" class="pdp-sell">
-        <div class="pdp-sell__icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        <div class="pdp-sell__content">
+          <h3 class="pdp-sell__title">Polna omara oblačil?</h3>
+          <p class="pdp-sell__text">Prodaj svoja otroška oblačila in izprazni omaro.</p>
         </div>
-        <h3 class="pdp-sell__title">Polna omara oblačil?</h3>
-        <p class="pdp-sell__text">Prodaj svoja otroška oblačila in izprazni omaro.</p>
         <span class="pdp-sell__cta">
           Prodaj pri nas
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -234,7 +254,6 @@
       <div class="pdp-impact__panel is-active" id="js-impact-eco">
         <div class="pdp-eco__item">
           <div class="pdp-eco__number pdp-eco__number--people">0,50<span class="pdp-eco__unit">€</span><small>plačilo / uro</small></div>
-          <div class="pdp-eco__divider pdp-eco__divider--people"></div>
           <div class="pdp-eco__body">
             <div class="pdp-eco__item-title">Poceni delovna sila</div>
             <div class="pdp-eco__item-text">Delavci v tretjem svetu — tudi otroci — delajo za manj kot pol evra na uro</div>
@@ -243,7 +262,6 @@
 
         <div class="pdp-eco__item">
           <div class="pdp-eco__number pdp-eco__number--co2">10<span class="pdp-eco__unit">%</span><small>emisij CO₂</small></div>
-          <div class="pdp-eco__divider pdp-eco__divider--co2"></div>
           <div class="pdp-eco__body">
             <div class="pdp-eco__item-title">Emisije toplogrednih plinov</div>
             <div class="pdp-eco__item-text">Več kot vsi mednarodni leti in pomorski promet skupaj</div>
@@ -252,7 +270,6 @@
 
         <div class="pdp-eco__item">
           <div class="pdp-eco__number pdp-eco__number--water">93<span class="pdp-eco__unit">mrd</span><small>m³ vode</small></div>
-          <div class="pdp-eco__divider pdp-eco__divider--water"></div>
           <div class="pdp-eco__body">
             <div class="pdp-eco__item-title">Poraba vode</div>
             <div class="pdp-eco__item-text">Enako kot potrebuje 200 milijonov ljudi letno</div>
@@ -265,8 +282,7 @@
       {# Trust panel #}
       <div class="pdp-impact__panel" id="js-impact-trust">
         <div class="pdp-eco__item">
-          <div class="pdp-eco__number" style="color:#e0a030;">10x<small>pregledano</small></div>
-          <div class="pdp-eco__divider" style="background:#f9b94a;"></div>
+          <div class="pdp-eco__number pdp-eco__number--trust">10x<small>pregledano</small></div>
           <div class="pdp-eco__body">
             <div class="pdp-eco__item-title">Vsak artikel pregledamo 10-krat</div>
             <div class="pdp-eco__item-text">Od sprejema do pakiranja — pri etiketiranju, fotografiranju, sortiranju in uvrščanju na police</div>
@@ -274,8 +290,7 @@
         </div>
 
         <div class="pdp-eco__item">
-          <div class="pdp-eco__number" style="color:#e0a030;">14<small>dni za vračilo</small></div>
-          <div class="pdp-eco__divider" style="background:#f9b94a;"></div>
+          <div class="pdp-eco__number pdp-eco__number--trust">14<small>dni za vračilo</small></div>
           <div class="pdp-eco__body">
             <div class="pdp-eco__item-title">Brez pojasnila</div>
             <div class="pdp-eco__item-text">Če s čim nisi zadovoljna, nam artikel vrni v 14 dneh — brez vprašanj</div>
@@ -420,7 +435,7 @@
     "@type": "Offer",
     "url": "{{ breadcrumbs|last ? breadcrumbs|last.href : '' }}",
     "priceCurrency": "EUR",
-    "price": "{{ special ? special : price }}",
+    "price": "{{ special_raw ? special_raw : price_raw }}",
     "availability": "https://schema.org/InStock"
   }
 }
@@ -565,9 +580,11 @@ $('#button-cart').on('click', function() {
         }
       }
       if (json['success']) {
-        $('.pdp-breadcrumb').after('<div class="alert alert-success alert-dismissible">' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+        // Use theme toast instead of Bootstrap alert
+        if (typeof showToast === 'function') {
+          showToast(json['success']);
+        }
         $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
-        $('html, body').animate({ scrollTop: 0 }, 'slow');
         $('#cart > ul').load('index.php?route=common/cart/info ul li');
       }
     },

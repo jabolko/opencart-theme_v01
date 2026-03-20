@@ -70,19 +70,35 @@
 
   var toastTimer = null;
 
+  window.showToast = showToast;
+
   function showToast(message) {
     var toast = document.getElementById('oc-toast');
     if (!toast) { return; }
     var msgEl = toast.querySelector('.oc-toast__msg');
-    if (msgEl) { msgEl.textContent = message; }
+    if (msgEl) {
+      // Strip HTML tags, show plain text only
+      var tmp = document.createElement('div');
+      tmp.innerHTML = message;
+      msgEl.textContent = tmp.textContent || tmp.innerText || message;
+    }
     if (toastTimer) { clearTimeout(toastTimer); }
+    // Reset animation
+    toast.classList.remove('oc-toast--visible', 'oc-toast--dismissing');
+    // Force reflow to restart animation
+    void toast.offsetWidth;
     toast.classList.add('oc-toast--visible');
-    toastTimer = setTimeout(function () { hideToast(); }, 3500);
+    toastTimer = setTimeout(function () { hideToast(); }, 4000);
   }
 
   function hideToast() {
     var toast = document.getElementById('oc-toast');
-    if (toast) { toast.classList.remove('oc-toast--visible'); }
+    if (toast) {
+      toast.classList.add('oc-toast--dismissing');
+      setTimeout(function() {
+        toast.classList.remove('oc-toast--visible', 'oc-toast--dismissing');
+      }, 350);
+    }
     if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
   }
 
@@ -128,6 +144,58 @@
     // Reset flag after all queued observer microtasks have fired
     setTimeout(function () { cartReformatting = false; }, 0);
   }
+
+  // ---------------------------------------------------------------------------
+  // Mobile cart sheet — refresh body + footer + shipping bar from AJAX
+  // ---------------------------------------------------------------------------
+
+  function updateCartSheetFromHtml($html) {
+    var sheetBody = document.getElementById('js-cart-sheet-body');
+    var sheet = document.getElementById('js-cart-sheet');
+    if (!sheetBody || !sheet) return;
+
+    var $items = $html.find('.cart-drop__items');
+    var $empty = $html.find('.cart-drop__empty');
+    var $newFooter = $html.find('.cart-drop__footer');
+
+    // Update items
+    if ($items.length) {
+      $(sheetBody).html($items[0].outerHTML);
+    } else if ($empty.length) {
+      $(sheetBody).html($empty[0].outerHTML);
+    }
+
+    // Update footer
+    var $footer = $(sheet).find('.cart-sheet__footer');
+    if ($newFooter.length) {
+      if ($footer.length) {
+        $footer.html($newFooter.html());
+      } else {
+        $(sheet).append('<div class="cart-sheet__footer">' + $newFooter.html() + '</div>');
+      }
+    } else if ($footer.length) {
+      $footer.remove();
+    }
+
+    // Update shipping progress on both mobile + desktop
+    if (typeof window.updateCartShipping === 'function') {
+      window.updateCartShipping();
+    }
+  }
+
+
+  // Hook into OC's cart AJAX — fires when common/cart/info completes
+  $(document).ajaxComplete(function(e, xhr, settings) {
+    if (settings.url && settings.url.indexOf('common/cart/info') !== -1) {
+      var html = xhr.responseText || '';
+      if (html) {
+        updateCartSheetFromHtml($(html));
+      }
+    }
+  });
+
+  // Keep for MutationObserver compatibility (reformatCart still needs it)
+  function refreshCartSheet() {}
 
   // ---------------------------------------------------------------------------
   // Wishlist badge — OC's common.js does: $('#wishlist-total span').html(count)
@@ -581,7 +649,7 @@
         }
 
         if (inWishlist) { updateWishlistBadge(); }
-        if (inCart) { reformatCart(); syncStickyCart(); }
+        if (inCart) { reformatCart(); syncStickyCart(); refreshCartSheet(); }
       });
 
       var wishlistEl = document.getElementById('wishlist-total');

@@ -311,6 +311,12 @@ class ControllerProductProduct extends Controller {
 				$data['tax'] = false;
 			}
 
+			// Raw numeric price for schema.org (no currency symbol, dot decimal)
+			$data['price_raw'] = number_format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), 2, '.', '');
+			$data['special_raw'] = (!is_null($product_info['special']) && (float)$product_info['special'] >= 0)
+				? number_format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), 2, '.', '')
+				: false;
+
 			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
 
 			$data['discounts'] = array();
