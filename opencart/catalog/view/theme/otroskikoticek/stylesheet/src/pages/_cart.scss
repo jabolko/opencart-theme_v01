@@ -1,7 +1,948 @@
 // =============================================================================
-// _cart.scss — Cart page. Scoped to body#checkout-cart.
-// See claude/design/components/cart.md
+// _cart.scss — Cart page (PAGE-004). Mobile-first.
 // =============================================================================
 @use '../abstracts' as *;
 
-// Styles go here
+// Page wrapper
+.cart-page {
+  background: $color-surface-alt;
+  padding-bottom: 0;
+
+}
+
+// =============================================================================
+// DESKTOP TWO-COLUMN LAYOUT
+// =============================================================================
+.cart-layout {
+  @include respond-to('md') {
+    display: flex;
+    gap: $space-8;
+    align-items: flex-start;
+    padding-top: $space-12;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+
+    @include respond-to('md') {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__sidebar {
+    @include respond-to('md') {
+      width: 26rem; // ~442px
+      flex-shrink: 0;
+      position: sticky;
+      top: $space-8;
+    }
+  }
+}
+
+// Desktop sidebar CTA
+.cart-sidebar__cta {
+  display: none;
+
+  @include respond-to('md') {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    width: 100%;
+    background: $color-primary;
+    color: $color-text-on-primary;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-base;
+    padding: $space-3 $space-6;
+    border-radius: $radius-full;
+    text-decoration: none;
+    margin-bottom: $space-4;
+    transition: background $transition-base;
+
+    svg {
+      width: 1.06rem;
+      height: 1.06rem;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: $color-primary-light;
+      color: $color-text-on-primary;
+    }
+  }
+}
+
+
+// =============================================================================
+// EMPTY CART STATE
+// =============================================================================
+.cart-empty {
+  text-align: center;
+  padding: $space-12 $space-4;
+
+  @include respond-to('md') {
+    max-width: 28rem; // ~476px — not full width on desktop
+    margin: 0 auto;
+    padding: $space-16 $space-4;
+  }
+
+  &__icon {
+    width: 4.71rem; // 80px
+    height: 4.71rem;
+    color: $color-border;
+    margin-bottom: $space-6;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: $font-size-xl;
+    color: $color-text-heading;
+    margin: 0 0 $space-2;
+
+    @include respond-to('md') {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  &__text {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin: 0 0 $space-6;
+  }
+
+  &__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    align-items: center;
+  }
+
+  &__cta-main {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: $color-primary;
+    color: $color-text-on-primary;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-base;
+    padding: $space-3 $space-6;
+    border-radius: $radius-full;
+    text-decoration: none;
+    transition: background $transition-base;
+
+    @include respond-to('md') {
+      width: auto;
+      min-width: 14rem;
+    }
+
+    &:hover {
+      background: $color-primary-light;
+      color: $color-text-on-primary;
+    }
+  }
+
+  &__cats {
+    display: flex;
+    gap: $space-2;
+    width: 100%;
+
+    @include respond-to('md') {
+      width: auto;
+      justify-content: center;
+    }
+  }
+
+  &__cat {
+    flex: 1;
+    text-align: center;
+    border: 1px solid $color-border;
+    color: $color-text-base;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-sm;
+    padding: $space-2 $space-4;
+    border-radius: $radius-full;
+    text-decoration: none;
+    transition: border-color $transition-base, color $transition-base;
+
+    @include respond-to('md') {
+      flex: none;
+      min-width: 7rem;
+    }
+
+    &:hover {
+      border-color: $color-text-base;
+      color: $color-text-heading;
+    }
+  }
+}
+
+// =============================================================================
+// CART HEADER
+// =============================================================================
+.cart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 0 $space-2;
+  order: 3; // after reservation (1) and shipping (2)
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-xl;
+    color: $color-text-heading;
+    margin: 0;
+  }
+
+  &__count {
+    font-weight: $font-weight-heading-md;
+    color: $color-text-muted;
+    font-size: $font-size-base;
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-family: $font-family-heading;
+    font-size: 0.76rem; // 13px
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-base;
+    text-decoration: none;
+    transition: color $transition-base;
+    flex-shrink: 0;
+
+    svg {
+      width: 0.94rem; // 16px
+      height: 0.94rem;
+    }
+
+    &:hover { color: $color-text-heading; }
+  }
+}
+
+// =============================================================================
+// RESERVATION BANNER
+// =============================================================================
+.cart-reserve {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  background: #fef9ee; // warm amber tint
+  border: 1px solid #f5dfa8;
+  border-radius: $radius-md;
+  padding: $space-3 $space-4;
+  margin-bottom: $space-3;
+  margin-top: $space-3;
+  order: 1;
+
+  &__icon {
+    width: 1.18rem; // 20px
+    height: 1.18rem;
+    flex-shrink: 0;
+    color: $color-warning;
+  }
+
+  &__text {
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-base;
+
+    strong {
+      font-family: $font-family-heading;
+      font-weight: $font-weight-heading-semi;
+      color: $color-text-heading;
+    }
+  }
+
+  // Under 5 min — pulse urgency
+  &--urgent {
+    background: #fef0f0;
+    border-color: #f5b8b8;
+    animation: cart-pulse 1.5s ease-in-out infinite;
+
+    .cart-reserve__icon { color: $color-error; }
+    .cart-reserve__text strong { color: $color-error; }
+  }
+
+  // Expired
+  &--expired {
+    background: $color-surface-alt;
+    border-color: $color-border;
+    animation: none;
+
+    .cart-reserve__icon { color: $color-text-muted; }
+    .cart-reserve__text { color: $color-text-muted; }
+    .cart-reserve__text strong { color: $color-text-muted; }
+  }
+}
+
+@keyframes cart-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+// =============================================================================
+// FREE SHIPPING PROGRESS — V2 prominent banner
+// =============================================================================
+.cart-shipping {
+  margin-bottom: $space-4;
+  order: 2;
+  border-radius: $radius-md;
+  padding: $space-3 $space-4;
+
+  &--progress {
+    background: #fef9ee;
+    border: 1px solid #f5dfa8;
+  }
+
+  &--free {
+    background: rgba($color-success, 0.08);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__icon {
+    width: 1.18rem; // 20px
+    height: 1.18rem;
+    flex-shrink: 0;
+    color: $color-primary-dark;
+
+    .cart-shipping--free & {
+      color: $color-success;
+    }
+  }
+
+  &__text {
+    font-family: $font-family-heading;
+    font-size: 0.76rem; // 13px — fits one line on mobile
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+
+    @include respond-to('md') {
+      font-size: $font-size-sm;
+    }
+
+    strong { color: $color-primary-dark; }
+
+    &--free {
+      color: $color-success;
+    }
+  }
+
+  &__bar {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    margin-top: $space-2;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 3px;
+    background: $color-primary;
+    transition: width 0.5s ease;
+  }
+}
+
+// =============================================================================
+// CART ITEMS
+// =============================================================================
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-bottom: $space-4;
+  order: 4;
+}
+
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $space-3;
+  position: relative;
+
+  @include respond-to('md') {
+    gap: $space-4;
+    padding: $space-4;
+  }
+
+  // Thumbnail
+  &__thumb {
+    flex-shrink: 0;
+    width: 5.29rem; // 90px
+    height: 5.29rem;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    background: $color-surface-alt;
+
+    @include respond-to('md') {
+      width: 7.06rem; // 120px
+      height: 7.06rem;
+      border-radius: $radius-md;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  // Body — fills remaining space
+  &__body {
+    flex: 1;
+    min-width: 0; // allow text truncation
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 5.29rem; // match thumb height
+
+    @include respond-to('md') {
+      min-height: 7.06rem; // match desktop thumb
+    }
+  }
+
+  &__top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem; // 2px
+  }
+
+  &__brand {
+    font-family: $font-family-heading;
+    font-size: 0.71rem; // 12px
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+
+    @include respond-to('md') {
+      font-size: 0.82rem; // 14px
+      margin-bottom: 0.12rem;
+    }
+  }
+
+  &__name {
+    font-family: $font-family-heading;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-heading-md;
+    color: $color-text-base;
+    text-decoration: none;
+    line-height: 1.3;
+    // Clamp to 2 lines
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    @include respond-to('md') {
+      font-size: 0.94rem; // 16px
+    }
+  }
+
+  &__meta {
+    font-family: $font-family-body;
+    font-size: 0.71rem;
+    color: $color-text-muted;
+
+    @include respond-to('md') {
+      font-size: 0.76rem;
+      margin-top: $space-1;
+    }
+  }
+
+  // Bottom row — price left, timer badge right
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: $space-2;
+  }
+
+  &__price {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: $font-size-base;
+    color: $color-text-base;
+
+    @include respond-to('md') {
+      font-size: $font-size-lg; // 19px
+    }
+  }
+
+  // Timer badge — small pill on each card
+  &__timer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.18rem; // 3px
+    background: #fef9ee;
+    border-radius: $radius-full;
+    padding: 0.12rem 0.47rem; // 2px 8px
+    font-family: $font-family-heading;
+    font-size: 0.65rem; // 11px
+    font-weight: $font-weight-heading-semi;
+    color: $color-warning;
+
+    svg {
+      width: 0.71rem;
+      height: 0.71rem;
+    }
+
+    @include respond-to('md') {
+      font-size: 0.71rem;
+      padding: 0.18rem 0.59rem; // 3px 10px
+
+      svg { width: 0.82rem; height: 0.82rem; }
+    }
+  }
+
+  // Remove button — top-right corner
+  &__remove {
+    position: absolute;
+    top: $space-1;
+    right: $space-1;
+    width: 2.35rem; // 40px — comfortable tap target
+    height: 2.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-muted;
+    padding: 0;
+    transition: color $transition-base;
+
+    svg {
+      width: 1.06rem; // 18px
+      height: 1.06rem;
+    }
+
+    &:hover,
+    &:focus {
+      color: $color-error;
+      outline: none;
+    }
+  }
+}
+
+// =============================================================================
+// COUPON CODE
+// =============================================================================
+.cart-coupon {
+  margin-bottom: $space-4;
+
+  &__field {
+    display: flex;
+    align-items: center;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    overflow: hidden;
+    transition: border-color $transition-base;
+
+    &:focus-within { border-color: $color-text-muted; }
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: $space-3 $space-4;
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-base;
+
+    &::placeholder { color: $color-text-muted; }
+  }
+
+  &__btn {
+    flex-shrink: 0;
+    background: $color-secondary;
+    color: $color-text-on-dark;
+    border: none;
+    padding: $space-3 $space-4;
+    font-family: $font-family-heading;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-heading-semi;
+    cursor: pointer;
+    transition: background $transition-base;
+
+    &:hover { background: $color-secondary-dark; }
+  }
+}
+
+// =============================================================================
+// ORDER SUMMARY
+// =============================================================================
+.cart-summary {
+  background: $color-surface;
+  border-radius: $radius-md;
+  padding: $space-4;
+  margin-bottom: $space-4;
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    font-family: $font-family-body;
+    font-size: $font-size-sm;
+    color: $color-text-base;
+
+    &--total {
+      border-top: 1px solid $color-border;
+      padding-top: $space-3;
+      margin-top: $space-1;
+      font-family: $font-family-heading;
+      font-weight: $font-weight-heading-semi;
+      font-size: $font-size-lg;
+      color: $color-text-heading;
+    }
+  }
+
+  &__payments {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.29rem; // 5px
+    flex-wrap: wrap;
+    padding-top: $space-3;
+    margin-top: $space-3;
+    border-top: 1px solid $color-surface-section;
+  }
+}
+
+// Payment method icon cards
+.cart-pay {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.12rem; // 36px
+  height: 1.41rem; // 24px
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  background: $color-surface;
+  font-family: $font-family-heading;
+  font-weight: 700;
+  font-size: 0.41rem; // 7px
+  color: $color-text-heading;
+  overflow: hidden;
+  flex-shrink: 0;
+  line-height: 1.2;
+  text-align: center;
+
+  &--visa {
+    font-size: 0.59rem; // 10px
+    font-style: italic;
+    color: #1a1f71;
+    letter-spacing: -0.02em;
+  }
+
+  &--mc {
+    position: relative;
+
+    i {
+      position: absolute;
+      width: 0.82rem; // 14px
+      height: 0.82rem;
+      border-radius: 50%;
+      font-style: normal;
+
+      &:first-child {
+        background: #eb001b;
+        left: 0.29rem;
+        top: 0.29rem;
+      }
+
+      &:last-child {
+        background: #f79e1b;
+        left: 0.94rem;
+        top: 0.29rem;
+        opacity: 0.85;
+      }
+    }
+  }
+
+  &--pp {
+    font-size: 0.41rem;
+    color: #003087;
+    letter-spacing: -0.02em;
+
+    em {
+      font-style: normal;
+      color: #009cde;
+    }
+  }
+
+  &--svg {
+    padding: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      border-radius: $radius-sm;
+    }
+  }
+
+  &--bank {
+    font-size: 0.33rem; // ~5.5px
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-base;
+  }
+
+  &--cod {
+    font-size: 0.33rem;
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-base;
+  }
+}
+
+// =============================================================================
+// CONTACT LINE
+// =============================================================================
+.cart-contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: 0 0 $space-3;
+  margin-bottom: $space-3;
+
+  &__label {
+    font-family: $font-family-heading;
+    font-size: 0.71rem; // 12px
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-muted;
+  }
+
+  &__phone {
+    font-family: $font-family-heading;
+    font-size: 0.71rem;
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+    text-decoration: none;
+    transition: color $transition-base;
+
+    &:hover { color: $color-primary-dark; }
+  }
+}
+
+// =============================================================================
+// TRUST BADGES (SSL + experience)
+// =============================================================================
+.cart-badges {
+  display: flex;
+  gap: $space-4;
+  padding: 0 0 $space-3;
+
+  &__item {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+  }
+
+  &__icon {
+    width: 1.65rem; // 28px
+    height: 1.65rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-size: 0.71rem; // 12px
+    font-weight: $font-weight-heading-semi;
+    color: $color-text-heading;
+  }
+
+  &__desc {
+    font-family: $font-family-body;
+    font-size: 0.59rem; // 10px
+    color: $color-text-muted;
+    line-height: 1.4;
+  }
+}
+
+
+
+// =============================================================================
+// GOOGLE REVIEW PILL
+// =============================================================================
+.cart-review {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem; // 6px
+  padding: 0.59rem $space-4;
+  margin-bottom: $space-4;
+  border-radius: $radius-lg;
+  background: $color-surface;
+  -webkit-tap-highlight-color: transparent;
+
+  &__gicon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
+  &__score {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 0.76rem;
+    color: $color-text-heading;
+  }
+
+  &__stars {
+    color: #fbbc04;
+    font-size: 0.71rem;
+    letter-spacing: 1px;
+  }
+
+  &__count {
+    font-family: $font-family-body;
+    font-size: 0.65rem;
+    color: $color-text-muted;
+  }
+}
+
+// =============================================================================
+// RECENTLY VIEWED — same pattern as .pdp-similar
+// =============================================================================
+.cart-recent {
+  padding: $space-4 0;
+  position: relative;
+  margin-bottom: $space-4;
+
+  // Fade edge on right
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 3rem;
+    background: linear-gradient(to left, $color-surface-alt, transparent);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__title {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.06rem; // 18px
+    color: $color-text-heading;
+    margin-bottom: $space-3;
+  }
+
+  &__scroller {
+    display: flex;
+    gap: 0.59rem; // 10px
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: $space-4;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__spacer {
+    flex-shrink: 0;
+    width: 3rem;
+    min-height: 1px;
+  }
+}
+
+// =============================================================================
+// STICKY CHECKOUT FOOTER
+// =============================================================================
+.cart-sticky {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $color-surface;
+  padding: $space-3 $space-4;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+
+  @include respond-to('md') {
+    display: none;
+  }
+
+  &__total {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__label {
+    font-family: $font-family-body;
+    font-size: 0.71rem;
+    color: $color-text-muted;
+  }
+
+  &__price {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: $font-size-lg;
+    color: $color-text-heading;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    background: $color-primary;
+    color: $color-text-on-primary;
+    font-family: $font-family-heading;
+    font-weight: $font-weight-heading-semi;
+    font-size: $font-size-sm;
+    padding: $space-3 $space-6;
+    border-radius: $radius-full;
+    text-decoration: none;
+    transition: background $transition-base;
+
+    svg {
+      width: 1.06rem; // 18px
+      height: 1.06rem;
+      flex-shrink: 0;
+    }
+
+    &:hover {
+      background: $color-primary-light;
+      color: $color-text-on-primary;
+    }
+  }
+}

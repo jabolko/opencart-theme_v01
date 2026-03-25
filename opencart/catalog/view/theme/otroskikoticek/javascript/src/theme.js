@@ -588,6 +588,46 @@
     // Cart button uses Bootstrap data-toggle="dropdown" — no custom handler needed
   }
 
+  // ---------------------------------------------------------------------------
+  // Recently viewed — save product data to localStorage on product page
+  // ---------------------------------------------------------------------------
+  function trackRecentlyViewed() {
+    var el = document.getElementById('product-product');
+    if (!el) return;
+    var KEY = 'recently_viewed';
+    var MAX = 20;
+
+    // Read product data from the page
+    var pid = el.getAttribute('data-product-id');
+    if (!pid) return;
+    var nameEl = el.querySelector('.pdp-info__title');
+    var brandEl = el.querySelector('.pdp-info__brand');
+    var priceEl = el.querySelector('.pdp-info__price-current');
+    var imgEl = el.querySelector('.pdp-gallery__slide img');
+    var linkEl = el.querySelector('.pdp-info__title');
+
+    var item = {
+      id: pid,
+      name: nameEl ? nameEl.textContent.trim() : '',
+      brand: brandEl ? brandEl.textContent.trim() : '',
+      price: priceEl ? priceEl.textContent.trim() : '',
+      thumb: imgEl ? imgEl.getAttribute('src') : '',
+      href: window.location.href
+    };
+
+    var stored = [];
+    try { stored = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { stored = []; }
+
+    // Remove duplicate
+    stored = stored.filter(function (p) { return p.id !== pid; });
+    // Add to front
+    stored.unshift(item);
+    // Cap
+    if (stored.length > MAX) stored = stored.slice(0, MAX);
+
+    localStorage.setItem(KEY, JSON.stringify(stored));
+  }
+
   $(document).ready(function () {
     reformatCart();
     syncStickyCart();
@@ -597,6 +637,7 @@
     initArrivalsScroll();
     initReviewsScroll();
     initStickyNav();
+    trackRecentlyViewed();
 
     // Suppress OC's scroll-to-top animation on cart/wishlist/compare add
     var _origAnimate = $.fn.animate;

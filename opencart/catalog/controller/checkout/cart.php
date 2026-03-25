@@ -52,6 +52,7 @@ class ControllerCheckoutCart extends Controller {
 
 			$this->load->model('tool/image');
 			$this->load->model('tool/upload');
+			$this->load->model('catalog/product');
 
 			$data['products'] = array();
 
@@ -130,19 +131,25 @@ class ControllerCheckoutCart extends Controller {
 					}
 				}
 
+				// Fetch manufacturer name for cart card
+				$product_info = $this->model_catalog_product->getProduct($product['product_id']);
+				$manufacturer = ($product_info && !empty($product_info['manufacturer'])) ? $product_info['manufacturer'] : '';
+
 				$data['products'][] = array(
-					'cart_id'   => $product['cart_id'],
-					'thumb'     => $image,
-					'name'      => $product['name'],
-					'model'     => $product['model'],
-					'option'    => $option_data,
-					'recurring' => $recurring,
-					'quantity'  => $product['quantity'],
-					'stock'     => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
-					'reward'    => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
-					'price'     => $price,
-					'total'     => $total,
-					'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
+					'cart_id'      => $product['cart_id'],
+					'product_id'   => $product['product_id'],
+					'thumb'        => $image,
+					'name'         => $product['name'],
+					'manufacturer' => $manufacturer,
+					'model'        => $product['model'],
+					'option'       => $option_data,
+					'recurring'    => $recurring,
+					'quantity'     => $product['quantity'],
+					'stock'        => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
+					'reward'       => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
+					'price'        => $price,
+					'total'        => $total,
+					'href'         => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
 			}
 
@@ -204,6 +211,31 @@ class ControllerCheckoutCart extends Controller {
 				array_multisort($sort_order, SORT_ASC, $totals);
 			}
 
+			// Estimate shipping if not yet in totals (no shipping method chosen yet)
+			$has_shipping = false;
+			foreach ($totals as $t) {
+				if ($t['code'] == 'shipping') {
+					$has_shipping = true;
+					break;
+				}
+			}
+
+			$data['shipping_estimate'] = '';
+			if (!$has_shipping && $this->cart->hasShipping()) {
+				$sub_total = $this->cart->getSubTotal();
+				$free_threshold = (float)$this->config->get('shipping_free_total');
+				$flat_cost = (float)$this->config->get('shipping_flat_cost');
+
+				if ($free_threshold > 0 && $sub_total >= $free_threshold) {
+					$data['shipping_estimate'] = $this->currency->format(0, $this->session->data['currency']);
+					$data['shipping_estimate_label'] = 'Brezplačna dostava';
+				} elseif ($flat_cost > 0) {
+					$shipping_with_tax = $this->tax->calculate($flat_cost, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax'));
+					$data['shipping_estimate'] = $this->currency->format($shipping_with_tax, $this->session->data['currency']);
+					$data['shipping_estimate_label'] = 'Predvidena dostava';
+				}
+			}
+
 			$data['totals'] = array();
 
 			foreach ($totals as $total) {
@@ -242,20 +274,25 @@ class ControllerCheckoutCart extends Controller {
 
 			$this->response->setOutput($this->load->view('checkout/cart', $data));
 		} else {
-			$data['text_error'] = $this->language->get('text_empty');
-			
+			// Empty cart — render cart template with empty state
+			$data['products'] = array();
+			$data['vouchers'] = array();
+			$data['totals'] = array();
 			$data['continue'] = $this->url->link('common/home');
+			$data['checkout'] = $this->url->link('checkout/checkout', '', true);
+			$data['shipping_estimate'] = '';
+			$data['shipping_estimate_label'] = '';
 
 			unset($this->session->data['success']);
 
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
+			$data['error_warning'] = '';
+			$data['success'] = '';
+			$data['attention'] = '';
+
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			$this->response->setOutput($this->load->view('error/not_found', $data));
+			$this->response->setOutput($this->load->view('checkout/cart', $data));
 		}
 	}
 

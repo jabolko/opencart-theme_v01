@@ -16,10 +16,6 @@
     padding-left: $space-3;
     padding-right: $space-3;
 
-    @include respond-below('sm') {
-      padding-top: 3.20rem; // clear fixed mobile header
-    }
-
     @include respond-to('sm') {
       padding-left: 15px;
       padding-right: 15px;

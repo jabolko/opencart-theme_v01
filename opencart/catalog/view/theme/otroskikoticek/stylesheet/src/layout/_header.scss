@@ -724,6 +724,11 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
     padding: 0.59rem 0; // 10px ÷ 17
   }
 
+  // Global body offset to clear the fixed header on all pages
+  body {
+    padding-top: 3.53rem; // header height: 0.59rem*2 padding + ~1.15rem logo + container chrome ≈ 60px
+  }
+
   .header-inner {
     flex-wrap: nowrap;
     align-items: center;
@@ -1347,6 +1352,23 @@ body.mobile-nav-open { overflow: hidden; }
 
   @include respond-below('sm') {
     top: 4.5rem; // below fixed header
+    left: $space-4;
+    right: $space-4;
+    transform: translateY(-20px);
+    white-space: normal;
+    font-size: $font-size-sm;
+    padding: $space-3 $space-4;
+    text-align: center;
+    justify-content: center;
+    border-radius: $radius-md;
+
+    &.oc-toast--visible {
+      animation: toastDropDownMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    &.oc-toast--dismissing {
+      animation: toastFloatUpMobile 0.3s ease forwards;
+    }
   }
 }
 
@@ -1358,4 +1380,14 @@ body.mobile-nav-open { overflow: hidden; }
 @keyframes toastFloatUp {
   from { transform: translateX(-50%) translateY(0); opacity: 1; }
   to { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+}
+
+@keyframes toastDropDownMobile {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes toastFloatUpMobile {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-20px); opacity: 0; }
 }

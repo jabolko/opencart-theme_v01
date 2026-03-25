@@ -1,119 +1,405 @@
 {{ header }}
-<div id="checkout-cart" class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  {% if attention %}
-  <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ attention }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  {% if success %}
-  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  {% if error_warning %}
-  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-sm-9' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
+<div class="cart-page">
+  <div class="container">
+
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
     {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1>{{ heading_title }}
-        {% if weight %}
-        &nbsp;({{ weight }})
-        {% endif %} </h1>
-      <form action="{{ action }}" method="post" enctype="multipart/form-data">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <td class="text-center">{{ column_image }}</td>
-                <td class="text-left">{{ column_name }}</td>
-                <td class="text-left">{{ column_model }}</td>
-                <td class="text-left">{{ column_quantity }}</td>
-                <td class="text-right">{{ column_price }}</td>
-                <td class="text-right">{{ column_total }}</td>
-              </tr>
-            </thead>
-            <tbody>
-            
-            {% for product in products %}
-            <tr>
-              <td class="text-center">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
-              <td class="text-left"><a href="{{ product.href }}">{{ product.name }}</a> {% if not product.stock %} <span class="text-danger">***</span> {% endif %}
-                {% if product.option %}
-                {% for option in product.option %} <br/>
-                <small>{{ option.name }}: {{ option.value }}</small> {% endfor %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+
+    {% if products %}
+    <div class="cart-layout">
+
+      {# ── LEFT COLUMN: header, reserve, shipping, items ── #}
+      <div class="cart-layout__main">
+
+        {# Cart header #}
+        <div class="cart-header">
+          <h1 class="cart-header__title">Košarica <span class="cart-header__count" id="js-cart-count">({{ products|length }})</span></h1>
+          <a href="javascript:history.back()" class="cart-header__back">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Nazaj
+          </a>
+        </div>
+
+        {# Reservation banner #}
+        <div class="cart-reserve" id="js-cart-reserve">
+          <svg class="cart-reserve__icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span class="cart-reserve__text">Artikli rezervirani za <strong id="js-cart-timer">30:00</strong></span>
+        </div>
+
+        {# Free shipping progress #}
+        <div class="cart-shipping" id="js-cart-page-shipping"></div>
+
+        {# Product cards #}
+        <div class="cart-items" id="js-cart-items">
+          {% for product in products %}
+          <div class="cart-item" data-cart-id="{{ product.cart_id }}" data-product-id="{{ product.product_id }}">
+            <a href="{{ product.href }}" class="cart-item__thumb">
+              {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}" />{% endif %}
+            </a>
+            <div class="cart-item__body">
+              <div class="cart-item__top">
+                {% if product.manufacturer %}
+                <span class="cart-item__brand">{{ product.manufacturer }}</span>
                 {% endif %}
-                {% if product.reward %} <br/>
-                <small>{{ product.reward }}</small> {% endif %}
-                {% if product.recurring %} <br/>
-                <span class="label label-info">{{ text_recurring_item }}</span> <small>{{ product.recurring }}</small> {% endif %}</td>
-              <td class="text-left">{{ product.model }}</td>
-              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
-                  <input type="text" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1" class="form-control" />
-                  <span class="input-group-btn">
-                  <button type="submit" data-toggle="tooltip" title="{{ button_update }}" class="btn btn-primary"><i class="fa fa-refresh"></i></button>
-                  <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="cart.remove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i></button>
-                  </span></div></td>
-              <td class="text-right">{{ product.price }}</td>
-              <td class="text-right">{{ product.total }}</td>
-            </tr>
-            {% endfor %}
-            {% for voucher in vouchers %}
-            <tr>
-              <td></td>
-              <td class="text-left">{{ voucher.description }}</td>
-              <td class="text-left"></td>
-              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
-                  <input type="text" name="" value="1" size="1" disabled="disabled" class="form-control" />
-                  <span class="input-group-btn">
-                  <button type="button" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger" onclick="voucher.remove('{{ voucher.key }}');"><i class="fa fa-times-circle"></i></button>
-                  </span></div></td>
-              <td class="text-right">{{ voucher.amount }}</td>
-              <td class="text-right">{{ voucher.amount }}</td>
-            </tr>
-            {% endfor %}
-              </tbody>
-            
-          </table>
+                <a href="{{ product.href }}" class="cart-item__name">{{ product.name }}</a>
+                {% if product.option %}
+                <span class="cart-item__meta">{% for option in product.option %}{{ option.name }}: {{ option.value }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                {% endif %}
+              </div>
+              <div class="cart-item__bottom">
+                <span class="cart-item__price">{{ product.total }}</span>
+                <span class="cart-item__timer-badge" data-cart-id="{{ product.cart_id }}">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span class="cart-item__timer-val">30:00</span>
+                </span>
+              </div>
+            </div>
+            <button type="button" class="cart-item__remove" data-cart-id="{{ product.cart_id }}" aria-label="Odstrani">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          {% endfor %}
         </div>
-      </form>
-      {% if modules %}
-      <h2>{{ text_next }}</h2>
-      <p>{{ text_next_choice }}</p>
-      <div class="panel-group" id="accordion"> {% for module in modules %}
-        {{ module }}
-        {% endfor %} </div>
-      {% endif %} <br/>
-      <div class="row">
-        <div class="col-sm-4 col-sm-offset-8">
-          <table class="table table-bordered">
+
+      </div>
+
+      {# ── RIGHT COLUMN: coupon, summary, contact, badges, review, CTA ── #}
+      <div class="cart-layout__sidebar">
+
+        {# Coupon code #}
+        <div class="cart-coupon">
+          <div class="cart-coupon__field">
+            <input type="text" class="cart-coupon__input" id="js-coupon-input" placeholder="Koda za popust" />
+            <button type="button" class="cart-coupon__btn" id="js-coupon-btn">Uporabi</button>
+          </div>
+        </div>
+
+        {# Order summary #}
+        <div class="cart-summary">
+          <div class="cart-summary__rows">
             {% for total in totals %}
-            <tr>
-              <td class="text-right"><strong>{{ total.title }}:</strong></td>
-              <td class="text-right">{{ total.text }}</td>
-            </tr>
+            {% if not loop.last %}
+            <div class="cart-summary__row">
+              <span>{{ total.title }}</span>
+              <span>{{ total.text }}</span>
+            </div>
+            {% endif %}
             {% endfor %}
-          </table>
+            {% if shipping_estimate %}
+            <div class="cart-summary__row">
+              <span>{{ shipping_estimate_label }}</span>
+              <span>{{ shipping_estimate }}</span>
+            </div>
+            {% endif %}
+            {% for total in totals %}
+            {% if loop.last %}
+            <div class="cart-summary__row cart-summary__row--total">
+              <span>{{ total.title }}</span>
+              <span>{{ total.text }}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+          <div class="cart-summary__payments">
+            <span class="cart-pay cart-pay--visa">VISA</span>
+            <span class="cart-pay cart-pay--mc"><i></i><i></i></span>
+            <span class="cart-pay cart-pay--pp">Pay<em>Pal</em></span>
+            <span class="cart-pay cart-pay--svg" aria-label="Apple Pay"><svg viewBox="0 0 120 80" fill="none"><rect width="120" height="80" rx="4" fill="white"/><path d="M55.55 22.9C61.1 22.9 64.97 26.73 64.97 32.3c0 5.59-3.94 9.43-9.55 9.43H49.27v9.77h-4.44V22.9h10.72zm-6.28 15.1h5.09c3.87 0 6.07-2.08 6.07-5.69 0-3.6-2.2-5.67-6.04-5.67h-5.12v11.36z" fill="#000"/><path d="M66.13 45.58c0-3.65 2.79-5.89 7.75-6.16l5.71-.34v-1.6c0-2.32-1.57-3.71-4.18-3.71-2.48 0-4.02 1.19-4.4 3.05h-4.04c.24-3.77 3.45-6.54 8.6-6.54 5.06 0 8.29 2.68 8.29 6.86V51.5h-4.1v-3.43h-.1c-1.2 2.32-3.84 3.79-6.58 3.79-4.08 0-6.94-2.54-6.94-6.28zm13.46-1.88v-1.65l-5.13.32c-2.56.18-4 1.31-4 3.1 0 1.82 1.5 3.01 3.8 3.01 2.99 0 5.33-1.97 5.33-4.78z" fill="#000"/><path d="M87.72 59.18V55.7c.32.08 1.03.08 1.39.08 1.98 0 3.05-.83 3.7-2.97l.38-1.27-7.53-20.87h4.64l5.27 16.97h.08l5.27-16.97h4.52l-7.81 21.94c-1.78 5.05-3.85 6.68-8.17 6.68-.36 0-1.43-.04-1.75-.1z" fill="#000"/><path d="M31.74 25.7c1.07-1.34 1.8-3.14 1.6-4.97-1.57.08-3.48 1.03-4.58 2.37-1 1.15-1.87 3.02-1.64 4.78 1.76.15 3.52-.88 4.62-2.18z" fill="#000"/><path d="M33.32 28.22c-2.55-.15-4.72 1.45-5.94 1.45-1.22 0-3.09-1.37-5.11-1.34-2.63.04-5.07 1.52-6.4 3.89-2.74 4.73-.74 11.74 1.93 15.59 1.3 1.91 2.86 4 4.91 3.93 1.95-.08 2.71-1.26 5.07-1.26s3.05 1.26 5.11 1.22c2.13-.04 3.47-1.87 4.76-3.77 1.49-2.17 2.1-4.27 2.14-4.39-.04-.04-4.12-1.56-4.15-6.25-.04-3.93 3.24-5.79 3.39-5.91-1.83-2.7-4.69-3.01-5.68-3.08z" fill="#000"/></svg></span>
+            <span class="cart-pay cart-pay--svg" aria-label="Google Pay"><svg viewBox="0 0 120 80" fill="none"><rect width="120" height="80" rx="4" fill="white"/><path d="M57.54 27v8.98h5.54c1.32 0 2.41-.44 3.27-1.33.89-.88 1.33-1.94 1.33-3.16 0-1.2-.44-2.24-1.33-3.13-.89-.91-1.98-1.37-3.3-1.37h-5.51zm0 12.14v10.42h-3.31V23.84h8.78c2.23 0 4.12.74 5.68 2.23 1.58 1.48 2.38 3.3 2.38 5.43 0 2.18-.79 4-2.38 5.46-1.53 1.46-3.43 2.19-5.68 2.19h-5.47z" fill="#3C4043"/><path d="M74.41 44.17c0 .86.37 1.58 1.1 2.16.73.57 1.59.86 2.57.86 1.39 0 2.63-.51 3.72-1.54 1.1-1.03 1.64-2.24 1.64-3.63-.98-.81-2.42-1.22-4.32-1.22-1.34 0-2.46.33-3.36.97-.9.65-1.35 1.45-1.35 2.4zm4.28-12.79c2.45 0 4.38.65 5.79 1.96 1.41 1.31 2.12 3.1 2.12 5.37v10.85h-3.17v-2.44h-.14c-1.37 2.01-3.19 3.02-5.47 3.02-1.94 0-3.57-.58-4.87-1.72-1.31-1.15-1.96-2.59-1.96-4.31 0-1.82.69-3.27 2.07-4.35 1.38-1.08 3.22-1.62 5.52-1.62 1.96 0 3.58.36 4.85 1.08v-.76c0-1.15-.46-2.12-1.37-2.93-.83-.79-1.96-1.22-3.14-1.2-1.85 0-3.31.78-4.39 2.34l-2.91-1.83c1.6-2.3 3.98-3.45 7.12-3.45z" fill="#3C4043"/><path d="M104.77 31.96L93.73 57.32h-3.42l4.1-8.87-7.26-16.49h3.6l5.25 12.65h.07l5.11-12.65h3.6z" fill="#3C4043"/><path d="M44.17 36.89c0-1.04-.09-2.04-.26-3.01H29.96v5.69h7.99c-.33 1.84-1.4 3.46-3 4.49v3.7h4.77c2.79-2.58 4.42-6.38 4.42-10.87z" fill="#4285F4"/><path d="M29.96 51.34c3.99 0 7.36-1.31 9.81-3.57l-4.77-3.7c-1.33.89-3.04 1.41-5.04 1.41-3.86 0-7.14-2.6-8.31-6.1h-4.91v3.81c2.51 5 7.63 8.15 13.22 8.15z" fill="#34A853"/><path d="M21.65 39.39c-.62-1.84-.62-3.82 0-5.66v-3.81h-4.91A17.4 17.4 0 0 0 15.16 36.56c0 2.39.57 4.64 1.58 6.64l4.91-3.81z" fill="#FABB05"/><path d="M29.96 27.63c2.18 0 4.14.75 5.68 2.22l4.22-4.22c-2.56-2.38-5.9-3.85-9.9-3.85-5.59 0-10.7 3.15-13.22 8.15l4.91 3.81c1.17-3.5 4.45-6.1 8.31-6.1z" fill="#E94235"/></svg></span>
+            <span class="cart-pay cart-pay--bank">Bančno<br>nakazilo</span>
+            <span class="cart-pay cart-pay--cod">Po<br>povzetju</span>
+          </div>
+        </div>
+
+        {# Desktop checkout CTA #}
+        <a href="{{ checkout }}" class="cart-sidebar__cta">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Varno zaključi nakup
+        </a>
+
+        {# Contact line #}
+        <div class="cart-contact">
+          <span class="cart-contact__label">Imaš vprašanje?</span>
+          <a href="tel:+38640611233" class="cart-contact__phone">Pokliči nas 040 611 233</a>
+        </div>
+
+        {# Trust badges — SSL + experience #}
+        <div class="cart-badges">
+          <div class="cart-badges__item">
+            <img src="image/catalog/assets/elements/badges/lets-encrypt.svg" alt="Let's Encrypt" class="cart-badges__icon" width="28" height="28" />
+            <div class="cart-badges__text">
+              <span class="cart-badges__title">Varen nakup</span>
+              <span class="cart-badges__desc">100% varnost zagotavlja Let's Encrypt</span>
+            </div>
+          </div>
+          <div class="cart-badges__item">
+            <svg class="cart-badges__icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7d9478" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <div class="cart-badges__text">
+              <span class="cart-badges__title">Vredni zaupanja</span>
+              <span class="cart-badges__desc">Že več kot 10 let z vami</span>
+            </div>
+          </div>
+        </div>
+
+        {# Google review pill #}
+        <div class="cart-review">
+          <svg class="cart-review__gicon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span class="cart-review__score">4.9</span>
+          <span class="cart-review__stars">★★★★★</span>
+          <span class="cart-review__count">150+ ocen</span>
+        </div>
+
+      </div>
+
+    </div>
+    {% else %}
+
+    {# ── EMPTY CART STATE ── #}
+    <div class="cart-empty">
+      <svg class="cart-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <h1 class="cart-empty__title">Tvoja košarica je prazna!</h1>
+      <p class="cart-empty__text">Dodaj kaj lepega in se vrni.</p>
+      <div class="cart-empty__ctas">
+        <a href="{{ base }}index.php?route=product/category&path=226" class="cart-empty__cta-main">Nakupuj</a>
+        <div class="cart-empty__cats">
+          <a href="{{ base }}index.php?route=product/category&path=226" class="cart-empty__cat">Deklice</a>
+          <a href="{{ base }}index.php?route=product/category&path=225" class="cart-empty__cat">Dečki</a>
+          <a href="{{ base }}index.php?route=product/category&path=63" class="cart-empty__cat">Nosečnice</a>
         </div>
       </div>
-      <div class="buttons clearfix">
-        <div class="pull-left"><a href="{{ continue }}" class="btn btn-default">{{ button_shopping }}</a></div>
-        <div class="pull-right"><a href="{{ checkout }}" class="btn btn-primary">{{ button_checkout }}</a></div>
-      </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+    </div>
+
+    {% endif %}
+
+    {# Recently viewed — full width below both columns #}
+    <div class="cart-recent" id="js-cart-recent" style="display:none;">
+      <h2 class="cart-recent__title">Nedavno ogledani</h2>
+      <div class="cart-recent__scroller" id="js-cart-recent-scroller"></div>
+    </div>
+
+  </div>
 </div>
-{{ footer }} 
+
+{% if products %}
+{# Sticky checkout footer — mobile only #}
+<div class="cart-sticky" id="js-cart-sticky">
+  <div class="cart-sticky__total">
+    <span class="cart-sticky__label">Skupaj</span>
+    <span class="cart-sticky__price" id="js-cart-sticky-total">
+      {% for total in totals %}{% if loop.last %}{{ total.text }}{% endif %}{% endfor %}
+    </span>
+  </div>
+  <a href="{{ checkout }}" class="cart-sticky__cta">
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    Varno zaključi nakup
+  </a>
+</div>
+{% endif %}
+
+{{ footer }}
+
+<script type="text/javascript"><!--
+(function() {
+  // =========================================================================
+  // Reservation timer — 30min per session, stored in localStorage
+  // =========================================================================
+  var RESERVE_KEY = 'cart_reserve_ts';
+  var RESERVE_MS = 30 * 60 * 1000; // 30 minutes
+
+  function getReserveEnd() {
+    var stored = localStorage.getItem(RESERVE_KEY);
+    if (stored) {
+      var ts = parseInt(stored, 10);
+      if (ts > Date.now()) return ts;
+    }
+    var end = Date.now() + RESERVE_MS;
+    localStorage.setItem(RESERVE_KEY, end);
+    return end;
+  }
+
+  var reserveEnd = getReserveEnd();
+  var globalTimerEl = document.getElementById('js-cart-timer');
+  var reserveBanner = document.getElementById('js-cart-reserve');
+  var itemTimerEls = document.querySelectorAll('.cart-item__timer-val');
+
+  function formatTime(ms) {
+    if (ms <= 0) return '0:00';
+    var totalSec = Math.floor(ms / 1000);
+    var min = Math.floor(totalSec / 60);
+    var sec = totalSec % 60;
+    return min + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function tickTimer() {
+    var remaining = reserveEnd - Date.now();
+    var display = formatTime(remaining);
+
+    if (globalTimerEl) globalTimerEl.textContent = display;
+    for (var i = 0; i < itemTimerEls.length; i++) {
+      itemTimerEls[i].textContent = display;
+    }
+
+    if (remaining <= 0) {
+      if (reserveBanner) reserveBanner.classList.add('cart-reserve--expired');
+      if (globalTimerEl) globalTimerEl.textContent = '0:00';
+      return;
+    }
+
+    if (remaining < 5 * 60 * 1000) {
+      if (reserveBanner) reserveBanner.classList.add('cart-reserve--urgent');
+    }
+
+    setTimeout(tickTimer, 1000);
+  }
+
+  tickTimer();
+
+  // =========================================================================
+  // Remove item
+  // =========================================================================
+  var removeButtons = document.querySelectorAll('.cart-item__remove');
+  for (var r = 0; r < removeButtons.length; r++) {
+    removeButtons[r].addEventListener('click', function() {
+      var cartId = this.getAttribute('data-cart-id');
+      if (cartId) {
+        cart.remove(cartId);
+        setTimeout(function() { location.reload(); }, 600);
+      }
+    });
+  }
+
+  // =========================================================================
+  // Free shipping bar
+  // =========================================================================
+  function updatePageShipping() {
+    var el = document.getElementById('js-cart-page-shipping');
+    if (!el) return;
+    var threshold = 55;
+    var totalEl = document.querySelector('.cart-summary__row--total span:last-child');
+    if (!totalEl) return;
+    var totalText = totalEl.textContent.replace(/[^\d,.]/g, '').replace(',', '.');
+    var cartTotal = parseFloat(totalText) || 0;
+    var remaining = Math.max(0, threshold - cartTotal);
+    var pct = Math.min(100, (cartTotal / threshold) * 100);
+
+    var truckSvg = '<svg class="cart-shipping__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>';
+    var checkSvg = '<svg class="cart-shipping__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+    if (cartTotal > 0 && remaining > 0) {
+      el.className = 'cart-shipping cart-shipping--progress';
+      el.innerHTML = '<div class="cart-shipping__header">' + truckSvg + '<span class="cart-shipping__text">Do brezplačne poštnine ti manjka še <strong>' + remaining.toFixed(2).replace('.', ',') + ' €</strong></span></div><div class="cart-shipping__bar"><div class="cart-shipping__fill" style="width:' + pct + '%"></div></div>';
+    } else if (cartTotal >= threshold) {
+      el.className = 'cart-shipping cart-shipping--free';
+      el.innerHTML = '<div class="cart-shipping__header">' + checkSvg + '<span class="cart-shipping__text cart-shipping__text--free">Poštnina je brezplačna!</span></div>';
+    } else {
+      el.innerHTML = '';
+      el.className = 'cart-shipping';
+    }
+  }
+
+  updatePageShipping();
+
+  // =========================================================================
+  // Coupon code submit
+  // =========================================================================
+  var couponBtn = document.getElementById('js-coupon-btn');
+  var couponInput = document.getElementById('js-coupon-input');
+  if (couponBtn && couponInput) {
+    couponBtn.addEventListener('click', function() {
+      var code = couponInput.value.trim();
+      if (!code) return;
+      $.ajax({
+        url: 'index.php?route=extension/total/coupon/coupon',
+        type: 'post',
+        data: 'coupon=' + encodeURIComponent(code),
+        dataType: 'json',
+        success: function(json) {
+          if (json.redirect) {
+            location = json.redirect;
+          } else if (json.error) {
+            $('.cart-coupon .alert').remove();
+            $('.cart-coupon').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json.error + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          }
+        }
+      });
+    });
+    couponInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.keyCode === 13) { couponBtn.click(); }
+    });
+  }
+
+  // =========================================================================
+  // Reset timer when cart becomes empty
+  // =========================================================================
+  var cartItems = document.getElementById('js-cart-items');
+  if (cartItems && cartItems.children.length === 0) {
+    localStorage.removeItem(RESERVE_KEY);
+  }
+
+  // =========================================================================
+  // Recently viewed
+  // =========================================================================
+  var recentWrap = document.getElementById('js-cart-recent');
+  var recentScroller = document.getElementById('js-cart-recent-scroller');
+  if (recentWrap && recentScroller) {
+    var viewed = [];
+    try { viewed = JSON.parse(localStorage.getItem('recently_viewed')) || []; } catch (e) { viewed = []; }
+
+    var cartIds = {};
+    var cartEls = document.querySelectorAll('.cart-item[data-product-id]');
+    for (var ci = 0; ci < cartEls.length; ci++) {
+      cartIds[cartEls[ci].getAttribute('data-product-id')] = true;
+    }
+    viewed = viewed.filter(function (p) { return !cartIds[p.id]; });
+
+    if (viewed.length > 0) {
+      var html = '';
+      var max = Math.min(viewed.length, 10);
+      for (var v = 0; v < max; v++) {
+        var p = viewed[v];
+        html += '<article class="product-card product-card--scroll">' +
+          '<div class="product-card__media">' +
+            '<a href="' + p.href + '" class="product-card__img-wrap">' +
+              '<div class="product-card__img">' +
+                (p.thumb ? '<img src="' + p.thumb + '" alt="' + p.name.replace(/"/g, '&quot;') + '" loading="lazy" />' : '') +
+              '</div>' +
+            '</a>' +
+            '<button class="product-card__fav" type="button" onclick="wishlist.add(\'' + p.id + '\');" aria-label="Dodaj med priljubljene">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
+              '</svg>' +
+            '</button>' +
+          '</div>' +
+          '<div class="product-card__body">' +
+            (p.brand ? '<p class="product-card__manufacturer">' + p.brand + '</p>' : '') +
+            '<a href="' + p.href + '" class="product-card__name">' + p.name + '</a>' +
+            '<div class="product-card__footer">' +
+              '<p class="product-card__price">' + p.price + '</p>' +
+              '<button class="product-card__cart" type="button" onclick="cart.add(\'' + p.id + '\', \'1\');" aria-label="Dodaj v košarico">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                  '<circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>' +
+                  '<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>' +
+                '</svg>' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+      }
+      html += '<div class="cart-recent__spacer"></div>';
+      recentScroller.innerHTML = html;
+      recentWrap.style.display = '';
+    }
+  }
+})();
+//--></script>
