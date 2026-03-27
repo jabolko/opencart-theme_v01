@@ -1,0 +1,177 @@
+# =============================================================================
+# .htaccess — otroskikoticek OpenCart store
+# Performance, security headers, file protection, SEO URLs
+# =============================================================================
+
+# ----------------------------------------------------------------------
+# 1. SECURITY HEADERS
+# Protects customers from XSS, clickjacking, MIME sniffing
+# ----------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Prevent MIME-type sniffing (stops browser guessing file types)
+  Header set X-Content-Type-Options "nosniff"
+
+  # Block iframe embedding from other sites (prevents clickjacking)
+  Header set X-Frame-Options "SAMEORIGIN"
+
+  # Enable XSS filter in older browsers
+  Header set X-XSS-Protection "1; mode=block"
+
+  # Control referrer info sent to external sites (privacy)
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # Disable unused browser features (camera, mic, location)
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 2. DIRECTORY & FILE PROTECTION
+# Prevent directory listing and block access to sensitive files
+# ----------------------------------------------------------------------
+
+# Disable directory browsing (stops /image/catalog/ from listing all files)
+Options -Indexes
+
+# Follow symlinks (required by OpenCart)
+Options +FollowSymLinks
+
+# Block access to sensitive file types
+<FilesMatch "\.(twig|tpl|ini|log|sql|sh|md|yml|yaml|json|lock|env|bak|dist)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order Allow,Deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Block access to hidden files (.git, .env, .htpasswd etc.)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule (^|/)\.(?!htaccess|well-known) - [F]
+</IfModule>
+
+# Block access to system/storage directory (logs, cache, sessions)
+<IfModule mod_rewrite.c>
+  RewriteRule ^system/storage - [F,L]
+</IfModule>
+
+# Block direct access to PHP files in upload/cache directories
+<IfModule mod_rewrite.c>
+  RewriteRule ^image/cache/.*\.php$ - [F,L]
+  RewriteRule ^system/storage/upload/.*\.php$ - [F,L]
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 3. GZIP COMPRESSION
+# Reduces transfer size by 60-70% for text-based assets
+# ----------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE font/woff2
+  AddOutputFilterByType DEFLATE application/font-woff2
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 4. BROWSER CACHING
+# Static assets cached for 1 year, HTML never cached
+# ----------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # CSS & JS
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType application/x-javascript "access plus 1 year"
+
+  # Images
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Fonts
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 5. CACHE CONTROL HEADERS
+# Fine-grained control over what gets cached and for how long
+# ----------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Remove ETags (rely on Expires/Cache-Control instead)
+  Header unset ETag
+  FileETag None
+
+  # Static assets: cache 1 year, immutable (no revalidation requests)
+  <FilesMatch "\.(css|js|woff2|woff|svg|jpg|jpeg|png|webp|gif|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # HTML/PHP: never cache (always fetch fresh)
+  <FilesMatch "\.(html|php)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+  </FilesMatch>
+
+  # Keep-Alive connections
+  Header set Connection keep-alive
+</IfModule>
+
+# ----------------------------------------------------------------------
+# 6. HTTPS REDIRECT (enable for production — not needed on localhost)
+# Redirects all HTTP traffic to HTTPS
+# ----------------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTPS} off
+#   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
+#
+# Uncomment below after enabling HTTPS to add HSTS header:
+# <IfModule mod_headers.c>
+#   Header set Strict-Transport-Security "max-age=31536000; includeSubDomains" env=HTTPS
+# </IfModule>
+
+# ----------------------------------------------------------------------
+# 7. HOTLINK PROTECTION (enable for production)
+# Prevents other sites from embedding your images (steals bandwidth)
+# ----------------------------------------------------------------------
+# <IfModule mod_rewrite.c>
+#   RewriteEngine On
+#   RewriteCond %{HTTP_REFERER} !^$
+#   RewriteCond %{HTTP_REFERER} !^https?://(www\.)?otroski-koticek\.si [NC]
+#   RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F,NC,L]
+# </IfModule>
+
+# ----------------------------------------------------------------------
+# 8. OPENCART SEO URLs
+# Routes clean URLs through index.php
+# ----------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # If file or directory exists, serve it directly
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Route everything else through index.php
+  RewriteRule ^([^?]*) index.php?_route_=$1 [L,QSA]
+</IfModule>

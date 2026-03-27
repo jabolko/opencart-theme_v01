@@ -9,11 +9,16 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    libwebp-dev \
+    libavif-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-avif \
     && docker-php-ext-install gd zip opcache
 
-# Enable Apache mod_rewrite (needed for SEO-friendly URLs)
-RUN a2enmod rewrite
+# Enable Apache modules (rewrite, compression, caching, security headers)
+RUN a2enmod rewrite deflate expires headers
+
+# Allow .htaccess overrides (required for SEO URLs, caching, security)
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # Install Xdebug (for debugging and performance profiling)
 RUN pecl install xdebug && docker-php-ext-enable xdebug
