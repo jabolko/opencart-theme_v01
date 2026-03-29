@@ -4,7 +4,8 @@
 **Phase 3 — Page Templates**
 
 ## In Progress
-PAGE-004 — Cart page (mobile build in progress)
+PAGE-005 — Checkout page (V1 Accordion restyle)
+- Spec: `claude/pages/checkout.md` (contract, checklist, debugging guide)
 
 ## Recently Completed (2026-03-25)
 - Cart page mobile: horizontal product cards, reservation timer (30min), free shipping bar
@@ -24,11 +25,15 @@ PAGE-004 — Cart page (mobile build in progress)
 - Footer mobile accordion
 - Lighthouse homepage: Mobile 83/90/100/100, Desktop 99/94/100/100
 
-## TODO — Cart Page
-- [ ] Replace hardcoded shipping estimate with proper OC shipping cost (use OC shipping extension/language)
-- [ ] Cart page desktop layout (2-column: products left, sticky summary right)
-- [ ] Empty cart state (illustration + CTA)
-- [ ] Cart page Lighthouse audit
+## TODO — Cart Page (deferred)
+- [ ] Replace hardcoded shipping estimate with proper OC shipping cost
+
+## TODO — Checkout Page (PAGE-005)
+- [ ] Phase 1: checkout.twig shell + _checkout.scss + verify JS loads
+- [ ] Phase 2: login.twig, guest.twig, shipping_method.twig, payment_method.twig, confirm.twig
+- [ ] Phase 3: Controller override for sidebar cart data
+- [ ] Phase 4: Desktop layout + mobile sticky CTA + trust badges
+- [ ] Phase 5: Full end-to-end testing (guest + login flows)
 
 ## Decisions Made
 - Always run `npm run build` (not `scss:build`) — browser loads `theme.min.css`

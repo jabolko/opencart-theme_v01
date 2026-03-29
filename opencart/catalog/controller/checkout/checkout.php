@@ -85,6 +85,80 @@ class ControllerCheckoutCheckout extends Controller {
 
 		$data['shipping_required'] = $this->cart->hasShipping();
 
+		// ── Sidebar: cart products for order summary ──
+		$this->load->model('catalog/product');
+		$this->load->model('tool/image');
+
+		$data['cart_products'] = array();
+
+		foreach ($this->cart->getProducts() as $product) {
+			if ($product['image']) {
+				$image = $this->model_tool_image->resize($product['image'], 80, 80);
+			} else {
+				$image = $this->model_tool_image->resize('placeholder.png', 80, 80);
+			}
+
+			// Get manufacturer name
+			$product_info = $this->model_catalog_product->getProduct($product['product_id']);
+			$manufacturer = '';
+			if ($product_info && $product_info['manufacturer']) {
+				$manufacturer = $product_info['manufacturer'];
+			}
+
+			$data['cart_products'][] = array(
+				'name'         => $product['name'],
+				'manufacturer' => $manufacturer,
+				'model'        => $product['model'],
+				'quantity'     => $product['quantity'],
+				'price'        => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
+				'total'        => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
+				'image'        => $image,
+			);
+		}
+
+		// Sidebar: totals
+		$this->load->model('setting/extension');
+
+		$total_data = array(
+			'totals' => array(),
+			'taxes'  => $this->cart->getTaxes(),
+			'total'  => 0
+		);
+
+		$sort_order = array();
+
+		$results = $this->model_setting_extension->getExtensions('total');
+
+		foreach ($results as $key => $value) {
+			$sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+		}
+
+		array_multisort($sort_order, SORT_ASC, $results);
+
+		foreach ($results as $result) {
+			if ($this->config->get('total_' . $result['code'] . '_status')) {
+				$this->load->model('extension/total/' . $result['code']);
+				$this->{'model_extension_total_' . $result['code']}->getTotal($total_data);
+			}
+		}
+
+		$sort_order = array();
+
+		foreach ($total_data['totals'] as $key => $value) {
+			$sort_order[$key] = $value['sort_order'];
+		}
+
+		array_multisort($sort_order, SORT_ASC, $total_data['totals']);
+
+		$data['cart_totals'] = array();
+
+		foreach ($total_data['totals'] as $total_row) {
+			$data['cart_totals'][] = array(
+				'title' => $total_row['title'],
+				'text'  => $this->currency->format($total_row['value'], $this->session->data['currency']),
+			);
+		}
+
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');

@@ -1,0 +1,49 @@
+{% if not redirect %}
+<div class="ck-confirm">
+
+  {# Product cards #}
+  <div class="ck-confirm__items">
+    {% for product in products %}
+    <div class="ck-confirm__item">
+      <img class="ck-confirm__img" src="{{ product.image }}" alt="{{ product.name }}" width="56" height="56" loading="lazy" />
+      <div class="ck-confirm__info">
+        {% if product.manufacturer %}<div class="ck-confirm__brand">{{ product.manufacturer }}</div>{% endif %}
+        <div class="ck-confirm__name">{{ product.name }}</div>
+        {% for option in product.option %}
+        <div class="ck-confirm__option">{{ option.name }}: {{ option.value }}</div>
+        {% endfor %}
+      </div>
+      <div class="ck-confirm__price">{{ product.total }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# Shipping badge #}
+  {% if shipping_title %}
+  <div class="ck-confirm__shipping">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    <span>{{ shipping_title }}</span>
+  </div>
+  {% endif %}
+
+  {# Totals #}
+  <div class="ck-confirm__totals">
+    {% for total in totals %}
+    <div class="ck-confirm__row{% if loop.last %} ck-confirm__row--total{% endif %}">
+      <span>{{ total.title }}</span>
+      <span>{{ total.text }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# Payment extension template (COD confirm button, bank transfer info, etc.) #}
+  <div class="ck-confirm__payment">
+    {{ payment }}
+  </div>
+
+</div>
+{% else %}
+<script type="text/javascript"><!--
+location = '{{ redirect }}';
+//--></script>
+{% endif %}

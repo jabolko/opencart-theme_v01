@@ -17,6 +17,59 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-03-27 — Cart page complete, .htaccess (gzip/cache/security), font preload, Docker WebP/AVIF
+
+#### Cart Mobile (CLI localhost)
+- Page tested: cart
+- Lighthouse Performance: 100/100
+- Lighthouse Accessibility: 91/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 92/100
+- FCP: 0.8s | LCP: 0.8s | SI: 0.8s | TBT: 0ms | CLS: 0
+
+#### Cart Desktop (CLI localhost)
+- Page tested: cart
+- Lighthouse Performance: 98/100
+- Lighthouse Accessibility: 86/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 92/100
+- FCP: 0.9s | LCP: 0.9s | SI: 1.0s | TBT: 0ms | CLS: 0
+
+#### Homepage Mobile (CLI localhost)
+- Page tested: homepage
+- Lighthouse Performance: 100/100
+- Lighthouse Accessibility: 90/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 0.9s | LCP: 0.9s | TBT: 0ms | CLS: 0
+- Delta vs previous (2026-03-13): +17 Performance (83→100)
+
+#### Product Mobile (CLI localhost)
+- Page tested: product
+- Lighthouse Performance: 100/100
+- Lighthouse Accessibility: 87/100
+- Lighthouse Best Practices: 96/100
+- Lighthouse SEO: 100/100
+- FCP: 1.5s | LCP: 1.5s | TBT: 0ms | CLS: 0
+- Delta vs previous (2026-03-20): +28 Performance (72→100)
+
+#### Homepage Mobile (Chrome Incognito — real browser)
+- Page tested: homepage
+- FCP: 2.4s | LCP: 3.5s | SI: 2.4s | TBT: 0ms | CLS: 0
+- Notes: Real-browser numbers higher than CLI due to Docker TTFB (~700ms).
+  TBT=0 and CLS=0 confirm theme assets are not the bottleneck.
+
+#### What changed
+- `.htaccess` created: gzip (60-70% transfer reduction), browser caching (1yr),
+  security headers (XSS, clickjacking, MIME sniff), directory/file protection, SEO URLs
+- Font preload: Open Sans 600 + DM Sans 400 (eliminates font discovery delay)
+- Dockerfile: AllowOverride All, mod_deflate/expires/headers, WebP+AVIF GD support
+- Cart page built: horizontal cards, reservation timer, empty state, recently viewed,
+  payment icons, trust badges, Google review, sticky CTA, two-column desktop layout
+- Global fix: mobile header offset moved to body padding-top (one rule for all pages)
+
+---
+
 ### 2026-03-20 — Product page complete: desktop layout, toast alerts, cart sheet, contact CTA, shipping bar
 
 #### Mobile (CLI, simulated throttling)

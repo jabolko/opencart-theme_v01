@@ -324,6 +324,11 @@ class ControllerCheckoutConfirm extends Controller {
 			$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
 
 			$this->load->model('tool/upload');
+			$this->load->model('tool/image');
+			$this->load->model('catalog/product');
+
+			// Shipping method title for confirm template
+			$data['shipping_title'] = isset($this->session->data['shipping_method']['title']) ? $this->session->data['shipping_method']['title'] : '';
 
 			$data['products'] = array();
 
@@ -371,18 +376,30 @@ class ControllerCheckoutConfirm extends Controller {
 					}
 				}
 
+				// Get image + manufacturer
+				if ($product['image']) {
+					$image = $this->model_tool_image->resize($product['image'], 80, 80);
+				} else {
+					$image = $this->model_tool_image->resize('placeholder.png', 80, 80);
+				}
+
+				$product_info = $this->model_catalog_product->getProduct($product['product_id']);
+				$manufacturer = ($product_info && $product_info['manufacturer']) ? $product_info['manufacturer'] : '';
+
 				$data['products'][] = array(
-					'cart_id'    => $product['cart_id'],
-					'product_id' => $product['product_id'],
-					'name'       => $product['name'],
-					'model'      => $product['model'],
-					'option'     => $option_data,
-					'recurring'  => $recurring,
-					'quantity'   => $product['quantity'],
-					'subtract'   => $product['subtract'],
-					'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
-					'total'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
-					'href'       => $this->url->link('product/product', 'product_id=' . $product['product_id'])
+					'cart_id'      => $product['cart_id'],
+					'product_id'   => $product['product_id'],
+					'name'         => $product['name'],
+					'model'        => $product['model'],
+					'manufacturer' => $manufacturer,
+					'image'        => $image,
+					'option'       => $option_data,
+					'recurring'    => $recurring,
+					'quantity'     => $product['quantity'],
+					'subtract'     => $product['subtract'],
+					'price'        => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
+					'total'        => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
+					'href'         => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
 			}
 

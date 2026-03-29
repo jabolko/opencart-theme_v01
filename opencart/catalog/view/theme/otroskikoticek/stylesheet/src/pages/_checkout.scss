@@ -1,0 +1,891 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+// =============================================================================
+// Checkout Page — V1 Accordion
+// =============================================================================
+
+.ck-page {
+  background: $color-surface-alt;
+  min-height: 100vh;
+  padding-bottom: 1rem;
+
+  // Hide main site header and footer on checkout
+  & ~ footer,
+  & ~ .footer {
+    display: none;
+  }
+}
+
+// Hide main site header + footer when checkout page is active
+body:has(.ck-page) {
+  padding-top: 0;
+
+  .site-header {
+    display: none;
+  }
+
+  .site-footer {
+    display: none;
+  }
+}
+
+// ── Checkout Header ──
+.ck-header {
+  background: $color-surface;
+  padding: 0.7rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid $color-border;
+
+  &__back {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    text-decoration: none;
+    color: $color-text-base;
+    font-size: 0.82rem;
+
+    svg {
+      stroke: $color-text-base;
+    }
+  }
+
+  &__logo {
+    font-family: $font-family-heading;
+    font-weight: 700;
+    font-size: 1.06rem;
+    color: $color-text-heading;
+    text-decoration: none;
+  }
+
+  &__secure {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    color: $color-text-muted;
+
+    svg {
+      stroke: $color-text-muted;
+    }
+  }
+}
+
+// ── Progress Bar ──
+.ck-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: $color-surface;
+  gap: 0;
+
+  &__step {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    color: $color-text-muted;
+    font-family: $font-family-heading;
+    font-weight: 500;
+
+    &.is-active {
+      color: $color-text-heading;
+      font-weight: 600;
+    }
+
+    &.is-done {
+      color: $color-success;
+    }
+  }
+
+  &__dot {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid $color-border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: $color-text-muted;
+
+    .is-active & {
+      background: $color-primary;
+      border-color: $color-primary;
+      color: $color-text-heading;
+    }
+
+    .is-done & {
+      background: $color-success;
+      border-color: $color-success;
+      color: $color-surface;
+    }
+  }
+
+  &__line {
+    width: 2rem;
+    height: 2px;
+    background: $color-border;
+    margin: 0 0.25rem;
+    flex-shrink: 0;
+
+    &.is-done {
+      background: $color-success;
+    }
+  }
+
+  &__label {
+    display: none;
+
+    @media (min-width: 480px) {
+      display: inline;
+    }
+  }
+}
+
+// ── Layout ──
+.ck-layout {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0.5rem 1rem;
+
+  @include respond-to('md') {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  &__main {
+    order: 1;
+  }
+
+  &__side {
+    order: 2;
+    display: none;
+
+    @include respond-to('md') {
+      display: block;
+    }
+  }
+}
+
+// ── Panels (accordion) ──
+// We restyle .panel-heading and .panel-collapse but keep OC's IDs and structure
+.ck-panel {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  margin-bottom: 0.15rem;
+
+  .panel-heading {
+    padding: 1rem;
+    margin: 0;
+    border: none;
+    background: none;
+  }
+
+  .panel-title {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: $color-text-muted;
+    font-family: $font-family-heading;
+    margin: 0;
+
+    a,
+    a.accordion-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: $color-text-heading;
+      text-decoration: none;
+
+      i.fa-caret-down {
+        font-size: 0.82rem;
+        color: $color-text-muted;
+      }
+    }
+  }
+
+  .panel-collapse {
+    border: none;
+  }
+
+  .panel-body {
+    padding: 0 1rem 1.25rem;
+    border: none;
+
+    // Style OC's default form fields
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .control-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: $color-text-heading;
+      font-family: $font-family-heading;
+      margin-bottom: 0.25rem;
+    }
+
+    // Padding top on mobile for panel content
+    padding-top: 0.5rem;
+
+    .form-control {
+      padding: 0.7rem 0.82rem;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      font-family: $font-family-body;
+      font-size: 0.88rem;
+      color: $color-text-heading;
+      height: auto;
+      box-shadow: none;
+
+      &:focus {
+        border-color: $color-primary;
+        box-shadow: none;
+      }
+    }
+
+    // Radio options — V2 Filled style
+    .radio {
+      margin: 0 0 0.35rem;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.75rem 0.88rem;
+        background: $color-surface-alt;
+        border: 1.5px solid transparent;
+        border-radius: $radius-md;
+        font-size: 0.82rem;
+        color: $color-text-heading;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: $font-family-heading;
+        font-weight: 500;
+
+        &:hover {
+          background: darken($color-surface-alt, 2%);
+        }
+
+        // Selected state
+        &:has(input:checked) {
+          background: #fffbf0;
+          border-color: $color-primary;
+        }
+
+        // Custom radio circle
+        input[type="radio"] {
+          appearance: none;
+          -webkit-appearance: none;
+          width: 1.18rem;
+          height: 1.18rem;
+          border-radius: 50%;
+          border: 2px solid $color-border;
+          flex-shrink: 0;
+          margin: 0;
+          position: relative;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:focus {
+            outline: none;
+            box-shadow: none;
+          }
+
+          &:checked {
+            border-color: $color-primary;
+            background: $color-primary;
+
+            &::after {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 0.3rem;
+              height: 0.53rem;
+              border: solid $color-surface;
+              border-width: 0 2px 2px 0;
+              transform: translate(-50%, -60%) rotate(45deg);
+            }
+          }
+        }
+      }
+    }
+
+    // Checkbox — V2 style
+    .checkbox label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.82rem;
+      color: $color-text-base;
+      cursor: pointer;
+      padding: 0.6rem 0;
+
+      input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 1.06rem;
+        height: 1.06rem;
+        border-radius: 0.35rem;
+        border: 2px solid $color-border;
+        flex-shrink: 0;
+        margin: 0;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.15s;
+
+        &:checked {
+          background: $color-primary;
+          border-color: $color-primary;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0.3rem;
+            height: 0.53rem;
+            border: solid $color-surface;
+            border-width: 0 2px 2px 0;
+            transform: translate(-50%, -60%) rotate(45deg);
+          }
+        }
+      }
+
+      a {
+        color: $color-primary-dark;
+      }
+    }
+
+    // Buttons
+    .btn-primary,
+    input.btn-primary {
+      width: 100%;
+      padding: 0.88rem;
+      background: $color-primary;
+      color: $color-text-heading;
+      border: none;
+      border-radius: $radius-lg;
+      font-family: $font-family-heading;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+
+      &:hover,
+      &:focus {
+        background: $color-primary-dark;
+        color: $color-text-heading;
+      }
+    }
+
+    // Checkbox
+    .checkbox label {
+      font-size: 0.82rem;
+      color: $color-text-base;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+
+      input[type="checkbox"] {
+        accent-color: $color-primary;
+        margin-top: 0.15rem;
+      }
+    }
+
+    // Comment textarea (we hide it)
+    textarea.form-control {
+      display: none;
+    }
+
+    // "Comments" label above textarea
+    p > strong {
+      display: none;
+    }
+
+    // Fieldset legends — hidden on mobile
+    legend {
+      font-size: 0.94rem;
+      font-weight: 600;
+      color: $color-text-heading;
+      font-family: $font-family-heading;
+      border: none;
+      margin-bottom: 0.75rem;
+      display: none;
+
+      @include respond-to('md') {
+        display: block;
+      }
+    }
+
+    // Two-column guest form → single column on mobile
+    .row > .col-sm-6 {
+      width: 100%;
+      float: none;
+
+      @include respond-to('md') {
+        width: 50%;
+        float: left;
+      }
+    }
+
+    // Buttons container
+    .buttons {
+      margin-top: 0.75rem;
+
+      .pull-right {
+        float: none !important;
+        width: 100%;
+        text-align: left;
+        font-size: 0.82rem;
+        color: $color-text-base;
+        line-height: 1.5;
+
+        // T&C agree link
+        > a {
+          color: $color-text-base;
+          text-decoration: underline;
+        }
+
+        // Style the inline agree checkbox
+        input[name="agree"] {
+          appearance: none;
+          -webkit-appearance: none;
+          width: 1.06rem;
+          height: 1.06rem;
+          border-radius: 0.35rem;
+          border: 2px solid $color-border;
+          vertical-align: middle;
+          margin: 0 0.25rem 0 0;
+          position: relative;
+          cursor: pointer;
+          transition: all 0.15s;
+
+          &:checked {
+            background: $color-primary;
+            border-color: $color-primary;
+
+            &::after {
+              content: '';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 0.3rem;
+              height: 0.53rem;
+              border: solid $color-surface;
+              border-width: 0 2px 2px 0;
+              transform: translate(-50%, -60%) rotate(45deg);
+            }
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: none;
+          }
+        }
+
+        // CTA button — separate line below T&C text
+        .btn-primary,
+        input.btn-primary {
+          margin-top: 0.75rem;
+        }
+      }
+    }
+
+    // Paragraph before agree (text_payment_method / text_agree)
+    > p:first-of-type {
+      font-size: 0.82rem;
+      color: $color-text-base;
+      display: none; // hide "Izberite način plačila" text
+    }
+  }
+}
+
+// ── Trust Strip ──
+.ck-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  font-size: 0.7rem;
+  color: $color-text-muted;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    svg {
+      opacity: 0.6;
+    }
+
+    a {
+      color: $color-text-muted;
+      text-decoration: none;
+    }
+  }
+}
+
+// ── Sidebar ──
+.ck-sidebar {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  padding: 1.18rem;
+  position: sticky;
+  top: 1rem;
+
+  &__title {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+    margin-bottom: 0.75rem;
+  }
+
+  &__pay {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+  }
+
+  &__items {
+    border-bottom: 1px solid $color-border;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__totals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+  }
+
+  &__pay-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 1.5rem;
+    border: 1px solid $color-border;
+    border-radius: 4px;
+    font-size: 0.53rem;
+    font-weight: 600;
+    color: $color-text-base;
+    background: $color-surface;
+  }
+}
+
+// ── Hide OC defaults we don't need ──
+#checkout-checkout {
+  // Hide breadcrumb
+  > .breadcrumb {
+    display: none;
+  }
+
+  // Hide default h1
+  > h1 {
+    display: none;
+  }
+
+  // Hide OC column_left / column_right
+  > .row > [class*="col-"] {
+    width: 100%;
+    float: none;
+    padding: 0;
+  }
+}
+
+// ── Order Summary Item ──
+.ck-item {
+  display: flex;
+  gap: 0.7rem;
+  padding: 0.5rem 0;
+
+  & + & {
+    border-top: 1px solid $color-surface-alt;
+  }
+
+  &__img {
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: $radius-md;
+    object-fit: cover;
+    background: $color-surface-alt;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__brand {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__name {
+    font-size: 0.76rem;
+    color: $color-text-heading;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__price {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+    white-space: nowrap;
+  }
+}
+
+// ── Totals Row ──
+.ck-totals__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+
+  span:first-child {
+    color: $color-text-base;
+  }
+
+  span:last-child {
+    color: $color-text-heading;
+    font-weight: 500;
+  }
+
+  &--total {
+    border-top: 1px solid $color-border;
+    padding-top: 0.7rem;
+    margin-top: 0.25rem;
+
+    span {
+      font-size: 0.94rem;
+      font-weight: 600;
+      font-family: $font-family-heading;
+      color: $color-text-heading;
+    }
+  }
+}
+
+// ── Confirm Step (V1 Cards) ──
+.ck-confirm {
+
+  &__items {
+    padding-bottom: 0.5rem;
+  }
+
+  &__item {
+    display: flex;
+    gap: 0.7rem;
+    padding: 0.7rem 0;
+
+    & + & {
+      border-top: 1px solid $color-surface-alt;
+    }
+  }
+
+  &__img {
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: $radius-md;
+    object-fit: cover;
+    background: $color-surface-alt;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__brand {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__name {
+    font-size: 0.76rem;
+    color: $color-text-heading;
+  }
+
+  &__option {
+    font-size: 0.65rem;
+    color: $color-text-muted;
+  }
+
+  &__price {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+    white-space: nowrap;
+  }
+
+  &__shipping {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    background: $color-surface-alt;
+    border-radius: $radius-md;
+    margin: 0.5rem 0;
+    font-size: 0.76rem;
+    color: $color-text-base;
+
+    svg {
+      stroke: $color-text-base;
+      flex-shrink: 0;
+    }
+  }
+
+  &__totals {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid $color-border;
+    margin-top: 0.5rem;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+
+    span:first-child {
+      color: $color-text-base;
+    }
+
+    span:last-child {
+      color: $color-text-heading;
+      font-weight: 500;
+    }
+
+    &--total {
+      border-top: 1px solid $color-border;
+      padding-top: 0.6rem;
+      margin-top: 0.25rem;
+
+      span {
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: $font-family-heading;
+        color: $color-text-heading;
+      }
+    }
+  }
+
+  &__payment {
+    margin-top: 0.75rem;
+
+    // Bank transfer info box
+    h2 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: $color-text-heading;
+      font-family: $font-family-heading;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.82rem;
+      color: $color-text-base;
+      margin-bottom: 0.5rem;
+    }
+
+    .well {
+      background: $color-surface-alt;
+      border: 1px solid $color-border;
+      border-radius: $radius-md;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      box-shadow: none;
+
+      p {
+        margin-bottom: 0.25rem;
+        font-size: 0.76rem;
+        line-height: 1.6;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    // Style the payment extension's confirm button
+    .buttons {
+      margin-top: 0.5rem;
+
+      .pull-right {
+        float: none;
+      }
+    }
+
+    .btn-primary,
+    input.btn-primary,
+    #button-confirm {
+      width: 100%;
+      padding: 0.94rem;
+      background: $color-primary;
+      color: $color-text-heading;
+      border: none;
+      border-radius: $radius-lg;
+      font-family: $font-family-heading;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover,
+      &:focus {
+        background: $color-primary-dark;
+      }
+    }
+  }
+}
+
+// Hide unnecessary fields in guest/register forms (keep in DOM for backend)
+#collapse-payment-address,
+#collapse-shipping-address {
+  // Hide by targeting the input/select IDs' parent .form-group
+  #input-payment-company,
+  #input-payment-address-2,
+  #input-payment-country,
+  #input-payment-zone,
+  #input-shipping-company,
+  #input-shipping-address-2,
+  #input-shipping-country,
+  #input-shipping-zone {
+    display: none;
+  }
+
+  // Also hide labels and parent wrappers
+  label[for="input-payment-company"],
+  label[for="input-payment-address-2"],
+  label[for="input-payment-country"],
+  label[for="input-payment-zone"],
+  label[for="input-shipping-company"],
+  label[for="input-shipping-address-2"],
+  label[for="input-shipping-country"],
+  label[for="input-shipping-zone"] {
+    display: none;
+  }
+}
