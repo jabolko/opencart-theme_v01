@@ -40,13 +40,13 @@ $_['text_years_ago']        = '%s let nazaj';
 // Buttons
 $_['button_address_add']    = 'Dodajte naslov';
 $_['button_back']           = 'Nazaj';
-$_['button_continue']       = 'Nadaljujte';
+$_['button_continue']       = 'Nadaljuj';
 $_['button_cart']           = 'Dodaj v košarico';
 $_['button_cancel']         = 'Prekličite';
 $_['button_compare']        = 'Primerjajte ta izdelek';
 $_['button_wishlist']       = 'Dodajte na seznam želja';
 $_['button_checkout']       = 'Varno zaključi nakup';
-$_['button_confirm']        = 'Potrdite naročilo';
+$_['button_confirm']        = 'Potrdi naročilo';
 $_['button_coupon']         = 'Uporabite kupon';
 $_['button_delete']         = 'Izbrišite';
 $_['button_download']       = 'Prenesite';

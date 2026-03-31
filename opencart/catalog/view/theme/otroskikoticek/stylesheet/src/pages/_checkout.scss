@@ -28,16 +28,29 @@ body:has(.ck-page) {
   .site-footer {
     display: none;
   }
+
+  .sticky-nav {
+    display: none !important;
+  }
 }
 
 // ── Checkout Header ──
-.ck-header {
+.ck-header-wrap {
   background: $color-surface;
+  width: 100%;
+}
+
+.ck-header {
   padding: 0.7rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid $color-border;
+  position: relative;
+
+  @include respond-to('md') {
+    max-width: calc(640px - 3rem);
+    margin: 0 auto;
+  }
 
   &__back {
     display: flex;
@@ -58,6 +71,9 @@ body:has(.ck-page) {
     font-size: 1.06rem;
     color: $color-text-heading;
     text-decoration: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   &__secure {
@@ -69,6 +85,14 @@ body:has(.ck-page) {
 
     svg {
       stroke: $color-text-muted;
+    }
+
+    span {
+      display: none;
+
+      @include respond-to('md') {
+        display: inline;
+      }
     }
   }
 }
@@ -102,16 +126,17 @@ body:has(.ck-page) {
   }
 
   &__dot {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
     border-radius: 50%;
     border: 2px solid $color-border;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 600;
     color: $color-text-muted;
+    flex-shrink: 0;
 
     .is-active & {
       background: $color-primary;
@@ -123,14 +148,26 @@ body:has(.ck-page) {
       background: $color-success;
       border-color: $color-success;
       color: $color-surface;
+      font-size: 0;
+
+      &::after {
+        content: '';
+        display: block;
+        width: 0.3rem;
+        height: 0.5rem;
+        border: solid $color-surface;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        margin-top: -1px;
+      }
     }
   }
 
   &__line {
-    width: 2rem;
+    width: 1.18rem;
     height: 2px;
     background: $color-border;
-    margin: 0 0.25rem;
+    margin: 0 0.15rem;
     flex-shrink: 0;
 
     &.is-done {
@@ -139,11 +176,58 @@ body:has(.ck-page) {
   }
 
   &__label {
-    display: none;
+    font-size: 0.6rem;
 
     @media (min-width: 480px) {
-      display: inline;
+      font-size: 0.7rem;
     }
+  }
+}
+
+// ── Total Bar (below progress) ──
+.ck-total-bar {
+  background: $color-surface;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @include respond-to('md') {
+    // 640px layout - 2×1.5rem layout padding = 607px panel width
+    max-width: calc(640px - 3rem);
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+    border-radius: 0 0 $radius-lg $radius-lg;
+  }
+
+  &__sum {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+
+  &__label {
+    font-size: 0.7rem;
+    color: $color-text-muted;
+  }
+
+  &__amount {
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+  }
+
+  &__count {
+    font-size: 0.65rem;
+    color: $color-text-muted;
+  }
+
+  &__pay {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    margin-left: auto;
   }
 }
 
@@ -154,23 +238,12 @@ body:has(.ck-page) {
   padding: 0.5rem 1rem;
 
   @include respond-to('md') {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 1.5rem;
+    max-width: 640px;
     padding: 1.5rem;
   }
 
   &__main {
-    order: 1;
-  }
-
-  &__side {
-    order: 2;
-    display: none;
-
-    @include respond-to('md') {
-      display: block;
-    }
+    width: 100%;
   }
 }
 
@@ -442,7 +515,7 @@ body:has(.ck-page) {
       margin-top: 0.75rem;
 
       .pull-right {
-        float: none !important;
+        float: none;
         width: 100%;
         text-align: left;
         font-size: 0.82rem;
@@ -509,79 +582,60 @@ body:has(.ck-page) {
   }
 }
 
-// ── Trust Strip ──
+// ── Trust Strip (V1 Columns) ──
 .ck-trust {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  font-size: 0.7rem;
-  color: $color-text-muted;
+  justify-content: space-between;
+  padding: 1.25rem 0.5rem;
+  gap: 0.5rem;
 
-  &__item {
+  &__col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    gap: 0.35rem;
+  }
+
+  &__icon {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    justify-content: center;
 
     svg {
-      opacity: 0.6;
+      width: 1.35rem;
+      height: 1.35rem;
+      stroke: $color-text-base;
     }
+
+    &--google svg {
+      stroke: none;
+    }
+  }
+
+  &__label {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+    line-height: 1.3;
+  }
+
+  &__stars {
+    color: $color-primary;
+    letter-spacing: 0.5px;
+    font-size: 0.7rem;
+  }
+
+  &__sub {
+    font-size: 0.65rem;
+    color: $color-text-muted;
 
     a {
       color: $color-text-muted;
       text-decoration: none;
     }
-  }
-}
-
-// ── Sidebar ──
-.ck-sidebar {
-  background: $color-surface;
-  border-radius: $radius-lg;
-  padding: 1.18rem;
-  position: sticky;
-  top: 1rem;
-
-  &__title {
-    font-size: 0.94rem;
-    font-weight: 600;
-    color: $color-text-heading;
-    font-family: $font-family-heading;
-    margin-bottom: 0.75rem;
-  }
-
-  &__pay {
-    display: flex;
-    gap: 0.35rem;
-    margin-top: 0.75rem;
-  }
-
-  &__items {
-    border-bottom: 1px solid $color-border;
-    padding-bottom: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-
-  &__totals {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding-bottom: 0.75rem;
-  }
-
-  &__pay-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.35rem;
-    height: 1.5rem;
-    border: 1px solid $color-border;
-    border-radius: 4px;
-    font-size: 0.53rem;
-    font-weight: 600;
-    color: $color-text-base;
-    background: $color-surface;
   }
 }
 
@@ -603,6 +657,290 @@ body:has(.ck-page) {
     float: none;
     padding: 0;
   }
+}
+
+// ── Completed Step Summary ──
+.ck-done {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.88rem 1rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  &__check {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    background: $color-success;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+      width: 0.7rem;
+      height: 0.7rem;
+      stroke: $color-surface;
+      stroke-width: 3;
+      fill: none;
+    }
+  }
+
+  &__info {
+    font-size: 0.76rem;
+    color: $color-text-base;
+    line-height: 1.4;
+
+    strong {
+      color: $color-text-heading;
+      font-family: $font-family-heading;
+      font-weight: 600;
+      display: block;
+      font-size: 0.82rem;
+    }
+  }
+
+  &__edit {
+    font-size: 0.7rem;
+    color: $color-text-muted;
+    text-decoration: underline;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $color-text-heading;
+    }
+  }
+}
+
+// ── Loading Skeleton ──
+@keyframes ck-shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+.ck-skeleton {
+  background: linear-gradient(90deg, $color-surface-alt 25%, darken($color-surface-alt, 3%) 50%, $color-surface-alt 75%);
+  background-size: 400px 100%;
+  animation: ck-shimmer 1.2s infinite;
+  border-radius: $radius-md;
+
+  &__line {
+    height: 0.82rem;
+    margin-bottom: 0.6rem;
+
+    &--short { width: 60%; }
+    &--medium { width: 80%; }
+  }
+
+  &__btn {
+    height: 3rem;
+    border-radius: $radius-lg;
+    margin-top: 0.75rem;
+  }
+}
+
+// ── Back to Cart Link ──
+.ck-back-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  font-size: 0.7rem;
+  color: $color-text-muted;
+  text-decoration: none;
+  font-family: $font-family-heading;
+  font-weight: 500;
+
+  svg {
+    width: 0.82rem;
+    height: 0.82rem;
+    stroke: $color-text-muted;
+  }
+
+  &:hover {
+    color: $color-text-base;
+
+    svg {
+      stroke: $color-text-base;
+    }
+  }
+}
+
+// ── Address Bar (shown on shipping method + confirm steps) ──
+.ck-address-bar,
+.ck-confirm__address {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+  background: none;
+  margin-bottom: 0.75rem;
+  font-size: 0.76rem;
+  color: $color-text-base;
+
+  &__info,
+  .ck-confirm__address-info {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 1;
+    min-width: 0;
+
+    svg {
+      stroke: $color-text-muted;
+      flex-shrink: 0;
+    }
+
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__edit,
+  .ck-confirm__address-edit {
+    font-size: 0.7rem;
+    color: $color-text-muted;
+    text-decoration: underline;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $color-text-heading;
+    }
+  }
+}
+
+.ck-confirm__address {
+  @extend .ck-address-bar;
+}
+
+// ── V1 Pills Nav (Guest / Register / Login) ──
+.ck-pills {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  &__tabs {
+    display: flex;
+    gap: 0;
+    background: $color-surface-alt;
+    border-radius: $radius-md;
+    padding: 3px;
+  }
+
+  &__pill {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    font-family: $font-family-heading;
+    color: $color-text-muted;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: all 0.2s;
+
+    &.is-active {
+      background: $color-surface;
+      color: $color-text-heading;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  &__login {
+    margin-left: auto;
+    font-size: 0.76rem;
+    color: $color-text-base;
+    text-decoration: none;
+    font-family: $font-family-heading;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    transition: color 0.2s, opacity 0.2s;
+
+    svg {
+      stroke: $color-text-base;
+      transition: stroke 0.2s;
+    }
+
+    &:hover {
+      color: $color-text-heading;
+
+      svg {
+        stroke: $color-text-heading;
+      }
+    }
+
+    &.is-active {
+      color: $color-text-heading;
+      font-weight: 600;
+
+      svg {
+        stroke: $color-text-heading;
+      }
+    }
+
+    // Dim when register pill is active
+    &.is-dimmed {
+      color: $color-text-muted;
+      opacity: 0.6;
+
+      svg {
+        stroke: $color-text-muted;
+      }
+
+      &:hover {
+        opacity: 1;
+        color: $color-text-heading;
+
+        svg {
+          stroke: $color-text-heading;
+        }
+      }
+    }
+  }
+}
+
+// ── Login form (injected when Prijava clicked) ──
+.ck-login-form {
+  h2 {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: $color-text-heading;
+    font-family: $font-family-heading;
+    margin-bottom: 0.75rem;
+  }
+
+  // Style "forgotten password" link
+  a {
+    font-size: 0.76rem;
+    color: $color-text-muted;
+    text-decoration: underline;
+  }
+
+  p {
+    font-size: 0.82rem;
+    color: $color-text-base;
+    margin-bottom: 0.75rem;
+  }
+}
+
+// ── Hidden panel (checkout-option — still in DOM for OC JS) ──
+.ck-panel--hidden {
+  display: none;
 }
 
 // ── Order Summary Item ──
@@ -862,30 +1200,16 @@ body:has(.ck-page) {
   }
 }
 
-// Hide unnecessary fields in guest/register forms (keep in DOM for backend)
-#collapse-payment-address,
-#collapse-shipping-address {
-  // Hide by targeting the input/select IDs' parent .form-group
-  #input-payment-company,
-  #input-payment-address-2,
-  #input-payment-country,
-  #input-payment-zone,
-  #input-shipping-company,
-  #input-shipping-address-2,
-  #input-shipping-country,
-  #input-shipping-zone {
-    display: none;
-  }
+// Shipping address panel — hidden by default (auto-copied from billing)
+// Shows only if auto-save fails or user clicks "Spremeni"
+.ck-panel[data-step="2"]:has(#collapse-shipping-address) {
+  display: none;
 
-  // Also hide labels and parent wrappers
-  label[for="input-payment-company"],
-  label[for="input-payment-address-2"],
-  label[for="input-payment-country"],
-  label[for="input-payment-zone"],
-  label[for="input-shipping-company"],
-  label[for="input-shipping-address-2"],
-  label[for="input-shipping-country"],
-  label[for="input-shipping-zone"] {
-    display: none;
+  &.is-visible {
+    display: block;
   }
 }
+
+// Confirm CTA is styled via .panel-body .btn-primary (no custom class needed)
+
+// Hidden fields (zone, country, company, address2) are in _bootstrap-overrides.scss globally

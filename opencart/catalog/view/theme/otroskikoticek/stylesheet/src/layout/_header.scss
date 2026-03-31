@@ -726,7 +726,7 @@ body.mobile-nav-open .mobile-menu-toggle__bar:nth-child(3) {
 
   // Global body offset to clear the fixed header on all pages
   body {
-    padding-top: 3.53rem; // header height: 0.59rem*2 padding + ~1.15rem logo + container chrome ≈ 60px
+    padding-top: 3.13rem;
   }
 
   .header-inner {
@@ -1260,6 +1260,7 @@ body.mobile-nav-open { overflow: hidden; }
   padding: 0;
   text-decoration: none;
   transition: color $transition-base;
+  outline: none;
 
   .sticky-nav__icon {
     width: 1.18rem;  // ~20px

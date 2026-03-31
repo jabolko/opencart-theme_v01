@@ -31,6 +31,28 @@ img {
   display: block;
 }
 
+// Remove focus outline from all interactive elements
+button,
+input,
+select,
+textarea,
+a {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  &:focus,
+  &:active,
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
 // Remove list chrome inside nav elements only (not globally — breaks OC widgets)
 nav ul,
 nav ol {

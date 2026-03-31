@@ -4,12 +4,10 @@ class ControllerCheckoutConfirm extends Controller {
 		$redirect = '';
 
 		if ($this->cart->hasShipping()) {
-			// Validate if shipping address has been set.
 			if (!isset($this->session->data['shipping_address'])) {
 				$redirect = $this->url->link('checkout/checkout', '', true);
 			}
 
-			// Validate if shipping method has been set.
 			if (!isset($this->session->data['shipping_method'])) {
 				$redirect = $this->url->link('checkout/checkout', '', true);
 			}
@@ -19,17 +17,14 @@ class ControllerCheckoutConfirm extends Controller {
 			unset($this->session->data['shipping_methods']);
 		}
 
-		// Validate if payment address has been set.
 		if (!isset($this->session->data['payment_address'])) {
 			$redirect = $this->url->link('checkout/checkout', '', true);
 		}
 
-		// Validate if payment method has been set.
 		if (!isset($this->session->data['payment_method'])) {
 			$redirect = $this->url->link('checkout/checkout', '', true);
 		}
 
-		// Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
 			$redirect = $this->url->link('checkout/cart');
 		}
@@ -329,6 +324,17 @@ class ControllerCheckoutConfirm extends Controller {
 
 			// Shipping method title for confirm template
 			$data['shipping_title'] = isset($this->session->data['shipping_method']['title']) ? $this->session->data['shipping_method']['title'] : '';
+
+			// Shipping address for confirm template
+			if (isset($this->session->data['shipping_address'])) {
+				$sa = $this->session->data['shipping_address'];
+				$data['shipping_address_summary'] = $sa['firstname'] . ' ' . $sa['lastname'] . ', ' . $sa['address_1'] . ', ' . $sa['postcode'] . ' ' . $sa['city'];
+			} else {
+				$data['shipping_address_summary'] = '';
+			}
+
+			// Payment method title
+			$data['payment_title'] = isset($this->session->data['payment_method']['title']) ? $this->session->data['payment_method']['title'] : '';
 
 			$data['products'] = array();
 

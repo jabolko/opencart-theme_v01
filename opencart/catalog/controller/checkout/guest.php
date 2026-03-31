@@ -253,9 +253,9 @@ class ControllerCheckoutGuest extends Controller {
 
 			$this->session->data['payment_address']['firstname'] = $this->request->post['firstname'];
 			$this->session->data['payment_address']['lastname'] = $this->request->post['lastname'];
-			$this->session->data['payment_address']['company'] = $this->request->post['company'];
+			$this->session->data['payment_address']['company'] = isset($this->request->post['company']) ? $this->request->post['company'] : '';
 			$this->session->data['payment_address']['address_1'] = $this->request->post['address_1'];
-			$this->session->data['payment_address']['address_2'] = $this->request->post['address_2'];
+			$this->session->data['payment_address']['address_2'] = isset($this->request->post['address_2']) ? $this->request->post['address_2'] : '';
 			$this->session->data['payment_address']['postcode'] = $this->request->post['postcode'];
 			$this->session->data['payment_address']['city'] = $this->request->post['city'];
 			$this->session->data['payment_address']['country_id'] = $this->request->post['country_id'];
@@ -304,9 +304,9 @@ class ControllerCheckoutGuest extends Controller {
 			if ($this->session->data['guest']['shipping_address']) {
 				$this->session->data['shipping_address']['firstname'] = $this->request->post['firstname'];
 				$this->session->data['shipping_address']['lastname'] = $this->request->post['lastname'];
-				$this->session->data['shipping_address']['company'] = $this->request->post['company'];
+				$this->session->data['shipping_address']['company'] = isset($this->request->post['company']) ? $this->request->post['company'] : '';
 				$this->session->data['shipping_address']['address_1'] = $this->request->post['address_1'];
-				$this->session->data['shipping_address']['address_2'] = $this->request->post['address_2'];
+				$this->session->data['shipping_address']['address_2'] = isset($this->request->post['address_2']) ? $this->request->post['address_2'] : '';
 				$this->session->data['shipping_address']['postcode'] = $this->request->post['postcode'];
 				$this->session->data['shipping_address']['city'] = $this->request->post['city'];
 				$this->session->data['shipping_address']['country_id'] = $this->request->post['country_id'];

@@ -69,6 +69,31 @@
   color: $color-warning;
 }
 
+// =============================================================================
+// HIDE ZONE/COUNTRY FIELDS — Slovenia single-country store
+// Zone + Country stay in DOM with default values, just hidden from user
+// =============================================================================
+.form-group:has(#input-country),
+.form-group:has(#input-zone),
+.form-group:has(#input-payment-country),
+.form-group:has(#input-payment-zone),
+.form-group:has(#input-shipping-country),
+.form-group:has(#input-shipping-zone),
+.form-group:has(#input-payment-company),
+.form-group:has(#input-payment-address-2),
+.form-group:has(#input-shipping-company),
+.form-group:has(#input-shipping-address-2),
+.form-group:has(#input-company),
+.form-group:has(#input-address-2) {
+  display: none;
+}
+
+// Remove Bootstrap focus outlines on dropdown toggles
+.dropdown-toggle:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 // Error text under form fields
 .text-danger {
   font-size: 0.76rem;
