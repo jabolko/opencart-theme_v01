@@ -150,9 +150,31 @@ class ControllerCheckoutPaymentAddress extends Controller {
 				}
 
 				if (!$json) {
-					$address_id = $this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+					// Check if identical address already exists to prevent duplicates
+					$this->load->model('account/address');
+					$existing_addresses = $this->model_account_address->getAddresses();
+					$address_id = 0;
+
+					foreach ($existing_addresses as $existing) {
+						if ($existing['firstname'] == $this->request->post['firstname'] &&
+							$existing['lastname'] == $this->request->post['lastname'] &&
+							$existing['address_1'] == $this->request->post['address_1'] &&
+							$existing['city'] == $this->request->post['city'] &&
+							$existing['postcode'] == $this->request->post['postcode'] &&
+							$existing['country_id'] == $this->request->post['country_id']) {
+							$address_id = $existing['address_id'];
+							break;
+						}
+					}
+
+					if (!$address_id) {
+						$address_id = $this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+					}
 
 					$this->session->data['payment_address'] = $this->model_account_address->getAddress($address_id);
+
+					// Auto-copy to shipping address (prevents duplicate via shipping_address/save)
+					$this->session->data['shipping_address'] = $this->session->data['payment_address'];
 
 					// If no default address ID set we use the last address
 					if (!$this->customer->getAddressId()) {

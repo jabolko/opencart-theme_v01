@@ -124,6 +124,18 @@ Status: ❌ = direct edit (at risk) | ✅ = converted to OCMOD
 
 ---
 
+## 11. catalog/controller/checkout/payment_address.php ❌
+
+**What:** Prevent duplicate address creation on re-submit
+**Why:** OC calls addAddress() every time user submits "new address" form, even if identical address exists. Clicking "Uredi" and re-submitting creates duplicates.
+**Lines changed:** Around line 152 — added duplicate check before addAddress()
+**Changes:**
+- Check existing addresses for matching firstname, lastname, address_1, city, postcode, country_id
+- Only call addAddress() if no match found
+- Use existing address_id if match found
+
+---
+
 ## How to verify this list is complete
 
 Run this command to find all modified PHP files vs the OC default:

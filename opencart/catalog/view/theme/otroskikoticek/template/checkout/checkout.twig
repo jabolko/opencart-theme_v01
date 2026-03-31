@@ -58,8 +58,12 @@
   {% if error_warning %}
   <div class="ck-layout">
     <div class="ck-layout__main">
-      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <div class="ck-panel" style="margin-bottom: 0.15rem;">
+        <div style="padding: 1rem;">
+          <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0;">{{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -71,7 +75,7 @@
       <div class="panel-group" id="accordion">
 
         {# Step 1: Hidden — OC JS still needs this panel to exist #}
-        <div class="ck-panel ck-panel--hidden" data-step="1">
+        <div class="ck-panel ck-panel--hidden" data-step="1" hidden>
           <div class="panel-heading">
             <h4 class="panel-title">{{ text_checkout_option }}</h4>
           </div>
@@ -188,15 +192,59 @@
 {# ── Checkout UI helpers (consolidated, all fixes applied) ── #}
 <script type="text/javascript"><!--
 (function($) {
+  // Global AJAX timeout — prevent hung requests on slow networks
+  $.ajaxSetup({ timeout: 30000 });
+
   // ── Utilities ──
-  function escapeHtml(str) {
+  window.escapeHtml = function(str) {
     var div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
-  }
+  };
 
   var lockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
   var checkSvg = '<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
+  var errorMsg = 'Prišlo je do napake. Prosimo, poskusite ponovno.';
+
+  // Scroll to element if off-screen
+  window.ckScrollTo = function($el) {
+    if (!$el.length) return;
+    var elTop = $el.offset().top;
+    var viewTop = $(window).scrollTop();
+    var viewBottom = viewTop + $(window).height();
+    if (elTop < viewTop || elTop > viewBottom - 100) {
+      $('html, body').animate({ scrollTop: elTop - 80 }, 300);
+    }
+  }
+
+  // Global error handler — replaces native alert() with inline message
+  window.ckShowAjaxError = function(panelId, xhr) {
+    var $panel = $(panelId + ' .panel-body');
+    if (!$panel.length) $panel = $('#collapse-payment-address .panel-body');
+    $panel.find('.alert-dismissible').remove();
+    var $alert = $('<div class="alert alert-danger alert-dismissible">' + errorMsg + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+    $panel.prepend($alert);
+    ckScrollTo($alert);
+    if (typeof console !== 'undefined') console.error('Checkout error:', xhr ? xhr.statusText : '');
+  };
+
+  // Auto-scroll to any new alert injected into checkout panels
+  if (typeof MutationObserver !== 'undefined') {
+    var observer = new MutationObserver(function(mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        for (var j = 0; j < mutations[i].addedNodes.length; j++) {
+          var node = mutations[i].addedNodes[j];
+          if (node.nodeType === 1 && (node.classList.contains('alert-dismissible') || node.classList.contains('alert'))) {
+            ckScrollTo($(node));
+          }
+        }
+      }
+    });
+    var accordion = document.getElementById('accordion');
+    if (accordion) {
+      observer.observe(accordion, { childList: true, subtree: true });
+    }
+  }
 
   // ── Progress bar ──
   function ckUpdateProgress(stepNum) {
@@ -211,51 +259,35 @@
     });
   }
 
-  // ── Address summary ──
-  var ckShippingAddress = '';
-
-  function ckBuildAddressSummary() {
-    var paymentMode = $('input[name=\'payment_address\']:checked').val();
-    if (paymentMode === 'existing') {
-      var text = $('#payment-existing select[name=\'address_id\'] option:selected').text();
-      ckShippingAddress = text ? escapeHtml(text.trim()) : '';
-    } else {
-      var fn = $('#collapse-payment-address input[name=\'firstname\']').val() || '';
-      var ln = $('#collapse-payment-address input[name=\'lastname\']').val() || '';
-      var addr = $('#collapse-payment-address input[name=\'address_1\']').val() || '';
-      var pc = $('#collapse-payment-address input[name=\'postcode\']').val() || '';
-      var city = $('#collapse-payment-address input[name=\'city\']').val() || '';
-      if (fn && ln) {
-        ckShippingAddress = escapeHtml(fn + ' ' + ln + ', ' + addr + ', ' + pc + ' ' + city);
-      }
-    }
-  }
-
-  function ckInjectAddressBar(panelId) {
-    if (!ckShippingAddress) return;
-    var $panel = $(panelId + ' .panel-body');
-    $panel.find('.ck-address-bar').remove();
-    $panel.prepend(
-      '<div class="ck-address-bar">'
-      + '<div class="ck-address-bar__info">'
-      + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
-      + '<span>Dostava na: ' + ckShippingAddress + '</span>'
-      + '</div>'
-      + '<a class="ck-address-bar__edit" href="javascript:void(0)">Spremeni</a>'
-      + '</div>'
-    );
-  }
-
-  function ckGetAddressSummary() {
+  // ── Address summary (shared by address bar + done summary) ──
+  function ckGetAddress() {
     var paymentMode = $('input[name=\'payment_address\']:checked').val();
     if (paymentMode === 'existing') {
       return $('#payment-existing select[name=\'address_id\'] option:selected').text().trim();
     }
     var fn = $('#collapse-payment-address input[name=\'firstname\']').val() || '';
     var ln = $('#collapse-payment-address input[name=\'lastname\']').val() || '';
+    var addr = $('#collapse-payment-address input[name=\'address_1\']').val() || '';
+    var pc = $('#collapse-payment-address input[name=\'postcode\']').val() || '';
+    var city = $('#collapse-payment-address input[name=\'city\']').val() || '';
     var email = $('#collapse-payment-address input[name=\'email\']').val() || '';
-    if (fn) return fn + ' ' + ln + (email ? ' · ' + email : '');
-    return '';
+    return {
+      full: (fn && ln) ? fn + ' ' + ln + ', ' + addr + ', ' + pc + ' ' + city : '',
+      short: fn ? fn + ' ' + ln + (email ? ' · ' + email : '') : ''
+    };
+  }
+
+  function ckInjectAddressBar(panelId) {
+    var addr = ckGetAddress();
+    if (!addr.full) return;
+    var $panel = $(panelId + ' .panel-body');
+    $panel.find('.ck-address-bar').remove();
+    $panel.prepend(
+      '<div class="ck-address-bar"><div class="ck-address-bar__info">'
+      + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+      + '<span>Dostava na: ' + escapeHtml(addr.full) + '</span>'
+      + '</div></div>'
+    );
   }
 
   // ── Pills re-attachment ──
@@ -285,6 +317,7 @@
   };
 
   function ckShowDoneSummary(panelId, title, detail) {
+    if (!title || !detail) return;
     $(panelId).closest('.ck-panel').find('.panel-heading').html(
       '<div class="ck-done">'
       + '<div class="ck-done__left">'
@@ -316,16 +349,11 @@
       + lockSvg + 'Potrdi naročilo' + (total ? ' — ' + total : '')
       + '</button>'
     ).insertAfter($btn).on('click', function() {
+      var $proxy = $(this);
+      $proxy.prop('disabled', true).html('<span class="ck-spinner"></span> Obdelujemo naročilo...');
       $btn.trigger('click');
     });
   }
-
-  // ── Event: "Spremeni" on address bar ──
-  $(document).on('click', '.ck-address-bar__edit', function(e) {
-    e.preventDefault();
-    $('.ck-panel[data-step="2"]:has(#collapse-shipping-address)').addClass('is-visible');
-    $('a[href=\'#collapse-shipping-address\']').trigger('click');
-  });
 
   // ── Event: "Uredi" on completed step ──
   $(document).on('click', '.ck-done__edit', function() {
@@ -372,11 +400,10 @@
     }
     if (id === 'collapse-shipping-method') {
       ckUpdateProgress(2);
-      ckBuildAddressSummary();
       ckInjectAddressBar('#collapse-shipping-method');
       $('#button-shipping-method').val('Nadaljuj na plačilo');
-      var addrSummary = ckGetAddressSummary();
-      if (addrSummary) ckShowDoneSummary('#collapse-payment-address', 'Tvoji podatki', addrSummary);
+      var addr = ckGetAddress();
+      if (addr.short) ckShowDoneSummary('#collapse-payment-address', 'Tvoji podatki', addr.short);
     }
     if (id === 'collapse-payment-method') {
       ckUpdateProgress(3);
@@ -412,7 +439,6 @@
 
     // Shipping method loaded (GET)
     if (!isSave && url.indexOf('route=checkout/shipping_method') !== -1) {
-      ckBuildAddressSummary();
       ckInjectAddressBar('#collapse-shipping-method');
       return;
     }
@@ -423,13 +449,37 @@
       return;
     }
 
-    // Pills re-attachment (GET)
+    // Pills re-attachment + button label update (GET)
     if (!isSave && (
       url.indexOf('route=checkout/payment_address') !== -1 ||
       url.indexOf('route=checkout/guest') !== -1 ||
       url.indexOf('route=checkout/register') !== -1
     )) {
       ckReattachPills($('#collapse-payment-address .panel-body'));
+      // Update button labels (panel is already open, shown.bs.collapse won't fire)
+      $('#button-guest, #button-register, #button-payment-address').val('Nadaljuj na dostavo');
+      // Add hint text under phone field
+      var $phone = $('#input-payment-telephone');
+      if ($phone.length && !$phone.parent().find('.ck-field-hint').length) {
+        $phone.after('<span class="ck-field-hint">Kurir vas pokliče ob dostavi</span>');
+      }
+      // Fix tab order to match visual order (CSS reorders, DOM doesn't)
+      // Works for guest, register, AND logged-in new address forms
+      $('#input-payment-firstname').attr('tabindex', 1);
+      $('#input-payment-lastname').attr('tabindex', 2);
+      $('#input-payment-address-1').attr('tabindex', 3);
+      $('#input-payment-postcode').attr('tabindex', 4);
+      $('#input-payment-city').attr('tabindex', 5);
+      $('#input-payment-email').attr('tabindex', 6);
+      $('#input-payment-telephone').attr('tabindex', 7);
+      $('#input-payment-password').attr('tabindex', 8);
+      $('#input-payment-confirm').attr('tabindex', 9);
+      // Shipping new address
+      $('#input-shipping-firstname').attr('tabindex', 1);
+      $('#input-shipping-lastname').attr('tabindex', 2);
+      $('#input-shipping-address-1').attr('tabindex', 3);
+      $('#input-shipping-postcode').attr('tabindex', 4);
+      $('#input-shipping-city').attr('tabindex', 5);
       return;
     }
   });
@@ -500,6 +550,7 @@ $(document).ready(function() {
         if (!$loginHtml.length) $loginHtml = $(html);
         $panelBody.html('').prepend($pillsHtml).append('<div class="ck-login-form">' + $loginHtml.html() + '</div>');
         setActivePill('login');
+        $('#button-login').val('Prijavi se');
       }
     });
   });
@@ -567,7 +618,7 @@ $(document).ready(function() {
             $('a[href=\'#collapse-payment-address\']').trigger('click');
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -584,7 +635,7 @@ $(document).ready(function() {
 			$('a[href=\'#collapse-payment-address\']').trigger('click');
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -604,15 +655,23 @@ $(document).delegate('#button-login', 'click', function() {
             $('#button-login').button('reset');
         },
         success: function(json) {
-            $('.alert-dismissible, .text-danger').remove();
-            $('.form-group').removeClass('has-error');
+            $('#collapse-payment-address .alert-dismissible, #collapse-payment-address .text-danger').remove();
+            $('#collapse-payment-address .form-group').removeClass('has-error');
 
             if (json['redirect']) {
                 location = json['redirect'];
             } else if (json['error']) {
-                var $target = $('.ck-login-form').length ? $('#collapse-payment-address .panel-body') : $('#collapse-checkout-option .panel-body');
-                $target.find('.alert-dismissible').remove();
-                $('.ck-login-form').before('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                // Inject alert into the panel body (above login form or at top)
+                var $body = $('#collapse-payment-address .panel-body');
+                $body.find('.alert-dismissible').remove();
+                var $loginForm = $body.find('.ck-login-form');
+                var $alertEl = $('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                if ($loginForm.length) {
+                    $loginForm.before($alertEl);
+                } else {
+                    $body.prepend($alertEl);
+                }
+                ckScrollTo($alertEl);
 
 				// Highlight any found errors
 				$('input[name=\'email\']').parent().addClass('has-error');
@@ -620,7 +679,7 @@ $(document).delegate('#button-login', 'click', function() {
 		   }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -645,16 +704,16 @@ $(document).delegate('#button-register', 'click', function() {
                 $('#button-register').button('reset');
 
                 if (json['error']['warning']) {
-                    $('#collapse-payment-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-payment-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
 
-				for (i in json['error']) {
+				for (var i in json['error']) {
 					var element = $('#input-payment-' + i.replace('_', '-'));
 
 					if ($(element).parent().hasClass('input-group')) {
-						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).parent().after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					} else {
-						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					}
 				}
 
@@ -679,7 +738,7 @@ $(document).delegate('#button-register', 'click', function() {
 									$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
                                 },
                                 error: function(xhr, ajaxOptions, thrownError) {
-                                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                    window.ckShowAjaxError('#collapse-payment-address', xhr);
                                 }
                             });
 
@@ -693,7 +752,7 @@ $(document).delegate('#button-register', 'click', function() {
 							$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                         },
                         error: function(xhr, ajaxOptions, thrownError) {
-                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            window.ckShowAjaxError('#collapse-payment-address', xhr);
                         }
                     });
                 } else {
@@ -712,7 +771,7 @@ $(document).delegate('#button-register', 'click', function() {
 							$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                         },
                         error: function(xhr, ajaxOptions, thrownError) {
-                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            window.ckShowAjaxError('#collapse-payment-address', xhr);
                         }
                     });
                 }
@@ -730,7 +789,7 @@ $(document).delegate('#button-register', 'click', function() {
 						$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 });
                 {% endif %}
@@ -747,13 +806,13 @@ $(document).delegate('#button-register', 'click', function() {
 						$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-payment-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_payment_address }} <i class="fa fa-caret-down"></i></a>');
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 });
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -779,16 +838,16 @@ $(document).delegate('#button-payment-address', 'click', function() {
                 location = json['redirect'];
             } else if (json['error']) {
                 if (json['error']['warning']) {
-                    $('#collapse-payment-address .panel-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-payment-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
 
-				for (i in json['error']) {
+				for (var i in json['error']) {
 					var element = $('#input-payment-' + i.replace('_', '-'));
 
 					if ($(element).parent().hasClass('input-group')) {
-						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).parent().after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					} else {
-						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					}
 				}
 
@@ -796,72 +855,41 @@ $(document).delegate('#button-payment-address', 'click', function() {
 				$('.text-danger').parent().parent().addClass('has-error');
             } else {
                 {% if shipping_required %}
-                // Auto-copy billing address as shipping address
-                var paymentData = $('#collapse-payment-address input[type=\'text\'], #collapse-payment-address input[type=\'hidden\'], #collapse-payment-address input[type=\'checkbox\']:checked, #collapse-payment-address input[type=\'radio\']:checked, #collapse-payment-address select').serialize();
-
-                // Get the selected address_id (existing address) or form data (new address)
-                var paymentAddress = $('input[name=\'payment_address\']:checked').val();
-                var shippingData = (paymentAddress === 'existing')
-                    ? { shipping_address: 'existing', address_id: $('select[name=\'address_id\']').val() }
-                    : paymentData.replace(/payment_address/g, 'shipping_address');
-
-                // Save shipping address (same as billing)
+                // Shipping address auto-copied in payment_address/save (server-side)
+                // Go straight to shipping method — no shipping_address/save needed
                 $.ajax({
-                    url: 'index.php?route=checkout/shipping_address/save',
-                    type: 'post',
-                    data: shippingData,
-                    dataType: 'json',
-                    success: function(shippingJson) {
-                        if (shippingJson['error']) {
-                            // Fallback: open shipping address panel if auto-save fails
-                            $.ajax({
-                                url: 'index.php?route=checkout/shipping_address',
-                                dataType: 'html',
-                                success: function(html) {
-                                    $('#collapse-shipping-address .panel-body').html(html);
-                                    $('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
-                                    $('a[href=\'#collapse-shipping-address\']').trigger('click');
-                                }
-                            });
-                        } else {
-                            // Success — go straight to shipping method
-                            $.ajax({
-                                url: 'index.php?route=checkout/shipping_method',
-                                dataType: 'html',
-                                complete: function() {
-                                    $('#button-payment-address').button('reset');
-                                },
-                                success: function(html) {
-                                    $('#collapse-shipping-method .panel-body').html(html);
+                    url: 'index.php?route=checkout/shipping_method',
+                    dataType: 'html',
+                    complete: function() {
+                        $('#button-payment-address').button('reset');
+                    },
+                    success: function(html) {
+                        $('#collapse-shipping-method .panel-body').html(html);
 
-                                    $('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-method" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_method }} <i class="fa fa-caret-down"></i></a>');
+                        $('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-method" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_method }} <i class="fa fa-caret-down"></i></a>');
 
-                                    $('a[href=\'#collapse-shipping-method\']').trigger('click');
+                        $('a[href=\'#collapse-shipping-method\']').trigger('click');
 
-                                    $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');
-                                    $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
+                        $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');
+                        $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
 
-                                    // Also pre-load shipping address panel in background (for "Spremeni" link)
-                                    $.ajax({
-                                        url: 'index.php?route=checkout/shipping_address',
-                                        dataType: 'html',
-                                        success: function(html) {
-                                            $('#collapse-shipping-address .panel-body').html(html);
-                                            $('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
-                                        }
-                                    });
-                                }
-                            });
+                        // Pre-load shipping address + refresh payment address dropdown
+                        $.ajax({
+                            url: 'index.php?route=checkout/shipping_address',
+                            dataType: 'html',
+                            success: function(html) {
+                                $('#collapse-shipping-address .panel-body').html(html);
+                                $('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
+                            }
+                        });
 
-                            // Refresh payment address panel
-                            $.ajax({
-                                url: 'index.php?route=checkout/payment_address',
-                                dataType: 'html',
-                                success: function(html) {
-                                    $('#collapse-payment-address .panel-body').html(html);
-                                }
-                            });
-                        }
+                        $.ajax({
+                            url: 'index.php?route=checkout/payment_address',
+                            dataType: 'html',
+                            success: function(html) {
+                                $('#collapse-payment-address .panel-body').html(html);
+                            }
+                        });
                     },
                     error: function() {
                         // Fallback: open shipping address panel
@@ -890,7 +918,7 @@ $(document).delegate('#button-payment-address', 'click', function() {
 						$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 }).done(function() {
 					$.ajax({
@@ -900,7 +928,7 @@ $(document).delegate('#button-payment-address', 'click', function() {
 							$('#collapse-payment-address .panel-body').html(html);
 						},
 						error: function(xhr, ajaxOptions, thrownError) {
-							alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+							window.ckShowAjaxError('#collapse-payment-address', xhr);
 						}
 					});
 				});
@@ -908,7 +936,7 @@ $(document).delegate('#button-payment-address', 'click', function() {
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -933,16 +961,16 @@ $(document).delegate('#button-shipping-address', 'click', function() {
                 $('#button-shipping-address').button('reset');
 
                 if (json['error']['warning']) {
-                    $('#collapse-shipping-address .panel-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-shipping-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
 
-				for (i in json['error']) {
+				for (var i in json['error']) {
 					var element = $('#input-shipping-' + i.replace('_', '-'));
 
 					if ($(element).parent().hasClass('input-group')) {
-						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).parent().after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					} else {
-						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					}
 				}
 
@@ -972,12 +1000,12 @@ $(document).delegate('#button-shipping-address', 'click', function() {
                                 $('#collapse-shipping-address .panel-body').html(html);
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
-                                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                window.ckShowAjaxError('#collapse-payment-address', xhr);
                             }
                         });
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 }).done(function() {
 					$.ajax({
@@ -987,14 +1015,14 @@ $(document).delegate('#button-shipping-address', 'click', function() {
 							$('#collapse-payment-address .panel-body').html(html);
 						},
 						error: function(xhr, ajaxOptions, thrownError) {
-							alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+							window.ckShowAjaxError('#collapse-payment-address', xhr);
 						}
 					});
 				});
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -1019,16 +1047,16 @@ $(document).delegate('#button-guest', 'click', function() {
                 $('#button-guest').button('reset');
 
                 if (json['error']['warning']) {
-                    $('#collapse-payment-address .panel-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-payment-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
 
-				for (i in json['error']) {
+				for (var i in json['error']) {
 					var element = $('#input-payment-' + i.replace('_', '-'));
 
 					if ($(element).parent().hasClass('input-group')) {
-						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).parent().after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					} else {
-						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					}
 				}
 
@@ -1056,7 +1084,7 @@ $(document).delegate('#button-guest', 'click', function() {
 									$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
                                 },
                                 error: function(xhr, ajaxOptions, thrownError) {
-                                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                                    window.ckShowAjaxError('#collapse-payment-address', xhr);
                                 }
                             });
 
@@ -1070,7 +1098,7 @@ $(document).delegate('#button-guest', 'click', function() {
 							$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                         },
                         error: function(xhr, ajaxOptions, thrownError) {
-                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            window.ckShowAjaxError('#collapse-payment-address', xhr);
                         }
                     });
                 } else {
@@ -1092,7 +1120,7 @@ $(document).delegate('#button-guest', 'click', function() {
 							$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                         },
                         error: function(xhr, ajaxOptions, thrownError) {
-                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                            window.ckShowAjaxError('#collapse-payment-address', xhr);
                         }
                     });
                 }
@@ -1113,14 +1141,14 @@ $(document).delegate('#button-guest', 'click', function() {
 						$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 });
                 {% endif %}
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -1145,16 +1173,16 @@ $(document).delegate('#button-guest-shipping', 'click', function() {
                 $('#button-guest-shipping').button('reset');
 
                 if (json['error']['warning']) {
-                    $('#collapse-shipping-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-shipping-address .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
 
-				for (i in json['error']) {
+				for (var i in json['error']) {
 					var element = $('#input-shipping-' + i.replace('_', '-'));
 
 					if ($(element).parent().hasClass('input-group')) {
-						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).parent().after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					} else {
-						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+						$(element).after('<div class="text-danger">' + escapeHtml(json['error'][i]) + '</div>');
 					}
 				}
 
@@ -1178,13 +1206,13 @@ $(document).delegate('#button-guest-shipping', 'click', function() {
 						$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 });
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -1207,7 +1235,7 @@ $(document).delegate('#button-shipping-method', 'click', function() {
                 $('#button-shipping-method').button('reset');
 
                 if (json['error']['warning']) {
-                    $('#collapse-shipping-method .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-shipping-method .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
             } else {
                 $.ajax({
@@ -1226,13 +1254,13 @@ $(document).delegate('#button-shipping-method', 'click', function() {
 						$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 });
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });
@@ -1255,7 +1283,7 @@ $(document).delegate('#button-payment-method', 'click', function() {
                 $('#button-payment-method').button('reset');
 
                 if (json['error']['warning']) {
-                    $('#collapse-payment-method .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    $('#collapse-payment-method .panel-body').prepend('<div class="alert alert-danger alert-dismissible">' + escapeHtml(json['error']['warning']) + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                 }
             } else {
                 $.ajax({
@@ -1272,13 +1300,13 @@ $(document).delegate('#button-payment-method', 'click', function() {
 						$('a[href=\'#collapse-checkout-confirm\']').trigger('click');
 					},
                     error: function(xhr, ajaxOptions, thrownError) {
-                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        window.ckShowAjaxError('#collapse-payment-address', xhr);
                     }
                 });
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            window.ckShowAjaxError('#collapse-payment-address', xhr);
         }
     });
 });

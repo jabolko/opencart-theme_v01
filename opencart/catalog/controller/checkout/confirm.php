@@ -49,6 +49,15 @@ class ControllerCheckoutConfirm extends Controller {
 		}
 
 		if (!$redirect) {
+			// Prevent double-submit (duplicate orders)
+			if (isset($this->session->data['order_processing'])) {
+				$redirect = $this->url->link('checkout/success');
+			}
+		}
+
+		if (!$redirect) {
+			$this->session->data['order_processing'] = true;
+
 			$order_data = array();
 
 			$totals = array();

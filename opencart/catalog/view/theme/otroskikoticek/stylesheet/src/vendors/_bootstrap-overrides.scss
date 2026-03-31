@@ -32,18 +32,28 @@
   padding: $space-3 $space-4;
   margin-bottom: $space-3;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: $space-2;
+  position: relative;
 
   i { margin-top: 0.12rem; }
 
   .close {
     opacity: 0.5;
     font-size: 1.18rem;
+    float: none;
     margin-left: auto;
-    padding: 0;
+    padding: 0.35rem;
     line-height: 1;
+    flex-shrink: 0;
     transition: opacity 0.2s ease;
+    position: static;
+    color: inherit;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover { opacity: 1; }
   }

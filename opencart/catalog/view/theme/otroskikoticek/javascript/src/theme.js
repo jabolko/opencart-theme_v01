@@ -73,6 +73,8 @@
   window.showToast = showToast;
 
   function showToast(message) {
+    // Suppress toast on checkout — errors shown inline
+    if (document.querySelector('.ck-page')) { return; }
     var toast = document.getElementById('oc-toast');
     if (!toast) { return; }
     var msgEl = toast.querySelector('.oc-toast__msg');
@@ -628,6 +630,194 @@
     localStorage.setItem(KEY, JSON.stringify(stored));
   }
 
+  // ---------------------------------------------------------------------------
+  // Cart page — reservation timer, shipping bar, coupon, recently viewed
+  // Only runs when .cart-page is present in the DOM.
+  // ---------------------------------------------------------------------------
+  function initCartPage() {
+    var page = document.querySelector('.cart-page');
+    if (!page) return;
+
+    // -- Reservation timer --
+    var RESERVE_KEY = 'cart_reserve_ts';
+    var RESERVE_MS = 30 * 60 * 1000;
+
+    function getReserveEnd() {
+      var stored = localStorage.getItem(RESERVE_KEY);
+      if (stored) {
+        var ts = parseInt(stored, 10);
+        if (ts > Date.now()) return ts;
+      }
+      var end = Date.now() + RESERVE_MS;
+      localStorage.setItem(RESERVE_KEY, end);
+      return end;
+    }
+
+    var reserveEnd = getReserveEnd();
+    var globalTimerEl = document.getElementById('js-cart-timer');
+    var reserveBanner = document.getElementById('js-cart-reserve');
+    var itemTimerEls = document.querySelectorAll('.cart-item__timer-val');
+
+    function formatTime(ms) {
+      if (ms <= 0) return '0:00';
+      var totalSec = Math.floor(ms / 1000);
+      var min = Math.floor(totalSec / 60);
+      var sec = totalSec % 60;
+      return min + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function tickTimer() {
+      var remaining = reserveEnd - Date.now();
+      var display = formatTime(remaining);
+
+      if (globalTimerEl) globalTimerEl.textContent = display;
+      for (var i = 0; i < itemTimerEls.length; i++) {
+        itemTimerEls[i].textContent = display;
+      }
+
+      if (remaining <= 0) {
+        if (reserveBanner) reserveBanner.classList.add('cart-reserve--expired');
+        if (globalTimerEl) globalTimerEl.textContent = '0:00';
+        return;
+      }
+
+      if (remaining < 5 * 60 * 1000) {
+        if (reserveBanner) reserveBanner.classList.add('cart-reserve--urgent');
+      }
+
+      setTimeout(tickTimer, 1000);
+    }
+
+    if (globalTimerEl) tickTimer();
+
+    // -- Remove item --
+    var removeButtons = document.querySelectorAll('.cart-item__remove');
+    for (var r = 0; r < removeButtons.length; r++) {
+      removeButtons[r].addEventListener('click', function () {
+        var cartId = this.getAttribute('data-cart-id');
+        if (cartId) {
+          cart.remove(cartId);
+          setTimeout(function () { location.reload(); }, 600);
+        }
+      });
+    }
+
+    // -- Free shipping bar --
+    function updatePageShipping() {
+      var el = document.getElementById('js-cart-page-shipping');
+      if (!el) return;
+      var threshold = 55;
+      var totalEl = document.querySelector('.cart-summary__row--total span:last-child');
+      if (!totalEl) return;
+      var totalText = totalEl.textContent.replace(/[^\d,.]/g, '').replace(',', '.');
+      var cartTotal = parseFloat(totalText) || 0;
+      var remaining = Math.max(0, threshold - cartTotal);
+      var pct = Math.min(100, (cartTotal / threshold) * 100);
+
+      var truckSvg = '<svg class="cart-shipping__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>';
+      var checkSvg = '<svg class="cart-shipping__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+      if (cartTotal > 0 && remaining > 0) {
+        el.className = 'cart-shipping cart-shipping--progress';
+        el.innerHTML = '<div class="cart-shipping__header">' + truckSvg + '<span class="cart-shipping__text">Do brezplačne poštnine ti manjka še <strong>' + remaining.toFixed(2).replace('.', ',') + ' €</strong></span></div><div class="cart-shipping__bar"><div class="cart-shipping__fill" style="width:' + pct + '%"></div></div>';
+      } else if (cartTotal >= threshold) {
+        el.className = 'cart-shipping cart-shipping--free';
+        el.innerHTML = '<div class="cart-shipping__header">' + checkSvg + '<span class="cart-shipping__text cart-shipping__text--free">Poštnina je brezplačna!</span></div>';
+      } else {
+        el.innerHTML = '';
+        el.className = 'cart-shipping';
+      }
+    }
+
+    updatePageShipping();
+
+    // -- Coupon code --
+    var couponBtn = document.getElementById('js-coupon-btn');
+    var couponInput = document.getElementById('js-coupon-input');
+    if (couponBtn && couponInput) {
+      couponBtn.addEventListener('click', function () {
+        var code = couponInput.value.trim();
+        if (!code) return;
+        $.ajax({
+          url: 'index.php?route=extension/total/coupon/coupon',
+          type: 'post',
+          data: 'coupon=' + encodeURIComponent(code),
+          dataType: 'json',
+          success: function (json) {
+            if (json.redirect) {
+              location = json.redirect;
+            } else if (json.error) {
+              $('.cart-coupon .alert').remove();
+              $('.cart-coupon').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json.error + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            }
+          }
+        });
+      });
+      couponInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) { couponBtn.click(); }
+      });
+    }
+
+    // -- Reset timer when cart empty --
+    var cartItemsEl = document.getElementById('js-cart-items');
+    if (cartItemsEl && cartItemsEl.children.length === 0) {
+      localStorage.removeItem(RESERVE_KEY);
+    }
+
+    // -- Recently viewed --
+    var recentWrap = document.getElementById('js-cart-recent');
+    var recentScroller = document.getElementById('js-cart-recent-scroller');
+    if (recentWrap && recentScroller) {
+      var viewed = [];
+      try { viewed = JSON.parse(localStorage.getItem('recently_viewed')) || []; } catch (e) { viewed = []; }
+
+      var cartIds = {};
+      var cartEls = document.querySelectorAll('.cart-item[data-product-id]');
+      for (var ci = 0; ci < cartEls.length; ci++) {
+        cartIds[cartEls[ci].getAttribute('data-product-id')] = true;
+      }
+      viewed = viewed.filter(function (p) { return !cartIds[p.id]; });
+
+      if (viewed.length > 0) {
+        var html = '';
+        var max = Math.min(viewed.length, 10);
+        for (var v = 0; v < max; v++) {
+          var p = viewed[v];
+          html += '<article class="product-card product-card--scroll">' +
+            '<div class="product-card__media">' +
+              '<a href="' + p.href + '" class="product-card__img-wrap">' +
+                '<div class="product-card__img">' +
+                  (p.thumb ? '<img src="' + p.thumb + '" alt="' + p.name.replace(/"/g, '&quot;') + '" loading="lazy" />' : '') +
+                '</div>' +
+              '</a>' +
+              '<button class="product-card__fav" type="button" onclick="wishlist.add(\'' + p.id + '\');" aria-label="Dodaj med priljubljene">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                  '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
+                '</svg>' +
+              '</button>' +
+            '</div>' +
+            '<div class="product-card__body">' +
+              (p.brand ? '<p class="product-card__manufacturer">' + p.brand + '</p>' : '') +
+              '<a href="' + p.href + '" class="product-card__name">' + p.name + '</a>' +
+              '<div class="product-card__footer">' +
+                '<p class="product-card__price">' + p.price + '</p>' +
+                '<button class="product-card__cart" type="button" onclick="cart.add(\'' + p.id + '\', \'1\');" aria-label="Dodaj v košarico">' +
+                  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                    '<circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>' +
+                    '<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>' +
+                  '</svg>' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</article>';
+        }
+        html += '<div class="cart-recent__spacer"></div>';
+        recentScroller.innerHTML = html;
+        recentWrap.style.display = '';
+      }
+    }
+  }
+
   $(document).ready(function () {
     reformatCart();
     syncStickyCart();
@@ -638,6 +828,7 @@
     initReviewsScroll();
     initStickyNav();
     trackRecentlyViewed();
+    initCartPage();
 
     // Suppress OC's scroll-to-top animation on cart/wishlist/compare add
     var _origAnimate = $.fn.animate;
