@@ -204,6 +204,8 @@ body:has(.ck-page) {
     display: flex;
     align-items: baseline;
     gap: 0.35rem;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   &__label {
@@ -221,6 +223,10 @@ body:has(.ck-page) {
   &__count {
     font-size: 0.65rem;
     color: $color-text-base;
+
+    @media (max-width: 374px) {
+      display: none;
+    }
   }
 
   &__pay {
@@ -228,6 +234,10 @@ body:has(.ck-page) {
     gap: 0.25rem;
     align-items: center;
     margin-left: auto;
+
+    .ck-pay-hidden {
+      display: none;
+    }
   }
 }
 

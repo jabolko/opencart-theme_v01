@@ -189,18 +189,46 @@
 
 </div>
 
+{# ── Global utilities (must be available to all script blocks) ── #}
+<script type="text/javascript"><!--
+function escapeHtml(str) {
+  if (!str) return '';
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+//--></script>
+
 {# ── Checkout UI helpers (consolidated, all fixes applied) ── #}
 <script type="text/javascript"><!--
 (function($) {
   // Global AJAX timeout — prevent hung requests on slow networks
   $.ajaxSetup({ timeout: 30000 });
 
-  // ── Utilities ──
-  window.escapeHtml = function(str) {
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
-  };
+  // Rotate payment icons — show 3 at a time on mobile
+  $(document).ready(function() {
+    if (window.innerWidth >= 768) return;
+    var $pay = $('.ck-total-bar__pay');
+    if (!$pay.length) return;
+    var $icons = $pay.children();
+    var total = $icons.length;
+    if (total <= 3) return;
+    var start = 0;
+
+    function showGroup() {
+      $icons.addClass('ck-pay-hidden');
+      for (var i = 0; i < 3; i++) {
+        $icons.eq((start + i) % total).removeClass('ck-pay-hidden');
+      }
+    }
+
+    showGroup();
+
+    setInterval(function() {
+      start = (start + 3) % total;
+      showGroup();
+    }, 3000);
+  });
 
   var lockSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
   var checkSvg = '<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
