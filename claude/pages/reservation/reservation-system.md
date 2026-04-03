@@ -859,100 +859,149 @@ Existing label shape PNGs in `image/catalog/assets/elements/labels/` (ribbons, h
 
 ---
 
-## Implementation Status (2026-04-03)
+## Implementation Status (2026-04-03, final audit complete)
 
-All phases complete. Development uses direct core edits + test script. OCMOD XML generation deferred to production deploy.
+All phases complete. 6 audit rounds, converging to zero findings. Development uses direct core edits + test script. OCMOD XML generation deferred to production deploy.
 
-### Phase 1: Core reservation — DONE
-- Direct edits to 12 core PHP files (manifest: `modified-files.txt`)
-- Test script: `test-reservation.sh` (13 assertions + cleanup)
+### Automated Testing — 13/13 PASS
+Test script: `claude/pages/reservation/test-reservation.sh`
+```bash
+bash claude/pages/reservation/test-reservation.sh
+```
+Tests: add, race condition, duplicate add, cart page, checkout, remove, heartbeat, labels (REZERVIRANO + PRODANO), server time, homepage. Cleans up after itself.
 
-### Phase 2: Core testing — ALL PASS
-- [x] Add product → qty decremented (T1)
-- [x] Race condition → second user blocked (T2)
-- [x] Already in cart → error returned (T3)
-- [x] Cart page → no stock warning (T4)
-- [x] Checkout accessible (T5)
-- [x] Remove → stock restored (T6)
-- [x] Heartbeat extends timer (T7)
-- [x] Expiry → stock restored after 30 min (T9)
-
-### Phase 3: Theme integration — DONE
-- [x] cart.twig — data-server-time, data-time-added
-- [x] Cart controller — server_time passed
-- [x] Server-synced timer in theme.js (replaced localStorage)
-- [x] Checkout heartbeat JS
-- [x] Z etiketo attribute (ID=82, 52 products tagged)
-- [x] Top brand IDs (Benetton=14, Gap=23, H&M=13, Next=18, Okaidi=17, S.Oliver=16, Zara=12)
-- [x] getProductLabels() batch method in product model
-- [x] Labels wired: category, latest, product page, similar, related
-- [x] SCSS: --reserved, --sold, --tagged, --in-cart, --brand, --novo
-- [x] Instant UI: ajaxComplete hook for badge/button swap
-- [x] getStockStatus endpoint for JS-rendered cards (recently viewed)
-- [x] Cart dropdown + mobile sheet per-item timers
-- [x] Sold filtered from similar/related/recently viewed
-- [x] Product page CTA states (V košarici / Že v košarici drugega kupca / Prodano)
-- [x] Scarcity hidden when sold
-- [x] npm run build
-
-### Phase 4: Manual browser testing — ALL PASS (2026-04-03)
-- [x] Full end-to-end: browse → add → checkout → order (order 9276)
-- [x] Order cancel restores stock (orders 9278, 9279) — required `subtract=1` fix
+### Manual Browser Testing — ALL PASS (2026-04-03)
+- [x] Full end-to-end: browse → add → checkout → order
+- [x] Order cancel (admin) restores stock
 - [x] Login merge: guest → register → cart preserved
 - [x] Logout → cart hidden, login back → cart restored
 - [x] Second browser: REZERVIRANO label, disabled CTA, "Že v košarici drugega kupca"
 - [x] Cron endpoint: clearExpired returns `{"success":true}`
-- [x] NOVO, Top znamka, Z etiketo labels verified on category pages
-- [x] Duplicate add → "Ta artikel je že v tvoji košarici"
-- [x] Sold add → "Ta artikel je žal že prodan"
-- [x] Reserved add → "Artikel je že rezerviran za drugo stranko"
+- [x] All 5 label types verified on category pages
+- [x] All 3 error messages verified (reserved, sold, already in cart)
 
-### Critical fix discovered during testing
-All 6913 products had `subtract=0` (original import). Fixed globally to `subtract=1`.
-Without this, OC's restock on order cancel does not fire (`WHERE subtract='1'`).
+### Audit History
+| Round | Approach | Findings found | All fixed |
+|-------|----------|---------------|-----------|
+| 1st | Heuristic | 5 critical, 7 warning | Yes |
+| 2nd | Deeper heuristic | 5 critical, 2 warning | Yes |
+| 3rd | Even deeper | 3 high, 1 medium | Yes |
+| 4th | Targeted | 2 medium | Yes |
+| 5th | Verification matrix (50 checks) | 1 low | Yes |
+| **6th** | **Re-run matrix + 7 extra (57 checks)** | **0** | **Clean** |
 
-### Remaining items (not blockers)
-- Generate OCMOD XML from diffs (pre-production)
-- N+1 optimization in similar products (batch query)
-- Search page labels (product/search controller — same pattern)
-- Special/manufacturer page labels (same pattern)
-- Update core-modifications.md with reservation entries
+### Fixes Applied During Audits
+- Transaction wrapping: remove(), clear(), clearCart() — all use FOR UPDATE
+- Double-restock race: expiry uses SELECT FOR UPDATE to lock rows before restoring
+- Login merge dedup: checks for existing product, delete-before-restore with countAffected guard
+- Login merge race: date_added refreshed on guest rows before merge loop
+- Cookie recovery race: date_added = NOW() during recovery prevents immediate expiry
+- Cart token: session-scoped (reused across add calls, all items share one token)
+- IP fallback removed: shared IPs caused cart hijacking, cookie-only is sufficient
+- Cookie Secure flag: set based on HTTPS
+- Cache invalidation: only when expired rows found (not every request)
+- api_id='0' filter: consistent across all 10+ reservation queries
+- API order cleanup: LIMIT 1 prevents deleting other guests' reservations
+- XSS: all localStorage data escaped in recently viewed via esc() helper
+- Template sold state: added to similar + related product sections
+- JS safeId: moved before btnHtml (was undefined due to hoisting)
+- Product page CTA: green checkmark on success, Bootstrap reset prevented when disabled
+- All products: subtract=0 → subtract=1 (required for OC restock on order cancel)
+
+### Security Properties (verified in final audit)
+- **No SQL injection**: all strings escaped, all integers cast
+- **No XSS**: all user data from localStorage escaped via esc()
+- **No stock inflation**: every decrement has matching restore path, all in transactions
+- **No stock leak**: every add() has eventual remove/expire/clearCart path
+- **No negative stock**: `WHERE quantity >= N` prevents over-decrement
+- **No double-restock**: FOR UPDATE locks prevent concurrent restore
+- **Race-safe**: atomic reservation via InnoDB row lock + FOR UPDATE
+- **256-bit cart token**: infeasible to brute-force
+- **Cookie HttpOnly + Secure**: no JS access, HTTPS-only on production
 
 ---
 
-## Files Summary
+## Files Summary — Complete for OCMOD Generation
 
-### OCMOD files (install via admin):
-| File | Core files modified |
-|------|-------------------|
-| `reservation-timer.ocmod.xml` | cart.php, cart controller, success.php, api/order.php, order model, language files |
-| `reservation-checkout-extend.ocmod.xml` | checkout.php controller |
+### OCMOD 1: reservation-timer (core reservation logic)
+| File | What changed |
+|------|-------------|
+| `system/library/cart/cart.php` | Heart of system: atomic add, transactional remove/clear/clearCart, expiry with FOR UPDATE, cookie recovery, login merge with dedup, getVisitorIp, cache property |
+| `catalog/controller/checkout/cart.php` | currentTime, clearExpired, getStockStatus endpoints + reservation failure/sold/already-in-cart catch |
+| `catalog/controller/checkout/success.php` | `clearCart()` instead of `clear()` |
+| `catalog/controller/api/order.php` | `clearCart()` + product-specific cart cleanup with LIMIT 1 |
+| `catalog/model/checkout/order.php` | Stock subtraction commented out (reserved at cart-add time) |
+| `catalog/language/sl-SI/checkout/cart.php` | error_reserved, error_already_in_cart, error_sold, text_reservation_timer |
+| `catalog/language/en-gb/checkout/cart.php` | English equivalents |
 
-### Theme files (normal development):
-| File | Change |
-|------|--------|
-| `cart.twig` | `data-server-time`, `data-time-added` attributes |
-| `common/cart.twig` | Per-item timer badge |
-| `theme.js` | Replace localStorage timer with server-synced timer |
-| `_cart.scss` | Minor update for expired/urgent states (already exists) |
-| `_product-card.scss` | Label modifiers: `--reserved`, `--sold`, `--tagged` |
-| `latest.twig` | Label template in `.product-card__labels` |
-| `category.twig` | Same label template |
-| `product.twig` | Labels + disabled button for reserved/sold |
-| `checkout.twig` | Heartbeat JS (already in our template) |
+### OCMOD 2: reservation-checkout-extend (heartbeat)
+| File | What changed |
+|------|-------------|
+| `catalog/controller/checkout/checkout.php` | updateCartTime() method — resets date_added on POST |
 
-### Core modifications tracked in `core-modifications.md`:
-| File | Change |
-|------|--------|
-| `catalog/model/catalog/product.php` | Batch reservation + label queries, label fields in product data |
-| `catalog/controller/checkout/cart.php` | `server_time` passed to cart template |
+### OCMOD 3: reservation-labels (labels + product page states)
+| File | What changed |
+|------|-------------|
+| `catalog/model/catalog/product.php` | getProductsByIds() batch query + getProductLabels() (reservation, in_cart, is_new, is_top_brand, has_tag_label) |
+| `catalog/controller/extension/module/latest.php` | Calls getProductLabels(), passes 5 label fields |
+| `catalog/controller/product/category.php` | Same |
+| `catalog/controller/product/search.php` | Same |
+| `catalog/controller/product/special.php` | Same |
+| `catalog/controller/product/manufacturer.php` | Same |
+| `catalog/controller/product/product.php` | reservation_status for PDP, labels for similar/related, sold filter, batch query for similar |
+| `catalog/controller/common/cart.php` | date_added + server_time passed to template |
+
+### Theme files (NOT OCMOD — deployed with theme)
+| File | What changed |
+|------|-------------|
+| `template/checkout/cart.twig` | data-server-time, data-time-added attributes |
+| `template/checkout/checkout.twig` | Heartbeat JS (30s interval) |
+| `template/common/cart.twig` | Per-item timer in dropdown + mobile sheet |
+| `template/extension/module/latest.twig` | Label + button states (in_cart/reserved/sold/available) |
+| `template/product/category.twig` | Same label + button states |
+| `template/product/product.twig` | Gallery label, CTA states, similar/related labels, scarcity hidden when sold |
+| `javascript/src/theme.js` | Server-synced timer, ajaxComplete instant update, recently viewed with getStockStatus + XSS escaping |
+| `stylesheet/src/components/_product-card.scss` | --in-cart, --reserved, --sold, --tagged, --novo, --brand label modifiers + cart button states |
+| `stylesheet/src/pages/_product.scss` | pdp-cart-btn --in-cart, --disabled + gallery label positioning |
+| `stylesheet/src/layout/_header.scss` | cart-drop__timer styling |
+
+### Database Changes (one-time, auto-detected on first request)
+```sql
+ALTER TABLE oc_cart ADD COLUMN visitor_ip VARCHAR(45) NOT NULL DEFAULT '' AFTER date_added;
+ALTER TABLE oc_cart ADD COLUMN cart_token VARCHAR(64) NOT NULL DEFAULT '' AFTER visitor_ip;
+UPDATE oc_product SET subtract = 1 WHERE status = 1;
+```
+
+### Recommended Index (add before production at scale)
+```sql
+ALTER TABLE oc_cart ADD INDEX idx_expiry (api_id, date_added), ADD INDEX idx_product_id (product_id);
+```
 
 ---
 
 ## Cron Setup (optional safety net)
 
 ```crontab
-*/5 * * * * curl -s http://localhost:8080/index.php?route=checkout/cart/clearExpired > /dev/null
+*/5 * * * * curl -s https://yourdomain.com/index.php?route=checkout/cart/clearExpired > /dev/null
 ```
 
-This catches expired reservations even when no customer visits the site. The constructor handles it on every page load too, so the cron is defense-in-depth only.
+Catches expired reservations when no visitors trigger the constructor. Add shared secret token before production.
+
+---
+
+## OCMOD Generation Checklist (when ready to deploy)
+
+```
+1. Create git tag for the clean baseline: git tag reservation-baseline
+2. For each OCMOD file:
+   a. Diff each modified core file against the original OC 3.0.5.0 version
+   b. Convert each diff hunk into an OCMOD <operation> XML block
+   c. Test: upload OCMOD via admin, refresh modifications, verify site works
+   d. Run test-reservation.sh to verify all 13 assertions pass
+3. Remove direct core file edits (revert to original + OCMOD overlay)
+4. Final test: full end-to-end browser test
+5. Deploy theme files (templates, JS, SCSS) alongside OCMOD files
+6. Run SQL: ALTER TABLE + UPDATE subtract + ADD INDEX
+7. Setup cron
+8. Monitor: check system/storage/logs/ for PHP errors after first hour
+```

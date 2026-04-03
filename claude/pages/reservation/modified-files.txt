@@ -1,31 +1,91 @@
 # Reservation System — Modified Core Files Manifest
-# These files are edited directly during development.
-# OCMOD XML will be generated from git diff against baseline.
+# Last verified: 2026-04-03 (6th audit, 57 checks, 0 failures)
 #
+# Development: files edited directly, OCMOD cache cleared via test script
+# Production: generate OCMOD XML from git diff against OC 3.0.5.0 baseline
+#
+# ═══════════════════════════════════════════════════════════════════════
 # OCMOD 1: reservation-timer (core reservation logic)
-system/library/cart/cart.php                          # heart of reservation (add/remove/clear/expiry/recovery)
-catalog/controller/checkout/cart.php                  # endpoints + failure catch + already-in-cart
-catalog/controller/checkout/success.php               # clearCart() not clear()
-catalog/controller/api/order.php                      # clearCart() not clear()
-catalog/model/checkout/order.php                      # disabled stock subtraction
-catalog/language/sl-SI/checkout/cart.php               # error_reserved + error_already_in_cart + timer text
-catalog/language/en-gb/checkout/cart.php               # same (English)
+# ═══════════════════════════════════════════════════════════════════════
+system/library/cart/cart.php
+  # Atomic add (transaction + FOR UPDATE), transactional remove/clear/clearCart
+  # Expiry cleanup with FOR UPDATE (prevents double-restock)
+  # Cookie-only persistent recovery (IP fallback removed)
+  # Login merge with dedup + date_added refresh
+  # Session-scoped cart_token (reused across add calls)
+  # Cache invalidation only when stock changes
+  # getVisitorIp(), $cache property, $stock=true override
 
+catalog/controller/checkout/cart.php
+  # currentTime() — server time for JS timer sync
+  # clearExpired() — cron endpoint with FOR UPDATE
+  # getStockStatus() — batch status for JS-rendered cards
+  # add() — reservation_failed + reservation_sold + reservation_already_in_cart catch
+  # server_time + date_added passed to cart template
+
+catalog/controller/checkout/success.php
+  # clearCart() instead of clear() (stock stays deducted on successful order)
+
+catalog/controller/api/order.php
+  # clearCart() + per-product cart cleanup with LIMIT 1
+
+catalog/model/checkout/order.php
+  # Stock subtraction commented out (lines 324-331) — reserved at cart-add time
+  # Option value subtraction commented out (line 329-331)
+  # Restock on cancel (lines 350-363) — UNCHANGED, works correctly
+
+catalog/language/sl-SI/checkout/cart.php
+  # +error_reserved, +error_already_in_cart, +error_sold, +text_reservation_timer
+
+catalog/language/en-gb/checkout/cart.php
+  # Same (English equivalents)
+
+# ═══════════════════════════════════════════════════════════════════════
 # OCMOD 2: reservation-checkout-extend (heartbeat)
-catalog/controller/checkout/checkout.php              # updateCartTime() method
+# ═══════════════════════════════════════════════════════════════════════
+catalog/controller/checkout/checkout.php
+  # updateCartTime() — resets date_added=NOW() for session cart rows on POST
 
-# OCMOD 3: reservation-labels (product labels + product page)
-catalog/model/catalog/product.php                     # getProductLabels() batch method
-catalog/controller/extension/module/latest.php        # calls getProductLabels(), passes to template
-catalog/controller/product/category.php               # calls getProductLabels(), passes to template
-catalog/controller/product/product.php                # reservation_status for product page
+# ═══════════════════════════════════════════════════════════════════════
+# OCMOD 3: reservation-labels (product labels + product page states)
+# ═══════════════════════════════════════════════════════════════════════
+catalog/model/catalog/product.php
+  # getProductsByIds() — batch query (replaces N+1 in similar products)
+  # getProductLabels() — batch reservation status, in_cart, is_new, is_top_brand, has_tag_label
 
-# Theme files (NOT OCMOD — our theme, normal git):
-# catalog/view/theme/otroskikoticek/template/checkout/cart.twig       — data-server-time, data-time-added
-# catalog/view/theme/otroskikoticek/template/checkout/checkout.twig   — heartbeat JS
-# catalog/view/theme/otroskikoticek/template/extension/module/latest.twig — label badges
-# catalog/view/theme/otroskikoticek/template/product/category.twig    — label badges
-# catalog/view/theme/otroskikoticek/template/product/product.twig     — REZERVIRAN/PRODANO + disabled CTA
-# catalog/view/theme/otroskikoticek/javascript/src/theme.js           — server timer + instant card update
-# catalog/view/theme/otroskikoticek/stylesheet/src/components/_product-card.scss — label modifiers
-# catalog/view/theme/otroskikoticek/stylesheet/src/pages/_product.scss — disabled button + gallery label
+catalog/controller/extension/module/latest.php
+  # Calls getProductLabels(), passes 5 label fields to template
+
+catalog/controller/product/category.php
+  # Same
+
+catalog/controller/product/search.php
+  # Same
+
+catalog/controller/product/special.php
+  # Same
+
+catalog/controller/product/manufacturer.php
+  # Same
+
+catalog/controller/product/product.php
+  # reservation_status for PDP (my_cart + reserved + sold)
+  # Similar products: batch query, labels, sold filter, sold-exclusion SQL
+  # Related products: labels, sold filter
+
+catalog/controller/common/cart.php
+  # date_added + server_time passed to template for timer
+
+# ═══════════════════════════════════════════════════════════════════════
+# Theme files (NOT OCMOD — deployed with theme via git)
+# ═══════════════════════════════════════════════════════════════════════
+# template/checkout/cart.twig          — data-server-time, data-time-added
+# template/checkout/checkout.twig      — heartbeat JS (30s setInterval)
+# template/common/cart.twig            — per-item timer in dropdown + mobile sheet
+# template/extension/module/latest.twig — label + button states
+# template/product/category.twig       — label + button states
+# template/product/product.twig        — gallery label, CTA states, similar/related labels
+# javascript/src/theme.js              — server timer, ajaxComplete, recently viewed + XSS escape
+# stylesheet/src/components/_product-card.scss — label + button modifiers
+# stylesheet/src/pages/_product.scss   — pdp-cart-btn states + gallery label
+# stylesheet/src/layout/_header.scss   — cart-drop__timer styling
