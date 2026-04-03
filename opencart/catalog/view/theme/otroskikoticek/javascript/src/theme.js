@@ -873,6 +873,13 @@
         var allPids = [];
         for (var vi = 0; vi < Math.min(viewed.length, 15); vi++) { allPids.push(viewed[vi].id); }
 
+        function esc(str) {
+          if (!str) return '';
+          var d = document.createElement('div');
+          d.appendChild(document.createTextNode(str));
+          return d.innerHTML;
+        }
+
         function renderRecentCards(statuses) {
           var checkSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
           var cartSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>';
@@ -895,25 +902,31 @@
             } else if (st === 'reserved') {
               btnHtml = '<button class="product-card__cart product-card__cart--disabled" type="button" disabled aria-label="Rezerviran">' + cartSvg + '</button>';
             } else {
-              btnHtml = '<button class="product-card__cart" type="button" onclick="cart.add(\'' + p.id + '\', \'1\');" aria-label="Dodaj v košarico">' + cartSvg + '</button>';
+              btnHtml = '<button class="product-card__cart" type="button" onclick="cart.add(\'' + safeId + '\', \'1\');" aria-label="Dodaj v košarico">' + cartSvg + '</button>';
             }
-            html += '<article class="product-card product-card--scroll" data-product-id="' + p.id + '">' +
+            var safeName = esc(p.name);
+            var safeBrand = esc(p.brand);
+            var safePrice = esc(p.price);
+            var safeHref = esc(p.href);
+            var safeThumb = esc(p.thumb);
+            var safeId = parseInt(p.id, 10) || 0;
+            html += '<article class="product-card product-card--scroll" data-product-id="' + safeId + '">' +
               '<div class="product-card__media">' +
-                '<a href="' + p.href + '" class="product-card__img-wrap">' +
+                '<a href="' + safeHref + '" class="product-card__img-wrap">' +
                   '<div class="product-card__img">' +
                     '<div class="product-card__labels">' + labelHtml + '</div>' +
-                    (p.thumb ? '<img src="' + p.thumb + '" alt="' + p.name.replace(/"/g, '&quot;') + '" loading="lazy" />' : '') +
+                    (safeThumb ? '<img src="' + safeThumb + '" alt="' + safeName + '" loading="lazy" />' : '') +
                   '</div>' +
                 '</a>' +
-                '<button class="product-card__fav" type="button" onclick="wishlist.add(\'' + p.id + '\');" aria-label="Dodaj med priljubljene">' +
+                '<button class="product-card__fav" type="button" onclick="wishlist.add(\'' + safeId + '\');" aria-label="Dodaj med priljubljene">' +
                   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
                 '</button>' +
               '</div>' +
               '<div class="product-card__body">' +
-                (p.brand ? '<p class="product-card__manufacturer">' + p.brand + '</p>' : '') +
-                '<a href="' + p.href + '" class="product-card__name">' + p.name + '</a>' +
+                (safeBrand ? '<p class="product-card__manufacturer">' + safeBrand + '</p>' : '') +
+                '<a href="' + safeHref + '" class="product-card__name">' + safeName + '</a>' +
                 '<div class="product-card__footer">' +
-                  '<p class="product-card__price">' + p.price + '</p>' +
+                  '<p class="product-card__price">' + safePrice + '</p>' +
                   btnHtml +
                 '</div>' +
               '</div>' +

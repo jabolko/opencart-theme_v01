@@ -57,10 +57,18 @@ class Cart {
 			}
 		}
 
-		// Reservation expiry: restore stock + delete expired cart rows (transaction)
+		// Reservation expiry: restore stock + delete expired cart rows
+		// Uses SELECT FOR UPDATE to prevent double-restock from concurrent requests
 		$this->db->query("START TRANSACTION");
-		$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND c.api_id = '0'");
-		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0'");
+		$expired = $this->db->query("SELECT cart_id, product_id, quantity FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' FOR UPDATE");
+		if ($expired->num_rows) {
+			$expired_ids = array();
+			foreach ($expired->rows as $row) {
+				$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$row['quantity'] . " WHERE product_id = '" . (int)$row['product_id'] . "'");
+				$expired_ids[] = (int)$row['cart_id'];
+			}
+			$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id IN (" . implode(',', $expired_ids) . ")");
+		}
 		$this->db->query("COMMIT");
 
 		// Invalidate product cache after expiry cleanup

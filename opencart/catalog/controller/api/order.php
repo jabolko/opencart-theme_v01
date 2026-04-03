@@ -353,6 +353,13 @@ class ControllerApiOrder extends Controller {
 				
 				// clear cart since the order has already been successfully stored.
 				$this->cart->clearCart();
+
+				// Reservation system: also clear cart rows by order product IDs
+				// (API session differs from frontend session — clearCart may miss them)
+				$order_products = $this->model_checkout_order->getOrderProducts($json['order_id']);
+				foreach ($order_products as $op) {
+					$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE product_id = '" . (int)$op['product_id'] . "' AND customer_id = '" . (int)$order_data['customer_id'] . "'");
+				}
 			}
 		}
 

@@ -312,6 +312,15 @@
 
   svg { flex-shrink: 0; }
 
+  &--in-cart {
+    background: $color-success;
+    color: #fff;
+    cursor: default;
+
+    &:hover { background: $color-success; }
+    &:active { transform: none; }
+  }
+
   &--disabled {
     background: $color-text-muted;
     color: #fff;
