@@ -40,7 +40,7 @@ class ControllerCheckoutCart extends Controller {
 
 				// Get active reservations
 				$reserved = array();
-				$res_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "cart WHERE product_id IN (" . $ids_str . ") AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) GROUP BY product_id");
+				$res_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "cart WHERE product_id IN (" . $ids_str . ") AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' GROUP BY product_id");
 				foreach ($res_query->rows as $row) {
 					$reserved[] = (int)$row['product_id'];
 				}

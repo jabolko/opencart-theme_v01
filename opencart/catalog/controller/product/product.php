@@ -259,7 +259,7 @@ class ControllerProductProduct extends Controller {
 			if ($my_cart_check->num_rows) {
 				$data['reservation_status'] = 'in_cart';
 			} elseif ((int)$product_info['quantity'] <= 0) {
-				$reserved_check = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . $pid . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
+				$reserved_check = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . $pid . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' LIMIT 1");
 				$data['reservation_status'] = $reserved_check->num_rows ? 'reserved' : 'sold';
 			} else {
 				$data['reservation_status'] = 'available';
@@ -488,7 +488,7 @@ class ControllerProductProduct extends Controller {
 			}
 
 			// Base WHERE clause for similar products (exclude sold: qty=0 and not in any cart)
-			$similar_base = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "' AND (p.quantity > 0 OR p.product_id IN (SELECT c.product_id FROM " . DB_PREFIX . "cart c WHERE c.date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE)))";
+			$similar_base = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "' AND (p.quantity > 0 OR p.product_id IN (SELECT c.product_id FROM " . DB_PREFIX . "cart c WHERE c.date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND c.api_id = '0'))";
 
 			// Size + gender conditions (reused in both queries)
 			$size_cond = '';
