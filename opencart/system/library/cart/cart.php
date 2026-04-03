@@ -29,30 +29,14 @@ class Cart {
 			$this->session->data['_reservation_db_init'] = true;
 		}
 
-		// Persistent cart recovery for guests (cookie-first, IP fallback)
+		// Persistent cart recovery for guests (cookie-based)
 		if (!(int)$this->customer->getId() && $this->session->getId()) {
-			$recovered = false;
-			$current_session = $this->session->getId();
-
-			// Method 1: Cookie-based recovery
 			if (!empty($_COOKIE['oc_cart_token'])) {
 				$token = $_COOKIE['oc_cart_token'];
+				$current_session = $this->session->getId();
 				$cookie_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0' AND session_id != '" . $this->db->escape($current_session) . "' LIMIT 1");
 				if ($cookie_cart->num_rows) {
 					$this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($current_session) . "' WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0'");
-					$recovered = true;
-				}
-			}
-
-			// Method 2: IP fallback (only if cookie didn't match, scoped to 30 min)
-			if (!$recovered) {
-				$visitor_ip = $this->getVisitorIp();
-				if ($visitor_ip) {
-					$ip_cart = $this->db->query("SELECT session_id FROM " . DB_PREFIX . "cart WHERE visitor_ip = '" . $this->db->escape($visitor_ip) . "' AND customer_id = '0' AND session_id != '" . $this->db->escape($current_session) . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
-					if ($ip_cart->num_rows) {
-						// Claim only carts from that ONE session (not all carts from this IP)
-						$this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($current_session) . "' WHERE session_id = '" . $this->db->escape($ip_cart->row['session_id']) . "' AND customer_id = '0'");
-					}
 				}
 			}
 		}
@@ -356,7 +340,7 @@ class Cart {
 				$this->db->query("COMMIT");
 
 				// Set persistent recovery cookie (30 days, HttpOnly)
-				setcookie('oc_cart_token', $cart_token, time() + (30 * 86400), '/', '', false, true);
+				setcookie('oc_cart_token', $cart_token, time() + (30 * 86400), '/', '', !empty($_SERVER['HTTPS']), true);
 
 				// Invalidate product cache
 				if ($this->cache) {
