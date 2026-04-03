@@ -530,13 +530,8 @@ class ControllerProductProduct extends Controller {
 				$data['similar_title'] = 'Podobni artikli';
 			}
 
-			// Build product data from found IDs — enrich with labels
-			$sim_raw = array();
-			foreach ($found_ids as $sim_id) {
-				$sim_product = $this->model_catalog_product->getProduct($sim_id);
-				if (!$sim_product) continue;
-				$sim_raw[$sim_id] = $sim_product;
-			}
+			// Build product data from found IDs (batch query, not N+1)
+			$sim_raw = $this->model_catalog_product->getProductsByIds($found_ids);
 			$sim_raw = $this->model_catalog_product->getProductLabels($sim_raw);
 
 			foreach ($sim_raw as $sim_product) {

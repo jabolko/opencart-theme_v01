@@ -187,6 +187,7 @@ class ControllerProductSearch extends Controller {
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
+			$results = $this->model_catalog_product->getProductLabels($results);
 
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -231,6 +232,11 @@ class ControllerProductSearch extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
+					'reservation_status' => $result['reservation_status'],
+					'in_cart'     => $result['in_cart'],
+					'is_new'      => $result['is_new'],
+					'is_top_brand' => $result['is_top_brand'],
+					'has_tag_label' => $result['has_tag_label'],
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'] . $url)
 				);
 			}
