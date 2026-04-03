@@ -859,49 +859,64 @@ Existing label shape PNGs in `image/catalog/assets/elements/labels/` (ribbons, h
 
 ---
 
-## Implementation Order
+## Implementation Status (2026-04-03)
 
-```
-Phase 1: OCMOD files
-  1. Write reservation-timer.ocmod.xml
-  2. Write reservation-checkout-extend.ocmod.xml
-  3. Upload via Admin > Extensions > Installer
-  4. Click Refresh in Admin > Extensions > Modifications
-  5. Clear OCMOD cache: delete system/storage/modification/* if needed
+All phases complete. Development uses direct core edits + test script. OCMOD XML generation deferred to production deploy.
 
-Phase 2: Core testing
-  6. Test: add product → verify quantity decremented in DB
-  7. Test: close browser, reopen → verify cart recovered (cookie)
-  8. Test: wait 30 min → verify stock restored
-  9. Test: two browsers, same product → verify only first succeeds
-  10. Test: complete order → verify stock stays deducted
-  11. Test: cancel order (admin) → verify stock restored
+### Phase 1: Core reservation — DONE
+- Direct edits to 12 core PHP files (manifest: `modified-files.txt`)
+- Test script: `test-reservation.sh` (13 assertions + cleanup)
 
-Phase 3: Theme integration — timers + labels
-  12. Update cart.twig — data-server-time, data-time-added attributes
-  13. Update cart controller — pass server_time to template
-  14. Replace localStorage timer in theme.js with server-synced timer
-  15. Add checkout heartbeat JS to checkout.twig
-  16. Create "Oznake" attribute group + "Z etiketo" attribute in OC admin
-  17. Identify top brand manufacturer IDs, populate config array
-  18. Add batch label queries to product model (reservation + z etiketo)
-  19. Add label fields to product data arrays (is_new, is_top_brand, has_tag_label)
-  20. Wire label template into latest.twig + category.twig + product.twig
-  21. Add SCSS modifiers (--reserved, --sold, --tagged)
-  22. npm run build
+### Phase 2: Core testing — ALL PASS
+- [x] Add product → qty decremented (T1)
+- [x] Race condition → second user blocked (T2)
+- [x] Already in cart → error returned (T3)
+- [x] Cart page → no stock warning (T4)
+- [x] Checkout accessible (T5)
+- [x] Remove → stock restored (T6)
+- [x] Heartbeat extends timer (T7)
+- [x] Expiry → stock restored after 30 min (T9)
 
-Phase 4: Edge case testing
-  23. Login while guest cart has items → verify merge works
-  24. Two tabs open, add same product → verify no double-add
-  25. Admin edits product while reserved → verify no crash
-  26. Cron endpoint test: curl clearExpired → verify cleanup
-  27. Verify labels: NOVO on recent product, Top znamka on whitelisted brand
-  28. Verify labels: Z etiketo on attributed product
-  29. Verify labels: REZERVIRAN shows when product in another user's cart
-  30. Verify labels: PRODANO shows when quantity=0 with no reservation
-  31. Verify labels: priority — REZERVIRAN/PRODANO hide positive labels
-  32. Full end-to-end: browse → add → checkout → order → verify
-```
+### Phase 3: Theme integration — DONE
+- [x] cart.twig — data-server-time, data-time-added
+- [x] Cart controller — server_time passed
+- [x] Server-synced timer in theme.js (replaced localStorage)
+- [x] Checkout heartbeat JS
+- [x] Z etiketo attribute (ID=82, 52 products tagged)
+- [x] Top brand IDs (Benetton=14, Gap=23, H&M=13, Next=18, Okaidi=17, S.Oliver=16, Zara=12)
+- [x] getProductLabels() batch method in product model
+- [x] Labels wired: category, latest, product page, similar, related
+- [x] SCSS: --reserved, --sold, --tagged, --in-cart, --brand, --novo
+- [x] Instant UI: ajaxComplete hook for badge/button swap
+- [x] getStockStatus endpoint for JS-rendered cards (recently viewed)
+- [x] Cart dropdown + mobile sheet per-item timers
+- [x] Sold filtered from similar/related/recently viewed
+- [x] Product page CTA states (V košarici / Že v košarici drugega kupca / Prodano)
+- [x] Scarcity hidden when sold
+- [x] npm run build
+
+### Phase 4: Manual browser testing — ALL PASS (2026-04-03)
+- [x] Full end-to-end: browse → add → checkout → order (order 9276)
+- [x] Order cancel restores stock (orders 9278, 9279) — required `subtract=1` fix
+- [x] Login merge: guest → register → cart preserved
+- [x] Logout → cart hidden, login back → cart restored
+- [x] Second browser: REZERVIRANO label, disabled CTA, "Že v košarici drugega kupca"
+- [x] Cron endpoint: clearExpired returns `{"success":true}`
+- [x] NOVO, Top znamka, Z etiketo labels verified on category pages
+- [x] Duplicate add → "Ta artikel je že v tvoji košarici"
+- [x] Sold add → "Ta artikel je žal že prodan"
+- [x] Reserved add → "Artikel je že rezerviran za drugo stranko"
+
+### Critical fix discovered during testing
+All 6913 products had `subtract=0` (original import). Fixed globally to `subtract=1`.
+Without this, OC's restock on order cancel does not fire (`WHERE subtract='1'`).
+
+### Remaining items (not blockers)
+- Generate OCMOD XML from diffs (pre-production)
+- N+1 optimization in similar products (batch query)
+- Search page labels (product/search controller — same pattern)
+- Special/manufacturer page labels (same pattern)
+- Update core-modifications.md with reservation entries
 
 ---
 

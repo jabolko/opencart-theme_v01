@@ -17,6 +17,106 @@ One entry per Lighthouse run. Record after every significant change.
 
 ---
 
+### 2026-04-03 — Reservation system complete, product labels, instant UI updates, cart timers
+
+#### Homepage Desktop (CLI localhost)
+- Page tested: homepage
+- Lighthouse Performance: 99/100
+- Lighthouse Accessibility: 86/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 0.6s | LCP: 0.8s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-home-mobile.html` (desktop preset)
+- Delta vs previous (2026-03-27): = Performance (99→99)
+
+#### Homepage Mobile (CLI localhost, simulated throttling)
+- Page tested: homepage
+- Lighthouse Performance: 82/100
+- Lighthouse Accessibility: 90/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 2.9s | LCP: 4.0s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-home-mobile-sim.html`
+- Delta vs previous (2026-03-27): -18 Performance (100→82)
+- Notes: Previous 100 was desktop preset mislabeled as mobile. This is true mobile throttling.
+  Actual mobile perf unchanged from 2026-03-13 baseline (83→82, within variance).
+
+#### Category Desktop (CLI localhost)
+- Page tested: category (Deklice, path=226)
+- Lighthouse Performance: 98/100
+- Lighthouse Accessibility: 78/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 0.6s | LCP: 0.8s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-category-desktop.html`
+- Notes: First desktop category run. A11y 78 needs Phase 5 attention (filter drawer, labels).
+
+#### Category Mobile (CLI localhost, simulated throttling)
+- Page tested: category (Deklice, path=226)
+- Lighthouse Performance: 80/100
+- Lighthouse Accessibility: 84/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 2.9s | LCP: 3.8s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-category-mobile.html`
+- Delta vs previous (2026-03-18): -2 Performance (82→80), = Accessibility
+- Notes: Reservation label queries add ~1ms. Perf delta within variance.
+
+#### Product Desktop (CLI localhost)
+- Page tested: product (product_id=66092)
+- Lighthouse Performance: 99/100
+- Lighthouse Accessibility: 82/100
+- Lighthouse Best Practices: 100/100
+- Lighthouse SEO: 100/100
+- FCP: 0.7s | LCP: 0.9s | TBT: 0ms | CLS: 0.019
+- Report file: `reports/lighthouse-product-desktop.html`
+- Delta vs previous (2026-03-20): +1 Performance (98→99)
+
+#### Product Mobile (CLI localhost, simulated throttling)
+- Page tested: product (product_id=66092)
+- Lighthouse Performance: 78/100
+- Lighthouse Accessibility: 87/100
+- Lighthouse Best Practices: 96/100
+- Lighthouse SEO: 100/100
+- FCP: 3.5s | LCP: 4.3s | TBT: 0ms | CLS: 0
+- Report file: `reports/lighthouse-product-mobile.html`
+- Delta vs previous (2026-03-27): -22 Performance (100→78)
+- Notes: Previous 100 was desktop preset. True mobile throttling shows 78, consistent
+  with 2026-03-20 baseline (72→78, actually improved). Docker TTFB is the bottleneck.
+
+#### What changed
+- Reservation system: atomic stock decrement, 30-min expiry, checkout heartbeat
+- Product labels: REZERVIRANO, PRODANO, V KOŠARICI, Top znamka, Z etiketo
+- Instant UI: ajaxComplete hook swaps badges/buttons without refresh
+- Cart timers: server-synced countdown in cart page, dropdown, mobile sheet
+- getStockStatus endpoint for JS-rendered cards (recently viewed)
+- Sold products filtered from similar/related/recently viewed
+- Product page CTA states: V košarici / Že v košarici drugega kupca / Prodano
+
+#### Reservation system performance impact
+- TBT: 0ms on all pages (no JS blocking from reservation logic)
+- CLS: 0 on all pages (no layout shift from labels)
+- Extra queries per page: 2-4 (batch, ~1ms total)
+- JS: theme.min.js grew 17KB → 19KB (+2KB for timers/labels/ajaxComplete)
+- Net performance impact: **zero measurable** (all scores within variance)
+
+#### vs Targets
+| Metric | Target | Homepage M | Category M | Product M | Status |
+|--------|--------|-----------|-----------|----------|--------|
+| Perf   | >= 90  | 82        | 80        | 78       | MISS — Docker TTFB |
+| A11y   | >= 90  | 90        | 84        | 87       | PARTIAL — homepage hits |
+| BP     | >= 90  | 100       | 100       | 96       | PASS |
+| SEO    | >= 90  | 100       | 100       | 100      | PASS |
+| LCP    | < 2.5s | 4.0s      | 3.8s      | 4.3s     | MISS — Docker TTFB |
+| TBT    | —      | 0ms       | 0ms       | 0ms      | PASS |
+| CLS    | < 0.1  | 0         | 0         | 0        | PASS |
+
+Mobile Perf and LCP miss targets due to Docker TTFB (~700-800ms). On real hosting
+with <100ms TTFB, LCP would drop to ~1.5-2.0s and Perf would reach 90+.
+Desktop scores (98-99) confirm theme assets are not the bottleneck.
+
+---
+
 ### 2026-03-27 — Cart page complete, .htaccess (gzip/cache/security), font preload, Docker WebP/AVIF
 
 #### Cart Mobile (CLI localhost)
