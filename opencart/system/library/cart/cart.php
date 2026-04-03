@@ -358,7 +358,7 @@ class Cart {
 			} else {
 				$this->db->query("ROLLBACK");
 				// Distinguish: reserved by another customer vs sold out
-				$in_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . (int)$product_id . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
+				$in_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . (int)$product_id . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' LIMIT 1");
 				if ($in_cart->num_rows) {
 					$this->session->data['reservation_failed'] = (int)$product_id;
 				} else {
