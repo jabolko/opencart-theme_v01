@@ -68,13 +68,13 @@ class Cart {
 				$expired_ids[] = (int)$row['cart_id'];
 			}
 			$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id IN (" . implode(',', $expired_ids) . ")");
+
+			// Invalidate product cache only when stock actually changed
+			if ($this->cache) {
+				$this->cache->delete('product');
+			}
 		}
 		$this->db->query("COMMIT");
-
-		// Invalidate product cache after expiry cleanup
-		if ($this->cache) {
-			$this->cache->delete('product');
-		}
 
 		if ($this->customer->getId()) {
 			// We want to change the session ID on all the old items in the customers cart
@@ -84,8 +84,16 @@ class Cart {
 			$cart_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE api_id = '0' AND customer_id = '0' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
 
 			foreach ($cart_query->rows as $cart) {
-				// Reservation system: claim the guest cart row (don't delete+re-add — would double-decrement stock)
-				$this->db->query("UPDATE " . DB_PREFIX . "cart SET customer_id = '" . (int)$this->customer->getId() . "' WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+				// Check if customer already has this product in cart (from a previous logged-in session)
+				$existing = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '0' AND customer_id = '" . (int)$this->customer->getId() . "' AND product_id = '" . (int)$cart['product_id'] . "' AND `option` = '" . $this->db->escape($cart['option']) . "' AND recurring_id = '" . (int)$cart['recurring_id'] . "' LIMIT 1");
+				if ($existing->num_rows) {
+					// Duplicate — restore stock for the guest row and delete it
+					$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart['quantity'] . " WHERE product_id = '" . (int)$cart['product_id'] . "'");
+					$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+				} else {
+					// Claim the guest cart row
+					$this->db->query("UPDATE " . DB_PREFIX . "cart SET customer_id = '" . (int)$this->customer->getId() . "' WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+				}
 			}
 		}
 	}
@@ -381,16 +389,19 @@ class Cart {
 	}
 
 	public function remove($cart_id) {
-		// Restore reserved stock before removing from cart
-		$cart_item = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+		// Transaction: restore stock + delete row atomically (prevents race with expiry)
+		$this->db->query("START TRANSACTION");
+		$cart_item = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' FOR UPDATE");
 		if ($cart_item->num_rows) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart_item->row['quantity'] . " WHERE product_id = '" . (int)$cart_item->row['product_id'] . "'");
-			// Invalidate cache
+			$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "'");
+			$this->db->query("COMMIT");
 			if ($this->cache) {
 				$this->cache->delete('product');
 			}
+		} else {
+			$this->db->query("COMMIT");
 		}
-		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
 	}
 
 	// Called on successful order — stock stays deducted (reservation becomes sale)
@@ -400,13 +411,20 @@ class Cart {
 
 	// Called on manual cart clear / admin login override — restores stock
 	public function clear() {
-		// Restore stock for all reserved items before clearing
-		$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND c.customer_id = '" . (int)$this->customer->getId() . "' AND c.session_id = '" . $this->db->escape($this->session->getId()) . "'");
-		// Invalidate cache
+		$api_id = isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0;
+		$customer_id = (int)$this->customer->getId();
+		$session_id = $this->db->escape($this->session->getId());
+
+		// Transaction: restore stock + delete rows atomically
+		$this->db->query("START TRANSACTION");
+		$this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "' FOR UPDATE");
+		$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.api_id = '" . $api_id . "' AND c.customer_id = '" . $customer_id . "' AND c.session_id = '" . $session_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "'");
+		$this->db->query("COMMIT");
+
 		if ($this->cache) {
 			$this->cache->delete('product');
 		}
-		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
 	}
 
 	public function getRecurringProducts() {

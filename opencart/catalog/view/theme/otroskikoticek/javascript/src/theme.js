@@ -896,6 +896,12 @@
             if (st === 'sold') continue;
             count++;
             var labelHtml = labelMap[st] || '';
+            var safeId = parseInt(p.id, 10) || 0;
+            var safeName = esc(p.name);
+            var safeBrand = esc(p.brand);
+            var safePrice = esc(p.price);
+            var safeHref = esc(p.href);
+            var safeThumb = esc(p.thumb);
             var btnHtml;
             if (st === 'in_cart') {
               btnHtml = '<button class="product-card__cart product-card__cart--in-cart" type="button" disabled aria-label="V košarici">' + checkSvg + '</button>';
@@ -904,12 +910,6 @@
             } else {
               btnHtml = '<button class="product-card__cart" type="button" onclick="cart.add(\'' + safeId + '\', \'1\');" aria-label="Dodaj v košarico">' + cartSvg + '</button>';
             }
-            var safeName = esc(p.name);
-            var safeBrand = esc(p.brand);
-            var safePrice = esc(p.price);
-            var safeHref = esc(p.href);
-            var safeThumb = esc(p.thumb);
-            var safeId = parseInt(p.id, 10) || 0;
             html += '<article class="product-card product-card--scroll" data-product-id="' + safeId + '">' +
               '<div class="product-card__media">' +
                 '<a href="' + safeHref + '" class="product-card__img-wrap">' +
