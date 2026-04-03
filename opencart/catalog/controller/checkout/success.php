@@ -4,7 +4,7 @@ class ControllerCheckoutSuccess extends Controller {
 		$this->load->language('checkout/success');
 
 		if (isset($this->session->data['order_id'])) {
-			$this->cart->clear();
+			$this->cart->clearCart();
 
 			unset($this->session->data['shipping_method']);
 			unset($this->session->data['shipping_methods']);

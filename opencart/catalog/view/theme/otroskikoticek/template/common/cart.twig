@@ -14,12 +14,12 @@
   <ul class="dropdown-menu pull-right cart-desktop-drop">
     {% if products or vouchers %}
     <li>
-      <div class="cart-drop">
+      <div class="cart-drop" data-server-time="{{ server_time }}">
         <div class="cart-drop__header">Košarica</div>
         <div class="cart-drop__shipping" id="js-desktop-cart-shipping"></div>
         <div class="cart-drop__items">
           {% for product in products %}
-          <div class="cart-drop__item">
+          <div class="cart-drop__item" data-time-added="{{ product.date_added }}">
             <a href="{{ product.href }}" class="cart-drop__thumb">
               {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}" />{% endif %}
             </a>
@@ -28,6 +28,10 @@
               {% if product.option %}
               <span class="cart-drop__option">{% for option in product.option %}{{ option.name }}: {{ option.value }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
               {% endif %}
+              <span class="cart-drop__timer">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span class="cart-drop__timer-val">--:--</span>
+              </span>
             </div>
             <span class="cart-drop__price">{{ product.total }}</span>
             <button type="button" onclick="cart.remove('{{ product.cart_id }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
@@ -86,7 +90,7 @@
     {% if products or vouchers %}
     <div class="cart-drop__items">
       {% for product in products %}
-      <div class="cart-drop__item">
+      <div class="cart-drop__item" data-time-added="{{ product.date_added }}">
         <a href="{{ product.href }}" class="cart-drop__thumb">
           {% if product.thumb %}<img src="{{ product.thumb }}" alt="{{ product.name }}" />{% endif %}
         </a>
@@ -95,6 +99,10 @@
           {% if product.option %}
           <span class="cart-drop__option">{% for option in product.option %}{{ option.name }}: {{ option.value }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
           {% endif %}
+          <span class="cart-drop__timer">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="cart-drop__timer-val">--:--</span>
+          </span>
         </div>
         <span class="cart-drop__price">{{ product.total }}</span>
         <button type="button" onclick="cart.remove('{{ product.cart_id }}');" class="cart-drop__remove" title="{{ button_remove }}">×</button>
@@ -208,5 +216,40 @@
   };
 
   window.updateCartShipping();
+
+  // Reservation timer for cart dropdown + mobile sheet
+  window.tickCartDropTimers = function() {
+    var drops = document.querySelectorAll('.cart-drop[data-server-time], .cart-sheet__body');
+    var serverEl = document.querySelector('.cart-drop[data-server-time]');
+    if (!serverEl) return;
+    var serverNow = new Date(serverEl.getAttribute('data-server-time').replace(' ', 'T')).getTime();
+    var offset = serverNow - Date.now();
+
+    var items = document.querySelectorAll('.cart-drop__item[data-time-added]');
+    if (!items.length) return;
+
+    function fmt(ms) {
+      if (ms <= 0) return '0:00';
+      var s = Math.floor(ms / 1000);
+      var m = Math.floor(s / 60);
+      s = s % 60;
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
+
+    function tick() {
+      var now = Date.now() + offset;
+      var anyActive = false;
+      for (var i = 0; i < items.length; i++) {
+        var added = new Date(items[i].getAttribute('data-time-added').replace(' ', 'T')).getTime();
+        var remaining = 1800000 - (now - added);
+        var el = items[i].querySelector('.cart-drop__timer-val');
+        if (el) el.textContent = fmt(remaining);
+        if (remaining > 0) anyActive = true;
+      }
+      if (anyActive) setTimeout(tick, 1000);
+    }
+    tick();
+  };
+  window.tickCartDropTimers();
 })();
 //--></script>

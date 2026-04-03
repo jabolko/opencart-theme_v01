@@ -95,16 +95,17 @@ class ControllerCommonCart extends Controller {
 			}
 
 			$data['products'][] = array(
-				'cart_id'   => $product['cart_id'],
-				'thumb'     => $image,
-				'name'      => $product['name'],
-				'model'     => $product['model'],
-				'option'    => $option_data,
-				'recurring' => ($product['recurring'] ? $product['recurring']['name'] : ''),
-				'quantity'  => $product['quantity'],
-				'price'     => $price,
-				'total'     => $total,
-				'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
+				'cart_id'    => $product['cart_id'],
+				'thumb'      => $image,
+				'name'       => $product['name'],
+				'model'      => $product['model'],
+				'option'     => $option_data,
+				'recurring'  => ($product['recurring'] ? $product['recurring']['name'] : ''),
+				'quantity'   => $product['quantity'],
+				'price'      => $price,
+				'total'      => $total,
+				'date_added' => $product['date_added'],
+				'href'       => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 			);
 		}
 
@@ -132,6 +133,7 @@ class ControllerCommonCart extends Controller {
 
 		$data['cart'] = $this->url->link('checkout/cart');
 		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
+		$data['server_time'] = date('Y-m-d H:i:s');
 
 		return $this->load->view('common/cart', $data);
 	}

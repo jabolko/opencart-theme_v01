@@ -182,6 +182,9 @@ class ControllerProductCategory extends Controller {
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
+			// Enrich with label data (reservation status, NOVO, Top znamka, Z etiketo)
+			$results = $this->model_catalog_product->getProductLabels($results);
+
 			foreach ($results as $result) {
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_product_height'));
@@ -226,6 +229,11 @@ class ControllerProductCategory extends Controller {
 					'tax'          => $tax,
 					'minimum'      => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'       => $result['rating'],
+					'reservation_status' => $result['reservation_status'],
+					'in_cart'      => $result['in_cart'],
+					'is_new'       => $result['is_new'],
+					'is_top_brand' => $result['is_top_brand'],
+					'has_tag_label' => $result['has_tag_label'],
 					'href'         => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
 				);
 			}

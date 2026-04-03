@@ -1,0 +1,31 @@
+# Reservation System — Modified Core Files Manifest
+# These files are edited directly during development.
+# OCMOD XML will be generated from git diff against baseline.
+#
+# OCMOD 1: reservation-timer (core reservation logic)
+system/library/cart/cart.php                          # heart of reservation (add/remove/clear/expiry/recovery)
+catalog/controller/checkout/cart.php                  # endpoints + failure catch + already-in-cart
+catalog/controller/checkout/success.php               # clearCart() not clear()
+catalog/controller/api/order.php                      # clearCart() not clear()
+catalog/model/checkout/order.php                      # disabled stock subtraction
+catalog/language/sl-SI/checkout/cart.php               # error_reserved + error_already_in_cart + timer text
+catalog/language/en-gb/checkout/cart.php               # same (English)
+
+# OCMOD 2: reservation-checkout-extend (heartbeat)
+catalog/controller/checkout/checkout.php              # updateCartTime() method
+
+# OCMOD 3: reservation-labels (product labels + product page)
+catalog/model/catalog/product.php                     # getProductLabels() batch method
+catalog/controller/extension/module/latest.php        # calls getProductLabels(), passes to template
+catalog/controller/product/category.php               # calls getProductLabels(), passes to template
+catalog/controller/product/product.php                # reservation_status for product page
+
+# Theme files (NOT OCMOD — our theme, normal git):
+# catalog/view/theme/otroskikoticek/template/checkout/cart.twig       — data-server-time, data-time-added
+# catalog/view/theme/otroskikoticek/template/checkout/checkout.twig   — heartbeat JS
+# catalog/view/theme/otroskikoticek/template/extension/module/latest.twig — label badges
+# catalog/view/theme/otroskikoticek/template/product/category.twig    — label badges
+# catalog/view/theme/otroskikoticek/template/product/product.twig     — REZERVIRAN/PRODANO + disabled CTA
+# catalog/view/theme/otroskikoticek/javascript/src/theme.js           — server timer + instant card update
+# catalog/view/theme/otroskikoticek/stylesheet/src/components/_product-card.scss — label modifiers
+# catalog/view/theme/otroskikoticek/stylesheet/src/pages/_product.scss — disabled button + gallery label

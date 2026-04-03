@@ -251,6 +251,20 @@ class ControllerProductProduct extends Controller {
 			$data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
 
 			$data['product_id'] = (int)$this->request->get['product_id'];
+
+			// Reservation status for this product
+			$pid = (int)$this->request->get['product_id'];
+			// Check if this user has it in their cart
+			$my_cart_check = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . $pid . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND customer_id = '" . (int)$this->customer->getId() . "' LIMIT 1");
+			if ($my_cart_check->num_rows) {
+				$data['reservation_status'] = 'in_cart';
+			} elseif ((int)$product_info['quantity'] <= 0) {
+				$reserved_check = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . $pid . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
+				$data['reservation_status'] = $reserved_check->num_rows ? 'reserved' : 'sold';
+			} else {
+				$data['reservation_status'] = 'available';
+			}
+
 			$data['manufacturer'] = $product_info['manufacturer'];
 			$data['manufacturers'] = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $product_info['manufacturer_id']);
 			$data['model'] = $product_info['model'];
@@ -400,8 +414,11 @@ class ControllerProductProduct extends Controller {
 			$data['products'] = array();
 
 			$results = $this->model_catalog_product->getProductRelated($this->request->get['product_id']);
+			$results = $this->model_catalog_product->getProductLabels($results);
 
 			foreach ($results as $result) {
+				// Filter out sold products
+				if ($result['reservation_status'] == 'sold') continue;
 				if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
 				} else {
@@ -444,6 +461,8 @@ class ControllerProductProduct extends Controller {
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $rating,
+					'reservation_status' => $result['reservation_status'],
+					'in_cart'     => $result['in_cart'],
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])
 				);
 			}
@@ -468,8 +487,8 @@ class ControllerProductProduct extends Controller {
 				if ($attr['attribute_id'] == 75) $znamka = $attr['text'];
 			}
 
-			// Base WHERE clause for similar products
-			$similar_base = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "'";
+			// Base WHERE clause for similar products (exclude sold: qty=0 and not in any cart)
+			$similar_base = "SELECT DISTINCT p.product_id FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND p.product_id != '" . $product_id . "' AND (p.quantity > 0 OR p.product_id IN (SELECT c.product_id FROM " . DB_PREFIX . "cart c WHERE c.date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE)))";
 
 			// Size + gender conditions (reused in both queries)
 			$size_cond = '';
@@ -511,10 +530,18 @@ class ControllerProductProduct extends Controller {
 				$data['similar_title'] = 'Podobni artikli';
 			}
 
-			// Build product data from found IDs
+			// Build product data from found IDs — enrich with labels
+			$sim_raw = array();
 			foreach ($found_ids as $sim_id) {
 				$sim_product = $this->model_catalog_product->getProduct($sim_id);
 				if (!$sim_product) continue;
+				$sim_raw[$sim_id] = $sim_product;
+			}
+			$sim_raw = $this->model_catalog_product->getProductLabels($sim_raw);
+
+			foreach ($sim_raw as $sim_product) {
+				// Filter out sold products
+				if ($sim_product['reservation_status'] == 'sold') continue;
 
 				if ($sim_product['image']) {
 					$sim_image = $this->model_tool_image->resize($sim_product['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_related_height'));
@@ -542,6 +569,8 @@ class ControllerProductProduct extends Controller {
 					'price'        => $sim_price,
 					'special'      => $sim_special,
 					'minimum'      => $sim_product['minimum'] > 0 ? $sim_product['minimum'] : 1,
+					'reservation_status' => $sim_product['reservation_status'],
+					'in_cart'      => $sim_product['in_cart'],
 					'href'         => $this->url->link('product/product', 'product_id=' . $sim_product['product_id'])
 				);
 			}

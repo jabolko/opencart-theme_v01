@@ -560,4 +560,91 @@ class ModelCatalogProduct extends Model {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id IN(" . implode(',', $implode) . ")");
   	    return $query->row;
 	}
+
+	/**
+	 * Batch-compute product labels for an array of products.
+	 * Returns the same array with label fields added to each product.
+	 *
+	 * @param array $products Array of product arrays (must have product_id, quantity, manufacturer_id, date_added)
+	 * @return array Same array with reservation_status, is_new, is_top_brand, has_tag_label added
+	 */
+	public function getProductLabels($products) {
+		if (empty($products)) {
+			return $products;
+		}
+
+		// Collect product IDs
+		$product_ids = array();
+		foreach ($products as $product) {
+			$product_ids[] = (int)$product['product_id'];
+		}
+		$ids_str = implode(',', $product_ids);
+
+		// 1a. Reservation status: which products have active cart reservations (any user)?
+		$reserved_ids = array();
+		$reserved_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "cart WHERE product_id IN (" . $ids_str . ") AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) GROUP BY product_id");
+		foreach ($reserved_query->rows as $row) {
+			$reserved_ids[] = (int)$row['product_id'];
+		}
+
+		// 1b. Which products are in THIS user's cart?
+		$session_id = $this->db->escape($this->session->getId());
+		$customer_id = (int)$this->customer->getId();
+		$my_cart_ids = array();
+		$my_cart_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "cart WHERE product_id IN (" . $ids_str . ") AND session_id = '" . $session_id . "' AND customer_id = '" . $customer_id . "'");
+		foreach ($my_cart_query->rows as $row) {
+			$my_cart_ids[] = (int)$row['product_id'];
+		}
+
+		// 2. Z etiketo attribute
+		$z_etiketo_attr_id = 82;
+		$tagged_ids = array();
+		if ($z_etiketo_attr_id > 0) {
+			$tag_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product_attribute WHERE product_id IN (" . $ids_str . ") AND attribute_id = '" . (int)$z_etiketo_attr_id . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "' AND LOWER(text) = 'da'");
+			foreach ($tag_query->rows as $row) {
+				$tagged_ids[] = (int)$row['product_id'];
+			}
+		}
+
+		// 3. Top brand manufacturer IDs
+		// Benetton=14, Gap=23, H&M=13, Next=18, Okaidi=17, S.Oliver=16, Zara=12
+		$top_brand_ids = array(12, 13, 14, 16, 17, 18, 23);
+
+		// 4. NOVO threshold: 14 days
+		$novo_threshold = strtotime('-14 days');
+
+		// Enrich each product
+		foreach ($products as &$product) {
+			$pid = (int)$product['product_id'];
+			$qty = isset($product['quantity']) ? (int)$product['quantity'] : 1;
+			$mfg_id = isset($product['manufacturer_id']) ? (int)$product['manufacturer_id'] : 0;
+			$date_added = isset($product['date_added']) ? $product['date_added'] : '';
+
+			// In this user's cart?
+			$product['in_cart'] = in_array($pid, $my_cart_ids);
+
+			// Reservation status
+			if ($product['in_cart']) {
+				$product['reservation_status'] = 'in_cart';
+			} elseif ($qty <= 0 && in_array($pid, $reserved_ids)) {
+				$product['reservation_status'] = 'reserved';
+			} elseif ($qty <= 0) {
+				$product['reservation_status'] = 'sold';
+			} else {
+				$product['reservation_status'] = 'available';
+			}
+
+			// NOVO
+			$product['is_new'] = ($date_added && strtotime($date_added) > $novo_threshold);
+
+			// Top znamka
+			$product['is_top_brand'] = in_array($mfg_id, $top_brand_ids);
+
+			// Z etiketo
+			$product['has_tag_label'] = in_array($pid, $tagged_ids);
+		}
+		unset($product); // break reference
+
+		return $products;
+	}
 }

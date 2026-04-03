@@ -34,6 +34,10 @@ $_['column_total']             = 'Total';
 
 // Error
 $_['error_stock']              = 'Products marked with *** are not available in the desired quantity or not in stock!';
+$_['error_reserved']           = 'This item is already reserved by another customer.';
+$_['error_already_in_cart']    = 'This item is already in your cart.';
+$_['error_sold']               = 'This item has been sold.';
+$_['text_reservation_timer']   = 'Reserved for %s';
 $_['error_minimum']            = 'Minimum order amount for %s is %s!';
 $_['error_required']           = '%s required!';
 $_['error_product']            = 'Warning: There are no products in your cart!';

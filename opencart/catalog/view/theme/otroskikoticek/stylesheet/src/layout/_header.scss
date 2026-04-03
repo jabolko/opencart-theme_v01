@@ -566,6 +566,18 @@ header {
     text-overflow: ellipsis;
   }
 
+  &__timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.24rem;
+    margin-top: 2px;
+    font-family: $font-family-body;
+    font-size: 0.65rem;
+    color: $color-warning;
+
+    svg { flex-shrink: 0; }
+  }
+
   &__price {
     font-family: $font-family-heading;
     font-size: $font-size-sm;
@@ -1391,4 +1403,117 @@ body.mobile-nav-open { overflow: hidden; }
 @keyframes toastFloatUpMobile {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-20px); opacity: 0; }
+}
+
+// ============================================================
+// .search-sheet — mobile search bottom sheet (V3)
+// ============================================================
+
+.search-sheet-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 600;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  &.is-open {
+    display: block;
+    opacity: 1;
+  }
+}
+
+.search-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-surface;
+  z-index: 601;
+  border-radius: $radius-lg $radius-lg 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+
+  &.is-open {
+    transform: translateY(0);
+  }
+
+  // Hide on desktop
+  @include respond-to('md') {
+    display: none;
+  }
+
+  &__handle {
+    width: 2.12rem;
+    height: 0.24rem;
+    background: $color-border;
+    border-radius: 2px;
+    margin: 0.5rem auto 0;
+  }
+
+  &__field {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: $space-4;
+
+    svg {
+      stroke: $color-text-muted;
+      flex-shrink: 0;
+    }
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: $font-family-body;
+    color: $color-text-heading;
+    background: transparent;
+
+    &::placeholder {
+      color: $color-text-muted;
+    }
+  }
+
+  &__clear {
+    background: none;
+    border: none;
+    color: $color-text-muted;
+    font-size: 1.18rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    line-height: 1;
+  }
+
+  &__cats {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    padding: 0 $space-4 $space-4;
+  }
+
+  &__cat {
+    display: inline-block;
+    padding: 0.35rem 0.82rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-full;
+    font-size: 0.76rem;
+    font-family: $font-family-heading;
+    font-weight: 500;
+    color: $color-text-base;
+    text-decoration: none;
+    transition: border-color $transition-base, color $transition-base;
+
+    &:hover {
+      border-color: $color-primary;
+      color: $color-text-heading;
+    }
+  }
 }

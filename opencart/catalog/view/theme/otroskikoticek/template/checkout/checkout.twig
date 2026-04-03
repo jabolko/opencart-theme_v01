@@ -1339,4 +1339,14 @@ $(document).delegate('#button-payment-method', 'click', function() {
     });
 });
 //--></script>
+<script type="text/javascript"><!--
+(function() {
+    // Reservation heartbeat: extend timer every 30 seconds during checkout
+    var hb = setInterval(function() {
+        $.post('index.php?route=checkout/checkout/updateCartTime');
+    }, 30000);
+    $.post('index.php?route=checkout/checkout/updateCartTime');
+    $(window).on('beforeunload', function() { clearInterval(hb); });
+})();
+//--></script>
 {{ footer }}

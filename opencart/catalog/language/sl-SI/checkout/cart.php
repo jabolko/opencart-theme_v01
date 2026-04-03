@@ -39,6 +39,10 @@ $_['column_total']             = 'Cena';
 
 // Error
 $_['error_stock']              = 'POZOR: Izdelki označeni z *** niso dobavljivi v želeni količini ali pa niso na zalogi!';
+$_['error_reserved']           = 'Artikel je že rezerviran za drugo stranko.';
+$_['error_already_in_cart']    = 'Ta artikel je že v tvoji košarici.';
+$_['error_sold']               = 'Ta artikel je žal že prodan.';
+$_['text_reservation_timer']   = 'Rezervirano še %s';
 $_['error_minimum']            = 'POZOR: Najmanjše naročilo za %s je %s!';
 $_['error_required']           = 'POZOR: Polje %s zahtevano!';
 $_['error_product']            = 'POZOR: Ni izdelkov v vaši košarici!';

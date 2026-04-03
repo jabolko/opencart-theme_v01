@@ -1,5 +1,13 @@
 <?php
 class ControllerCheckoutCheckout extends Controller {
+	public function updateCartTime() {
+		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+			$this->db->query("UPDATE " . DB_PREFIX . "cart SET date_added = NOW() WHERE session_id = '" . $this->db->escape($this->session->getId()) . "' AND api_id = '0'");
+			$this->response->addHeader('Content-Type: application/json');
+			$this->response->setOutput(json_encode(array('success' => true, 'server_time' => date('Y-m-d H:i:s'))));
+		}
+	}
+
 	public function index() {
 		// Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {

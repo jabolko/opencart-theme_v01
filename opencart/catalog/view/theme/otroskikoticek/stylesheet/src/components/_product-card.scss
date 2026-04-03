@@ -211,6 +211,33 @@
         transform: translateY(-50%) scale(1);
       }
     }
+
+    // In user's cart — green checkmark
+    &--in-cart {
+      color: $color-success;
+      cursor: default;
+
+      &:hover, &:focus {
+        background: none;
+        color: $color-success;
+      }
+
+      &::after { display: none; }
+    }
+
+    // Reserved by other / sold — greyed out cart icon
+    &--disabled {
+      color: $color-text-muted;
+      opacity: 0.35;
+      cursor: not-allowed;
+
+      &:hover, &:focus {
+        background: none;
+        color: $color-text-muted;
+      }
+
+      &::after { display: none; }
+    }
   }
 }
 
@@ -236,6 +263,26 @@
   &--brand {
     background: $color-surface-alt;
     color: $color-text-base;
+  }
+
+  &--in-cart {
+    background: $color-success;
+    color: #fff;
+  }
+
+  &--reserved {
+    background: $color-warning;
+    color: $color-text-heading;
+  }
+
+  &--sold {
+    background: $color-text-muted;
+    color: #fff;
+  }
+
+  &--tagged {
+    background: $color-success;
+    color: #fff;
   }
 }
 

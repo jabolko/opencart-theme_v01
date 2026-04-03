@@ -1,5 +1,69 @@
 <?php
 class ControllerCheckoutCart extends Controller {
+	public function currentTime() {
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode(array('server_time' => date('Y-m-d H:i:s'))));
+	}
+
+	public function clearExpired() {
+		// Cron endpoint — safety net for expiry when no visitors trigger the constructor
+		$this->db->query("START TRANSACTION");
+		$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND c.api_id = '0'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0'");
+		$this->db->query("COMMIT");
+		$this->cache->delete('product');
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode(array('success' => true)));
+	}
+
+	public function getStockStatus() {
+		$json = array('products' => array());
+		if (isset($this->request->post['product_ids'])) {
+			$ids = array_map('intval', (array)$this->request->post['product_ids']);
+			$ids = array_filter($ids);
+			if ($ids) {
+				$ids_str = implode(',', $ids);
+
+				// Get quantities
+				$query = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "product WHERE product_id IN (" . $ids_str . ")");
+				$quantities = array();
+				foreach ($query->rows as $row) {
+					$quantities[(int)$row['product_id']] = (int)$row['quantity'];
+				}
+
+				// Get active reservations
+				$reserved = array();
+				$res_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "cart WHERE product_id IN (" . $ids_str . ") AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) GROUP BY product_id");
+				foreach ($res_query->rows as $row) {
+					$reserved[] = (int)$row['product_id'];
+				}
+
+				// Get this user's cart
+				$my_cart = array();
+				$my_query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "cart WHERE product_id IN (" . $ids_str . ") AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND customer_id = '" . (int)$this->customer->getId() . "'");
+				foreach ($my_query->rows as $row) {
+					$my_cart[] = (int)$row['product_id'];
+				}
+
+				foreach ($ids as $pid) {
+					$qty = isset($quantities[$pid]) ? $quantities[$pid] : 0;
+					if (in_array($pid, $my_cart)) {
+						$status = 'in_cart';
+					} elseif ($qty <= 0 && in_array($pid, $reserved)) {
+						$status = 'reserved';
+					} elseif ($qty <= 0) {
+						$status = 'sold';
+					} else {
+						$status = 'available';
+					}
+					$json['products'][$pid] = $status;
+				}
+			}
+		}
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
 	public function index() {
 		$this->load->language('checkout/cart');
 
@@ -57,6 +121,19 @@ class ControllerCheckoutCart extends Controller {
 			$data['products'] = array();
 
 			$products = $this->cart->getProducts();
+
+			// Batch-fetch manufacturer names (single query instead of N+1)
+			$product_ids = array();
+			foreach ($products as $p) {
+				$product_ids[] = (int)$p['product_id'];
+			}
+			$manufacturers = array();
+			if ($product_ids) {
+				$mfg_query = $this->db->query("SELECT p.product_id, m.name AS manufacturer FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "manufacturer m ON p.manufacturer_id = m.manufacturer_id WHERE p.product_id IN (" . implode(',', $product_ids) . ")");
+				foreach ($mfg_query->rows as $row) {
+					$manufacturers[$row['product_id']] = $row['manufacturer'];
+				}
+			}
 
 			foreach ($products as $product) {
 				$product_total = 0;
@@ -131,9 +208,8 @@ class ControllerCheckoutCart extends Controller {
 					}
 				}
 
-				// Fetch manufacturer name for cart card
-				$product_info = $this->model_catalog_product->getProduct($product['product_id']);
-				$manufacturer = ($product_info && !empty($product_info['manufacturer'])) ? $product_info['manufacturer'] : '';
+				// Manufacturer from batch query
+				$manufacturer = isset($manufacturers[$product['product_id']]) ? $manufacturers[$product['product_id']] : '';
 
 				$data['products'][] = array(
 					'cart_id'      => $product['cart_id'],
@@ -149,9 +225,13 @@ class ControllerCheckoutCart extends Controller {
 					'reward'       => ($product['reward'] ? sprintf($this->language->get('text_points'), $product['reward']) : ''),
 					'price'        => $price,
 					'total'        => $total,
-					'href'         => $this->url->link('product/product', 'product_id=' . $product['product_id'])
+					'href'         => $this->url->link('product/product', 'product_id=' . $product['product_id']),
+					'date_added'   => $product['date_added']
 				);
 			}
+
+			// Server time for reservation timer sync
+			$data['server_time'] = date('Y-m-d H:i:s');
 
 			// Gift Voucher
 			$data['vouchers'] = array();
@@ -265,10 +345,6 @@ class ControllerCheckoutCart extends Controller {
 				}
 			}
 
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
@@ -354,6 +430,36 @@ class ControllerCheckoutCart extends Controller {
 
 			if (!$json) {
 				$this->cart->add($this->request->post['product_id'], $quantity, $option, $recurring_id);
+
+				// Check if reservation failed (stock unavailable — another customer reserved first)
+				if (isset($this->session->data['reservation_failed']) && $this->session->data['reservation_failed'] == $this->request->post['product_id']) {
+					unset($this->session->data['reservation_failed']);
+					$json = array();
+					$json['error']['warning'] = $this->language->get('error_reserved');
+					$this->response->addHeader('Content-Type: application/json');
+					$this->response->setOutput(json_encode($json));
+					return;
+				}
+
+				// Check if product was already in cart (duplicate add attempt)
+				if (isset($this->session->data['reservation_already_in_cart']) && $this->session->data['reservation_already_in_cart'] == $this->request->post['product_id']) {
+					unset($this->session->data['reservation_already_in_cart']);
+					$json = array();
+					$json['error']['warning'] = $this->language->get('error_already_in_cart');
+					$this->response->addHeader('Content-Type: application/json');
+					$this->response->setOutput(json_encode($json));
+					return;
+				}
+
+				// Check if product is sold out (qty=0, no active reservation)
+				if (isset($this->session->data['reservation_sold']) && $this->session->data['reservation_sold'] == $this->request->post['product_id']) {
+					unset($this->session->data['reservation_sold']);
+					$json = array();
+					$json['error']['warning'] = $this->language->get('error_sold');
+					$this->response->addHeader('Content-Type: application/json');
+					$this->response->setOutput(json_encode($json));
+					return;
+				}
 
 				$json['success'] = sprintf($this->language->get('text_success'), $this->url->link('product/product', 'product_id=' . $this->request->post['product_id']), $product_info['name'], $this->url->link('checkout/cart'));
 

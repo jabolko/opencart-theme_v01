@@ -193,6 +193,52 @@
       if (html) {
         updateCartSheetFromHtml($(html));
       }
+      // Restart reservation timers after cart reload
+      if (typeof window.tickCartDropTimers === 'function') {
+        setTimeout(window.tickCartDropTimers, 100);
+      }
+    }
+  });
+
+  // Instant product card update after add-to-cart
+  $(document).ajaxComplete(function(e, xhr, settings) {
+    if (!settings.url || settings.url.indexOf('checkout/cart/add') === -1) return;
+    try {
+      var json = JSON.parse(xhr.responseText);
+    } catch (ex) { return; }
+    if (!json || !settings.data) return;
+
+    // Extract product_id from POST data
+    var match = settings.data.match(/product_id=(\d+)/);
+    if (!match) return;
+    var pid = match[1];
+
+    if (json.success) {
+      // Find all product cards with this product_id — swap to checkmark + V KOŠARICI
+      var checkSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      var allCards = document.querySelectorAll('.product-card');
+      for (var i = 0; i < allCards.length; i++) {
+        var btn = allCards[i].querySelector('.product-card__cart');
+        if (btn && btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + pid + "'") !== -1) {
+          // Swap to green checkmark
+          btn.disabled = true;
+          btn.removeAttribute('onclick');
+          btn.className = 'product-card__cart product-card__cart--in-cart';
+          btn.innerHTML = checkSvg;
+          // Swap label to V KOŠARICI
+          var labels = allCards[i].querySelector('.product-card__labels');
+          if (labels) {
+            labels.innerHTML = '<span class="product-label product-label--in-cart">V KOŠARICI</span>';
+          }
+        }
+      }
+    }
+
+    if (json.error && json.error.warning) {
+      // Show error toast for reservation failed / already in cart
+      if (typeof showToast === 'function') {
+        showToast(json.error.warning);
+      }
     }
   });
 
@@ -438,16 +484,63 @@
     });
 
     // Mobile search button — scroll to top and focus the main search input
+    // Mobile search bottom sheet
     var searchBtn = document.getElementById('js-mobile-search-btn');
-    if (searchBtn) {
-      searchBtn.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(function () {
-          var input = document.querySelector('#search .form-control');
-          if (input) { input.focus(); }
-        }, 350);
+    var stickySearchBtn = document.getElementById('js-sticky-search');
+    var searchSheet = document.getElementById('js-search-sheet');
+    var searchOverlay = document.getElementById('js-search-overlay');
+    var searchInput = document.getElementById('js-search-input');
+    var searchClear = document.getElementById('js-search-clear');
+
+    function openSearch() {
+      if (!searchSheet) return;
+      searchSheet.classList.add('is-open');
+      if (searchOverlay) searchOverlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+      if (searchInput) setTimeout(function() { searchInput.focus(); }, 300);
+    }
+
+    function closeSearch() {
+      if (!searchSheet) return;
+      searchSheet.classList.remove('is-open');
+      if (searchOverlay) searchOverlay.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    if (searchBtn) searchBtn.addEventListener('click', openSearch);
+    if (stickySearchBtn) stickySearchBtn.addEventListener('click', openSearch);
+    if (searchOverlay) searchOverlay.addEventListener('click', closeSearch);
+
+    // Clear button
+    if (searchClear && searchInput) {
+      searchInput.addEventListener('input', function() {
+        searchClear.style.display = this.value ? 'block' : 'none';
+      });
+      searchClear.addEventListener('click', function() {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        searchInput.focus();
       });
     }
+
+    // Submit on Enter
+    if (searchInput) {
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+          var q = this.value.trim();
+          if (q) {
+            window.location = 'index.php?route=product/search&search=' + encodeURIComponent(q);
+          }
+        }
+      });
+    }
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+      if ((e.key === 'Escape' || e.keyCode === 27) && searchSheet && searchSheet.classList.contains('is-open')) {
+        closeSearch();
+      }
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -638,25 +731,17 @@
     var page = document.querySelector('.cart-page');
     if (!page) return;
 
-    // -- Reservation timer --
-    var RESERVE_KEY = 'cart_reserve_ts';
-    var RESERVE_MS = 30 * 60 * 1000;
+    // -- Server-synced reservation timer --
+    var RESERVE_MS = 30 * 60 * 1000; // 30 min
 
-    function getReserveEnd() {
-      var stored = localStorage.getItem(RESERVE_KEY);
-      if (stored) {
-        var ts = parseInt(stored, 10);
-        if (ts > Date.now()) return ts;
-      }
-      var end = Date.now() + RESERVE_MS;
-      localStorage.setItem(RESERVE_KEY, end);
-      return end;
-    }
+    // Calculate clock offset: server time - client time
+    var serverTimeAttr = page.getAttribute('data-server-time');
+    var serverNow = serverTimeAttr ? new Date(serverTimeAttr.replace(' ', 'T')).getTime() : Date.now();
+    var clockOffset = serverNow - Date.now();
 
-    var reserveEnd = getReserveEnd();
+    var items = document.querySelectorAll('.cart-item[data-time-added]');
     var globalTimerEl = document.getElementById('js-cart-timer');
     var reserveBanner = document.getElementById('js-cart-reserve');
-    var itemTimerEls = document.querySelectorAll('.cart-item__timer-val');
 
     function formatTime(ms) {
       if (ms <= 0) return '0:00';
@@ -666,29 +751,34 @@
       return min + ':' + (sec < 10 ? '0' : '') + sec;
     }
 
-    function tickTimer() {
-      var remaining = reserveEnd - Date.now();
-      var display = formatTime(remaining);
+    function tickTimers() {
+      var now = Date.now() + clockOffset;
+      var minRemaining = Infinity;
 
-      if (globalTimerEl) globalTimerEl.textContent = display;
-      for (var i = 0; i < itemTimerEls.length; i++) {
-        itemTimerEls[i].textContent = display;
+      for (var i = 0; i < items.length; i++) {
+        var addedStr = items[i].getAttribute('data-time-added');
+        var added = new Date(addedStr.replace(' ', 'T')).getTime();
+        var remaining = RESERVE_MS - (now - added);
+        if (remaining < minRemaining) minRemaining = remaining;
+
+        var timerEl = items[i].querySelector('.cart-item__timer-val');
+        if (timerEl) timerEl.textContent = formatTime(remaining);
       }
 
-      if (remaining <= 0) {
+      if (globalTimerEl) globalTimerEl.textContent = formatTime(minRemaining);
+
+      if (minRemaining <= 0) {
         if (reserveBanner) reserveBanner.classList.add('cart-reserve--expired');
-        if (globalTimerEl) globalTimerEl.textContent = '0:00';
         return;
       }
-
-      if (remaining < 5 * 60 * 1000) {
+      if (minRemaining < 5 * 60 * 1000) {
         if (reserveBanner) reserveBanner.classList.add('cart-reserve--urgent');
       }
 
-      setTimeout(tickTimer, 1000);
+      setTimeout(tickTimers, 1000);
     }
 
-    if (globalTimerEl) tickTimer();
+    if (globalTimerEl && items.length) tickTimers();
 
     // -- Remove item --
     var removeButtons = document.querySelectorAll('.cart-item__remove');
@@ -758,10 +848,10 @@
       });
     }
 
-    // -- Reset timer when cart empty --
+    // -- Hide timer when cart empty --
     var cartItemsEl = document.getElementById('js-cart-items');
-    if (cartItemsEl && cartItemsEl.children.length === 0) {
-      localStorage.removeItem(RESERVE_KEY);
+    if (cartItemsEl && cartItemsEl.children.length === 0 && reserveBanner) {
+      reserveBanner.style.display = 'none';
     }
 
     // -- Recently viewed --
@@ -779,41 +869,70 @@
       viewed = viewed.filter(function (p) { return !cartIds[p.id]; });
 
       if (viewed.length > 0) {
-        var html = '';
-        var max = Math.min(viewed.length, 10);
-        for (var v = 0; v < max; v++) {
-          var p = viewed[v];
-          html += '<article class="product-card product-card--scroll">' +
-            '<div class="product-card__media">' +
-              '<a href="' + p.href + '" class="product-card__img-wrap">' +
-                '<div class="product-card__img">' +
-                  (p.thumb ? '<img src="' + p.thumb + '" alt="' + p.name.replace(/"/g, '&quot;') + '" loading="lazy" />' : '') +
-                '</div>' +
-              '</a>' +
-              '<button class="product-card__fav" type="button" onclick="wishlist.add(\'' + p.id + '\');" aria-label="Dodaj med priljubljene">' +
-                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-                  '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
-                '</svg>' +
-              '</button>' +
-            '</div>' +
-            '<div class="product-card__body">' +
-              (p.brand ? '<p class="product-card__manufacturer">' + p.brand + '</p>' : '') +
-              '<a href="' + p.href + '" class="product-card__name">' + p.name + '</a>' +
-              '<div class="product-card__footer">' +
-                '<p class="product-card__price">' + p.price + '</p>' +
-                '<button class="product-card__cart" type="button" onclick="cart.add(\'' + p.id + '\', \'1\');" aria-label="Dodaj v košarico">' +
-                  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-                    '<circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>' +
-                    '<path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>' +
-                  '</svg>' +
+        // Fetch stock status first, then render (filtering out sold)
+        var allPids = [];
+        for (var vi = 0; vi < Math.min(viewed.length, 15); vi++) { allPids.push(viewed[vi].id); }
+
+        function renderRecentCards(statuses) {
+          var checkSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+          var cartSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>';
+          var labelMap = {
+            'in_cart':  '<span class="product-label product-label--in-cart">V KOŠARICI</span>',
+            'reserved': '<span class="product-label product-label--reserved">REZERVIRANO</span>'
+          };
+          var html = '';
+          var count = 0;
+          for (var v = 0; v < viewed.length && count < 10; v++) {
+            var p = viewed[v];
+            var st = statuses[p.id] || 'available';
+            // Filter out sold products
+            if (st === 'sold') continue;
+            count++;
+            var labelHtml = labelMap[st] || '';
+            var btnHtml;
+            if (st === 'in_cart') {
+              btnHtml = '<button class="product-card__cart product-card__cart--in-cart" type="button" disabled aria-label="V košarici">' + checkSvg + '</button>';
+            } else if (st === 'reserved') {
+              btnHtml = '<button class="product-card__cart product-card__cart--disabled" type="button" disabled aria-label="Rezerviran">' + cartSvg + '</button>';
+            } else {
+              btnHtml = '<button class="product-card__cart" type="button" onclick="cart.add(\'' + p.id + '\', \'1\');" aria-label="Dodaj v košarico">' + cartSvg + '</button>';
+            }
+            html += '<article class="product-card product-card--scroll" data-product-id="' + p.id + '">' +
+              '<div class="product-card__media">' +
+                '<a href="' + p.href + '" class="product-card__img-wrap">' +
+                  '<div class="product-card__img">' +
+                    '<div class="product-card__labels">' + labelHtml + '</div>' +
+                    (p.thumb ? '<img src="' + p.thumb + '" alt="' + p.name.replace(/"/g, '&quot;') + '" loading="lazy" />' : '') +
+                  '</div>' +
+                '</a>' +
+                '<button class="product-card__fav" type="button" onclick="wishlist.add(\'' + p.id + '\');" aria-label="Dodaj med priljubljene">' +
+                  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
                 '</button>' +
               '</div>' +
-            '</div>' +
-          '</article>';
+              '<div class="product-card__body">' +
+                (p.brand ? '<p class="product-card__manufacturer">' + p.brand + '</p>' : '') +
+                '<a href="' + p.href + '" class="product-card__name">' + p.name + '</a>' +
+                '<div class="product-card__footer">' +
+                  '<p class="product-card__price">' + p.price + '</p>' +
+                  btnHtml +
+                '</div>' +
+              '</div>' +
+            '</article>';
+          }
+          if (count > 0) {
+            html += '<div class="cart-recent__spacer"></div>';
+            recentScroller.innerHTML = html;
+            recentWrap.style.display = '';
+          }
         }
-        html += '<div class="cart-recent__spacer"></div>';
-        recentScroller.innerHTML = html;
-        recentWrap.style.display = '';
+
+        // Fetch status then render
+        $.post('index.php?route=checkout/cart/getStockStatus', { product_ids: allPids }, function(json) {
+          renderRecentCards(json && json.products ? json.products : {});
+        }, 'json').fail(function() {
+          // Fallback: render without status data if AJAX fails
+          renderRecentCards({});
+        });
       }
     }
   }
