@@ -36,7 +36,7 @@ class Cart {
 				$current_session = $this->session->getId();
 				$cookie_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0' AND session_id != '" . $this->db->escape($current_session) . "' LIMIT 1");
 				if ($cookie_cart->num_rows) {
-					$this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($current_session) . "' WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0'");
+					$this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($current_session) . "', date_added = NOW() WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0'");
 				}
 			}
 		}
@@ -71,9 +71,11 @@ class Cart {
 				// Check if customer already has this product in cart (from a previous logged-in session)
 				$existing = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '0' AND customer_id = '" . (int)$this->customer->getId() . "' AND product_id = '" . (int)$cart['product_id'] . "' AND `option` = '" . $this->db->escape($cart['option']) . "' AND recurring_id = '" . (int)$cart['recurring_id'] . "' LIMIT 1");
 				if ($existing->num_rows) {
-					// Duplicate — restore stock for the guest row and delete it
-					$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart['quantity'] . " WHERE product_id = '" . (int)$cart['product_id'] . "'");
+					// Duplicate — delete the guest row first, only restore stock if delete succeeded
 					$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+					if ($this->db->countAffected() > 0) {
+						$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart['quantity'] . " WHERE product_id = '" . (int)$cart['product_id'] . "'");
+					}
 				} else {
 					// Claim the guest cart row
 					$this->db->query("UPDATE " . DB_PREFIX . "cart SET customer_id = '" . (int)$this->customer->getId() . "' WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
@@ -332,7 +334,11 @@ class Cart {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "' AND quantity >= " . (int)$quantity);
 
 			if ($this->db->countAffected() > 0) {
-				$cart_token = bin2hex(random_bytes(32));
+				// Reuse cart token within session (all items share one token for cookie recovery)
+				if (empty($this->session->data['cart_token'])) {
+					$this->session->data['cart_token'] = bin2hex(random_bytes(32));
+				}
+				$cart_token = $this->session->data['cart_token'];
 				$visitor_ip = $this->getVisitorIp();
 
 				$this->db->query("INSERT INTO " . DB_PREFIX . "cart SET api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "', customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', visitor_ip = '" . $this->db->escape($visitor_ip) . "', cart_token = '" . $this->db->escape($cart_token) . "', date_added = NOW()");
@@ -390,7 +396,16 @@ class Cart {
 
 	// Called on successful order — stock stays deducted (reservation becomes sale)
 	public function clearCart() {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+		// Transaction with FOR UPDATE: prevents expiry from restoring stock on these rows
+		// (this is a successful order — stock must stay deducted)
+		$api_id = isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0;
+		$customer_id = (int)$this->customer->getId();
+		$session_id = $this->db->escape($this->session->getId());
+
+		$this->db->query("START TRANSACTION");
+		$this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "' FOR UPDATE");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "'");
+		$this->db->query("COMMIT");
 	}
 
 	// Called on manual cart clear / admin login override — restores stock
