@@ -1,14 +1,6 @@
-# PAGE-005 — Checkout Page
+# OpenCart Checkout Contract — Reference
 
-## Design
-V1 Accordion — restyled OC panels with numbered dots, progress bar, order summary sidebar.
-Prototype: `prototypes/checkout-designs.html` (V1 tab)
-
-## Strategy
-**CSS-only restyle + minimal Twig overrides.** Keep OC's 800-line checkout JS 100% intact.
-Only change the HTML shell and sub-templates. Never touch button IDs, panel IDs, or AJAX endpoints.
-
----
+> Reference document for OC's checkout internals. Implementation details in `checkout-system.md`.
 
 ## OC Checkout Contract (DO NOT BREAK)
 
@@ -121,47 +113,6 @@ JS does: `$('a[href=\'#collapse-X\']').trigger('click')` — Bootstrap collapse 
 | `#input-shipping-{field}` | Same for shipping address |
 
 ---
-
-## Implementation Checklist
-
-### Phase 1: Shell + Styles (mobile first)
-- [ ] Create `template/checkout/checkout.twig` — progress bar + accordion + sidebar
-- [ ] Create `stylesheet/src/pages/_checkout.scss` — all checkout styles
-- [ ] Add `@import 'pages/checkout'` to `theme.scss`
-- [ ] Verify: page loads, step 1 appears, no JS errors in console
-
-### Phase 2: Sub-templates
-- [ ] Create `login.twig` — guest-first, "Imam račun" secondary
-- [ ] Verify: guest/register toggle works, button-account triggers next step
-- [ ] Create `guest.twig` — 6 visible fields, country/zone hidden+preselected
-- [ ] Verify: form submits, validation errors show, next step opens
-- [ ] Create `shipping_method.twig` — radio cards, hide comments
-- [ ] Verify: shipping options load, selection saves, next step opens
-- [ ] Create `payment_method.twig` — radio cards with icons, T&C checkbox
-- [ ] Verify: payment options load, agree checkbox works, next step opens
-- [ ] Create `confirm.twig` — mini product cards, clean totals, CTA
-- [ ] Verify: order summary correct, payment template loads, order can be placed
-
-### Phase 3: Controller + Sidebar
-- [ ] Override `controller/checkout/checkout.php` — pass cart products to template
-- [ ] Order summary sidebar (desktop: sticky, mobile: collapsible top)
-- [ ] Verify: sidebar shows correct items and totals
-
-### Phase 4: Desktop + Polish
-- [ ] Desktop two-column layout (form left, sticky sidebar right)
-- [ ] Sticky mobile CTA footer
-- [ ] Trust badges, payment icons
-- [ ] Progress bar animation on step change
-- [ ] Lighthouse audit
-
-### Phase 5: Testing
-- [ ] Full guest checkout flow (place real test order)
-- [ ] Full login checkout flow
-- [ ] Validation errors display correctly per field
-- [ ] Shipping address different from billing
-- [ ] All payment methods render correctly
-- [ ] Mobile: all steps usable, no overflow, sticky CTA visible
-- [ ] Desktop: sidebar sticky, form readable, no layout breaks
 
 ---
 
