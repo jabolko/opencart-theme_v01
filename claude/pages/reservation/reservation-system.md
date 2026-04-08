@@ -1,6 +1,6 @@
 # Reservation System — Complete Implementation Plan
 
-> Last updated: 2026-04-01
+> Last updated: 2026-04-08 (code samples reflect final audited code)
 
 ## Overview
 
@@ -86,422 +86,51 @@ This is the same call OC admin uses. Clears all `product.*` cache keys instantly
 
 ## OCMOD 1: reservation-timer.ocmod.xml
 
-**Modifies 6 files in OpenCart core.**
+**Replaces the entire `system/library/cart/cart.php`.** The changes are too extensive for search/replace OCMOD operations — use a full file replacement approach or carefully diff against OC 3.0.5.0 original.
 
----
-
-### File 1: `system/library/cart/cart.php`
-
-This is the heart of the system. All modifications happen in this file.
-
-#### 1.1 Constructor — DB schema auto-init (once per session)
-
-**Location:** After `$this->weight = $registry->get('weight');` (line 18)
-**Operation:** `<add position="after">`
-
-```php
-// Reservation system: ensure columns exist (runs once per session)
-if (empty($this->session->data['_reservation_db_init'])) {
-    $col_check = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "cart` LIKE 'visitor_ip'");
-    if (!$col_check->num_rows) {
-        $this->db->query("ALTER TABLE `" . DB_PREFIX . "cart` ADD COLUMN `visitor_ip` VARCHAR(45) NOT NULL DEFAULT '' AFTER `date_added`");
-        $this->db->query("ALTER TABLE `" . DB_PREFIX . "cart` ADD COLUMN `cart_token` VARCHAR(64) NOT NULL DEFAULT '' AFTER `visitor_ip`");
-    }
-    $this->session->data['_reservation_db_init'] = true;
-}
+The final audited code is the source of truth. Read it directly:
+```
+opencart/system/library/cart/cart.php
 ```
 
-#### 1.2 Constructor — Persistent cart recovery (before expiry cleanup)
-
-**Location:** Before `DELETE FROM cart WHERE ... INTERVAL 1 HOUR` (line 21)
-**Operation:** `<add position="before">`
-
-```php
-// Persistent cart recovery for guests (cookie-first, IP fallback)
-if (!(int)$this->customer->getId()) {
-    $recovered = false;
-    $current_session = $this->session->getId();
-
-    // Method 1: Cookie-based recovery
-    if (!empty($_COOKIE['oc_cart_token'])) {
-        $token = $_COOKIE['oc_cart_token'];
-        $cookie_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0' AND session_id != '" . $this->db->escape($current_session) . "' LIMIT 1");
-        if ($cookie_cart->num_rows) {
-            $this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($current_session) . "' WHERE cart_token = '" . $this->db->escape($token) . "' AND customer_id = '0'");
-            $recovered = true;
-        }
-    }
-
-    // Method 2: IP fallback (only if cookie didn't match)
-    if (!$recovered) {
-        $visitor_ip = $this->getVisitorIp();
-        if ($visitor_ip) {
-            $ip_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE visitor_ip = '" . $this->db->escape($visitor_ip) . "' AND customer_id = '0' AND session_id != '" . $this->db->escape($current_session) . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) LIMIT 1");
-            if ($ip_cart->num_rows) {
-                $this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($current_session) . "' WHERE visitor_ip = '" . $this->db->escape($visitor_ip) . "' AND customer_id = '0' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE)");
-            }
-        }
-    }
-}
-```
-
-**Note:** IP fallback is scoped to 30 minutes (active reservations only), not 30 days — a long-lived IP fallback would incorrectly merge carts for shared IPs (family on same Wi-Fi). Cookie recovery has no time limit (cookie itself expires in 30 days).
-
-#### 1.3 Constructor — Replace expiry cleanup
-
-**Search:**
-```php
-$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)");
-```
-
-**Replace with:**
-```php
-// Reservation expiry: restore stock + delete expired cart rows (transaction)
-$this->db->query("START TRANSACTION");
-$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND c.api_id = '0'");
-$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0'");
-$this->db->query("COMMIT");
-
-// Invalidate product cache (Latest/Popular/Bestseller may have stale stock)
-$this->cache = $registry->get('cache');
-if ($this->cache) { $this->cache->delete('product'); }
-```
-
-**Why `api_id = '0'`?** API cart entries (from admin) follow different lifecycle rules. We only expire customer/guest carts.
-
-**Why transaction?** If crash between UPDATE and DELETE, next run would find the same rows and restore stock again (double-restore). Transaction ensures both happen atomically — crash = rollback = safe.
-
-#### 1.4 Constructor — Login merge fix
-
-**Search:**
-```php
-$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
-
-				// The advantage of using $this->add is that it will check if the products already exist and increaser the quantity if necessary.
-				$this->add($cart['product_id'], $cart['quantity'], json_decode($cart['option']), $cart['recurring_id']);
-```
-
-**Replace with:**
-```php
-// Reservation system: claim the guest cart row (don't delete+re-add — would double-decrement)
-$this->db->query("UPDATE " . DB_PREFIX . "cart SET customer_id = '" . (int)$this->customer->getId() . "' WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
-```
-
-**Why:** Original OC deletes the guest row then calls `add()` which would INSERT a new row. With our system, `add()` includes stock reservation logic. Calling it for an already-reserved product would try to decrement stock again (double-deduction). Instead, we just reassign ownership.
-
-#### 1.5 add() — Atomic stock reservation
-
-**Search:**
-```php
-if (!$query->row['total']) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "cart SET api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "', customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', date_added = NOW()");
-		} else {
-			$this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = (quantity + " . (int)$quantity . ") WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id = '" . (int)$product_id . "' AND recurring_id = '" . (int)$recurring_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "'");
-		}
-```
-
-**Replace with:**
-```php
-if (!$query->row['total']) {
-    // Atomic stock reservation: decrement only if available
-    $this->db->query("START TRANSACTION");
-    $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "' AND quantity >= " . (int)$quantity);
-
-    if ($this->db->countAffected() > 0) {
-        $cart_token = bin2hex(random_bytes(32));
-        $visitor_ip = $this->getVisitorIp();
-
-        $this->db->query("INSERT INTO " . DB_PREFIX . "cart SET api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "', customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', visitor_ip = '" . $this->db->escape($visitor_ip) . "', cart_token = '" . $this->db->escape($cart_token) . "', date_added = NOW()");
-
-        $this->db->query("COMMIT");
-
-        // Set persistent recovery cookie (30 days, HttpOnly, SameSite)
-        setcookie('oc_cart_token', $cart_token, time() + (30 * 86400), '/', '', false, true);
-
-        // Invalidate product cache
-        $cache = $this->config->get('cache');
-        // Use registry if available
-        if (isset($this->cache)) { $this->cache->delete('product'); }
-
-    } else {
-        $this->db->query("ROLLBACK");
-        // Signal reservation failure to controller
-        $this->session->data['reservation_failed'] = (int)$product_id;
-    }
-} else {
-    // Product already in this customer's cart — do nothing
-    // For qty=1 unique products, don't increment (would exceed max=1)
-}
-```
-
-**Race condition handling:** Two users add the same product simultaneously. Both execute `UPDATE WHERE quantity >= 1`. MySQL acquires a row lock on the first UPDATE. Second waits. First commits (quantity 1→0). Second runs, `quantity >= 1` fails (quantity is now 0), `countAffected()` = 0, rollback. Second user gets "already reserved" error. No overselling.
-
-#### 1.6 remove() — Restore stock on item removal
-
-**Search:**
-```php
-public function remove($cart_id) {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-```
-
-**Replace with:**
-```php
-public function remove($cart_id) {
-    // Restore reserved stock before removing from cart
-    $cart_item = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-    if ($cart_item->num_rows) {
-        $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart_item->row['quantity'] . " WHERE product_id = '" . (int)$cart_item->row['product_id'] . "'");
-        // Invalidate cache
-        if (isset($this->cache)) { $this->cache->delete('product'); }
-    }
-    $this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-```
-
-#### 1.7 update() — Cap quantity at 1
-
-**Search:**
-```php
-public function update($cart_id, $quantity) {
-		$this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = '" . (int)$quantity . "' WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-```
-
-**Replace with:**
-```php
-public function update($cart_id, $quantity) {
-    if ((int)$quantity <= 0) {
-        $this->remove($cart_id);
-        return;
-    }
-    // For unique products (qty=1): always cap at 1, no stock change needed
-    $this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = '1' WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-```
-
-#### 1.8 New method: clearCart() — order success (no stock restore)
-
-**Location:** Before `public function clear()` (line 296)
-**Operation:** `<add position="before">`
-
-```php
-// Called on successful order — stock stays deducted (reservation becomes sale)
-public function clearCart() {
-    $this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-}
-
-```
-
-#### 1.9 clear() — Restore stock on manual clear
-
-**Search:**
-```php
-public function clear() {
-		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-```
-
-**Replace with:**
-```php
-public function clear() {
-    // Restore stock for all reserved items before clearing
-    $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND c.customer_id = '" . (int)$this->customer->getId() . "' AND c.session_id = '" . $this->db->escape($this->session->getId()) . "'");
-    // Invalidate cache
-    if (isset($this->cache)) { $this->cache->delete('product'); }
-    $this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
-```
-
-**Where `clear()` is called (all must be audited):**
-- `catalog/controller/checkout/success.php:7` — **CHANGE to `clearCart()`** (sale complete, don't restore)
-- `catalog/controller/api/order.php:355` — **CHANGE to `clearCart()`** (API order complete)
-- `catalog/controller/api/cart.php:12` — **KEEP as `clear()`** (API reset = genuinely emptying cart, restore stock)
-- `catalog/controller/account/login.php:11` — **KEEP as `clear()`** (admin override = clear everything, restore stock)
-
-#### 1.10 getProducts() — Pass `date_added` through
-
-**Search:**
-```php
-'cart_id'         => $cart['cart_id'],
-```
-
-**Add after:**
-```php
-'date_added'      => $cart['date_added'],
-```
-
-This allows templates to display per-item server-time countdown.
-
-#### 1.11 New method: getVisitorIp()
-
-**Location:** Before `public function hasDownload()` (line 404)
-**Operation:** `<add position="before">`
-
-```php
-private function getVisitorIp() {
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($ips[0]);
-    }
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        return $_SERVER['HTTP_CLIENT_IP'];
-    }
-    return !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
-}
-
-```
-
-#### 1.12 Cache property — store registry reference
-
-**Location:** After `private $weight;` (line 10)
-**Operation:** `<add position="after">`
-
-```php
-private $cache;
-```
-
-**Location:** After `$this->weight = $registry->get('weight');` (line 18), before the DB init block
-**Operation:** `<add position="after">`
-
-```php
-$this->cache = $registry->get('cache');
-```
-
----
-
-### File 2: `catalog/controller/checkout/cart.php`
-
-#### 2.1 New endpoints — server time + cron cleanup
-
-**Location:** Before `public function index()` (line 3)
-**Operation:** `<add position="before">`
-
-```php
-public function currentTime() {
-    $this->response->addHeader('Content-Type: application/json');
-    $this->response->setOutput(json_encode(array('server_time' => date('Y-m-d H:i:s'))));
-}
-
-public function clearExpired() {
-    // Cron endpoint — run every 5 min via crontab or OC cron
-    $this->db->query("START TRANSACTION");
-    $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND c.api_id = '0'");
-    $this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0'");
-    $this->db->query("COMMIT");
-    $this->cache->delete('product');
-    $this->response->addHeader('Content-Type: application/json');
-    $this->response->setOutput(json_encode(array('success' => true)));
-}
-
-```
-
-**Note:** `clearExpired()` is a safety net. The constructor already runs expiry on every page load. The cron catches cases where no customer visits the site for extended periods (items stay reserved until someone triggers the constructor).
-
-#### 2.2 add() — Catch reservation failure
-
-**Location:** After `$this->cart->add(...)` call, before `$json['success'] = sprintf(...)` (around line 366)
-**Operation:** `<add position="before">`
-
-```php
-// Check if reservation failed (stock unavailable — another customer reserved first)
-if (isset($this->session->data['reservation_failed']) && $this->session->data['reservation_failed'] == $this->request->post['product_id']) {
-    unset($this->session->data['reservation_failed']);
-    $json = array();
-    $json['error']['warning'] = $this->language->get('error_reserved');
-    $this->response->addHeader('Content-Type: application/json');
-    $this->response->setOutput(json_encode($json));
-    return;
-}
-```
-
----
-
-### File 3: `catalog/controller/checkout/success.php`
-
-#### 3.1 Use clearCart() instead of clear()
-
-**Search:**
-```php
-$this->cart->clear();
-```
-
-**Replace with:**
-```php
-$this->cart->clearCart();
-```
-
-Stock was already deducted at add-to-cart time. On successful order, just delete cart rows — do NOT restore stock.
-
----
-
-### File 4: `catalog/controller/api/order.php`
-
-#### 4.1 Use clearCart() for API orders
-
-**Search:** (line ~355)
-```php
-$this->cart->clear();
-```
-
-**Replace with:**
-```php
-$this->cart->clearCart();
-```
-
-Same reason as success.php — API orders are completed orders.
-
----
-
-### File 5: `catalog/model/checkout/order.php`
-
-#### 5.1 Disable stock subtraction on order processing
-
-**Search:** (line ~324)
-```php
-$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
-```
-
-**Replace with:**
-```php
-// Reservation system: stock already deducted at add-to-cart time — skip
-// $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");
-```
-
-Also disable option value subtraction (line ~329):
-```php
-// $this->db->query("UPDATE " . DB_PREFIX . "product_option_value SET quantity = (quantity - " . (int)$order_product['quantity'] . ") WHERE product_option_value_id = '" . (int)$order_option['product_option_value_id'] . "' AND subtract = '1'");
-```
-
-**IMPORTANT:** The **restock logic** (order cancellation, line ~354: `quantity + N`) stays **UNCHANGED**. If an order is cancelled/voided, stock is correctly restored by OC's built-in logic.
-
----
-
-### File 6: Language files
-
-#### 6.1 Slovenian — `catalog/language/sl-SI/checkout/cart.php`
-
-```php
-$_['error_reserved']          = 'Artikel je že rezerviran za drugo stranko.';
-$_['text_reservation_timer']  = 'Rezervirano še %s';
-```
-
-#### 6.2 English — `catalog/language/en-gb/checkout/cart.php`
-
-```php
-$_['error_reserved']          = 'This item is already reserved by another customer.';
-$_['text_reservation_timer']  = 'Reserved for %s';
-```
+### Key changes vs OC 3.0.5.0 original:
+
+| Method | Change |
+|--------|--------|
+| **Properties** | Added `private $cache;` + `$this->cache = $registry->get('cache');` in constructor |
+| **Constructor: schema init** | `SHOW COLUMNS` + `ALTER TABLE` for `visitor_ip` + `cart_token` columns (once per session) |
+| **Constructor: recovery** | Cookie-based recovery with `date_added = NOW()` refresh. IP fallback removed. |
+| **Constructor: expiry** | `SELECT ... FOR UPDATE` → per-row stock restore → `DELETE` → `COMMIT`. Cache invalidated only when rows found. |
+| **Constructor: login merge** | `date_added = NOW()` on guest rows before merge. Dedup check: if customer already has product, delete guest row (countAffected guard) + restore stock. Otherwise claim row. |
+| **add()** | Transaction wraps entire method. `SELECT COUNT ... FOR UPDATE` prevents duplicate race. Atomic `UPDATE product WHERE qty >= N`. Session-scoped `cart_token` (reused across adds). Three session flags: `reservation_failed`, `reservation_sold`, `reservation_already_in_cart`. Cookie Secure flag based on HTTPS. |
+| **update()** | Hardcaps quantity to 1. Delegates to remove() if qty <= 0. |
+| **remove()** | Transactional: `SELECT ... FOR UPDATE` → stock restore → `DELETE` → `COMMIT`. Cache invalidated. |
+| **clearCart()** | NEW method. Transactional with `FOR UPDATE`. Deletes without restoring stock (successful order). |
+| **clear()** | Transactional: `SELECT ... FOR UPDATE` → JOIN UPDATE stock restore → `DELETE` → `COMMIT`. Cache invalidated. |
+| **getProducts()** | `$stock = true` override (reserved items always in-stock for this user). `date_added` passed through in product array. |
+| **getVisitorIp()** | NEW private method. `X-Forwarded-For` → `HTTP_CLIENT_IP` → `REMOTE_ADDR` chain. |
+
+### Other core files (OCMOD search/replace):
+
+**`catalog/controller/checkout/cart.php`** — 3 new methods + reservation catch:
+- `currentTime()` — JSON server time
+- `clearExpired()` — cron endpoint with FOR UPDATE pattern
+- `getStockStatus()` — batch product status (reserved/sold/in_cart/available)
+- In `add()`: catches `reservation_failed`, `reservation_sold`, `reservation_already_in_cart` session flags
+
+**`catalog/controller/checkout/success.php`** — `clearCart()` instead of `clear()`
+
+**`catalog/controller/api/order.php`** — `clearCart()` + per-product cart cleanup with `LIMIT 1`
+
+**`catalog/model/checkout/order.php`** — Stock subtraction + option subtraction commented out (lines 324-331). Restock on cancel unchanged.
+
+**Language files** — 4 new strings: `error_reserved`, `error_already_in_cart`, `error_sold`, `text_reservation_timer`
 
 ---
 
 ## OCMOD 2: reservation-checkout-extend.ocmod.xml
 
-**Modifies 1 file.** Extends reservation timer during active checkout via heartbeat.
-
----
-
-### File 1: `catalog/controller/checkout/checkout.php`
-
-#### 1.1 New method: updateCartTime()
-
-**Location:** Before `public function index()`
-**Operation:** `<add position="before">`
-
+**`catalog/controller/checkout/checkout.php`** — `updateCartTime()` method:
 ```php
 public function updateCartTime() {
     if ($this->request->server['REQUEST_METHOD'] == 'POST') {
@@ -510,29 +139,9 @@ public function updateCartTime() {
         $this->response->setOutput(json_encode(array('success' => true, 'server_time' => date('Y-m-d H:i:s'))));
     }
 }
-
 ```
 
-### Theme integration — Heartbeat JS
-
-**In `checkout.twig`, before `{{ footer }}`:**
-
-```html
-<script type="text/javascript"><!--
-(function() {
-    // Heartbeat: extend reservation every 30 seconds during checkout
-    var hb = setInterval(function() {
-        $.post('index.php?route=checkout/checkout/updateCartTime');
-    }, 30000);
-    // Immediate call on page load
-    $.post('index.php?route=checkout/checkout/updateCartTime');
-    // Stop on unload
-    $(window).on('beforeunload', function() { clearInterval(hb); });
-})();
-//--></script>
-```
-
-This is added directly to our theme's checkout.twig (not via OCMOD) since we already own this template.
+Heartbeat JS added directly to theme's `checkout.twig` (not OCMOD).
 
 ---
 
