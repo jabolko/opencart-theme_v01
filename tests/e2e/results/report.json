@@ -1,0 +1,410 @@
+{
+  "started": "2026-04-08T11:55:34.028Z",
+  "users": [
+    {
+      "userId": 3,
+      "scenario": "race_checkout",
+      "productId": "66092",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 6186
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2054
+        },
+        {
+          "name": "add_failed_race",
+          "ms": 0
+        }
+      ],
+      "errors": [],
+      "success": false,
+      "timing": {
+        "total": 8288
+      }
+    },
+    {
+      "userId": 5,
+      "scenario": "race_checkout",
+      "productId": "66092",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 8222
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2076
+        },
+        {
+          "name": "add_failed_race",
+          "ms": 0
+        }
+      ],
+      "errors": [],
+      "success": false,
+      "timing": {
+        "total": 10346
+      }
+    },
+    {
+      "userId": 1,
+      "scenario": "race_checkout",
+      "productId": "66092",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 8196
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2074
+        },
+        {
+          "name": "add_failed_race",
+          "ms": 0
+        }
+      ],
+      "errors": [],
+      "success": false,
+      "timing": {
+        "total": 10302
+      }
+    },
+    {
+      "userId": 10,
+      "scenario": "abandon",
+      "productId": "66100",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 8326
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2059
+        },
+        {
+          "name": "add_success",
+          "ms": 0
+        },
+        {
+          "name": "abandoned",
+          "ms": 0
+        }
+      ],
+      "errors": [],
+      "success": true,
+      "timing": {
+        "total": 10412
+      }
+    },
+    {
+      "userId": 9,
+      "scenario": "abandon",
+      "productId": "66099",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 9188
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2122
+        },
+        {
+          "name": "add_success",
+          "ms": 0
+        },
+        {
+          "name": "abandoned",
+          "ms": 0
+        }
+      ],
+      "errors": [],
+      "success": true,
+      "timing": {
+        "total": 11363
+      }
+    },
+    {
+      "userId": 4,
+      "scenario": "race_checkout",
+      "productId": "66092",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 9241
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2124
+        },
+        {
+          "name": "add_failed_race",
+          "ms": 0
+        }
+      ],
+      "errors": [],
+      "success": false,
+      "timing": {
+        "total": 11398
+      }
+    },
+    {
+      "userId": 2,
+      "scenario": "race_checkout",
+      "productId": "66092",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 4817
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2085
+        },
+        {
+          "name": "add_success",
+          "ms": 0
+        },
+        {
+          "name": "checkout_page",
+          "ms": 805
+        },
+        {
+          "name": "fill_form",
+          "ms": 545
+        },
+        {
+          "name": "submit_guest",
+          "ms": 3018
+        },
+        {
+          "name": "shipping",
+          "ms": 3059
+        },
+        {
+          "name": "payment",
+          "ms": 2083
+        }
+      ],
+      "errors": [
+        {
+          "userId": 2,
+          "type": "exception",
+          "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+          "time": 49443
+        }
+      ],
+      "success": false,
+      "timing": {
+        "total": 49489
+      }
+    },
+    {
+      "userId": 7,
+      "scenario": "checkout",
+      "productId": "66094",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 9274
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2119
+        },
+        {
+          "name": "add_success",
+          "ms": 0
+        },
+        {
+          "name": "checkout_page",
+          "ms": 1192
+        },
+        {
+          "name": "fill_form",
+          "ms": 567
+        },
+        {
+          "name": "submit_guest",
+          "ms": 3018
+        },
+        {
+          "name": "shipping",
+          "ms": 3053
+        },
+        {
+          "name": "payment",
+          "ms": 2081
+        }
+      ],
+      "errors": [
+        {
+          "userId": 7,
+          "type": "exception",
+          "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+          "time": 54355
+        }
+      ],
+      "success": false,
+      "timing": {
+        "total": 54404
+      }
+    },
+    {
+      "userId": 8,
+      "scenario": "checkout",
+      "productId": "66095",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 9288
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2132
+        },
+        {
+          "name": "add_success",
+          "ms": 0
+        },
+        {
+          "name": "checkout_page",
+          "ms": 1174
+        },
+        {
+          "name": "fill_form",
+          "ms": 564
+        },
+        {
+          "name": "submit_guest",
+          "ms": 3020
+        },
+        {
+          "name": "shipping",
+          "ms": 3050
+        },
+        {
+          "name": "payment",
+          "ms": 2082
+        }
+      ],
+      "errors": [
+        {
+          "userId": 8,
+          "type": "exception",
+          "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+          "time": 54357
+        }
+      ],
+      "success": false,
+      "timing": {
+        "total": 54407
+      }
+    },
+    {
+      "userId": 6,
+      "scenario": "checkout",
+      "productId": "66093",
+      "steps": [
+        {
+          "name": "product_page",
+          "ms": 10235
+        },
+        {
+          "name": "add_to_cart",
+          "ms": 2069
+        },
+        {
+          "name": "add_success",
+          "ms": 0
+        },
+        {
+          "name": "checkout_page",
+          "ms": 894
+        },
+        {
+          "name": "fill_form",
+          "ms": 558
+        },
+        {
+          "name": "submit_guest",
+          "ms": 3018
+        },
+        {
+          "name": "shipping",
+          "ms": 3060
+        },
+        {
+          "name": "payment",
+          "ms": 2081
+        }
+      ],
+      "errors": [
+        {
+          "userId": 6,
+          "type": "exception",
+          "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+          "time": 54977
+        }
+      ],
+      "success": false,
+      "timing": {
+        "total": 55024
+      }
+    }
+  ],
+  "errors": [
+    {
+      "userId": 2,
+      "type": "exception",
+      "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "userId": 8,
+      "type": "exception",
+      "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "userId": 7,
+      "type": "exception",
+      "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+    },
+    {
+      "userId": 6,
+      "type": "exception",
+      "text": "elementHandle.click: Timeout 30000ms exceeded.\nCall log:\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    58 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n"
+    }
+  ],
+  "stock_before": {
+    "66092": "available",
+    "66093": "available",
+    "66094": "available",
+    "66095": "available",
+    "66099": "available",
+    "66100": "available"
+  },
+  "stock_after": {
+    "66092": "reserved",
+    "66093": "reserved",
+    "66094": "reserved",
+    "66095": "reserved",
+    "66099": "reserved",
+    "66100": "reserved"
+  },
+  "summary": {
+    "race_product": "66092",
+    "race_winners": 1,
+    "race_losers": 4,
+    "checkout_success": 0,
+    "abandoned": 2,
+    "total_errors": 4,
+    "console_errors": 0,
+    "network_errors": 0,
+    "page_errors": 0
+  }
+}

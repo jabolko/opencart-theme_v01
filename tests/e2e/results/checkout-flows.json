@@ -1,0 +1,27 @@
+[
+  {
+    "flow": "GUEST",
+    "success": true,
+    "error": null
+  },
+  {
+    "flow": "LOGIN_AT_CHECKOUT",
+    "success": true,
+    "error": null
+  },
+  {
+    "flow": "ALREADY_LOGGED",
+    "success": true,
+    "error": null
+  },
+  {
+    "flow": "LOGIN_NEW_ADDR",
+    "success": true,
+    "error": null
+  },
+  {
+    "flow": "REGISTER",
+    "success": true,
+    "error": null
+  }
+]

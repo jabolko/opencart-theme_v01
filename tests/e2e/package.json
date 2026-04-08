@@ -1,0 +1,11 @@
+{
+  "name": "otroskikoticek-e2e",
+  "private": true,
+  "scripts": {
+    "test": "node multi-user-sim.js",
+    "test:headed": "HEADED=1 node multi-user-sim.js"
+  },
+  "dependencies": {
+    "playwright": "^1.59.0"
+  }
+}
