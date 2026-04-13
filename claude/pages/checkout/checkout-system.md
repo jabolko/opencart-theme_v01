@@ -161,6 +161,24 @@ Tab order fixed via `tabindex` attributes set by JS after form loads.
 
 checkout.php has `updateCartTime()` which belongs to the reservation system (OCMOD 2). When generating OCMODs, this method should be in the reservation OCMOD, not the checkout OCMOD. The remaining checkout.php changes (step headers + cart summary) go in the checkout OCMOD.
 
+### Heartbeat timing issue (2026-04-13)
+
+The checkout template fires the initial heartbeat `$.post('updateCartTime')` immediately on `$(document).ready()`, simultaneously with the guest/payment_address form AJAX. Both requests trigger the Cart constructor, both attempt the reservation expiry cleanup, causing MySQL lock conflicts.
+
+**Fix (in reservation rework):** Delay the initial heartbeat call by 3 seconds. The 30-second interval continues normally. See `claude/pages/reservation/constructor-rework-plan.md` for full details.
+
+### Concurrent AJAX calls that trigger Cart constructor
+
+| Checkout moment | Simultaneous AJAX calls |
+|---|---|
+| Page load | `GET checkout/guest` + `POST updateCartTime` |
+| Guest save (same address) | `GET shipping_method` + `GET guest_shipping` |
+| Payment address save (logged in) | `GET shipping_method` + `GET shipping_address` + `GET payment_address` |
+| Register save | `GET shipping_method` + `GET shipping_address` + `GET payment_address` |
+| Any step + heartbeat | Current AJAX + heartbeat POST |
+
+Each of these AJAX calls creates a new Cart object on the server (startup.php line 209), running the constructor's expiry cleanup. The reservation system rework (SKIP LOCKED + rate limiting) ensures these concurrent constructors don't conflict.
+
 ---
 
 ## OCMOD Generation Checklist
