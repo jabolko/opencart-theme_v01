@@ -468,9 +468,9 @@ Existing label shape PNGs in `image/catalog/assets/elements/labels/` (ribbons, h
 
 ---
 
-## Implementation Status (2026-04-03, final audit complete)
+## Implementation Status (2026-04-13, constructor rework complete)
 
-All phases complete. 6 audit rounds, converging to zero findings. Development uses direct core edits + test script. OCMOD XML generation deferred to production deploy.
+All phases complete. 6 audit rounds + constructor rework. Development uses direct core edits + test script. OCMOD XML generation deferred to production deploy.
 
 ### Automated Testing — 13/13 PASS
 Test script: `claude/pages/reservation/test-reservation.sh`
@@ -499,9 +499,9 @@ Tests: add, race condition, duplicate add, cart page, checkout, remove, heartbea
 | 5th | Verification matrix (50 checks) | 1 low | Yes |
 | **6th** | **Re-run matrix + 7 extra (57 checks)** | **0** | **Clean** |
 
-### Fixes Applied During Audits
+### Fixes Applied During Audits + Constructor Rework
 - Transaction wrapping: remove(), clear(), clearCart() — all use FOR UPDATE
-- Double-restock race: expiry uses SELECT FOR UPDATE to lock rows before restoring
+- Double-restock race: expiry uses SELECT FOR UPDATE SKIP LOCKED (was NOWAIT → caused uncatchable PHP warnings)
 - Login merge dedup: checks for existing product, delete-before-restore with countAffected guard
 - Login merge race: date_added refreshed on guest rows before merge loop
 - Cookie recovery race: date_added = NOW() during recovery prevents immediate expiry
@@ -516,6 +516,7 @@ Tests: add, race condition, duplicate add, cart page, checkout, remove, heartbea
 - JS safeId: moved before btnHtml (was undefined due to hoisting)
 - Product page CTA: green checkmark on success, Bootstrap reset prevented when disabled
 - All products: subtract=0 → subtract=1 (required for OC restock on order cancel)
+- **Constructor rework (2026-04-13):** NOWAIT → SKIP LOCKED + rate-limited (60s/session). Retry loops removed from add/remove/clear/clearCart. Heartbeat initial call delayed 3s. Cart page touch added.
 
 ### Security Properties (verified in final audit)
 - **No SQL injection**: all strings escaped, all integers cast
@@ -535,8 +536,8 @@ Tests: add, race condition, duplicate add, cart page, checkout, remove, heartbea
 ### OCMOD 1: reservation-timer (core reservation logic)
 | File | What changed |
 |------|-------------|
-| `system/library/cart/cart.php` | Heart of system: atomic add, transactional remove/clear/clearCart, expiry with FOR UPDATE, cookie recovery, login merge with dedup, getVisitorIp, cache property |
-| `catalog/controller/checkout/cart.php` | currentTime, clearExpired, getStockStatus endpoints + reservation failure/sold/already-in-cart catch |
+| `system/library/cart/cart.php` | Heart of system: atomic add, transactional remove/clear/clearCart, expiry with SKIP LOCKED (rate-limited 60s/session), cookie recovery, login merge with dedup, getVisitorIp, cache property |
+| `catalog/controller/checkout/cart.php` | currentTime, clearExpired (SKIP LOCKED), getStockStatus endpoints + reservation failure/sold/already-in-cart catch |
 | `catalog/controller/checkout/success.php` | `clearCart()` instead of `clear()` |
 | `catalog/controller/api/order.php` | `clearCart()` + product-specific cart cleanup with LIMIT 1 |
 | `catalog/model/checkout/order.php` | Stock subtraction commented out (reserved at cart-add time) |
@@ -563,8 +564,8 @@ Tests: add, race condition, duplicate add, cart page, checkout, remove, heartbea
 ### Theme files (NOT OCMOD — deployed with theme)
 | File | What changed |
 |------|-------------|
-| `template/checkout/cart.twig` | data-server-time, data-time-added attributes |
-| `template/checkout/checkout.twig` | Heartbeat JS (30s interval) |
+| `template/checkout/cart.twig` | data-server-time, data-time-added attributes, delayed updateCartTime call |
+| `template/checkout/checkout.twig` | Heartbeat JS (30s interval, initial call delayed 3s) |
 | `template/common/cart.twig` | Per-item timer in dropdown + mobile sheet |
 | `template/extension/module/latest.twig` | Label + button states (in_cart/reserved/sold/available) |
 | `template/product/category.twig` | Same label + button states |
@@ -588,13 +589,13 @@ ALTER TABLE oc_cart ADD INDEX idx_expiry (api_id, date_added), ADD INDEX idx_pro
 
 ---
 
-## Cron Setup (optional safety net)
+## Cron Setup (primary expiry mechanism)
 
 ```crontab
-*/5 * * * * curl -s https://yourdomain.com/index.php?route=checkout/cart/clearExpired > /dev/null
+*/2 * * * * curl -s https://yourdomain.com/index.php?route=checkout/cart/clearExpired > /dev/null
 ```
 
-Catches expired reservations when no visitors trigger the constructor. Add shared secret token before production.
+Primary expiry mechanism — runs every 2 minutes. The constructor's rate-limited fallback (once per 60s per session) is the safety net if cron fails. Both use SKIP LOCKED. Add shared secret token before production.
 
 ---
 
