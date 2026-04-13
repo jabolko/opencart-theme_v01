@@ -58,15 +58,19 @@
 - [ ] Category strip design decision (handoff active/category-strip.md)
 - [ ] Latest Products admin wiring (assign to Homepage → content_top)
 
-## TODO — Reservation Optional Hardening (from audit, not blockers)
-- [ ] Add index: `ALTER TABLE oc_cart ADD INDEX idx_expiry (api_id, date_added), ADD INDEX idx_product_id (product_id);` — before production at scale
+## TODO — Pre-Production (must do before launch)
+- [ ] Reservation failure logging: add `error_log()` in cart.php add() rollback path, remove() empty-row path, and clearExpired when stock is restored. Gives audit trail for production monitoring. One line per failure point.
+- [ ] Activate cron in Docker for dev testing: `docker exec opencart_web bash -c "echo '*/2 * * * * curl -s http://localhost/index.php?route=checkout/cart/clearExpired > /dev/null' | crontab -"`. Verify expiry works without page loads.
+- [ ] Duplicate address check in guest.php and register flows — currently only in payment_address.php. Guest save and register save can create duplicate addresses on re-submit. Same pattern: check existing addresses before addAddress().
+- [ ] OCMOD XML generation from git diffs (reservation: 3 OCMODs, checkout: 1 OCMOD). See `claude/pages/reservation/reservation-system.md` OCMOD checklist.
 - [ ] Add shared secret to `clearExpired` endpoint — e.g. `?token=xxx` checked against config
+- [ ] Add index: `ALTER TABLE oc_cart ADD INDEX idx_expiry (api_id, date_added), ADD INDEX idx_product_id (product_id);`
+
+## TODO — Reservation Optional Hardening (from audit, not blockers)
 - [ ] Add ID cap to `getStockStatus`: `$ids = array_slice($ids, 0, 100);` — prevents abuse
 - [ ] Order status toggle guard — admin training: don't toggle Complete→Cancelled→Complete (double-restocks). Optional: add `stock_restored` flag to oc_order to prevent re-restock
 - [ ] Option-level stock reservation — extend add()/remove()/expiry to also decrement/restore `product_option_value.quantity`. Only needed if store adds products with size/color options that track per-option stock
 - [ ] getProducts() remove() for disabled products — optionally skip stock restore when product status=0
-- [ ] Cookie `Secure` flag — set based on HTTPS: `setcookie('oc_cart_token', ..., ..., '/', '', isset($_SERVER['HTTPS']), true);`
-- [ ] Rate-limit expiry cleanup — run once per 60s via session flag instead of every request (saves ~0.3ms/request)
 
 ## TODO — Phase 5 Sweep
 - [ ] Tap feedback: `:active` scale+tint on all tappable elements
@@ -86,10 +90,11 @@
 - subtract=1 required for all products (unique items must track stock)
 
 ## Next Up
-1. Custom templates for search/special/manufacturer (with labels)
-2. Success page design
-3. Phase 5 sweep (A11y, SEO, tap feedback, color audit)
-4. Production deploy (OCMOD generation, cron setup)
+1. Pre-production hardening (failure logging, cron, duplicate address, OCMOD)
+2. Custom templates for search/special/manufacturer (with labels)
+3. Success page design
+4. Phase 5 sweep (A11y, SEO, tap feedback, color audit)
+5. Production deploy (OCMOD install, cron setup, index, monitoring)
 
 ## Future (v2)
 - [ ] Checkout: rewrite to single `custom.php` controller + Twig macros + partials. Architecturally cleaner (one controller, enforced template contract, easy to add/change steps), but high regression risk against the current 5 tested checkout flows. Do after launch when the current system is stable in production and we have real user data to validate against.
