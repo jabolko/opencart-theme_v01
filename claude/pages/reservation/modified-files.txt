@@ -1,5 +1,5 @@
 # Reservation System — Modified Core Files Manifest
-# Last verified: 2026-04-03 (6th audit, 57 checks, 0 failures)
+# Last verified: 2026-04-13 (constructor rework: SKIP LOCKED + rate-limited expiry)
 #
 # Development: files edited directly, OCMOD cache cleared via test script
 # Production: generate OCMOD XML from git diff against OC 3.0.5.0 baseline
@@ -9,7 +9,7 @@
 # ═══════════════════════════════════════════════════════════════════════
 system/library/cart/cart.php
   # Atomic add (transaction + FOR UPDATE), transactional remove/clear/clearCart
-  # Expiry cleanup with FOR UPDATE (prevents double-restock)
+  # Expiry cleanup: rate-limited (60s/session) + SKIP LOCKED (zero contention)
   # Cookie-only persistent recovery (IP fallback removed)
   # Login merge with dedup + date_added refresh
   # Session-scoped cart_token (reused across add calls)
@@ -18,7 +18,7 @@ system/library/cart/cart.php
 
 catalog/controller/checkout/cart.php
   # currentTime() — server time for JS timer sync
-  # clearExpired() — cron endpoint with FOR UPDATE
+  # clearExpired() — cron endpoint with SKIP LOCKED (no try/catch needed)
   # getStockStatus() — batch status for JS-rendered cards
   # add() — reservation_failed + reservation_sold + reservation_already_in_cart catch
   # server_time + date_added passed to cart template
@@ -79,8 +79,8 @@ catalog/controller/common/cart.php
 # ═══════════════════════════════════════════════════════════════════════
 # Theme files (NOT OCMOD — deployed with theme via git)
 # ═══════════════════════════════════════════════════════════════════════
-# template/checkout/cart.twig          — data-server-time, data-time-added
-# template/checkout/checkout.twig      — heartbeat JS (30s setInterval)
+# template/checkout/cart.twig          — data-server-time, data-time-added, delayed updateCartTime call
+# template/checkout/checkout.twig      — heartbeat JS (30s interval, initial call delayed 3s)
 # template/common/cart.twig            — per-item timer in dropdown + mobile sheet
 # template/extension/module/latest.twig — label + button states
 # template/product/category.twig       — label + button states

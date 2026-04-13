@@ -1,5 +1,5 @@
 # Checkout System — Modified Core Files Manifest
-# Last updated: 2026-04-08
+# Last updated: 2026-04-13
 #
 # Development: files edited directly
 # Production: generate OCMOD XML from git diff against OC 3.0.5.0 baseline
@@ -37,6 +37,8 @@ catalog/language/sl-SI/checkout/checkout.php               # +98
 # Theme files (NOT OCMOD — deployed with theme via git)
 # ═══════════════════════════════════════════════════════════════════════
 # template/checkout/checkout.twig    — complete rewrite (V1 accordion, pills, progress, total bar)
+#                                      + heartbeat initial call delayed 3s (reservation fix)
+# template/checkout/cart.twig        — + delayed updateCartTime call (keeps reservation alive on cart page)
 # template/checkout/confirm.twig     — product cards with images + manufacturer
 # template/checkout/payment_address.twig — custom form layout
 # template/checkout/payment_method.twig  — custom radio/checkbox styling
