@@ -6,23 +6,19 @@ class ControllerCheckoutCart extends Controller {
 	}
 
 	public function clearExpired() {
-		// Cron endpoint — safety net for expiry when no visitors trigger the constructor
-		try {
-			$this->db->query("START TRANSACTION");
-			$expired = $this->db->query("SELECT cart_id, product_id, quantity FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' FOR UPDATE NOWAIT");
-			if ($expired->num_rows) {
-				$expired_ids = array();
-				foreach ($expired->rows as $row) {
-					$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$row['quantity'] . " WHERE product_id = '" . (int)$row['product_id'] . "'");
-					$expired_ids[] = (int)$row['cart_id'];
-				}
-				$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id IN (" . implode(',', $expired_ids) . ")");
+		// Cron endpoint — primary expiry mechanism. SKIP LOCKED: no conflicts.
+		$this->db->query("START TRANSACTION");
+		$expired = $this->db->query("SELECT cart_id, product_id, quantity FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' FOR UPDATE SKIP LOCKED");
+		if ($expired->num_rows) {
+			$expired_ids = array();
+			foreach ($expired->rows as $row) {
+				$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$row['quantity'] . " WHERE product_id = '" . (int)$row['product_id'] . "'");
+				$expired_ids[] = (int)$row['cart_id'];
 			}
-			$this->db->query("COMMIT");
+			$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id IN (" . implode(',', $expired_ids) . ")");
 			$this->cache->delete('product');
-		} catch (\Exception $e) {
-			try { $this->db->query("ROLLBACK"); } catch (\Exception $e2) {}
 		}
+		$this->db->query("COMMIT");
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode(array('success' => true)));
 	}

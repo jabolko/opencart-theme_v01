@@ -117,21 +117,30 @@ $this->db->query("SELECT ... FOR UPDATE SKIP LOCKED");
 
 Same reasoning — cron should gracefully skip locked rows.
 
-### Change 3: Delay the checkout heartbeat initial call
+### Change 3: Heartbeat — delay initial call + extend to cart page
 
-**Before (checkout.twig line 1348):**
+**checkout.twig — delay initial call (line 1348):**
 ```javascript
+// Before: fires immediately, races with guest form AJAX
 $.post('index.php?route=checkout/checkout/updateCartTime');
-```
 
-**After:**
-```javascript
+// After: 3-second delay, form loads first
 setTimeout(function() {
     $.post('index.php?route=checkout/checkout/updateCartTime');
 }, 3000);
 ```
 
-**Why:** The immediate heartbeat races with the guest/payment_address form AJAX. A 3-second delay ensures the form loads first. The 30-second interval continues normally after that.
+**cart.twig — add one call on cart page load:**
+```javascript
+// Keep reservation alive while user is on cart page (not just checkout)
+setTimeout(function() {
+    $.post('index.php?route=checkout/checkout/updateCartTime');
+}, 3000);
+```
+
+**Why:** Same `updateCartTime()` endpoint, no new methods needed. The cart page currently has no heartbeat — if a user spends 25 minutes browsing the cart, their reservation could expire before they reach checkout. One line of JS fixes this.
+
+The 30-second interval stays only on checkout (user is actively filling forms). Cart page gets a single touch on load (user is just reviewing, not stuck for 30 minutes).
 
 ### Change 4: Remove retry loops from add/remove/clear/clearCart
 
@@ -162,6 +171,7 @@ If a deadlock still occurs (extremely unlikely), the Exception propagates normal
 | `system/library/cart/cart.php` | Replace NOWAIT expiry with rate-limited SKIP LOCKED. Remove retry loops from add/remove/clear/clearCart (keep transactions). |
 | `catalog/controller/checkout/cart.php` | clearExpired: NOWAIT → SKIP LOCKED. Remove try/catch. |
 | `catalog/view/theme/otroskikoticek/template/checkout/checkout.twig` | Delay initial heartbeat by 3 seconds |
+| `catalog/view/theme/otroskikoticek/template/checkout/cart.twig` | Add single delayed `updateCartTime` call on cart page load |
 
 ## What stays the same
 
@@ -173,7 +183,8 @@ If a deadlock still occurs (extremely unlikely), the Exception propagates normal
 - Login merge with dedup (no transaction needed — guarded by countAffected)
 - All label logic, template states, JS instant updates
 - Cron endpoint (exists, just changes from NOWAIT to SKIP LOCKED)
-- Heartbeat interval (30s — unchanged, only initial call delayed)
+- Heartbeat interval (30s on checkout — unchanged, only initial call delayed)
+- `updateCartTime()` endpoint — reused on cart page (single delayed call, no interval)
 
 ## Execution order
 

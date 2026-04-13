@@ -41,11 +41,13 @@ class Cart {
 			}
 		}
 
-		// Reservation expiry: restore stock + delete expired cart rows
-		// NOWAIT: if another transaction holds a lock, skip — next request handles it
-		try {
+		// Reservation expiry: rate-limited (once per 60s per session)
+		// SKIP LOCKED: silently skips rows held by other transactions (no error, no warning)
+		if (empty($this->session->data['_last_expiry']) || (time() - $this->session->data['_last_expiry']) > 60) {
+			$this->session->data['_last_expiry'] = time();
+
 			$this->db->query("START TRANSACTION");
-			$expired = $this->db->query("SELECT cart_id, product_id, quantity FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' FOR UPDATE NOWAIT");
+			$expired = $this->db->query("SELECT cart_id, product_id, quantity FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' FOR UPDATE SKIP LOCKED");
 			if ($expired->num_rows) {
 				$expired_ids = array();
 				foreach ($expired->rows as $row) {
@@ -59,9 +61,6 @@ class Cart {
 				}
 			}
 			$this->db->query("COMMIT");
-		} catch (\Exception $e) {
-			try { $this->db->query("ROLLBACK"); } catch (\Exception $e2) {}
-			// Lock conflict or deadlock — silently skip, next request handles expiry
 		}
 
 		if ($this->customer->getId()) {
@@ -331,54 +330,48 @@ class Cart {
 	}
 
 	public function add($product_id, $quantity = 1, $option = array(), $recurring_id = 0) {
-		for ($retry = 0; $retry < 3; $retry++) {
-			try {
-				// Start transaction BEFORE duplicate check to prevent race condition
-				$this->db->query("START TRANSACTION");
+		// Start transaction BEFORE duplicate check to prevent race condition
+		$this->db->query("START TRANSACTION");
 
-				$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id = '" . (int)$product_id . "' AND recurring_id = '" . (int)$recurring_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "' FOR UPDATE");
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id = '" . (int)$product_id . "' AND recurring_id = '" . (int)$recurring_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "' FOR UPDATE");
 
-				if (!$query->row['total']) {
-					$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "' AND quantity >= " . (int)$quantity);
+		if (!$query->row['total']) {
+			// Atomic stock reservation: decrement only if available
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "' AND quantity >= " . (int)$quantity);
 
-					if ($this->db->countAffected() > 0) {
-						if (empty($this->session->data['cart_token'])) {
-							$this->session->data['cart_token'] = bin2hex(random_bytes(32));
-						}
-						$cart_token = $this->session->data['cart_token'];
-						$visitor_ip = $this->getVisitorIp();
-
-						$this->db->query("INSERT INTO " . DB_PREFIX . "cart SET api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "', customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', visitor_ip = '" . $this->db->escape($visitor_ip) . "', cart_token = '" . $this->db->escape($cart_token) . "', date_added = NOW()");
-
-						$this->db->query("COMMIT");
-
-						setcookie('oc_cart_token', $cart_token, time() + (30 * 86400), '/', '', !empty($_SERVER['HTTPS']), true);
-
-						if ($this->cache) {
-							$this->cache->delete('product');
-						}
-					} else {
-						$this->db->query("ROLLBACK");
-						$in_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . (int)$product_id . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' LIMIT 1");
-						if ($in_cart->num_rows) {
-							$this->session->data['reservation_failed'] = (int)$product_id;
-						} else {
-							$this->session->data['reservation_sold'] = (int)$product_id;
-						}
-					}
-				} else {
-					$this->db->query("COMMIT");
-					$this->session->data['reservation_already_in_cart'] = (int)$product_id;
+			if ($this->db->countAffected() > 0) {
+				// Reuse cart token within session (all items share one token for cookie recovery)
+				if (empty($this->session->data['cart_token'])) {
+					$this->session->data['cart_token'] = bin2hex(random_bytes(32));
 				}
-				return; // Success — exit retry loop
-			} catch (\Exception $e) {
-				try { $this->db->query("ROLLBACK"); } catch (\Exception $e2) {}
-				if ($retry >= 2) {
+				$cart_token = $this->session->data['cart_token'];
+				$visitor_ip = $this->getVisitorIp();
+
+				$this->db->query("INSERT INTO " . DB_PREFIX . "cart SET api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "', customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', visitor_ip = '" . $this->db->escape($visitor_ip) . "', cart_token = '" . $this->db->escape($cart_token) . "', date_added = NOW()");
+
+				$this->db->query("COMMIT");
+
+				// Set persistent recovery cookie (30 days, HttpOnly)
+				setcookie('oc_cart_token', $cart_token, time() + (30 * 86400), '/', '', !empty($_SERVER['HTTPS']), true);
+
+				// Invalidate product cache
+				if ($this->cache) {
+					$this->cache->delete('product');
+				}
+			} else {
+				$this->db->query("ROLLBACK");
+				// Distinguish: reserved by another customer vs sold out
+				$in_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . (int)$product_id . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' LIMIT 1");
+				if ($in_cart->num_rows) {
 					$this->session->data['reservation_failed'] = (int)$product_id;
-					return;
+				} else {
+					$this->session->data['reservation_sold'] = (int)$product_id;
 				}
-				usleep(50000 * ($retry + 1));
 			}
+		} else {
+			$this->db->query("COMMIT");
+			// Product already in this customer's cart — signal to controller
+			$this->session->data['reservation_already_in_cart'] = (int)$product_id;
 		}
 	}
 
@@ -392,26 +385,18 @@ class Cart {
 	}
 
 	public function remove($cart_id) {
-		for ($retry = 0; $retry < 3; $retry++) {
-			try {
-				$this->db->query("START TRANSACTION");
-				$cart_item = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' FOR UPDATE");
-				if ($cart_item->num_rows) {
-					$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart_item->row['quantity'] . " WHERE product_id = '" . (int)$cart_item->row['product_id'] . "'");
-					$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "'");
-					$this->db->query("COMMIT");
-					if ($this->cache) {
-						$this->cache->delete('product');
-					}
-				} else {
-					$this->db->query("COMMIT");
-				}
-				return;
-			} catch (\Exception $e) {
-				try { $this->db->query("ROLLBACK"); } catch (\Exception $e2) {}
-				if ($retry >= 2) return;
-				usleep(50000 * ($retry + 1));
+		// Transaction: restore stock + delete row atomically (prevents race with expiry)
+		$this->db->query("START TRANSACTION");
+		$cart_item = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' FOR UPDATE");
+		if ($cart_item->num_rows) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$cart_item->row['quantity'] . " WHERE product_id = '" . (int)$cart_item->row['product_id'] . "'");
+			$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "'");
+			$this->db->query("COMMIT");
+			if ($this->cache) {
+				$this->cache->delete('product');
 			}
+		} else {
+			$this->db->query("COMMIT");
 		}
 	}
 
@@ -421,19 +406,10 @@ class Cart {
 		$customer_id = (int)$this->customer->getId();
 		$session_id = $this->db->escape($this->session->getId());
 
-		for ($retry = 0; $retry < 3; $retry++) {
-			try {
-				$this->db->query("START TRANSACTION");
-				$this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "' FOR UPDATE");
-				$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "'");
-				$this->db->query("COMMIT");
-				return;
-			} catch (\Exception $e) {
-				try { $this->db->query("ROLLBACK"); } catch (\Exception $e2) {}
-				if ($retry >= 2) return;
-				usleep(50000 * ($retry + 1));
-			}
-		}
+		$this->db->query("START TRANSACTION");
+		$this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "' FOR UPDATE");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "'");
+		$this->db->query("COMMIT");
 	}
 
 	// Called on manual cart clear / admin login override — restores stock
@@ -442,23 +418,15 @@ class Cart {
 		$customer_id = (int)$this->customer->getId();
 		$session_id = $this->db->escape($this->session->getId());
 
-		for ($retry = 0; $retry < 3; $retry++) {
-			try {
-				$this->db->query("START TRANSACTION");
-				$this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "' FOR UPDATE");
-				$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.api_id = '" . $api_id . "' AND c.customer_id = '" . $customer_id . "' AND c.session_id = '" . $session_id . "'");
-				$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "'");
-				$this->db->query("COMMIT");
+		// Transaction: restore stock + delete rows atomically
+		$this->db->query("START TRANSACTION");
+		$this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "' FOR UPDATE");
+		$this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "cart c ON p.product_id = c.product_id SET p.quantity = p.quantity + c.quantity WHERE c.api_id = '" . $api_id . "' AND c.customer_id = '" . $customer_id . "' AND c.session_id = '" . $session_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . $api_id . "' AND customer_id = '" . $customer_id . "' AND session_id = '" . $session_id . "'");
+		$this->db->query("COMMIT");
 
-				if ($this->cache) {
-					$this->cache->delete('product');
-				}
-				return;
-			} catch (\Exception $e) {
-				try { $this->db->query("ROLLBACK"); } catch (\Exception $e2) {}
-				if ($retry >= 2) return;
-				usleep(50000 * ($retry + 1));
-			}
+		if ($this->cache) {
+			$this->cache->delete('product');
 		}
 	}
 

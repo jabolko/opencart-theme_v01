@@ -1345,7 +1345,7 @@ $(document).delegate('#button-payment-method', 'click', function() {
     var hb = setInterval(function() {
         $.post('index.php?route=checkout/checkout/updateCartTime');
     }, 30000);
-    $.post('index.php?route=checkout/checkout/updateCartTime');
+    setTimeout(function() { $.post('index.php?route=checkout/checkout/updateCartTime'); }, 3000);
     $(window).on('beforeunload', function() { clearInterval(hb); });
 })();
 //--></script>

@@ -207,4 +207,10 @@
 </div>
 {% endif %}
 
+{% if products %}
+<script type="text/javascript"><!--
+// Keep reservation alive while user is on cart page
+setTimeout(function() { $.post('index.php?route=checkout/checkout/updateCartTime'); }, 3000);
+//--></script>
+{% endif %}
 {{ footer }}
