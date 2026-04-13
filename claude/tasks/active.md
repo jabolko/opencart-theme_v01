@@ -91,5 +91,8 @@
 3. Phase 5 sweep (A11y, SEO, tap feedback, color audit)
 4. Production deploy (OCMOD generation, cron setup)
 
+## Future (v2)
+- [ ] Checkout: rewrite to single `custom.php` controller + Twig macros + partials. Architecturally cleaner (one controller, enforced template contract, easy to add/change steps), but high regression risk against the current 5 tested checkout flows. Do after launch when the current system is stable in production and we have real user data to validate against.
+
 ## Session Notes
 _Clear this section at the start of each session._
