@@ -213,8 +213,26 @@ class ControllerCheckoutRegister extends Controller {
 			// Default Payment Address
 			$this->load->model('account/address');
 				
-			$address_id = $this->model_account_address->addAddress($customer_id, $this->request->post);
-			
+			// Check for duplicate address before creating
+			$existing_addresses = $this->model_account_address->getAddresses();
+			$address_id = 0;
+
+			foreach ($existing_addresses as $existing) {
+				if ($existing['firstname'] == $this->request->post['firstname'] &&
+					$existing['lastname'] == $this->request->post['lastname'] &&
+					$existing['address_1'] == $this->request->post['address_1'] &&
+					$existing['city'] == $this->request->post['city'] &&
+					$existing['postcode'] == $this->request->post['postcode'] &&
+					$existing['country_id'] == $this->request->post['country_id']) {
+					$address_id = $existing['address_id'];
+					break;
+				}
+			}
+
+			if (!$address_id) {
+				$address_id = $this->model_account_address->addAddress($customer_id, $this->request->post);
+			}
+
 			// Set the address as default
 			$this->model_account_customer->editAddressId($customer_id, $address_id);
 			

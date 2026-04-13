@@ -17,6 +17,7 @@ class ControllerCheckoutCart extends Controller {
 			}
 			$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id IN (" . implode(',', $expired_ids) . ")");
 			$this->cache->delete('product');
+			error_log('Reservation cron: expired ' . count($expired_ids) . ' cart items, stock restored');
 		}
 		$this->db->query("COMMIT");
 		$this->response->addHeader('Content-Type: application/json');

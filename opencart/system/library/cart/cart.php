@@ -56,6 +56,8 @@ class Cart {
 				}
 				$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id IN (" . implode(',', $expired_ids) . ")");
 
+				error_log('Reservation: expired ' . count($expired_ids) . ' cart items, stock restored');
+
 				if ($this->cache) {
 					$this->cache->delete('product');
 				}
@@ -364,8 +366,10 @@ class Cart {
 				$in_cart = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE product_id = '" . (int)$product_id . "' AND date_added > DATE_SUB(NOW(), INTERVAL 30 MINUTE) AND api_id = '0' LIMIT 1");
 				if ($in_cart->num_rows) {
 					$this->session->data['reservation_failed'] = (int)$product_id;
+					error_log('Reservation: product_id=' . (int)$product_id . ' reserved by another customer');
 				} else {
 					$this->session->data['reservation_sold'] = (int)$product_id;
+					error_log('Reservation: product_id=' . (int)$product_id . ' sold out (qty=0, no active reservation)');
 				}
 			}
 		} else {
@@ -397,6 +401,7 @@ class Cart {
 			}
 		} else {
 			$this->db->query("COMMIT");
+			error_log('Reservation: remove failed for cart_id=' . (int)$cart_id . ' (row not found or already deleted)');
 		}
 	}
 
