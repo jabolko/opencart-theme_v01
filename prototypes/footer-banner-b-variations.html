@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Footer Banner B — 3 Variations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #c8c8c8; }
+
+    :root {
+      --gold:    #f9b94a;
+      --gold-dk: #e0a030;
+      --bg:      #3a3a3a;
+      --on:      #f5f5f5;
+      --rule:    rgba(245,245,245,.09);
+      --dim:     rgba(245,245,245,.28);
+    }
+
+    .iter-label {
+      padding: 40px 0 0 40px;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: #888;
+    }
+
+    /* ── grid stub ── */
+    .foot-stub { background: var(--bg); padding: 32px 48px 0; border-top: 1px solid var(--rule); }
+    .stub-cols { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+    .stub-heading { font-family: 'Open Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .stub-line { height: 9px; background: rgba(245,245,245,.1); border-radius: 4px; margin-bottom: 7px; }
+    .stub-line.w60 { width: 60%; } .stub-line.w45 { width: 45%; } .stub-line.w75 { width: 75%; }
+    .stub-copy { padding: 12px 0 20px; font-size: 11px; color: var(--dim); }
+
+    /* ── review badge ── */
+    .review-badge { height: 60px; width: auto; filter: brightness(1.1); opacity: .9; display: block; }
+
+
+    /* ══════════════════════════════════════════════════════════
+       VARIATION 1
+       Large decorative " before the text. Photo 90px.
+       Review card: badge stacked above "207 ocen".
+    ══════════════════════════════════════════════════════════ */
+
+    .v1 { background: var(--bg); }
+
+    .v1__banner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 48px;
+      background: linear-gradient(135deg, rgba(249,185,74,.09) 0%, rgba(249,185,74,.03) 100%);
+      border-bottom: 1px solid rgba(249,185,74,.15);
+    }
+
+    .v1__photo {
+      width: 90px; height: 90px;
+      border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 3px solid var(--gold);
+    }
+
+    .v1__text { flex: 1 1 auto; min-width: 0; }
+
+    .v1__quote {
+      font-size: 15px; line-height: 1.65;
+      color: rgba(245,245,245,.82);
+      font-style: italic;
+      position: relative;
+      padding-left: 28px;
+    }
+    .v1__quote::before {
+      content: '\201C';
+      position: absolute;
+      left: 0; top: -6px;
+      font-size: 48px;
+      line-height: 1;
+      color: var(--gold);
+      font-style: normal;
+      font-family: 'Open Sans', serif;
+    }
+
+    .v1__cite {
+      display: block; margin-top: 10px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: rgba(245,245,245,.45);
+      padding-left: 28px;
+    }
+
+    .v1__review {
+      flex-shrink: 0;
+      background: rgba(0,0,0,.22);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      min-width: 160px;
+    }
+    .v1__review-count {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600; font-size: 13px;
+      color: rgba(245,245,245,.4);
+      letter-spacing: .04em;
+    }
+    .v1__review-count strong {
+      font-size: 20px;
+      color: var(--gold);
+      margin-right: 3px;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       VARIATION 2
+       Photo 100px. Quote text larger + bolder.
+       Review: big standalone "207" then badge below.
+       More editorial, number leads.
+    ══════════════════════════════════════════════════════════ */
+
+    .v2 { background: var(--bg); }
+
+    .v2__banner {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      padding: 44px 48px;
+      background: linear-gradient(135deg, rgba(249,185,74,.09) 0%, rgba(249,185,74,.03) 100%);
+      border-bottom: 1px solid rgba(249,185,74,.15);
+    }
+
+    .v2__photo {
+      width: 100px; height: 100px;
+      border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 0 6px rgba(249,185,74,.1);
+    }
+
+    .v2__text { flex: 1 1 auto; min-width: 0; }
+
+    .v2__mark {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 56px; line-height: .8;
+      color: var(--gold); opacity: .6;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .v2__quote {
+      font-size: 17px; line-height: 1.6;
+      color: rgba(245,245,245,.85);
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    .v2__cite {
+      display: block; margin-top: 10px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: rgba(245,245,245,.4);
+    }
+
+    .v2__review {
+      flex-shrink: 0;
+      background: rgba(0,0,0,.22);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      min-width: 160px;
+    }
+    .v2__num {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600; font-size: 36px;
+      color: var(--gold); line-height: 1;
+    }
+    .v2__num-label {
+      font-size: 11px; color: rgba(245,245,245,.35);
+      letter-spacing: .05em; margin-bottom: 10px;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       VARIATION 3
+       Photo 108px with warm shadow glow.
+       Huge decorative " as background watermark.
+       Review: badge + count side by side in card.
+       Most distinctive — richest version.
+    ══════════════════════════════════════════════════════════ */
+
+    .v3 { background: var(--bg); }
+
+    .v3__banner {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      padding: 44px 48px;
+      background: linear-gradient(135deg, rgba(249,185,74,.09) 0%, rgba(249,185,74,.03) 100%);
+      border-bottom: 1px solid rgba(249,185,74,.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* watermark " */
+    .v3__banner::before {
+      content: '\201C';
+      position: absolute;
+      right: 280px; top: -30px;
+      font-size: 240px; line-height: 1;
+      color: rgba(249,185,74,.06);
+      font-family: 'Open Sans', serif;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .v3__photo {
+      width: 108px; height: 108px;
+      border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 3px solid var(--gold);
+      box-shadow: 0 0 0 7px rgba(249,185,74,.12), 0 8px 28px rgba(0,0,0,.35);
+    }
+
+    .v3__text { flex: 1 1 auto; min-width: 0; position: relative; }
+
+    .v3__quote {
+      font-size: 16px; line-height: 1.65;
+      color: rgba(245,245,245,.85);
+      font-style: italic;
+    }
+    .v3__quote::before {
+      content: '\201C';
+      color: var(--gold);
+      font-size: 22px;
+      font-style: normal;
+      margin-right: 3px;
+      vertical-align: -3px;
+    }
+    .v3__quote::after {
+      content: '\201D';
+      color: var(--gold);
+      font-size: 22px;
+      font-style: normal;
+      margin-left: 3px;
+      vertical-align: -3px;
+    }
+
+    .v3__cite {
+      display: block; margin-top: 10px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: rgba(245,245,245,.4);
+    }
+
+    .v3__review {
+      flex-shrink: 0;
+      background: rgba(0,0,0,.22);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      min-width: 160px;
+    }
+    .v3__review-row {
+      display: flex; align-items: baseline; gap: 6px;
+    }
+    .v3__num {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600; font-size: 28px;
+      color: var(--gold); line-height: 1;
+    }
+    .v3__num-label {
+      font-size: 12px; color: rgba(245,245,245,.35);
+    }
+
+  </style>
+</head>
+<body>
+
+
+<!-- ═══ VARIATION 1 ══════════════════════════════════════════════ -->
+<p class="iter-label">Variation 1 — Decorative " · photo 90px · badge + count stacked</p>
+<div class="v1">
+  <div class="v1__banner">
+    <img class="v1__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="v1__text">
+      <p class="v1__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="v1__cite">— Meta</cite>
+    </div>
+    <a href="#" class="v1__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="v1__review-count"><strong>207</strong> ocen</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+
+<!-- ═══ VARIATION 2 ══════════════════════════════════════════════ -->
+<p class="iter-label">Variation 2 — Standalone " mark · photo 100px + glow · 207 number leads</p>
+<div class="v2">
+  <div class="v2__banner">
+    <img class="v2__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="v2__text">
+      <span class="v2__mark">"</span>
+      <p class="v2__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="v2__cite">— Meta</cite>
+    </div>
+    <a href="#" class="v2__review">
+      <p class="v2__num">207</p>
+      <p class="v2__num-label">ocen strank</p>
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+
+<!-- ═══ VARIATION 3 ══════════════════════════════════════════════ -->
+<p class="iter-label">Variation 3 — Watermark " · photo 108px + glow · inline " " around quote</p>
+<div class="v3">
+  <div class="v3__banner">
+    <img class="v3__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="v3__text">
+      <p class="v3__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="v3__cite">— Meta</cite>
+    </div>
+    <a href="#" class="v3__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <div class="v3__review-row">
+        <span class="v3__num">207</span>
+        <span class="v3__num-label">ocen</span>
+      </div>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+<div style="height:40px;"></div>
+</body>
+</html>

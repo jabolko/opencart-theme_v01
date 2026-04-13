@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell + Eco — Compact Versions | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --green: #528e6d;
+            --green-dark: #3d7356;
+            --green-light: #e8f2ec;
+            --success: #7d9478;
+            --red: #d55e6f;
+            --blue: #568cbe;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* ================================================================
+           V1 — SINGLE ROW COMBO
+           Sell left, eco right, one line each
+           ================================================================ */
+        .v1-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .v1-sell {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e8f2ec, #d4e8dc);
+            text-decoration: none;
+            display: block;
+        }
+
+        .v1-sell__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--green-dark);
+            margin-bottom: 2px;
+        }
+
+        .v1-sell__text {
+            font-size: 11px;
+            color: var(--charcoal);
+            line-height: 1.4;
+        }
+
+        .v1-eco {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .v1-eco__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--heading);
+            margin-bottom: 4px;
+        }
+
+        .v1-eco__stats {
+            display: flex;
+            gap: 8px;
+        }
+
+        .v1-eco__stat {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .v1-eco__stat--red { color: var(--red); }
+        .v1-eco__stat--green { color: var(--green); }
+        .v1-eco__stat--blue { color: var(--blue); }
+
+        .v1-eco__stat small {
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--muted);
+            display: block;
+        }
+
+        /* ================================================================
+           V2 — INLINE TEXT STRIP
+           Just text, no boxes. Sell link + eco one-liner
+           ================================================================ */
+        .v2-strip {
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .v2-sell {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            text-decoration: none;
+        }
+
+        .v2-sell__text {
+            font-size: 13px;
+            color: var(--charcoal);
+        }
+
+        .v2-sell__text strong {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .v2-sell__arrow {
+            color: var(--green);
+            font-size: 18px;
+        }
+
+        .v2-eco {
+            font-size: 11px;
+            color: var(--muted);
+            padding-top: 6px;
+            line-height: 1.45;
+        }
+
+        .v2-eco strong {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        .v2-eco .stat { font-weight: 700; }
+        .v2-eco .stat--red { color: var(--red); }
+        .v2-eco .stat--green { color: var(--green); }
+        .v2-eco .stat--blue { color: var(--blue); }
+
+        /* ================================================================
+           V3 — SELL CARD + ECO FOOTNOTE
+           Small sell card, eco as a tiny footnote below
+           ================================================================ */
+        .v3-sell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--green-light);
+            text-decoration: none;
+        }
+
+        .v3-sell__icon {
+            width: 32px; height: 32px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v3-sell__icon svg { width: 16px; height: 16px; stroke: var(--white); fill: none; stroke-width: 2; }
+
+        .v3-sell__body { flex: 1; }
+
+        .v3-sell__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--green-dark);
+        }
+
+        .v3-sell__text {
+            font-size: 11px;
+            color: var(--charcoal);
+        }
+
+        .v3-sell__chevron {
+            color: var(--green);
+            flex-shrink: 0;
+        }
+
+        .v3-sell__chevron svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        .v3-eco {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 10px 0 0;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .v3-eco span {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .v3-eco .dot {
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .v3-eco .dot--red { background: var(--red); }
+        .v3-eco .dot--green { background: var(--green); }
+        .v3-eco .dot--blue { background: var(--blue); }
+
+        /* ================================================================
+           V4 — EVERYTHING IN ONE LINE
+           Sell link left, eco stats right, single row
+           ================================================================ */
+        .v4-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .v4-sell {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--green);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .v4-sell svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        .v4-divider {
+            width: 1px;
+            height: 20px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .v4-eco {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .v4-eco__item {
+            text-align: center;
+        }
+
+        .v4-eco__num {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .v4-eco__num--red { color: var(--red); }
+        .v4-eco__num--green { color: var(--green); }
+        .v4-eco__num--blue { color: var(--blue); }
+
+        .v4-eco__label {
+            font-size: 8px;
+            color: var(--muted);
+        }
+
+        /* ================================================================
+           V5 — COLLAPSIBLE FOOTER
+           Sell as link, eco hidden behind "Več o trajnosti" toggle
+           ================================================================ */
+        .v5-wrap {
+            padding: 8px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .v5-sell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            text-decoration: none;
+        }
+
+        .v5-sell__icon svg { width: 18px; height: 18px; stroke: var(--green); fill: none; stroke-width: 1.5; }
+
+        .v5-sell__text {
+            flex: 1;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--green-dark);
+        }
+
+        .v5-sell__arrow svg { width: 16px; height: 16px; stroke: var(--green); fill: none; stroke-width: 2.5; }
+
+        .v5-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+        }
+
+        .v5-toggle svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; transition: transform 0.25s; }
+
+        .v5-toggle.open svg { transform: rotate(180deg); }
+
+        .v5-eco-detail {
+            display: none;
+            padding: 8px 0;
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .v5-eco-detail.show { display: block; }
+
+        .v5-eco-detail strong { color: var(--charcoal); font-family: 'Open Sans', sans-serif; }
+    </style>
+</head>
+<body>
+
+<!-- V1 — SIDE BY SIDE -->
+<div class="variation">
+    <div class="variation-label">V1 — Side by Side <span>Sell card left, eco stats right. Compact 50/50 split.</span></div>
+    <div class="v1-row">
+        <a href="#" class="v1-sell">
+            <div class="v1-sell__title">Prodaj oblačila</div>
+            <div class="v1-sell__text">Izprazni omaro →</div>
+        </a>
+        <div class="v1-eco">
+            <div class="v1-eco__title">Zakaj rabljeno?</div>
+            <div class="v1-eco__stats">
+                <div class="v1-eco__stat v1-eco__stat--red">0,50€<small>/uro</small></div>
+                <div class="v1-eco__stat v1-eco__stat--green">10%<small>CO₂</small></div>
+                <div class="v1-eco__stat v1-eco__stat--blue">93mrd<small>m³</small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- V2 — TEXT ONLY -->
+<div class="variation">
+    <div class="variation-label">V2 — Text Strip <span>Pure text. Sell as link, eco as one-liner footnote. Smallest footprint.</span></div>
+    <div class="v2-strip">
+        <a href="#" class="v2-sell">
+            <span class="v2-sell__text"><strong>Polna omara?</strong> Prodaj oblačila pri nas.</span>
+            <span class="v2-sell__arrow">›</span>
+        </a>
+        <div class="v2-eco">
+            Nežno rabljeno ne izkorišča delovne sile (<span class="stat stat--red">0,50€/h</span>), ne ustvarja emisij (<span class="stat stat--green">10% CO₂</span>) in ne porablja vode (<span class="stat stat--blue">93 mrd m³</span>).
+        </div>
+    </div>
+</div>
+
+<!-- V3 — SELL CARD + ECO DOTS -->
+<div class="variation">
+    <div class="variation-label">V3 — Sell Card + Eco Dots <span>Compact sell strip with icon, eco as tiny dot legend below.</span></div>
+    <a href="#" class="v3-sell">
+        <div class="v3-sell__icon">
+            <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+        </div>
+        <div class="v3-sell__body">
+            <div class="v3-sell__title">Prodaj oblačila pri nas</div>
+            <div class="v3-sell__text">Izprazni omaro, zasluži.</div>
+        </div>
+        <div class="v3-sell__chevron"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
+    </a>
+    <div class="v3-eco">
+        <span><span class="dot dot--red"></span> 0,50€/h plačilo</span>
+        <span><span class="dot dot--green"></span> 10% emisij</span>
+        <span><span class="dot dot--blue"></span> 93 mrd m³ vode</span>
+    </div>
+</div>
+
+<!-- V4 — ONE LINE -->
+<div class="variation">
+    <div class="variation-label">V4 — One Line <span>Everything on one row. Sell link | divider | eco stats. Ultra minimal.</span></div>
+    <div class="v4-row">
+        <a href="#" class="v4-sell">
+            <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+            Prodaj pri nas
+        </a>
+        <div class="v4-divider"></div>
+        <div class="v4-eco">
+            <div class="v4-eco__item">
+                <div class="v4-eco__num v4-eco__num--red">0,50€</div>
+                <div class="v4-eco__label">plačilo/h</div>
+            </div>
+            <div class="v4-eco__item">
+                <div class="v4-eco__num v4-eco__num--green">10%</div>
+                <div class="v4-eco__label">emisij</div>
+            </div>
+            <div class="v4-eco__item">
+                <div class="v4-eco__num v4-eco__num--blue">93mrd</div>
+                <div class="v4-eco__label">m³ vode</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- V5 — COLLAPSIBLE -->
+<div class="variation">
+    <div class="variation-label">V5 — Collapsible <span>Sell as icon link. Eco hidden behind "Več o trajnosti" toggle. Zero visual weight until tapped.</span></div>
+    <div class="v5-wrap">
+        <a href="#" class="v5-sell">
+            <span class="v5-sell__icon"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg></span>
+            <span class="v5-sell__text">Prodaj oblačila pri nas</span>
+            <span class="v5-sell__arrow"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></span>
+        </a>
+        <button class="v5-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
+            Več o trajnosti
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="v5-eco-detail">
+            Nežno rabljeno ne izkorišča delovne sile (<strong>0,50€/h</strong> v tretjem svetu), ne ustvarja emisij (<strong>10%</strong> vseh CO₂) in ne porablja vode (<strong>93 mrd m³</strong> letno). Vsak artikel pregledamo <strong>10-krat</strong>. 14 dni za vračilo brez pojasnila.
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

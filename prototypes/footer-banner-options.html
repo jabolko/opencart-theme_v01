@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Footer Banner Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #c8c8c8; }
+
+    :root {
+      --gold:    #f9b94a;
+      --gold-dk: #e0a030;
+      --bg:      #3a3a3a;
+      --on:      #f5f5f5;
+      --muted:   rgba(245,245,245,.55);
+      --dim:     rgba(245,245,245,.28);
+      --rule:    rgba(245,245,245,.09);
+    }
+
+    .iter-label {
+      padding: 36px 0 0 40px;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: #888;
+    }
+
+    /* ── shared grid stub (same for all 3) ── */
+    .foot-stub {
+      background: var(--bg);
+      padding: 32px 48px 0;
+      border-top: 1px solid var(--rule);
+    }
+    .stub-cols {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .stub-heading {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 12px;
+    }
+    .stub-line { height: 9px; background: rgba(245,245,245,.1); border-radius: 4px; margin-bottom: 7px; }
+    .stub-line.w60 { width: 60%; }
+    .stub-line.w45 { width: 45%; }
+    .stub-line.w75 { width: 75%; }
+    .stub-copy {
+      padding: 12px 0 20px;
+      font-size: 11px; color: var(--dim);
+    }
+
+    /* ── shared elements ── */
+    .review-badge { height: 64px; width: auto; filter: brightness(1.1); opacity: .9; display: block; }
+    .review-count { font-size: 12px; color: rgba(245,245,245,.45); margin-top: 5px; text-align: center; }
+
+    /* ══════════════════════════════════════════════════════════
+       OPTION A — Gold left accent + elevated background panel
+       Quote is left-bordered in gold. Whole banner has a raised
+       dark panel feel. Review badge pushed right with label.
+    ══════════════════════════════════════════════════════════ */
+
+    .fA { background: var(--bg); }
+
+    .fA__banner {
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      background: rgba(0,0,0,.18);
+      border-bottom: 2px solid var(--gold);
+    }
+    .fA__photo {
+      width: 72px; height: 72px;
+      border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 2.5px solid var(--gold);
+      box-shadow: 0 0 0 5px rgba(249,185,74,.12);
+    }
+    .fA__quote-wrap {
+      flex: 1 1 auto; min-width: 0;
+      border-left: 3px solid var(--gold);
+      padding-left: 20px;
+    }
+    .fA__quote {
+      font-size: 15px; line-height: 1.65;
+      color: rgba(245,245,245,.8);
+      font-style: italic;
+    }
+    .fA__cite {
+      display: block; margin-top: 8px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: var(--gold);
+    }
+    .fA__review {
+      flex-shrink: 0; display: flex;
+      flex-direction: column; align-items: center;
+      text-decoration: none; gap: 0;
+    }
+    .fA__review-label {
+      font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(245,245,245,.35); margin-bottom: 8px;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       OPTION B — Full-bleed gold-tinted band
+       Banner gets a warm amber tint (dark gold overlay).
+       Quote larger, centered vertically. Review badge in own
+       box with count prominent.
+    ══════════════════════════════════════════════════════════ */
+
+    .fB { background: var(--bg); }
+
+    .fB__banner {
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      background: linear-gradient(135deg, rgba(249,185,74,.1) 0%, rgba(249,185,74,.04) 100%);
+      border-top: 3px solid var(--gold);
+      border-bottom: 1px solid rgba(249,185,74,.2);
+    }
+    .fB__photo {
+      width: 80px; height: 80px;
+      border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 3px solid var(--gold);
+    }
+    .fB__text { flex: 1 1 auto; min-width: 0; }
+    .fB__eyebrow {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 10px;
+    }
+    .fB__quote {
+      font-size: 16px; line-height: 1.6;
+      color: rgba(245,245,245,.85);
+      font-style: italic;
+    }
+    .fB__cite {
+      display: block; margin-top: 8px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: rgba(245,245,245,.5);
+    }
+    .fB__review {
+      flex-shrink: 0;
+      background: rgba(0,0,0,.2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex; flex-direction: column; align-items: center;
+      text-decoration: none; gap: 6px;
+    }
+    .fB__review-count {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600; font-size: 22px; color: var(--gold);
+      line-height: 1;
+    }
+    .fB__review-label {
+      font-size: 11px; color: rgba(245,245,245,.4);
+      letter-spacing: .05em;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       OPTION C — Two-cell split layout
+       Left cell: photo + quote (takes ~60% width).
+       Right cell: review badge, centered, on slightly different bg.
+       Clean visual separation. Feels like two distinct messages.
+    ══════════════════════════════════════════════════════════ */
+
+    .fC { background: var(--bg); }
+
+    .fC__banner {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .fC__left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      padding: 36px 40px;
+      border-right: 1px solid var(--rule);
+    }
+    .fC__photo {
+      width: 76px; height: 76px;
+      border-radius: 50%; object-fit: cover; flex-shrink: 0;
+      border: 2.5px solid var(--gold);
+      box-shadow: 0 4px 20px rgba(249,185,74,.2);
+    }
+    .fC__quote {
+      font-size: 15.5px; line-height: 1.65;
+      color: rgba(245,245,245,.8);
+      font-style: italic;
+    }
+    .fC__cite {
+      display: block; margin-top: 8px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: var(--gold);
+    }
+    .fC__right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      gap: 8px;
+      background: rgba(0,0,0,.12);
+      text-decoration: none;
+    }
+    .fC__review-count {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600; font-size: 28px;
+      color: var(--gold); line-height: 1;
+    }
+    .fC__review-sub {
+      font-size: 12px; color: rgba(245,245,245,.4);
+      text-align: center; line-height: 1.4;
+    }
+
+  </style>
+</head>
+<body>
+
+
+<!-- ═══ OPTION A ══════════════════════════════════════════════ -->
+<p class="iter-label">Option A — Gold left accent · bottom gold line · photo glow</p>
+<div class="fA">
+  <div class="fA__banner">
+    <img class="fA__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="fA__quote-wrap">
+      <p class="fA__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="fA__cite">— Meta, ustanoviteljica</cite>
+    </div>
+    <a href="#" class="fA__review">
+      <p class="fA__review-label">Ocene strank</p>
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="review-count">207 ocen</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+
+<!-- ═══ OPTION B ══════════════════════════════════════════════ -->
+<p class="iter-label">Option B — Warm gold tint band · review in its own card · eyebrow label</p>
+<div class="fB">
+  <div class="fB__banner">
+    <img class="fB__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="fB__text">
+      <p class="fB__eyebrow">Beseda ustanoviteljice</p>
+      <p class="fB__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="fB__cite">— Meta</cite>
+    </div>
+    <a href="#" class="fB__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="fB__review-count">207</p>
+      <p class="fB__review-label">ocen strank</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+
+<!-- ═══ OPTION C ══════════════════════════════════════════════ -->
+<p class="iter-label">Option C — Split cell · review in dark panel · count big</p>
+<div class="fC">
+  <div class="fC__banner">
+    <div class="fC__left">
+      <img class="fC__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+      <div>
+        <p class="fC__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+        <cite class="fC__cite">— Meta, ustanoviteljica</cite>
+      </div>
+    </div>
+    <a href="#" class="fC__right">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="fC__review-count">207</p>
+      <p class="fC__review-sub">ocen strank<br>Google &amp; Facebook</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+<div style="height:40px;"></div>
+</body>
+</html>

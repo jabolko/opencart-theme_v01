@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart Empty State — 5 Variations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 17px; }
+  body { background: #f7f7f7; padding: 24px 16px; font-family: 'DM Sans', sans-serif; color: #565656; }
+  h2 { font-family: 'Open Sans', sans-serif; font-size: 0.82rem; font-weight: 600; color: #9aa0af; margin: 48px 0 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  h2:first-of-type { margin-top: 0; }
+  p.note { font-size: 0.71rem; color: #9aa0af; margin-bottom: 16px; line-height: 1.5; }
+  .wrap { max-width: 390px; margin: 0 auto; }
+  .sep { height: 1px; background: #eee; margin: 32px 0; }
+
+  /* Shared button styles */
+  .btn-gold { display: inline-block; background: #f9b94a; color: #2b2e35; font-family: 'Open Sans'; font-weight: 600; font-size: 0.875rem; padding: 10px 24px; border-radius: 9999px; text-decoration: none; transition: background 0.2s; }
+  .btn-gold:hover { background: #ffd369; }
+  .btn-outline { display: inline-block; border: 1px solid #d6d9e0; color: #565656; font-family: 'Open Sans'; font-weight: 600; font-size: 0.82rem; padding: 8px 20px; border-radius: 9999px; text-decoration: none; transition: all 0.2s; }
+  .btn-outline:hover { border-color: #565656; color: #2b2e35; }
+  .btn-sm { font-size: 0.76rem; padding: 6px 16px; }
+
+  /* Cart icon SVG */
+  .empty-cart-svg { color: #d6d9e0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== V1 — Centered, Big Icon, Stacked CTAs ===================== -->
+<h2>V1 — Centered, Big Icon, Stacked CTAs</h2>
+<div style="text-align: center; padding: 48px 16px;">
+  <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d6d9e0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;">
+    <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+  </svg>
+  <h3 style="font-family: 'Open Sans'; font-size: 1.25rem; font-weight: 700; color: #2b2e35; margin-bottom: 8px;">Tvoja košarica je prazna!</h3>
+  <p style="font-size: 0.875rem; color: #9aa0af; margin-bottom: 24px;">Dodaj kaj lepega in se vrni.</p>
+  <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+    <a href="#" class="btn-gold" style="width: 100%; text-align: center;">Nakupuj</a>
+    <div style="display: flex; gap: 8px; width: 100%;">
+      <a href="#" class="btn-outline" style="flex: 1; text-align: center;">Deklice</a>
+      <a href="#" class="btn-outline" style="flex: 1; text-align: center;">Dečki</a>
+      <a href="#" class="btn-outline" style="flex: 1; text-align: center;">Nosečnice</a>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ===================== V2 — Minimal, Inline Category Pills ===================== -->
+<h2>V2 — Minimal, Inline Category Pills</h2>
+<div style="text-align: center; padding: 48px 16px;">
+  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d6d9e0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;">
+    <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+  </svg>
+  <h3 style="font-family: 'Open Sans'; font-size: 1.125rem; font-weight: 700; color: #2b2e35; margin-bottom: 6px;">Tvoja košarica je prazna!</h3>
+  <p style="font-size: 0.82rem; color: #9aa0af; margin-bottom: 20px;">Začni z nakupovanjem</p>
+  <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+    <a href="#" class="btn-gold btn-sm">Deklice</a>
+    <a href="#" class="btn-gold btn-sm">Dečki</a>
+    <a href="#" class="btn-gold btn-sm">Nosečnice</a>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ===================== V3 — Card Style with Illustration ===================== -->
+<h2>V3 — Card Style with Illustration</h2>
+<div style="background: #fff; border-radius: 12px; padding: 40px 24px; text-align: center; margin: 16px 0;">
+  <div style="width: 72px; height: 72px; background: #f7f7f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9aa0af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+  </div>
+  <h3 style="font-family: 'Open Sans'; font-size: 1.125rem; font-weight: 700; color: #2b2e35; margin-bottom: 6px;">Tvoja košarica je prazna!</h3>
+  <p style="font-size: 0.82rem; color: #9aa0af; margin-bottom: 24px; line-height: 1.5;">Poišči oblačila za svoje najmlajše.</p>
+  <div style="display: flex; gap: 8px; justify-content: center;">
+    <a href="#" class="btn-outline">Deklice</a>
+    <a href="#" class="btn-outline">Dečki</a>
+    <a href="#" class="btn-outline">Nosečnice</a>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ===================== V4 — Full Width, Large Text, Row of Gold Buttons ===================== -->
+<h2>V4 — Large Text, Gold Button Row</h2>
+<div style="text-align: center; padding: 56px 16px;">
+  <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#d6d9e0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px;">
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+  </svg>
+  <h3 style="font-family: 'Open Sans'; font-size: 1.5rem; font-weight: 700; color: #2b2e35; margin-bottom: 8px;">Tvoja košarica je prazna!</h3>
+  <p style="font-size: 0.875rem; color: #9aa0af; margin-bottom: 28px;">Odkrij edinstvena oblačila za otroke.</p>
+  <div style="display: flex; gap: 10px; justify-content: center;">
+    <a href="#" class="btn-gold">Deklice</a>
+    <a href="#" class="btn-gold">Dečki</a>
+    <a href="#" class="btn-gold">Nosečnice</a>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- ===================== V5 — Compact, Bag Icon, Vertical Links ===================== -->
+<h2>V5 — Compact, Shopping Bag, Vertical Links</h2>
+<div style="text-align: center; padding: 40px 16px;">
+  <div style="width: 80px; height: 80px; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9aa0af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path>
+    </svg>
+  </div>
+  <h3 style="font-family: 'Open Sans'; font-size: 1.125rem; font-weight: 700; color: #2b2e35; margin-bottom: 6px;">Tvoja košarica je prazna!</h3>
+  <p style="font-size: 0.82rem; color: #9aa0af; margin-bottom: 24px;">Začni z nakupovanjem</p>
+  <div style="display: flex; flex-direction: column; gap: 8px; max-width: 200px; margin: 0 auto;">
+    <a href="#" style="font-family: 'Open Sans'; font-size: 0.94rem; font-weight: 600; color: #2b2e35; text-decoration: none; padding: 10px; border-bottom: 1px solid #eee;">Deklice →</a>
+    <a href="#" style="font-family: 'Open Sans'; font-size: 0.94rem; font-weight: 600; color: #2b2e35; text-decoration: none; padding: 10px; border-bottom: 1px solid #eee;">Dečki →</a>
+    <a href="#" style="font-family: 'Open Sans'; font-size: 0.94rem; font-weight: 600; color: #2b2e35; text-decoration: none; padding: 10px;">Nosečnice →</a>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

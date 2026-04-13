@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Search — 5 Designs</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f9b94a; --gold-dark: #e0a030; --charcoal: #565656; --heading: #2b2e35;
+    --muted: #9aa0af; --surface: #fff; --surface-alt: #f7f7f7; --border: #d6d9e0;
+    --success: #7d9478; --font-heading: 'Open Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); color: var(--charcoal); background: #eee; font-size: 15px; }
+  .version-nav { position: sticky; top: 0; z-index: 200; background: #3a3a3a; padding: 12px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .version-nav span { color: #fff; font-family: var(--font-heading); font-weight: 600; font-size: 14px; margin-right: 8px; }
+  .version-nav button { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; background: transparent; color: #fff; font-family: var(--font-body); font-size: 12px; cursor: pointer; }
+  .version-nav button.active, .version-nav button:hover { background: var(--gold); color: var(--heading); border-color: var(--gold); }
+  .version { display: none; max-width: 390px; margin: 0 auto; min-height: 100vh; background: var(--surface-alt); }
+  .version.active { display: block; }
+
+  /* Mock header */
+  .hdr { background: #444; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .hdr__logo { font-family: var(--font-heading); font-weight: 700; font-size: 15px; color: #fff; }
+  .hdr__actions { display: flex; gap: 16px; align-items: center; }
+  .hdr__btn { background: none; border: none; color: #f5f5f5; cursor: pointer; padding: 0; }
+  .hdr__btn svg { width: 20px; height: 20px; }
+  .hdr__hamburger { display: flex; flex-direction: column; gap: 4px; background: #555; border: none; border-radius: 4px; padding: 8px 6px; cursor: pointer; }
+  .hdr__hamburger span { display: block; width: 16px; height: 2px; background: #fff; border-radius: 1px; }
+
+  /* Mock content */
+  .content { padding: 16px; }
+  .content-card { background: #fff; border-radius: 12px; height: 120px; margin-bottom: 12px; }
+
+  /* ═══ V1 — Slide down search bar ═══ */
+  .v1-search { background: #444; padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+  .v1-search.open { max-height: 60px; padding: 0 16px 12px; }
+  .v1-search__field { display: flex; align-items: center; background: #555; border-radius: 8px; padding: 0 12px; }
+  .v1-search__input { flex: 1; background: none; border: none; color: #fff; font-size: 14px; padding: 10px 0; font-family: var(--font-body); outline: none; }
+  .v1-search__input::placeholder { color: #999; }
+  .v1-search__icon { width: 18px; height: 18px; stroke: #999; fill: none; }
+  .v1-search__close { background: none; border: none; color: #999; cursor: pointer; padding: 4px; margin-left: 8px; font-size: 18px; }
+
+  /* ═══ V2 — Full screen overlay ═══ */
+  .v2-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--surface); z-index: 100; display: none; flex-direction: column; max-width: 390px; margin: 0 auto; }
+  .v2-overlay.open { display: flex; }
+  .v2-top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .v2-back { background: none; border: none; cursor: pointer; color: var(--charcoal); padding: 0; }
+  .v2-back svg { width: 20px; height: 20px; }
+  .v2-input { flex: 1; border: none; outline: none; font-size: 16px; font-family: var(--font-body); color: var(--heading); }
+  .v2-input::placeholder { color: var(--muted); }
+  .v2-results { flex: 1; padding: 16px; overflow-y: auto; }
+  .v2-popular { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-family: var(--font-heading); }
+  .v2-tag { display: inline-block; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; color: var(--charcoal); margin: 0 6px 8px 0; }
+
+  /* ═══ V3 — Bottom sheet search ═══ */
+  .v3-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); z-index: 100; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); transform: translateY(100%); transition: transform 0.3s ease; max-width: 390px; margin: 0 auto; display: none; }
+  .v3-sheet.open { display: block; transform: translateY(0); }
+  .v3-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 8px auto 0; }
+  .v3-field { display: flex; align-items: center; gap: 8px; padding: 16px; }
+  .v3-field svg { width: 18px; height: 18px; stroke: var(--muted); fill: none; flex-shrink: 0; }
+  .v3-field input { flex: 1; border: none; outline: none; font-size: 16px; font-family: var(--font-body); color: var(--heading); }
+  .v3-field input::placeholder { color: var(--muted); }
+  .v3-cats { padding: 0 16px 16px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .v3-cat { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; font-size: 12px; color: var(--charcoal); font-family: var(--font-heading); font-weight: 500; }
+  .v3-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 99; display: none; }
+  .v3-overlay.open { display: block; }
+
+  /* ═══ V4 — Inline expand in header ═══ */
+  .v4-hdr { background: #444; padding: 10px 16px; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+  .v4-hdr.search-mode .v4-hdr__logo, .v4-hdr.search-mode .v4-hdr__actions { display: none; }
+  .v4-hdr__search { display: none; flex: 1; align-items: center; background: #555; border-radius: 8px; padding: 0 12px; }
+  .v4-hdr.search-mode .v4-hdr__search { display: flex; }
+  .v4-hdr__search input { flex: 1; background: none; border: none; color: #fff; font-size: 14px; padding: 10px 0; font-family: var(--font-body); outline: none; }
+  .v4-hdr__search input::placeholder { color: #999; }
+  .v4-hdr__cancel { background: none; border: none; color: #f5f5f5; font-size: 13px; font-family: var(--font-heading); font-weight: 500; cursor: pointer; display: none; white-space: nowrap; padding: 0; }
+  .v4-hdr.search-mode .v4-hdr__cancel { display: block; }
+
+  /* ═══ V5 — Persistent search bar below header ═══ */
+  .v5-search { background: #444; padding: 0 16px 12px; }
+  .v5-search__field { display: flex; align-items: center; background: #555; border-radius: 8px; padding: 0 12px; }
+  .v5-search__field svg { width: 16px; height: 16px; stroke: #999; fill: none; flex-shrink: 0; }
+  .v5-search__field input { flex: 1; background: none; border: none; color: #fff; font-size: 14px; padding: 9px 8px; font-family: var(--font-body); outline: none; }
+  .v5-search__field input::placeholder { color: #888; }
+</style>
+</head>
+<body>
+
+<nav class="version-nav">
+  <span>Search:</span>
+  <button class="active" onclick="show(1)">V1 Slide Down</button>
+  <button onclick="show(2)">V2 Full Screen</button>
+  <button onclick="show(3)">V3 Bottom Sheet</button>
+  <button onclick="show(4)">V4 Inline Expand</button>
+  <button onclick="show(5)">V5 Persistent</button>
+</nav>
+
+<!-- ═══ V1 — Slide down search bar ═══ -->
+<div class="version active" id="v1">
+  <div class="hdr">
+    <div class="hdr__hamburger"><span></span><span></span><span></span></div>
+    <div class="hdr__logo">Otroški kotiček</div>
+    <div class="hdr__actions">
+      <button class="hdr__btn" onclick="document.querySelector('#v1 .v1-search').classList.toggle('open')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="hdr__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+  </div>
+  <div class="v1-search" id="v1-search">
+    <div class="v1-search__field">
+      <svg class="v1-search__icon" viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="v1-search__input" type="text" placeholder="Išči oblačila, velikosti, znamke..." autofocus>
+      <button class="v1-search__close" onclick="document.querySelector('#v1 .v1-search').classList.remove('open')">&times;</button>
+    </div>
+  </div>
+  <div class="content">
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px; text-align: center;">Tap search icon → bar slides down from header</p>
+    <div class="content-card"></div>
+    <div class="content-card"></div>
+  </div>
+</div>
+
+<!-- ═══ V2 — Full screen overlay ═══ -->
+<div class="version" id="v2">
+  <div class="hdr">
+    <div class="hdr__hamburger"><span></span><span></span><span></span></div>
+    <div class="hdr__logo">Otroški kotiček</div>
+    <div class="hdr__actions">
+      <button class="hdr__btn" onclick="document.querySelector('#v2 .v2-overlay').classList.add('open')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="hdr__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+  </div>
+  <div class="v2-overlay">
+    <div class="v2-top">
+      <button class="v2-back" onclick="document.querySelector('#v2 .v2-overlay').classList.remove('open')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <input class="v2-input" type="text" placeholder="Išči oblačila, velikosti, znamke..." autofocus>
+    </div>
+    <div class="v2-results">
+      <div class="v2-popular">Priljubljeno iskanje</div>
+      <span class="v2-tag">Jakne</span>
+      <span class="v2-tag">Obleke</span>
+      <span class="v2-tag">Velikost 74</span>
+      <span class="v2-tag">S.Oliver</span>
+      <span class="v2-tag">Zimska</span>
+      <span class="v2-tag">H&M</span>
+      <span class="v2-tag">Deklice</span>
+      <span class="v2-tag">Cool Club</span>
+    </div>
+  </div>
+  <div class="content">
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px; text-align: center;">Tap search icon → full screen overlay with popular searches</p>
+    <div class="content-card"></div>
+  </div>
+</div>
+
+<!-- ═══ V3 — Bottom sheet ═══ -->
+<div class="version" id="v3">
+  <div class="hdr">
+    <div class="hdr__hamburger"><span></span><span></span><span></span></div>
+    <div class="hdr__logo">Otroški kotiček</div>
+    <div class="hdr__actions">
+      <button class="hdr__btn" onclick="document.querySelector('#v3 .v3-sheet').classList.add('open'); document.querySelector('#v3 .v3-overlay').classList.add('open')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="hdr__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+  </div>
+  <div class="v3-overlay" onclick="document.querySelector('#v3 .v3-sheet').classList.remove('open'); this.classList.remove('open')"></div>
+  <div class="v3-sheet">
+    <div class="v3-handle"></div>
+    <div class="v3-field">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Išči oblačila, velikosti, znamke..." autofocus>
+    </div>
+    <div class="v3-cats">
+      <span class="v3-cat">Deklice</span>
+      <span class="v3-cat">Dečki</span>
+      <span class="v3-cat">Jakne</span>
+      <span class="v3-cat">Obleke</span>
+      <span class="v3-cat">Velikost 74</span>
+    </div>
+  </div>
+  <div class="content">
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px; text-align: center;">Tap search icon → bottom sheet slides up with categories</p>
+    <div class="content-card"></div>
+  </div>
+</div>
+
+<!-- ═══ V4 — Inline expand in header ═══ -->
+<div class="version" id="v4">
+  <div class="v4-hdr" id="v4-hdr">
+    <div class="hdr__hamburger"><span></span><span></span><span></span></div>
+    <div class="v4-hdr__logo" style="font-family: var(--font-heading); font-weight: 700; font-size: 15px; color: #fff;">Otroški kotiček</div>
+    <div class="v4-hdr__search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" style="width: 16px; height: 16px; flex-shrink: 0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Išči..." autofocus>
+    </div>
+    <div class="v4-hdr__actions" style="display: flex; gap: 16px; align-items: center;">
+      <button class="hdr__btn" onclick="document.getElementById('v4-hdr').classList.add('search-mode')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="hdr__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+    <button class="v4-hdr__cancel" onclick="document.getElementById('v4-hdr').classList.remove('search-mode')">Prekliči</button>
+  </div>
+  <div class="content">
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px; text-align: center;">Tap search → logo + icons replaced by input + cancel</p>
+    <div class="content-card"></div>
+  </div>
+</div>
+
+<!-- ═══ V5 — Persistent search bar ═══ -->
+<div class="version" id="v5">
+  <div class="hdr">
+    <div class="hdr__hamburger"><span></span><span></span><span></span></div>
+    <div class="hdr__logo">Otroški kotiček</div>
+    <div class="hdr__actions">
+      <button class="hdr__btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+  </div>
+  <div class="v5-search">
+    <div class="v5-search__field">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Išči oblačila, velikosti, znamke...">
+    </div>
+  </div>
+  <div class="content">
+    <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px; text-align: center;">Search always visible below header — no icon needed</p>
+    <div class="content-card"></div>
+  </div>
+</div>
+
+<script>
+function show(n) {
+  document.querySelectorAll('.version').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.version-nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('v' + n).classList.add('active');
+  document.querySelectorAll('.version-nav button')[n - 1].classList.add('active');
+}
+</script>
+</body>
+</html>

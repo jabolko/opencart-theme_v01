@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Stock label Changes</name>
+    <code>Stock_label_Changes</code>
+    <version>3.1</version>
+    <author>Output Web</author>
+    <link>https://www.buy-extensions.com</link>
+
+    <!-- startup -->
+    <file path="system/library/journal3/productextras.php">
+        <operation>
+            <search><![CDATA[$labels = [];]]></search>
+            <add position="before"><![CDATA[
+                if ($product['quantity'] > 0 && isset($results['639'])) {
+                    unset($results['639']);
+                }
+                
+                if ($product['quantity'] <= 0) {
+                    $query = $this->db->query("SELECT * FROM ". DB_PREFIX ."reserved_stock where product_id='". (int)$product['product_id'] ."'");
+                    
+                    if($query->num_rows && isset($results['30'])){
+                        unset($results['30']);
+                    }else{
+                        unset($results['639']);
+                    }
+                }
+				
+				if(isset($results['30'])){
+					$results['30']['label']='PRODANO';
+				}
+            ]]></add>
+        </operation>
+    </file>
+	<file path="catalog/controller/journal3/event/products.php">
+        <operation>
+            <search><![CDATA[$data['product'] = array_merge($product, array(]]></search>
+            <add position="before"><![CDATA[
+            
+				if($result['quantity']<=0){
+					$reserved_query=$this->db->query("SELECT * FROM ".DB_PREFIX."reserved_stock WHERE product_id='".(int)$result['product_id']."'");
+			   
+					if($reserved_query->num_rows){
+						$reserved_status = 'REZERVIRAN';
+					}else{
+						$reserved_status = false;
+					}
+				}else{
+					$reserved_status = false;
+				}
+				if($reserved_status){
+					$button_cart_j3 = $this->journal3->get('filterAddToCartStock') && $result['quantity'] <= 0 ? $result['stock_status'] : $this->language->get('button_cart');
+				}else{
+					$button_cart_j3 = $this->journal3->get('filterAddToCartStock') && $result['quantity'] <= 0 ? 'PRODANO' : $this->language->get('button_cart');
+				}
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA['button_cart'    => $this->journal3->get('filterAddToCartStock') && $result['quantity'] <= 0 ? $result['stock_status'] : $this->language->get('button_cart'),]]></search>
+            <add position="replace"><![CDATA['button_cart'    => $button_cart_j3,]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/journal3/products.php">
+        <operation>
+            <search><![CDATA[$products[$result['product_id']] = array(]]></search>
+            <add position="before"><![CDATA[
+				if($result['quantity']<=0){
+					$reserved_query=$this->db->query("SELECT * FROM ".DB_PREFIX."reserved_stock WHERE product_id='".(int)$result['product_id']."'");
+			   
+					if($reserved_query->num_rows){
+						$reserved_status = true;
+					}else{
+						$reserved_status = false;
+					}
+				}else{
+					$reserved_status = false;
+				}
+				
+				if($reserved_status){
+					$button_cart_new = $this->journal3->get('filterAddToCartStock') && $result['quantity'] <= 0 ? $result['stock_status'] : $this->language->get('button_cart');
+				}else{
+					$button_cart_new = $this->journal3->get('filterAddToCartStock') && $result['quantity'] <= 0 ? 'PRODANO' : $this->language->get('button_cart');
+				}
+            ]]></add>
+        </operation>
+		<operation>
+            <search><![CDATA['button_cart'    => $this->journal3->get('filterAddToCartStock') && $result['quantity'] <= 0 ? $result['stock_status'] : $this->language->get('button_cart'),]]></search>
+            <add position="replace"><![CDATA['button_cart'    => $button_cart_new,]]></add>
+        </operation>
+    </file>
+</modification>

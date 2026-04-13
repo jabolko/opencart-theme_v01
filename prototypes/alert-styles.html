@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Styles | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --success: #7d9478;
+            --error: #d55e6f;
+            --warning: #e99f20;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: var(--surface-alt);
+            padding: 20px;
+        }
+
+        .section {
+            max-width: 420px;
+            margin: 0 auto 40px;
+        }
+
+        .section-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+
+        .alerts { display: flex; flex-direction: column; gap: 10px; }
+
+        /* ================================================================
+           CURRENT — what Bootstrap gives us (unstyled)
+           ================================================================ */
+        .alert-bootstrap {
+            padding: 15px;
+            border: 1px solid #d6e9c6;
+            border-radius: 4px;
+            background: #dff0d8;
+            color: #3c763d;
+            font-size: 14px;
+        }
+
+        .alert-bootstrap.danger {
+            background: #f2dede;
+            border-color: #ebccd1;
+            color: #a94442;
+        }
+
+        /* ================================================================
+           V1 — Soft tint (current implementation)
+           ================================================================ */
+        .v1 {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .v1 .close-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            opacity: 0.5;
+            font-size: 18px;
+            cursor: pointer;
+            color: inherit;
+            line-height: 1;
+        }
+
+        .v1.success { background: rgba(125, 148, 120, 0.1); color: var(--success); }
+        .v1.danger { background: rgba(213, 94, 111, 0.1); color: var(--error); }
+        .v1.info { background: rgba(249, 185, 74, 0.08); color: var(--gold-dark); }
+
+        /* ================================================================
+           V2 — Left border accent
+           ================================================================ */
+        .v2 {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background: var(--white);
+            font-size: 14px;
+            line-height: 1.5;
+            border-left: 3px solid;
+        }
+
+        .v2 .close-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            opacity: 0.4;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--charcoal);
+            line-height: 1;
+        }
+
+        .v2.success { border-left-color: var(--success); color: var(--charcoal); }
+        .v2.danger { border-left-color: var(--error); color: var(--charcoal); }
+        .v2.info { border-left-color: var(--gold); color: var(--charcoal); }
+
+        .v2 .icon { flex-shrink: 0; }
+        .v2.success .icon { color: var(--success); }
+        .v2.danger .icon { color: var(--error); }
+        .v2.info .icon { color: var(--gold-dark); }
+
+        /* ================================================================
+           V3 — Pill toast (floating feel)
+           ================================================================ */
+        .v3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .v3 .icon-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v3 .icon-circle svg { width: 14px; height: 14px; stroke: var(--white); fill: none; stroke-width: 2.5; }
+
+        .v3.success { background: var(--white); color: var(--heading); }
+        .v3.success .icon-circle { background: var(--success); }
+        .v3.danger { background: var(--white); color: var(--heading); }
+        .v3.danger .icon-circle { background: var(--error); }
+        .v3.info { background: var(--white); color: var(--heading); }
+        .v3.info .icon-circle { background: var(--gold); }
+
+        /* ================================================================
+           V4 — Dark toast
+           ================================================================ */
+        .v4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: var(--heading);
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .v4 .close-btn {
+            margin-left: auto;
+            background: none;
+            border: none;
+            opacity: 0.4;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--white);
+            line-height: 1;
+        }
+
+        .v4 .icon-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .v4.success .icon-dot { background: var(--success); }
+        .v4.danger .icon-dot { background: var(--error); }
+        .v4.info .icon-dot { background: var(--gold); }
+
+        /* ================================================================
+           V5 — Minimal inline (almost invisible)
+           ================================================================ */
+        .v5 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .v5 svg { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke-width: 2; }
+
+        .v5.success { color: var(--success); }
+        .v5.success svg { stroke: var(--success); }
+        .v5.danger { color: var(--error); }
+        .v5.danger svg { stroke: var(--error); }
+        .v5.info { color: var(--gold-dark); }
+        .v5.info svg { stroke: var(--gold-dark); }
+    </style>
+</head>
+<body>
+
+<!-- CURRENT BOOTSTRAP -->
+<div class="section">
+    <div class="section-label">Current Bootstrap (before)</div>
+    <div class="alerts">
+        <div class="alert-bootstrap">Success: Artikel je bil dodan v košarico!</div>
+        <div class="alert-bootstrap danger">Error: Prosimo, izberite velikost.</div>
+    </div>
+</div>
+
+<!-- V1 — SOFT TINT -->
+<div class="section">
+    <div class="section-label">V1 — Soft Tint (current implementation)</div>
+    <div class="alerts">
+        <div class="v1 success">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Artikel je bil dodan v košarico!
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="v1 danger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Prosimo, izberite velikost.
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="v1 info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Artikel je bil dodan na seznam želja.
+            <button class="close-btn">&times;</button>
+        </div>
+    </div>
+</div>
+
+<!-- V2 — LEFT BORDER -->
+<div class="section">
+    <div class="section-label">V2 — Left Border Accent</div>
+    <div class="alerts">
+        <div class="v2 success">
+            <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+            Artikel je bil dodan v košarico!
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="v2 danger">
+            <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+            Prosimo, izberite velikost.
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="v2 info">
+            <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+            Artikel je bil dodan na seznam želja.
+            <button class="close-btn">&times;</button>
+        </div>
+    </div>
+</div>
+
+<!-- V3 — PILL TOAST -->
+<div class="section">
+    <div class="section-label">V3 — Pill Toast</div>
+    <div class="alerts">
+        <div class="v3 success">
+            <span class="icon-circle"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Artikel je bil dodan v košarico!
+        </div>
+        <div class="v3 danger">
+            <span class="icon-circle"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+            Prosimo, izberite velikost.
+        </div>
+        <div class="v3 info">
+            <span class="icon-circle"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+            Artikel je bil dodan na seznam želja.
+        </div>
+    </div>
+</div>
+
+<!-- V4 — DARK TOAST -->
+<div class="section">
+    <div class="section-label">V4 — Dark Toast</div>
+    <div class="alerts">
+        <div class="v4 success">
+            <span class="icon-dot"></span>
+            Artikel je bil dodan v košarico!
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="v4 danger">
+            <span class="icon-dot"></span>
+            Prosimo, izberite velikost.
+            <button class="close-btn">&times;</button>
+        </div>
+        <div class="v4 info">
+            <span class="icon-dot"></span>
+            Artikel je bil dodan na seznam želja.
+            <button class="close-btn">&times;</button>
+        </div>
+    </div>
+</div>
+
+<!-- V5 — MINIMAL INLINE -->
+<div class="section">
+    <div class="section-label">V5 — Minimal Inline</div>
+    <div class="alerts">
+        <div class="v5 success">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Artikel je bil dodan v košarico!
+        </div>
+        <div class="v5 danger">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Prosimo, izberite velikost.
+        </div>
+        <div class="v5 info">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Artikel je bil dodan na seznam želja.
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

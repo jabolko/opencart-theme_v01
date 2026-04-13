@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menu Preview — otroskikoticek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #ececec;
+      min-height: 100vh;
+    }
+
+    :root {
+      --gold:       #f9b94a;
+      --gold-dark:  #e0a030;
+      --gold-pale:  #fdf3e0;
+      --teal:       #2d9da8;
+      --teal-dark:  #1f7a83;
+      --teal-light: #e8f7f8;
+      --text:       #2b2e35;
+      --text-muted: #566b6f;
+      --surface:    #ffffff;
+      --border:     #d6d9e0;
+    }
+
+    /* ============================================================
+       Nav shell
+    ============================================================ */
+    #nav {
+      background: var(--surface);
+      box-shadow:
+        0 1px 0 var(--border),
+        0 4px 24px rgba(43, 46, 53, 0.07),
+        0 8px 40px rgba(43, 46, 53, 0.04);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 28px;
+      display: flex;
+      align-items: stretch;
+      height: 52px;
+    }
+
+    /* ============================================================
+       Nav items — left group
+    ============================================================ */
+    .nav-left {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .nav-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-item > a {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0 15px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      transition: color .18s;
+      white-space: nowrap;
+    }
+
+    /* Sliding gold underline */
+    .nav-item > a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      right: 15px;
+      height: 2.5px;
+      background: var(--gold);
+      border-radius: 2px 2px 0 0;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform .22s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .nav-item:hover > a,
+    .nav-item:focus-within > a { color: var(--gold-dark); }
+
+    .nav-item:hover > a::after,
+    .nav-item:focus-within > a::after { transform: scaleX(1); }
+
+    /* ============================================================
+       Caret
+    ============================================================ */
+    .caret {
+      width: 0;
+      height: 0;
+      border-left: 3.5px solid transparent;
+      border-right: 3.5px solid transparent;
+      border-top: 4px solid currentColor;
+      opacity: .45;
+      flex-shrink: 0;
+      transition: transform .18s, opacity .18s;
+    }
+
+    .nav-item:hover .caret { opacity: .8; transform: rotate(180deg); }
+
+    /* ============================================================
+       Dropdown
+    ============================================================ */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 1px);
+      left: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      border-radius: 0 0 10px 10px;
+      min-width: 200px;
+      padding: 6px 0 10px;
+      box-shadow: 0 12px 32px rgba(43, 46, 53, .1);
+      z-index: 200;
+    }
+
+    .nav-item:hover .dropdown,
+    .nav-item:focus-within .dropdown { display: block; }
+
+    .dropdown-section {
+      padding: 8px 0 4px;
+    }
+
+    .dropdown-section:not(:first-child) {
+      border-top: 1px solid #f0f0f0;
+      margin-top: 4px;
+    }
+
+    .dropdown-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9aa0af;
+      padding: 0 18px 4px;
+    }
+
+    .dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 400;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: background .12s, color .12s, padding-left .12s;
+    }
+
+    .dropdown a:hover {
+      background: var(--gold-pale);
+      color: var(--gold-dark);
+      padding-left: 22px;
+    }
+
+    /* "See all" link inside dropdown */
+    .dropdown .see-all {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold-dark);
+      letter-spacing: .03em;
+      margin-top: 4px;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 10px;
+    }
+
+    .dropdown .see-all:hover { background: var(--gold-pale); }
+
+    /* ============================================================
+       Right group
+    ============================================================ */
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* "O nas" — quiet muted link, no underline effect */
+    .nav-item.secondary > a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--text-muted);
+    }
+
+    .nav-item.secondary > a::after { display: none; }
+    .nav-item.secondary:hover > a { color: var(--text); }
+
+    /* ============================================================
+       CTA — Prodaj oblačila
+       Teal gradient pill with shimmer + icon
+    ============================================================ */
+    .nav-item.cta > a {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      text-transform: none;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--teal) 0%, #1a8f9a 100%);
+      border-radius: 24px;
+      padding: 0 20px;
+      height: 34px;
+      margin-left: 6px;
+      gap: 7px;
+      box-shadow: 0 2px 10px rgba(45, 157, 168, .35);
+      transition: box-shadow .2s, transform .15s, background .2s;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Shimmer sweep */
+    .nav-item.cta > a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -70%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
+      transform: skewX(-15deg);
+      animation: shimmer 3.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0%   { left: -70%; }
+      60%  { left: 130%; }
+      100% { left: 130%; }
+    }
+
+    .nav-item.cta > a::after { display: none; }
+
+    .nav-item.cta:hover > a {
+      background: linear-gradient(135deg, #1a8f9a 0%, var(--teal-dark) 100%);
+      box-shadow: 0 4px 18px rgba(45, 157, 168, .45);
+      transform: translateY(-1px);
+    }
+
+    /* icon inside CTA */
+    .cta-icon {
+      display: inline-flex;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       Page background content (to show shadow clearly)
+    ============================================================ */
+    .page-content {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 28px;
+      color: #9aa0af;
+      font-size: 13px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="nav">
+    <div class="nav-inner">
+
+      <!-- Left: category links -->
+      <div class="nav-left">
+
+        <!-- Deklice -->
+        <div class="nav-item has-dropdown">
+          <a href="#">Deklice <span class="caret"></span></a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <a href="#">Jakne in Bunde</a>
+              <a href="#">Kavbojke in Hlače</a>
+              <a href="#">Majice in Srajčke</a>
+              <a href="#">Puloverji in Jope</a>
+              <a href="#">Obleke in Krila</a>
+              <a href="#">Kompleti in Pajaci</a>
+              <a href="#">Športna oblačila</a>
+            </div>
+            <a href="#" class="see-all">Vse za deklice →</a>
+          </div>
+        </div>
+
+        <!-- Dečki -->
+        <div class="nav-item has-dropdown">
+          <a href="#">Dečki <span class="caret"></span></a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <a href="#">Jakne in Bunde</a>
+              <a href="#">Kavbojke in Hlače</a>
+              <a href="#">Majice in Srajčke</a>
+              <a href="#">Puloverji in Jope</a>
+              <a href="#">Kompleti in Pajaci</a>
+              <a href="#">Športna oblačila</a>
+            </div>
+            <a href="#" class="see-all">Vse za dečke →</a>
+          </div>
+        </div>
+
+        <!-- Nosečnice -->
+        <div class="nav-item has-dropdown">
+          <a href="#">Nosečnice <span class="caret"></span></a>
+          <div class="dropdown">
+            <div class="dropdown-section">
+              <a href="#">Obleke</a>
+              <a href="#">Majice in Topi</a>
+              <a href="#">Kavbojke in Hlače</a>
+              <a href="#">Puloverji in Jope</a>
+              <a href="#">Dojenje</a>
+            </div>
+            <a href="#" class="see-all">Vse za nosečnice →</a>
+          </div>
+        </div>
+
+        <!-- Paket presenečenja — standalone -->
+        <div class="nav-item">
+          <a href="#">Paket presenečenja</a>
+        </div>
+
+      </div>
+
+      <!-- Right: secondary + CTA -->
+      <div class="nav-right">
+
+        <div class="nav-item secondary">
+          <a href="#">O nas</a>
+        </div>
+
+        <div class="nav-item cta">
+          <a href="#">
+            <span class="cta-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </span>
+            Prodaj oblačila
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-content">↑ hover over menu items to see dropdowns</div>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Update Cart Time on Checkout</name>
+    <code>update_checkout_cart_time</code>
+    <version>1.0</version>
+    <author>Your Name</author>
+    <link>Your Website</link>
+
+    <!-- Modify checkout controller to include updateCartTime() function -->
+    <file path="catalog/controller/checkout/checkout.php">
+        <operation>
+            <search><![CDATA[public function index() {]]></search>
+            <add position="before"><![CDATA[
+            public function updateCartTime() {
+                if ($this->request->server['REQUEST_METHOD'] == 'POST') {
+                    $this->db->query("UPDATE `" . DB_PREFIX . "cart` SET `date_added` = DATE_ADD(`date_added`, INTERVAL 30 SECOND) WHERE session_id = '" . $this->db->escape($this->session->getId()) . "'");
+                    $this->response->setOutput(json_encode(['success' => true]));
+                }
+            }
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/*/template/checkout/checkout.twig">
+        <operation>
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+                <script>
+                    $(document).ready(function() {
+                        updateCartTime();
+                    
+                        setInterval(function() {
+                            updateCartTime();
+                        }, 30000);
+                    
+                        function updateCartTime() {
+                            $.ajax({
+                                url: 'index.php?route=checkout/checkout/updateCartTime',
+                                type: 'POST',
+                                dataType: 'json',
+                                success: function(response) {
+                                    console.log("Cart time updated", response);
+                                    $('.cart-content ul').load('index.php?route=common/cart{{ constant('JOURNAL3_ROUTE_SEPARATOR') }}info{% if journal3_is_oc4 %}&language={{ language }}{% endif %} ul li');
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("Error:", error);
+                                }
+                            });
+                        }
+                    });
+                </script>
+            ]]></add>
+        </operation>
+    </file>
+</modification>

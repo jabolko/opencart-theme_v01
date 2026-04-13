@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Radio Buttons — 5 Designs</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f9b94a;
+    --gold-dark: #e0a030;
+    --charcoal: #565656;
+    --heading: #2b2e35;
+    --muted: #9aa0af;
+    --surface: #ffffff;
+    --surface-alt: #f7f7f7;
+    --border: #d6d9e0;
+    --success: #7d9478;
+    --font-heading: 'Open Sans', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); color: var(--charcoal); background: var(--surface-alt); padding: 16px; font-size: 15px; line-height: 1.5; }
+
+  .version-nav { position: sticky; top: 0; z-index: 100; background: #3a3a3a; padding: 12px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: -16px -16px 16px; }
+  .version-nav span { color: #fff; font-family: var(--font-heading); font-weight: 600; font-size: 14px; margin-right: 8px; }
+  .version-nav button { padding: 6px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; background: transparent; color: #fff; font-family: var(--font-body); font-size: 13px; cursor: pointer; }
+  .version-nav button.active, .version-nav button:hover { background: var(--gold); color: var(--heading); border-color: var(--gold); }
+  .version { display: none; max-width: 420px; margin: 0 auto; }
+  .version.active { display: block; }
+  .version h3 { font-family: var(--font-heading); font-size: 14px; color: var(--heading); margin-bottom: 12px; }
+
+  .card { background: #fff; border-radius: 12px; padding: 20px 16px; margin-bottom: 16px; }
+  .card-title { font-family: var(--font-heading); font-size: 15px; font-weight: 600; color: var(--heading); margin-bottom: 14px; }
+  .btn { width: 100%; padding: 14px; background: var(--gold); color: var(--heading); border: none; border-radius: 12px; font-family: var(--font-heading); font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 12px; }
+
+  /* ── Shared radio base ── */
+  .radios { display: flex; flex-direction: column; gap: 8px; }
+  .radios input[type="radio"] { display: none; }
+  .radios input[type="checkbox"] { display: none; }
+
+  /* ════════════════════════════════════════
+     V1 — BORDERED CARDS
+     ════════════════════════════════════════ */
+  .v1-radio { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+  .v1-radio:hover { border-color: var(--gold); }
+  input:checked + .v1-radio { border-color: var(--gold); background: #fffbf0; }
+  .v1-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  input:checked + .v1-radio .v1-dot { border-color: var(--gold); }
+  input:checked + .v1-radio .v1-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); }
+  .v1-text { flex: 1; }
+  .v1-title { font-size: 14px; font-weight: 500; color: var(--heading); font-family: var(--font-heading); }
+  .v1-desc { font-size: 12px; color: var(--muted); }
+  .v1-price { font-size: 14px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); white-space: nowrap; }
+  .v1-price--free { color: var(--success); }
+
+  /* Checkbox variant */
+  .v1-check { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .v1-box { width: 18px; height: 18px; border-radius: 4px; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.2s; }
+  input:checked + .v1-check .v1-box { background: var(--gold); border-color: var(--gold); }
+  input:checked + .v1-check .v1-box::after { content: ''; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+
+  /* ════════════════════════════════════════
+     V2 — PILL CHIPS (inline, compact)
+     ════════════════════════════════════════ */
+  .v2-radios { display: flex; flex-direction: column; gap: 6px; }
+  .v2-radio { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--surface-alt); border-radius: 8px; cursor: pointer; transition: all 0.2s; border: 1.5px solid transparent; }
+  .v2-radio:hover { background: #f0f0f0; }
+  input:checked + .v2-radio { background: #fffbf0; border-color: var(--gold); }
+  .v2-left { display: flex; align-items: center; gap: 10px; }
+  .v2-icon { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; position: relative; }
+  input:checked + .v2-radio .v2-icon { border-color: var(--gold); background: var(--gold); }
+  input:checked + .v2-radio .v2-icon::after { content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; border-radius: 50%; background: #fff; transform: translate(-50%, -50%); }
+  .v2-label { font-size: 14px; color: var(--heading); font-weight: 500; font-family: var(--font-heading); }
+  .v2-sub { font-size: 11px; color: var(--muted); }
+  .v2-price { font-size: 13px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); }
+  .v2-price--free { color: var(--success); }
+
+  .v2-check { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .v2-checkbox { width: 18px; height: 18px; border-radius: 6px; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  input:checked + .v2-check .v2-checkbox { background: var(--gold); border-color: var(--gold); }
+  input:checked + .v2-check .v2-checkbox::after { content: ''; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+
+  /* ════════════════════════════════════════
+     V3 — UNDERLINE MINIMAL (no borders, just lines)
+     ════════════════════════════════════════ */
+  .v3-radio { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid #eee; cursor: pointer; transition: all 0.2s; }
+  .v3-radio:last-of-type { border-bottom: none; }
+  input:checked + .v3-radio { background: transparent; }
+  .v3-circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; position: relative; transition: all 0.2s; }
+  input:checked + .v3-radio .v3-circle { border-color: var(--gold); border-width: 5px; }
+  .v3-info { flex: 1; }
+  .v3-name { font-size: 14px; color: var(--heading); font-weight: 500; font-family: var(--font-heading); }
+  .v3-meta { font-size: 12px; color: var(--muted); }
+  .v3-cost { font-size: 14px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); }
+  .v3-cost--free { color: var(--success); }
+
+  .v3-check { display: flex; align-items: center; gap: 10px; padding: 12px 0; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .v3-tick { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  input:checked + .v3-check .v3-tick { background: var(--heading); border-color: var(--heading); }
+  input:checked + .v3-check .v3-tick::after { content: ''; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+
+  /* ════════════════════════════════════════
+     V4 — FULL-WIDTH HIGHLIGHT (selected = gold left bar)
+     ════════════════════════════════════════ */
+  .v4-radio { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 8px; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent; background: var(--surface-alt); margin-bottom: 4px; }
+  input:checked + .v4-radio { border-left-color: var(--gold); background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .v4-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; }
+  input:checked + .v4-radio .v4-dot { border-color: var(--gold); background: var(--gold); box-shadow: inset 0 0 0 3px #fff; }
+  .v4-content { flex: 1; }
+  .v4-title { font-size: 14px; font-weight: 500; color: var(--heading); font-family: var(--font-heading); }
+  .v4-subtitle { font-size: 11px; color: var(--muted); }
+  .v4-amount { font-size: 14px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); }
+  .v4-amount--free { color: var(--success); }
+
+  .v4-check { display: flex; align-items: center; gap: 10px; padding: 12px 0; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .v4-square { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  input:checked + .v4-check .v4-square { background: var(--gold); border-color: var(--gold); }
+  input:checked + .v4-check .v4-square::after { content: ''; width: 5px; height: 9px; border: solid var(--heading); border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+
+  /* ════════════════════════════════════════
+     V5 — COMPACT LIST (tight, icon-led)
+     ════════════════════════════════════════ */
+  .v5-radio { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 6px; }
+  input:checked + .v5-radio { border-color: var(--gold); }
+  .v5-check-mark { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  input:checked + .v5-radio .v5-check-mark { background: var(--gold); border-color: var(--gold); }
+  input:checked + .v5-radio .v5-check-mark::after { content: ''; width: 5px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -1px; }
+  .v5-body { flex: 1; display: flex; justify-content: space-between; align-items: center; }
+  .v5-name { font-size: 13px; color: var(--heading); font-weight: 500; font-family: var(--font-heading); }
+  .v5-detail { font-size: 11px; color: var(--muted); }
+  .v5-tag { font-size: 12px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); }
+  .v5-tag--free { color: var(--success); font-size: 11px; background: #f0f7ee; padding: 2px 8px; border-radius: 4px; }
+
+  .v5-check { display: flex; align-items: center; gap: 8px; padding: 10px 0; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .v5-sq { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  input:checked + .v5-check .v5-sq { background: var(--heading); border-color: var(--heading); }
+  input:checked + .v5-check .v5-sq::after { content: ''; width: 4px; height: 8px; border: solid #fff; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); margin-top: -1px; }
+</style>
+</head>
+<body>
+
+<nav class="version-nav">
+  <span>Radios:</span>
+  <button class="active" onclick="show(1)">V1 Bordered</button>
+  <button onclick="show(2)">V2 Filled</button>
+  <button onclick="show(3)">V3 Underline</button>
+  <button onclick="show(4)">V4 Gold Bar</button>
+  <button onclick="show(5)">V5 Compact</button>
+</nav>
+
+<!-- ═══ V1 — BORDERED CARDS ═══ -->
+<div class="version active" id="v1">
+  <div class="card">
+    <div class="card-title">Način dostave</div>
+    <div class="radios">
+      <input type="radio" name="v1-ship" id="v1s1" checked>
+      <label class="v1-radio" for="v1s1">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">DPD</div><div class="v1-desc">2–3 delovne dni</div></div>
+        <div class="v1-price">3.50€</div>
+      </label>
+      <input type="radio" name="v1-ship" id="v1s2">
+      <label class="v1-radio" for="v1s2">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Pošta Slovenije</div><div class="v1-desc">3–5 delovnih dni</div></div>
+        <div class="v1-price">4.50€</div>
+      </label>
+      <input type="radio" name="v1-ship" id="v1s3">
+      <label class="v1-radio" for="v1s3">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Osebni prevzem</div><div class="v1-desc">Mozirje</div></div>
+        <div class="v1-price v1-price--free">Brezplačno</div>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na plačilo</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Način plačila</div>
+    <div class="radios">
+      <input type="radio" name="v1-pay" id="v1p1" checked>
+      <label class="v1-radio" for="v1p1">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Bančno nakazilo</div></div>
+      </label>
+      <input type="radio" name="v1-pay" id="v1p2">
+      <label class="v1-radio" for="v1p2">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Plačilo ob prevzemu</div><div class="v1-desc">+1.50€</div></div>
+      </label>
+      <input type="radio" name="v1-pay" id="v1p3">
+      <label class="v1-radio" for="v1p3">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Plačilo pri osebnem prevzemu</div></div>
+      </label>
+    </div>
+    <div style="margin-top: 12px;">
+      <input type="checkbox" id="v1c1" checked>
+      <label class="v1-check" for="v1c1">
+        <div class="v1-box"></div>
+        <span>Strinjam se s <a href="#" style="color: var(--gold-dark);">splošnimi pogoji</a></span>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na potrditev</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Korak 1 — Guest/Login</div>
+    <div class="radios">
+      <input type="radio" name="v1-acc" id="v1a1">
+      <label class="v1-radio" for="v1a1">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Registracija</div></div>
+      </label>
+      <input type="radio" name="v1-acc" id="v1a2" checked>
+      <label class="v1-radio" for="v1a2">
+        <div class="v1-dot"></div>
+        <div class="v1-text"><div class="v1-title">Gost</div></div>
+      </label>
+    </div>
+    <div style="margin-top: 12px;">
+      <input type="checkbox" id="v1c2" checked>
+      <label class="v1-check" for="v1c2">
+        <div class="v1-box"></div>
+        <span>Moj naslov za dostavo in naslov za račun sta enaka</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ V2 — FILLED BACKGROUND ═══ -->
+<div class="version" id="v2">
+  <div class="card">
+    <div class="card-title">Način dostave</div>
+    <div class="v2-radios">
+      <input type="radio" name="v2-ship" id="v2s1" checked>
+      <label class="v2-radio" for="v2s1">
+        <div class="v2-left"><div class="v2-icon"></div><div><div class="v2-label">DPD</div><div class="v2-sub">2–3 delovne dni</div></div></div>
+        <div class="v2-price">3.50€</div>
+      </label>
+      <input type="radio" name="v2-ship" id="v2s2">
+      <label class="v2-radio" for="v2s2">
+        <div class="v2-left"><div class="v2-icon"></div><div><div class="v2-label">Pošta Slovenije</div><div class="v2-sub">3–5 delovnih dni</div></div></div>
+        <div class="v2-price">4.50€</div>
+      </label>
+      <input type="radio" name="v2-ship" id="v2s3">
+      <label class="v2-radio" for="v2s3">
+        <div class="v2-left"><div class="v2-icon"></div><div><div class="v2-label">Osebni prevzem</div><div class="v2-sub">Mozirje</div></div></div>
+        <div class="v2-price v2-price--free">Brezplačno</div>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na plačilo</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Način plačila</div>
+    <div class="v2-radios">
+      <input type="radio" name="v2-pay" id="v2p1" checked>
+      <label class="v2-radio" for="v2p1">
+        <div class="v2-left"><div class="v2-icon"></div><div class="v2-label">Bančno nakazilo</div></div>
+      </label>
+      <input type="radio" name="v2-pay" id="v2p2">
+      <label class="v2-radio" for="v2p2">
+        <div class="v2-left"><div class="v2-icon"></div><div><div class="v2-label">Plačilo ob prevzemu</div><div class="v2-sub">+1.50€</div></div></div>
+      </label>
+      <input type="radio" name="v2-pay" id="v2p3">
+      <label class="v2-radio" for="v2p3">
+        <div class="v2-left"><div class="v2-icon"></div><div class="v2-label">Plačilo pri osebnem prevzemu</div></div>
+      </label>
+    </div>
+    <div style="margin-top: 12px;">
+      <input type="checkbox" id="v2c1" checked>
+      <label class="v2-check" for="v2c1">
+        <div class="v2-checkbox"></div>
+        <span>Strinjam se s <a href="#" style="color: var(--gold-dark);">splošnimi pogoji</a></span>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na potrditev</button>
+  </div>
+</div>
+
+<!-- ═══ V3 — UNDERLINE MINIMAL ═══ -->
+<div class="version" id="v3">
+  <div class="card">
+    <div class="card-title">Način dostave</div>
+    <div class="radios">
+      <input type="radio" name="v3-ship" id="v3s1" checked>
+      <label class="v3-radio" for="v3s1">
+        <div class="v3-circle"></div>
+        <div class="v3-info"><div class="v3-name">DPD</div><div class="v3-meta">2–3 delovne dni</div></div>
+        <div class="v3-cost">3.50€</div>
+      </label>
+      <input type="radio" name="v3-ship" id="v3s2">
+      <label class="v3-radio" for="v3s2">
+        <div class="v3-circle"></div>
+        <div class="v3-info"><div class="v3-name">Pošta Slovenije</div><div class="v3-meta">3–5 delovnih dni</div></div>
+        <div class="v3-cost">4.50€</div>
+      </label>
+      <input type="radio" name="v3-ship" id="v3s3">
+      <label class="v3-radio" for="v3s3">
+        <div class="v3-circle"></div>
+        <div class="v3-info"><div class="v3-name">Osebni prevzem</div><div class="v3-meta">Mozirje</div></div>
+        <div class="v3-cost v3-cost--free">Brezplačno</div>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na plačilo</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Način plačila</div>
+    <div class="radios">
+      <input type="radio" name="v3-pay" id="v3p1" checked>
+      <label class="v3-radio" for="v3p1">
+        <div class="v3-circle"></div>
+        <div class="v3-info"><div class="v3-name">Bančno nakazilo</div></div>
+      </label>
+      <input type="radio" name="v3-pay" id="v3p2">
+      <label class="v3-radio" for="v3p2">
+        <div class="v3-circle"></div>
+        <div class="v3-info"><div class="v3-name">Plačilo ob prevzemu</div><div class="v3-meta">+1.50€</div></div>
+      </label>
+    </div>
+    <div style="margin-top: 4px;">
+      <input type="checkbox" id="v3c1" checked>
+      <label class="v3-check" for="v3c1">
+        <div class="v3-tick"></div>
+        <span>Strinjam se s <a href="#" style="color: var(--gold-dark);">splošnimi pogoji</a></span>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na potrditev</button>
+  </div>
+</div>
+
+<!-- ═══ V4 — GOLD BAR ═══ -->
+<div class="version" id="v4">
+  <div class="card">
+    <div class="card-title">Način dostave</div>
+    <div class="radios">
+      <input type="radio" name="v4-ship" id="v4s1" checked>
+      <label class="v4-radio" for="v4s1">
+        <div class="v4-dot"></div>
+        <div class="v4-content"><div class="v4-title">DPD</div><div class="v4-subtitle">2–3 delovne dni</div></div>
+        <div class="v4-amount">3.50€</div>
+      </label>
+      <input type="radio" name="v4-ship" id="v4s2">
+      <label class="v4-radio" for="v4s2">
+        <div class="v4-dot"></div>
+        <div class="v4-content"><div class="v4-title">Pošta Slovenije</div><div class="v4-subtitle">3–5 delovnih dni</div></div>
+        <div class="v4-amount">4.50€</div>
+      </label>
+      <input type="radio" name="v4-ship" id="v4s3">
+      <label class="v4-radio" for="v4s3">
+        <div class="v4-dot"></div>
+        <div class="v4-content"><div class="v4-title">Osebni prevzem</div><div class="v4-subtitle">Mozirje</div></div>
+        <div class="v4-amount v4-amount--free">Brezplačno</div>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na plačilo</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Način plačila</div>
+    <div class="radios">
+      <input type="radio" name="v4-pay" id="v4p1" checked>
+      <label class="v4-radio" for="v4p1">
+        <div class="v4-dot"></div>
+        <div class="v4-content"><div class="v4-title">Bančno nakazilo</div></div>
+      </label>
+      <input type="radio" name="v4-pay" id="v4p2">
+      <label class="v4-radio" for="v4p2">
+        <div class="v4-dot"></div>
+        <div class="v4-content"><div class="v4-title">Plačilo ob prevzemu</div><div class="v4-subtitle">+1.50€</div></div>
+      </label>
+    </div>
+    <div style="margin-top: 12px;">
+      <input type="checkbox" id="v4c1" checked>
+      <label class="v4-check" for="v4c1">
+        <div class="v4-square"></div>
+        <span>Strinjam se s <a href="#" style="color: var(--gold-dark);">splošnimi pogoji</a></span>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na potrditev</button>
+  </div>
+</div>
+
+<!-- ═══ V5 — COMPACT WITH CHECKMARK ═══ -->
+<div class="version" id="v5">
+  <div class="card">
+    <div class="card-title">Način dostave</div>
+    <div class="radios">
+      <input type="radio" name="v5-ship" id="v5s1" checked>
+      <label class="v5-radio" for="v5s1">
+        <div class="v5-check-mark"></div>
+        <div class="v5-body"><div><div class="v5-name">DPD</div><div class="v5-detail">2–3 delovne dni</div></div><div class="v5-tag">3.50€</div></div>
+      </label>
+      <input type="radio" name="v5-ship" id="v5s2">
+      <label class="v5-radio" for="v5s2">
+        <div class="v5-check-mark"></div>
+        <div class="v5-body"><div><div class="v5-name">Pošta Slovenije</div><div class="v5-detail">3–5 delovnih dni</div></div><div class="v5-tag">4.50€</div></div>
+      </label>
+      <input type="radio" name="v5-ship" id="v5s3">
+      <label class="v5-radio" for="v5s3">
+        <div class="v5-check-mark"></div>
+        <div class="v5-body"><div><div class="v5-name">Osebni prevzem</div><div class="v5-detail">Mozirje</div></div><div class="v5-tag v5-tag--free">Brezplačno</div></div>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na plačilo</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Način plačila</div>
+    <div class="radios">
+      <input type="radio" name="v5-pay" id="v5p1" checked>
+      <label class="v5-radio" for="v5p1">
+        <div class="v5-check-mark"></div>
+        <div class="v5-body"><div class="v5-name">Bančno nakazilo</div></div>
+      </label>
+      <input type="radio" name="v5-pay" id="v5p2">
+      <label class="v5-radio" for="v5p2">
+        <div class="v5-check-mark"></div>
+        <div class="v5-body"><div><div class="v5-name">Plačilo ob prevzemu</div><div class="v5-detail">+1.50€</div></div></div>
+      </label>
+    </div>
+    <div style="margin-top: 10px;">
+      <input type="checkbox" id="v5c1" checked>
+      <label class="v5-check" for="v5c1">
+        <div class="v5-sq"></div>
+        <span>Strinjam se s <a href="#" style="color: var(--gold-dark);">splošnimi pogoji</a></span>
+      </label>
+    </div>
+    <button class="btn">Nadaljuj na potrditev</button>
+  </div>
+</div>
+
+<script>
+function show(n) {
+  document.querySelectorAll('.version').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.version-nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('v' + n).classList.add('active');
+  document.querySelectorAll('.version-nav button')[n - 1].classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

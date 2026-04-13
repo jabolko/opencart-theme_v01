@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Page — Deklice | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================================
+           CATEGORY PAGE — v1
+           ================================================================
+           Full category page for "Deklice" (Girls) based on research:
+           - Desktop: 4-col grid + left sidebar filters (280px)
+           - Mobile: 2-col grid + bottom sheet filter modal
+           - Product card: 6 elements (image 1:1, brand, name, price, fav, cart)
+           - Subcategories as horizontal pill strip
+           - "Load more" pagination
+           - Sort dropdown
+
+           DESIGN SYSTEM:
+           Gold: #f9b94a | Gold-dark: #e0a030
+           Charcoal: #565656 | Heading: #2b2e35
+           Fonts: Open Sans 600/700, DM Sans 400
+           8px grid, 16px border-radius cards
+           ================================================================ */
+
+        :root {
+            --gold: #f9b94a;
+            --gold-light: #ffd369;
+            --gold-dark: #e0a030;
+            --gold-wash: rgba(249, 185, 74, 0.08);
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --light-grey: #f7f7f7;
+            --section-grey: #ececec;
+            --border: #d6d9e0;
+            --reserved: #e67e22;
+            --sold: #95a5a6;
+            --sidebar-w: 280px;
+            --header-h: 64px;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: var(--charcoal);
+            background: var(--white);
+            -webkit-font-smoothing: antialiased;
+        }
+        body.no-scroll { overflow: hidden; }
+
+        a { text-decoration: none; color: inherit; }
+        button { border: none; background: none; cursor: pointer; font-family: inherit; }
+        input[type="checkbox"] { cursor: pointer; }
+
+        .icon { width: 22px; height: 22px; }
+        .icon-sm { width: 18px; height: 18px; }
+        .icon-xs { width: 16px; height: 16px; }
+
+
+        /* ================================================================
+           SVG ICONS (inline hidden)
+           ================================================================ */
+
+
+        /* ================================================================
+           HEADER
+           ================================================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .header-inner {
+            max-width: 1440px;
+            margin: 0 auto;
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+        }
+        .header-logo {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--heading);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-logo-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+        .header-nav {
+            display: flex;
+            gap: 32px;
+        }
+        .header-nav a {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--charcoal);
+            transition: color 0.2s;
+        }
+        .header-nav a:hover { color: var(--heading); }
+        .header-nav a.is-active { color: var(--gold-dark); }
+
+        .header-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            background: var(--light-grey);
+            border: 1.5px solid transparent;
+            border-radius: 12px;
+            padding: 0 14px;
+            width: 260px;
+            transition: all 0.2s;
+        }
+        .header-search:focus-within {
+            border-color: var(--gold);
+            background: var(--white);
+        }
+        .header-search svg {
+            width: 18px; height: 18px;
+            stroke: var(--muted);
+            flex-shrink: 0;
+        }
+        .header-search input {
+            flex: 1;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--heading);
+            outline: none;
+        }
+        .header-search input::placeholder { color: var(--muted); }
+
+        .header-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .header-btn {
+            position: relative;
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .header-btn:hover { background: var(--light-grey); }
+        .header-btn svg {
+            width: 21px; height: 21px;
+            stroke: var(--heading);
+            fill: none;
+            stroke-width: 1.8;
+        }
+        .header-badge {
+            position: absolute;
+            top: 4px; right: 2px;
+            min-width: 16px; height: 16px;
+            border-radius: 8px;
+            background: var(--gold);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.55rem;
+            color: var(--heading);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+
+        /* ================================================================
+           BREADCRUMB
+           ================================================================ */
+        .breadcrumb {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 16px 32px 0;
+            display: flex;
+            gap: 8px;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+        .breadcrumb a { color: var(--charcoal); transition: color 0.2s; }
+        .breadcrumb a:hover { color: var(--gold-dark); }
+        .breadcrumb span { color: var(--muted); }
+
+
+        /* ================================================================
+           CATEGORY HEADER
+           ================================================================ */
+        .cat-header {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px 32px 0;
+        }
+        .cat-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            color: var(--heading);
+            line-height: 1.15;
+        }
+        .cat-intro {
+            font-size: 0.88rem;
+            color: var(--charcoal);
+            margin-top: 8px;
+            max-width: 640px;
+            line-height: 1.55;
+        }
+        .cat-count {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+
+        /* ================================================================
+           SUBCATEGORY PILLS
+           ================================================================ */
+        .subcat-strip {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px 32px 0;
+        }
+        .subcat-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+        .subcat-scroll::-webkit-scrollbar { display: none; }
+
+        .subcat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: var(--light-grey);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--heading);
+            white-space: nowrap;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+        .subcat-pill:hover {
+            background: var(--gold-wash);
+            color: var(--gold-dark);
+        }
+        .subcat-pill.is-active {
+            background: var(--gold);
+            color: var(--heading);
+        }
+        .subcat-pill svg {
+            width: 18px; height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+        }
+
+
+        /* ================================================================
+           TOOLBAR (sort + results count + grid toggle)
+           ================================================================ */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .toolbar-count {
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+        .toolbar-count strong {
+            color: var(--heading);
+            font-weight: 600;
+        }
+
+        /* Mobile filter button — hidden on desktop */
+        .toolbar-filter-btn {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            background: var(--light-grey);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--heading);
+            transition: background 0.2s;
+        }
+        .toolbar-filter-btn svg {
+            width: 16px; height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+        .toolbar-filter-btn .filter-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 18px; height: 18px;
+            border-radius: 9px;
+            background: var(--gold);
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--heading);
+            padding: 0 4px;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sort-select {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 8px 32px 8px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--heading);
+            background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa0af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .sort-select:focus { border-color: var(--gold); }
+
+
+        /* ================================================================
+           MAIN LAYOUT — sidebar + product grid
+           ================================================================ */
+        .cat-layout {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 32px 64px;
+            display: flex;
+            gap: 32px;
+        }
+
+
+        /* ================================================================
+           FILTER SIDEBAR (desktop)
+           ================================================================ */
+        .filter-sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            padding-top: 20px;
+        }
+
+        .filter-section {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+        .filter-section:last-child { border-bottom: none; }
+
+        .filter-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .filter-header h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: var(--heading);
+        }
+        .filter-header svg {
+            width: 16px; height: 16px;
+            stroke: var(--muted);
+            fill: none;
+            stroke-width: 2;
+            transition: transform 0.3s;
+        }
+        .filter-section.is-collapsed .filter-header svg {
+            transform: rotate(-90deg);
+        }
+
+        .filter-body {
+            max-height: 400px;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+        .filter-section.is-collapsed .filter-body {
+            max-height: 0;
+        }
+
+        .filter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 4px 0;
+        }
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .filter-item:hover { background: var(--light-grey); }
+
+        .filter-checkbox {
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            appearance: none;
+            -webkit-appearance: none;
+            flex-shrink: 0;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .filter-checkbox:checked {
+            background: var(--gold);
+            border-color: var(--gold-dark);
+        }
+        .filter-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px; top: 2px;
+            width: 5px; height: 9px;
+            border: solid var(--heading);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .filter-label {
+            font-size: 0.84rem;
+            color: var(--charcoal);
+            flex: 1;
+        }
+        .filter-count {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        /* Scrollable filter with "show more" */
+        .filter-body--scroll {
+            max-height: 280px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+        .filter-body--scroll::-webkit-scrollbar { width: 4px; }
+        .filter-body--scroll::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .filter-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.72rem;
+            color: var(--muted);
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .filter-reset:hover {
+            color: var(--heading);
+            background: var(--light-grey);
+        }
+        .filter-reset svg {
+            width: 14px; height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Active filter chips */
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .active-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            background: var(--gold-wash);
+            font-size: 0.72rem;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            color: var(--gold-dark);
+            transition: all 0.2s;
+        }
+        .active-chip:hover { background: rgba(249, 185, 74, 0.18); }
+        .active-chip svg {
+            width: 12px; height: 12px;
+            stroke: currentColor;
+            stroke-width: 2.5;
+        }
+
+
+        /* ================================================================
+           PRODUCT GRID
+           ================================================================ */
+        .products-area {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+
+        /* ================================================================
+           PRODUCT CARD
+           ================================================================ */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: all 0.35s ease;
+        }
+        .card:hover {
+            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            border-color: transparent;
+        }
+
+        .card-img {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            background: var(--light-grey);
+            overflow: hidden;
+        }
+        .card-img img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .card:hover .card-img img { transform: scale(1.05); }
+
+        /* Placeholder image simulation */
+        .card-img-placeholder {
+            width: 100%; height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #f0eee9, #e8e5de);
+        }
+        .card-img-placeholder svg {
+            width: 48px; height: 48px;
+            stroke: var(--border);
+            fill: none;
+            stroke-width: 1.2;
+            opacity: 0.5;
+        }
+
+        .card-labels {
+            position: absolute;
+            top: 10px; left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 3;
+        }
+        .label {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            letter-spacing: 0.5px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+        }
+        .label--novo { background: var(--gold); color: var(--heading); }
+        .label--brand { background: var(--light-grey); color: var(--charcoal); }
+        .label--sold { background: var(--sold); color: var(--white); }
+
+        /* Favourite — positioned top-right on image */
+        .card-fav {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: all 0.25s;
+            opacity: 0;
+        }
+        .card:hover .card-fav { opacity: 1; }
+        .card-fav svg {
+            width: 16px; height: 16px;
+            stroke: var(--charcoal);
+            fill: none;
+            stroke-width: 2;
+            transition: all 0.2s;
+        }
+        .card-fav:hover {
+            background: var(--white);
+            transform: scale(1.1);
+        }
+        .card-fav:hover svg { stroke: #e74c3c; }
+        .card-fav.is-active svg {
+            stroke: #e74c3c;
+            fill: #e74c3c;
+        }
+        .card-fav.is-active { opacity: 1; }
+
+        .card-body {
+            padding: 14px 16px 16px;
+        }
+
+        .card-manufacturer {
+            font-size: 0.72rem;
+            color: var(--charcoal);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .card-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: var(--heading);
+            line-height: 1.3;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-price {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--gold-dark);
+        }
+
+        /* Add to cart button */
+        .card-cart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            height: 34px;
+            width: 34px;
+            border-radius: 10px;
+            color: var(--charcoal);
+            background: var(--light-grey);
+            overflow: hidden;
+            white-space: nowrap;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-cart svg {
+            width: 16px; height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+            transition: transform 0.3s;
+        }
+        .card-cart .cart-text {
+            font-size: 0.7rem;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (hover: hover) {
+            .card-cart:hover {
+                width: 110px;
+                background: var(--gold);
+                color: var(--heading);
+                gap: 5px;
+                padding: 0 12px;
+            }
+            .card-cart:hover .cart-text {
+                max-width: 70px;
+                opacity: 1;
+            }
+            .card-cart:hover svg { transform: scale(1.1); }
+        }
+
+        /* Sold state */
+        .card.is-sold { opacity: 0.7; }
+        .card.is-sold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+        .card.is-sold .card-img img { filter: grayscale(0.4); }
+        .card.is-sold .card-price {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+        .card.is-sold .card-cart {
+            background: var(--section-grey);
+            color: var(--sold);
+            cursor: default;
+        }
+
+
+        /* ================================================================
+           LOAD MORE
+           ================================================================ */
+        .load-more {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 48px 0 32px;
+        }
+        .load-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 36px;
+            border-radius: 14px;
+            background: var(--heading);
+            color: var(--white);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.88rem;
+            transition: all 0.3s;
+        }
+        .load-more-btn:hover {
+            background: var(--charcoal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(43,46,53,0.2);
+        }
+        .load-more-btn svg {
+            width: 18px; height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+        .load-more-progress {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+        .load-more-bar {
+            width: 200px;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--section-grey);
+            overflow: hidden;
+        }
+        .load-more-bar-fill {
+            height: 100%;
+            width: 28%;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+
+        /* ================================================================
+           MOBILE FILTER BOTTOM SHEET
+           ================================================================ */
+        .filter-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.35s;
+        }
+        .filter-overlay.is-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .filter-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 88vh;
+            background: var(--white);
+            border-radius: 24px 24px 0 0;
+            z-index: 201;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .filter-sheet.is-open { transform: translateY(0); }
+
+        .filter-sheet-handle {
+            display: flex;
+            justify-content: center;
+            padding: 12px 0 4px;
+        }
+        .filter-sheet-handle-bar {
+            width: 36px; height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+        }
+
+        .filter-sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .filter-sheet-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--heading);
+        }
+        .filter-sheet-close {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--light-grey);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .filter-sheet-close svg {
+            width: 18px; height: 18px;
+            stroke: var(--charcoal);
+            stroke-width: 2;
+        }
+
+        .filter-sheet-body {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 16px 20px;
+        }
+
+        .filter-sheet-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+        .filter-sheet-apply {
+            flex: 1;
+            padding: 14px;
+            border-radius: 14px;
+            background: var(--gold);
+            color: var(--heading);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .filter-sheet-apply:active { background: var(--gold-dark); }
+        .filter-sheet-reset {
+            padding: 14px 20px;
+            border-radius: 14px;
+            background: var(--light-grey);
+            color: var(--charcoal);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+
+        /* ================================================================
+           RESPONSIVE — Tablet (<=1024px)
+           ================================================================ */
+        @media (max-width: 1024px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            .filter-sidebar { width: 240px; }
+            .cat-layout { gap: 24px; padding: 0 24px 48px; }
+            .header-search { width: 200px; }
+        }
+
+
+        /* ================================================================
+           RESPONSIVE — Mobile (<=768px)
+           ================================================================ */
+        @media (max-width: 768px) {
+            .header-inner { padding: 0 16px; height: 56px; }
+            .header-nav { display: none; }
+            .header-search { display: none; }
+
+            .breadcrumb { padding: 12px 16px 0; font-size: 0.72rem; }
+            .cat-header { padding: 16px 16px 0; }
+            .cat-title { font-size: 1.5rem; }
+            .cat-intro { font-size: 0.82rem; margin-top: 4px; }
+
+            .subcat-strip { padding: 14px 16px 0; }
+            .subcat-pill { padding: 8px 14px; font-size: 0.76rem; }
+
+            /* Hide desktop sidebar */
+            .filter-sidebar { display: none; }
+
+            /* Show mobile filter button */
+            .toolbar-filter-btn { display: flex; }
+
+            .cat-layout {
+                padding: 0 12px 48px;
+                gap: 0;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .toolbar { padding: 14px 4px 10px; }
+
+            /* Card adjustments for mobile */
+            .card { border-radius: 12px; }
+            .card-body { padding: 10px 12px 14px; }
+            .card-manufacturer { font-size: 0.65rem; letter-spacing: 1.2px; }
+            .card-name { font-size: 0.8rem; margin-bottom: 6px; }
+            .card-price { font-size: 0.92rem; }
+            .card-cart { width: 30px; height: 30px; border-radius: 8px; }
+            .card-cart svg { width: 14px; height: 14px; }
+            .card-fav { opacity: 1; width: 30px; height: 30px; }
+            .card-fav svg { width: 14px; height: 14px; }
+            .card-labels { top: 8px; left: 8px; }
+            .label { padding: 2px 8px; font-size: 0.55rem; }
+
+            .load-more-btn { padding: 12px 28px; font-size: 0.82rem; }
+        }
+
+        @media (max-width: 380px) {
+            .product-grid { gap: 8px; }
+            .card-body { padding: 8px 10px 12px; }
+        }
+
+
+        /* ================================================================
+           FOOTER PLACEHOLDER
+           ================================================================ */
+        .footer-placeholder {
+            background: var(--heading);
+            color: var(--muted);
+            padding: 48px 32px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         SVG DEFS
+         ============================================================ -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+        <symbol id="heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </symbol>
+        <symbol id="cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+        </symbol>
+        <symbol id="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+        </symbol>
+        <symbol id="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </symbol>
+        <symbol id="sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
+            <line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/>
+            <line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/>
+            <line x1="17" y1="16" x2="23" y2="16"/>
+        </symbol>
+        <symbol id="refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+        </symbol>
+        <symbol id="loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/>
+            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/>
+            <line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/>
+            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/>
+        </symbol>
+        <symbol id="shirt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/>
+        </symbol>
+        <symbol id="home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        </symbol>
+        <symbol id="search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </symbol>
+        <symbol id="user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </symbol>
+        <symbol id="bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18"/><path d="M16 10a4 4 0 01-8 0"/>
+        </symbol>
+    </svg>
+
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="#" class="header-logo">
+                <span class="header-logo-dot"></span>
+                Otroški kotiček
+            </a>
+
+            <nav class="header-nav">
+                <a href="#">Otroška oblačila</a>
+                <a href="#" class="is-active">Vse za deklice</a>
+                <a href="#">Vse za dečke</a>
+                <a href="#">Za nosečnice</a>
+                <a href="#">Izprazni omaro</a>
+            </nav>
+
+            <div class="header-search">
+                <svg><use href="#search"/></svg>
+                <input type="text" placeholder="Išči po trgovini ...">
+            </div>
+
+            <div class="header-actions">
+                <button class="header-btn" aria-label="Račun">
+                    <svg><use href="#user"/></svg>
+                </button>
+                <button class="header-btn" aria-label="Shranjeni artikli">
+                    <svg><use href="#heart"/></svg>
+                </button>
+                <button class="header-btn" aria-label="Košarica">
+                    <svg><use href="#bag"/></svg>
+                    <span class="header-badge">2</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ============================================================
+         BREADCRUMB
+         ============================================================ -->
+    <div class="breadcrumb">
+        <a href="#">Domov</a>
+        <span>/</span>
+        <a href="#">Otroška oblačila</a>
+        <span>/</span>
+        <span>Deklice</span>
+    </div>
+
+
+    <!-- ============================================================
+         CATEGORY HEADER
+         ============================================================ -->
+    <div class="cat-header">
+        <h1 class="cat-title">Deklice</h1>
+        <p class="cat-intro">Rabljena otroška oblačila za deklice od 0 do 15 let. Znamke kot so H&M, Zara, Next in Benetton, za delček maloprodajne cene.</p>
+        <p class="cat-count">4.281 artiklov</p>
+    </div>
+
+
+    <!-- ============================================================
+         SUBCATEGORY STRIP
+         ============================================================ -->
+    <div class="subcat-strip">
+        <div class="subcat-scroll">
+            <a href="#" class="subcat-pill is-active">
+                <svg viewBox="0 0 24 24"><use href="#shirt"/></svg>
+                Vse
+            </a>
+            <a href="#" class="subcat-pill">Jakne in Bunde</a>
+            <a href="#" class="subcat-pill">Kavbojke in Hlače</a>
+            <a href="#" class="subcat-pill">Kompleti in Pajaci</a>
+            <a href="#" class="subcat-pill">Majice in Srajčke</a>
+            <a href="#" class="subcat-pill">Obleke in Krila</a>
+            <a href="#" class="subcat-pill">Puloverji in Jope</a>
+            <a href="#" class="subcat-pill">Športna oblačila</a>
+            <a href="#" class="subcat-pill">Paket presenečenja</a>
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+         MAIN LAYOUT
+         ============================================================ -->
+    <div class="cat-layout">
+
+        <!-- ════════════════════════════════════════
+             FILTER SIDEBAR (Desktop)
+             ════════════════════════════════════════ -->
+        <aside class="filter-sidebar">
+
+            <button class="filter-reset" onclick="resetFilters()">
+                <svg><use href="#refresh"/></svg>
+                Ponastavi filtre
+            </button>
+
+            <!-- Active filter chips (example) -->
+            <div class="active-filters" id="activeFilters">
+                <button class="active-chip" onclick="removeChip(this)">
+                    3-4 L / 104
+                    <svg><use href="#x"/></svg>
+                </button>
+                <button class="active-chip" onclick="removeChip(this)">
+                    H&M
+                    <svg><use href="#x"/></svg>
+                </button>
+            </div>
+
+            <!-- FILTER: Kategorije -->
+            <div class="filter-section is-collapsed">
+                <div class="filter-header" onclick="toggleFilter(this)">
+                    <h3>Kategorije</h3>
+                    <svg><use href="#chevron-down"/></svg>
+                </div>
+                <div class="filter-body">
+                    <div class="filter-list">
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Jakne in Bunde</span> <span class="filter-count">342</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Kavbojke in Hlače</span> <span class="filter-count">628</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Kompleti in Pajaci</span> <span class="filter-count">512</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Majice in Srajčke</span> <span class="filter-count">1240</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Obleke in Krila</span> <span class="filter-count">680</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Puloverji in Jope</span> <span class="filter-count">456</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Športna oblačila</span> <span class="filter-count">223</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Paket presenečenja</span> <span class="filter-count">200</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER: Starost / Velikost -->
+            <div class="filter-section">
+                <div class="filter-header" onclick="toggleFilter(this)">
+                    <h3>Starost / Velikost</h3>
+                    <svg><use href="#chevron-down"/></svg>
+                </div>
+                <div class="filter-body filter-body--scroll">
+                    <div class="filter-list">
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">0-1 M / 50</span> <span class="filter-count">48</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">2-3 M / 56</span> <span class="filter-count">62</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">2-4 M / 62</span> <span class="filter-count">85</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">3-6 M / 68</span> <span class="filter-count">142</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">6-9 M / 74</span> <span class="filter-count">198</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">9-12 M / 80</span> <span class="filter-count">245</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">12-18 M / 86</span> <span class="filter-count">310</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">18-24 M / 92</span> <span class="filter-count">365</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">2-3 L / 98</span> <span class="filter-count">385</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox" checked> <span class="filter-label">3-4 L / 104</span> <span class="filter-count">420</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">4-5 L / 110</span> <span class="filter-count">395</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">5-6 L / 116</span> <span class="filter-count">340</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">6-7 L / 122</span> <span class="filter-count">285</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">7-8 L / 128</span> <span class="filter-count">260</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">8-9 L / 134</span> <span class="filter-count">210</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">9-10 L / 140</span> <span class="filter-count">175</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">10-11 L / 146</span> <span class="filter-count">130</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">11-12 L / 152</span> <span class="filter-count">95</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">12-13 L / 158</span> <span class="filter-count">68</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">13-14 L / 164</span> <span class="filter-count">45</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">14-15 L / 170</span> <span class="filter-count">18</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER: Znamke -->
+            <div class="filter-section">
+                <div class="filter-header" onclick="toggleFilter(this)">
+                    <h3>Znamke</h3>
+                    <svg><use href="#chevron-down"/></svg>
+                </div>
+                <div class="filter-body filter-body--scroll">
+                    <div class="filter-list">
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Adidas</span> <span class="filter-count">42</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Benetton</span> <span class="filter-count">128</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Blue Seven</span> <span class="filter-count">65</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">C&A</span> <span class="filter-count">185</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Carter's</span> <span class="filter-count">38</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Desigual</span> <span class="filter-count">22</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Esprit</span> <span class="filter-count">56</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Gap</span> <span class="filter-count">92</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox" checked> <span class="filter-label">H&M</span> <span class="filter-count">845</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Lindex</span> <span class="filter-count">74</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Mango</span> <span class="filter-count">48</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Name it</span> <span class="filter-count">156</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Next</span> <span class="filter-count">210</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Nike</span> <span class="filter-count">35</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">OVS</span> <span class="filter-count">68</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">S.Oliver</span> <span class="filter-count">142</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Tom Tailor</span> <span class="filter-count">48</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Zara</span> <span class="filter-count">320</span></label>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+
+        <!-- ════════════════════════════════════════
+             PRODUCT AREA
+             ════════════════════════════════════════ -->
+        <main class="products-area">
+
+            <!-- TOOLBAR -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="toolbar-filter-btn" onclick="openFilterSheet()">
+                        <svg><use href="#sliders"/></svg>
+                        Filtri
+                        <span class="filter-count-badge">2</span>
+                    </button>
+                    <span class="toolbar-count">Prikazujem <strong>1–35</strong> od 4.281</span>
+                </div>
+                <div class="toolbar-right">
+                    <select class="sort-select">
+                        <option>Najnovejši</option>
+                        <option>Cena: naraščajoča</option>
+                        <option>Cena: padajoča</option>
+                        <option>Popularno</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- PRODUCT GRID -->
+            <div class="product-grid" id="productGrid">
+
+                <!-- Card 1 — with brand, novo badge -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #d4c5b3, #c9baa6)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">H&M</div>
+                        <div class="card-name">Pulover št. 122/128</div>
+                        <div class="card-bottom">
+                            <div class="card-price">6,90 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 — no brand -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #e0c4c4, #d4b5b5)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">&nbsp;</div>
+                        <div class="card-name">Paket št. 98/104</div>
+                        <div class="card-bottom">
+                            <div class="card-price">5,80 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #c4d4e0, #b5c5d4)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">&nbsp;</div>
+                        <div class="card-name">Paket št. 98/104</div>
+                        <div class="card-bottom">
+                            <div class="card-price">4,10 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #d4e0c4, #c5d4b5)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">&nbsp;</div>
+                        <div class="card-name">Paket št. 98/104</div>
+                        <div class="card-bottom">
+                            <div class="card-price">5,80 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 5 — H&M brand -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #e0d4c4, #d4c5b0)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">H&M</div>
+                        <div class="card-name">Paket št. 92</div>
+                        <div class="card-bottom">
+                            <div class="card-price">7,80 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #e8dcd0, #ddd0c2)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">&nbsp;</div>
+                        <div class="card-name">Paket št. 86/92</div>
+                        <div class="card-bottom">
+                            <div class="card-price">4,10 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 7 — H&M -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav is-active" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #f0e0d0, #e8d4c2)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">H&M</div>
+                        <div class="card-name">Paket št. 86</div>
+                        <div class="card-bottom">
+                            <div class="card-price">7,80 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 8 — H&M -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #f5dde8, #edd0de)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">H&M</div>
+                        <div class="card-name">Paket št. 134/140</div>
+                        <div class="card-bottom">
+                            <div class="card-price">8,40 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 9 — SOLD -->
+                <div class="card is-sold">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--sold">Prodano</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #e0dcd8, #d6d2cc)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">Benetton</div>
+                        <div class="card-name">Paket št. 116</div>
+                        <div class="card-bottom">
+                            <div class="card-price">9,00 €</div>
+                            <button class="card-cart" disabled>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 10 -->
+                <div class="card">
+                    <div class="card-img">
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #dde5f0, #d0dae8)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">Name it</div>
+                        <div class="card-name">Jakna št. 92</div>
+                        <div class="card-bottom">
+                            <div class="card-price">14,90 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 11 -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #f0e8dd, #e8ddd0)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">&nbsp;</div>
+                        <div class="card-name">Brezrokavnik št. 116</div>
+                        <div class="card-bottom">
+                            <div class="card-price">7,90 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 12 — Zara -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #e4d8e8, #d8cce0)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">Zara</div>
+                        <div class="card-name">Pulover št. 110</div>
+                        <div class="card-bottom">
+                            <div class="card-price">8,90 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 13 — Benetton -->
+                <div class="card">
+                    <div class="card-img">
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #c4e0d4, #b5d4c5)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">Benetton</div>
+                        <div class="card-name">Pulover št. 100</div>
+                        <div class="card-bottom">
+                            <div class="card-price">7,90 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 14 — H&M -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #f5e0e8, #edd4de)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">H&M</div>
+                        <div class="card-name">Obleka št. 98</div>
+                        <div class="card-bottom">
+                            <div class="card-price">5,50 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 15 — Next -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--brand">Top znamka</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #f0e8c4, #e8ddb5)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">Next</div>
+                        <div class="card-name">Obleka št. 92</div>
+                        <div class="card-bottom">
+                            <div class="card-price">7,90 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 16 — S.Oliver -->
+                <div class="card">
+                    <div class="card-img">
+                        <div class="card-labels">
+                            <span class="label label--novo">Novo</span>
+                        </div>
+                        <button class="card-fav" onclick="toggleFav(this)"><svg><use href="#heart"/></svg></button>
+                        <div class="card-img-placeholder" style="background: linear-gradient(145deg, #d4d8e0, #c5cad4)"><svg><use href="#shirt"/></svg></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-manufacturer">S.Oliver</div>
+                        <div class="card-name">Obleka št. 92</div>
+                        <div class="card-bottom">
+                            <div class="card-price">5,50 €</div>
+                            <button class="card-cart">
+                                <span class="cart-text">Dodaj</span>
+                                <svg><use href="#cart"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- LOAD MORE -->
+            <div class="load-more">
+                <div class="load-more-bar">
+                    <div class="load-more-bar-fill"></div>
+                </div>
+                <span class="load-more-progress">Prikazanih 35 od 4.281 artiklov</span>
+                <button class="load-more-btn">
+                    <svg><use href="#loader"/></svg>
+                    Naloži več
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+
+    <!-- ============================================================
+         MOBILE FILTER SHEET
+         ============================================================ -->
+    <div class="filter-overlay" id="filterOverlay" onclick="closeFilterSheet()"></div>
+    <div class="filter-sheet" id="filterSheet">
+        <div class="filter-sheet-handle"><div class="filter-sheet-handle-bar"></div></div>
+        <div class="filter-sheet-header">
+            <span class="filter-sheet-title">Filtri</span>
+            <button class="filter-sheet-close" onclick="closeFilterSheet()">
+                <svg><use href="#x"/></svg>
+            </button>
+        </div>
+        <div class="filter-sheet-body">
+
+            <!-- Duplicate filter sections for mobile -->
+            <div class="filter-section">
+                <div class="filter-header" onclick="toggleFilter(this)">
+                    <h3>Kategorije</h3>
+                    <svg><use href="#chevron-down"/></svg>
+                </div>
+                <div class="filter-body">
+                    <div class="filter-list">
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Jakne in Bunde</span> <span class="filter-count">342</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Kavbojke in Hlače</span> <span class="filter-count">628</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Kompleti in Pajaci</span> <span class="filter-count">512</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Majice in Srajčke</span> <span class="filter-count">1240</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Obleke in Krila</span> <span class="filter-count">680</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Puloverji in Jope</span> <span class="filter-count">456</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Športna oblačila</span> <span class="filter-count">223</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-header" onclick="toggleFilter(this)">
+                    <h3>Starost / Velikost</h3>
+                    <svg><use href="#chevron-down"/></svg>
+                </div>
+                <div class="filter-body">
+                    <div class="filter-list">
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">0-1 M / 50</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">2-3 M / 56</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">3-6 M / 68</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">6-9 M / 74</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">9-12 M / 80</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">12-18 M / 86</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">18-24 M / 92</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">2-3 L / 98</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox" checked> <span class="filter-label">3-4 L / 104</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">4-5 L / 110</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">5-6 L / 116</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">6-7 L / 122</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">7-8 L / 128</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">8-9 L / 134</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">9-10 L / 140</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-header" onclick="toggleFilter(this)">
+                    <h3>Znamke</h3>
+                    <svg><use href="#chevron-down"/></svg>
+                </div>
+                <div class="filter-body">
+                    <div class="filter-list">
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Adidas</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Benetton</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">C&A</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Gap</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox" checked> <span class="filter-label">H&M</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Name it</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Next</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Nike</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">S.Oliver</span></label>
+                        <label class="filter-item"><input type="checkbox" class="filter-checkbox"> <span class="filter-label">Zara</span></label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="filter-sheet-footer">
+            <button class="filter-sheet-reset">Ponastavi</button>
+            <button class="filter-sheet-apply" onclick="closeFilterSheet()">Pokaži 420 artiklov</button>
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer-placeholder">
+        Otroški kotiček — Rabljena otroška oblačila od 2013
+    </footer>
+
+
+    <!-- ============================================================
+         JAVASCRIPT
+         ============================================================ -->
+    <script>
+        // Toggle filter section collapse
+        function toggleFilter(header) {
+            const section = header.closest('.filter-section');
+            section.classList.toggle('is-collapsed');
+        }
+
+        // Toggle favourite
+        function toggleFav(btn) {
+            btn.classList.toggle('is-active');
+        }
+
+        // Remove active filter chip
+        function removeChip(chip) {
+            chip.remove();
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.querySelectorAll('.filter-checkbox:checked').forEach(cb => cb.checked = false);
+            document.getElementById('activeFilters').innerHTML = '';
+        }
+
+        // Mobile filter sheet
+        function openFilterSheet() {
+            document.getElementById('filterOverlay').classList.add('is-visible');
+            document.getElementById('filterSheet').classList.add('is-open');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeFilterSheet() {
+            document.getElementById('filterOverlay').classList.remove('is-visible');
+            document.getElementById('filterSheet').classList.remove('is-open');
+            document.body.classList.remove('no-scroll');
+        }
+
+        // Subcategory pill toggle
+        document.querySelectorAll('.subcat-pill').forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.subcat-pill').forEach(p => p.classList.remove('is-active'));
+                pill.classList.add('is-active');
+            });
+        });
+    </script>
+
+</body>
+</html>

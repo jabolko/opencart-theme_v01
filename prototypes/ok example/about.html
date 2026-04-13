@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O nas — Otroški Kotiček</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container flex-between">
+      <div class="flex" style="align-items:center; gap:var(--space-md);">
+        <span>📧 info@otroski-koticek.si</span>
+        <span class="separator"></span>
+        <span>📞 +386 40 123 456</span>
+      </div>
+      <div class="flex" style="align-items:center; gap:var(--space-lg);">
+        <a href="#">Pomoč</a>
+        <a href="#">Sledenje naročilu</a>
+        <a href="#">🇸🇮 Slovenščina</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-main">
+      <div class="container flex-between">
+        <a href="index.html" class="header-logo">
+          <div class="logo-icon">🧸</div>
+          <div>
+            <div class="logo-text">Otroški Kotiček</div>
+            <div class="logo-tagline">Nežno rabljena otroška oblačila</div>
+          </div>
+        </a>
+        <div class="header-search">
+          <input type="text" placeholder="Iščite oblačila, velikosti, znamke...">
+          <button class="search-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+        <div class="header-actions">
+          <a href="#" class="header-action">
+            <div class="action-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span>Račun</span>
+          </a>
+          <a href="#" class="header-action">
+            <div class="action-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span class="badge">3</span>
+            </div>
+            <span>Želje</span>
+          </a>
+          <a href="cart.html" class="header-action">
+            <div class="action-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span class="badge">2</span>
+            </div>
+            <span class="cart-total">€24,90</span>
+          </a>
+        </div>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="container">
+        <ul class="nav-list" id="navList">
+          <li class="nav-item"><a href="index.html" class="nav-link">Domov</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Deklice</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Dečki</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Nosečnice</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Novo</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link" style="color:var(--rose);">Akcija</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link active">O nas</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li><a href="index.html">Domov</a></li>
+        <li><span class="sep">›</span></li>
+        <li class="active">O nas</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- About Hero -->
+  <section class="about-hero">
+    <div class="container">
+      <h1>Naša zgodba</h1>
+      <p class="lead">Verjamemo, da vsak kos oblačila zasluži drugo priložnost — in vsak otrok zasluži oblačila, v katerih se počuti odlično.</p>
+    </div>
+  </section>
+
+  <!-- Story Section -->
+  <section class="section">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-image">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#fce5b0,#f5e0df);display:flex;align-items:center;justify-content:center;font-size:5rem;">🧸</div>
+        </div>
+        <div class="about-text">
+          <span class="section-label">Kako se je začelo</span>
+          <h2>Od ideje do skupnosti</h2>
+          <p>
+            Otroški Kotiček se je rodil iz preprostega spoznanja: otroci prerastejo oblačila
+            veliko hitreje, kot se ta obrabijo. Zakaj bi kakovostna oblačila končala v smeteh,
+            ko pa lahko razveselijo še enega malčka?
+          </p>
+          <p>
+            Začeli smo kot majhna domača iniciativa, danes pa smo ena največjih platform za
+            nežno rabljena otroška oblačila v Sloveniji. Vsak kos, ki ga ponudimo, je ročno
+            pregledan, opran in pripravljen za novo zgodbo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="section" style="background:var(--off-white);">
+    <div class="container">
+      <div class="about-content reverse">
+        <div class="about-image">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#e8f0e6,#e0e8f5);display:flex;align-items:center;justify-content:center;font-size:5rem;">🌍</div>
+        </div>
+        <div class="about-text">
+          <span class="section-label">Naše poslanstvo</span>
+          <h2>Za otroke in planet</h2>
+          <p>
+            Tekstilna industrija je eden največjih onesnaževalcev okolja. Z vsakim rabljenim kosom,
+            ki dobi novo življenje, skupaj zmanjšujemo ogljični odtis in varujemo naravne vire.
+          </p>
+          <p>
+            Do danes smo skupaj prihranili več kot 50 ton tekstilnih odpadkov. To je ekvivalent
+            več kot 250.000 majic, ki niso končale na odlagališčih. In to je šele začetek.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Naše vrednote</span>
+        <h2 class="section-title">V kaj verjamemo</h2>
+        <p class="section-description">Tri stebre, ki vodijo vsako naše odločitev.</p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">🌱</div>
+          <h3>Trajnostnost</h3>
+          <p>Vsak kos rabljenega oblačila pomeni manj odpadkov in manj obremenitev za naš planet. Krožna moda ni trend — je nujnost.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">✨</div>
+          <h3>Kakovost</h3>
+          <p>Vsak kos skrbno pregledamo, operemo in pripravimo. Ponudimo le tisto, kar bi sami z veseljem oblekli svojim otrokom.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">💛</div>
+          <h3>Skupnost</h3>
+          <p>Več kot 8.500 družin nam zaupa. Gradimo skupnost staršev, ki cenijo kakovost, trajnostnost in pametno nakupovanje.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section" style="background:var(--gold-lighter);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Enostavno</span>
+        <h2 class="section-title">Kako deluje</h2>
+        <p class="section-description">V treh preprostih korakih do kakovostnih oblačil za vašega otroka.</p>
+      </div>
+      <div class="values-grid">
+        <div class="value-card" style="background:var(--white);">
+          <div class="value-icon" style="background:var(--white);font-size:2.5rem;">1️⃣</div>
+          <h3>Izberite</h3>
+          <p>Brskajte po naši kolekciji in izberite kose, ki vam ustrezajo. Filtrirajte po velikosti, stanju ali znamki.</p>
+        </div>
+        <div class="value-card" style="background:var(--white);">
+          <div class="value-icon" style="background:var(--white);font-size:2.5rem;">2️⃣</div>
+          <h3>Naročite</h3>
+          <p>Varno plačajte s kartico, PayPalom ali UPN nakazilom. Dostava je brezplačna pri naročilih nad €49.</p>
+        </div>
+        <div class="value-card" style="background:var(--white);">
+          <div class="value-icon" style="background:var(--white);font-size:2.5rem;">3️⃣</div>
+          <h3>Uživajte</h3>
+          <p>V 2–4 delovnih dneh prejmete paketk. Niste zadovoljni? Brez skrbi — imate 14 dni za vračilo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats / Impact -->
+  <section class="section" style="background:var(--dark);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label" style="color:var(--gold);">Naš vpliv</span>
+        <h2 class="section-title" style="color:var(--white);">Skupaj naredimo razliko</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-xl);text-align:center;">
+        <div>
+          <div style="font-family:var(--font-heading);font-size:3rem;font-weight:700;color:var(--gold);margin-bottom:var(--space-sm);">15.000+</div>
+          <div style="font-size:0.9375rem;color:var(--gray-400);">Prodanih kosov</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-heading);font-size:3rem;font-weight:700;color:var(--gold);margin-bottom:var(--space-sm);">8.500+</div>
+          <div style="font-size:0.9375rem;color:var(--gray-400);">Zadovoljnih družin</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-heading);font-size:3rem;font-weight:700;color:var(--gold);margin-bottom:var(--space-sm);">50t+</div>
+          <div style="font-size:0.9375rem;color:var(--gray-400);">Prihranjenega tekstila</div>
+        </div>
+        <div>
+          <div style="font-family:var(--font-heading);font-size:3rem;font-weight:700;color:var(--gold);margin-bottom:var(--space-sm);">98%</div>
+          <div style="font-size:0.9375rem;color:var(--gray-400);">Zadovoljnih strank</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section testimonials-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Zadovoljne mamice</span>
+        <h2 class="section-title">Mnenja naših strank</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            Oblačila so vedno v brezhibnem stanju, točno kot je opisano. Moja hči obožuje "nove" kose!
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar">MK</div>
+            <div>
+              <div class="author-name">Maja K.</div>
+              <div class="author-info">Mama dveh deklic</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            Paket presenečenja je fantastična ideja! Za manj kot €20 dobimo 5 kosov v odličnem stanju.
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar">AN</div>
+            <div>
+              <div class="author-name">Ana N.</div>
+              <div class="author-info">Mama sina in hčerke</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">
+            Končno nekdo, ki razume, da otroci hitro rastejo! Kakovostna oblačila za razumno ceno.
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar">TL</div>
+            <div>
+              <div class="author-name">Tina L.</div>
+              <div class="author-info">Mama treh otrok</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container" style="text-align:center;">
+      <div class="section-header">
+        <span class="section-label">Pridružite se</span>
+        <h2 class="section-title">Začnite z nakupovanjem</h2>
+        <p class="section-description">Odkrijte kakovostna rabljena oblačila za vašega malčka — po cenah, ki ne bodo obremenile denarnice.</p>
+      </div>
+      <div style="display:flex;gap:var(--space-md);justify-content:center;">
+        <a href="category.html" class="btn btn-primary btn-lg">Raziščite kolekcijo</a>
+        <a href="#" class="btn btn-outline btn-lg">Prodajte nam oblačila</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2>Bodite prvi, ki izveste za novosti</h2>
+        <p>Prijavite se na naše e-novice in prejmite 10% popust na prvi nakup.</p>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" placeholder="Vaš e-poštni naslov">
+          <button type="submit">Prijavite se</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-icon">🧸</div>
+            <span class="logo-text">Otroški Kotiček</span>
+          </div>
+          <p>Nežno rabljena otroška oblačila vrhunske kakovosti. Trajnostna moda za generacije, ki prihajajo.</p>
+          <div class="footer-social"><a href="#">f</a><a href="#">ig</a><a href="#">tt</a><a href="#">p</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Nakupovanje</h4>
+          <ul><li><a href="category.html">Deklice</a></li><li><a href="category.html">Dečki</a></li><li><a href="category.html">Dojenčki</a></li><li><a href="category.html">Nosečnice</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Informacije</h4>
+          <ul><li><a href="about.html">O nas</a></li><li><a href="#">Pogoji poslovanja</a></li><li><a href="#">Politika zasebnosti</a></li></ul>
+        </div>
+        <div class="footer-col">
+          <h4>Kontakt</h4>
+          <ul><li><a href="#">📧 info@otroski-koticek.si</a></li><li><a href="#">📞 +386 40 123 456</a></li><li><a href="#">📍 Ljubljana, Slovenija</a></li></ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Otroški Kotiček. Vse pravice pridržane.</span>
+        <div class="payment-icons"><div class="payment-icon">VISA</div><div class="payment-icon">MC</div><div class="payment-icon">PAYPAL</div><div class="payment-icon">UPN</div></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

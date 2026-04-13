@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Strip V4 — Uredniški (Editorial) Text Iterations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;1,9..40,400&family=Open+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; color: #565656; background: #fff; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; display: block; }
+
+    /* ── Shared infrastructure ── */
+    :root {
+      --gold:       #f9b94a;
+      --gold-dark:  #e0a030;
+      --gold-light: #ffd369;
+      --heading:    #2b2e35;
+      --charcoal:   #565656;
+      --muted:      #9aa0af;
+      --white:      #ffffff;
+      --light-grey: #f7f7f7;
+      --border:     #d6d9e0;
+    }
+
+    .container { max-width: 1550px; margin: 0 auto; padding: 0 24px; }
+
+    /* Variation label strips */
+    .vl { background: #111; padding: 20px 32px; display: flex; align-items: baseline; gap: 14px; }
+    .vl__n { font-family: 'Open Sans', sans-serif; font-weight: 700; font-size: 26px; color: var(--gold); }
+    .vl__title { font-family: 'Open Sans', sans-serif; font-weight: 600; font-size: 15px; color: #fff; }
+    .vl__desc { font-size: 13px; color: #9aa0af; }
+
+    /* Hero sim */
+    .hero-sim { height: 60px; background: #eeeeee; }
+
+    /* Shared product image base */
+    .product-img {
+      position: absolute;
+      right: 20px;
+      bottom: 0;
+      height: 80%;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(-4px 8px 16px rgba(0,0,0,0.16));
+      transition: transform 0.35s ease, filter 0.35s ease;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════════
+       V1 — UREDNIŠKI KREPKO (Bold Editorial)
+       ──────────────────────────────────────────────────────────────────────
+       Identical grid to Opus V2. Typography doubled.
+       Name: 2.6rem top tiles / 2rem bottom tiles — Open Sans 700.
+       Eyebrow more visible. Gold italic price replaces muted sub.
+       CTA arrow prominent. Hover: card lifts + price brightens.
+       The layout Opus designed, but text you can actually read.
+       ══════════════════════════════════════════════════════════════════════ */
+
+    .u1 { background: var(--light-grey); padding: 40px 0; }
+
+    .u1-top {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .u1-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .u1-tile {
+      position: relative;
+      background: var(--cat-bg, #ececec);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .u1-top .u1-tile    { height: 300px; }
+    .u1-bottom .u1-tile { height: 240px; }
+
+    .u1-tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.10);
+    }
+    .u1-tile:hover .product-img {
+      transform: scale(1.05) translateY(-4px);
+      filter: drop-shadow(-4px 14px 22px rgba(0,0,0,0.22));
+    }
+
+    /* Bottom gradient — wider so big text always reads */
+    .u1-tile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.18) 40%, transparent 65%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .u1-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 22px 26px 24px;
+      z-index: 4;
+    }
+
+    .u1-eyebrow {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      opacity: 0.70;
+      margin-bottom: 5px;
+    }
+
+    /* ★ Name: 2.6rem top / 2rem bottom — was 1.25rem */
+    .u1-name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 2.6rem; /* ≈ 44px */
+      color: var(--heading);
+      line-height: 1.0;
+      letter-spacing: -0.025em;
+      transition: color 0.2s ease;
+    }
+    .u1-bottom .u1-name { font-size: 2rem; /* ≈ 34px */ }
+
+    /* ★ Price: gold italic — replaces the grey sub */
+    .u1-price {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--gold-dark);
+      margin-top: 5px;
+      opacity: 0.85;
+      transition: opacity 0.2s ease;
+    }
+    .u1-tile:hover .u1-price { opacity: 1; color: var(--gold-dark); }
+
+    /* ★ CTA: larger, gap animates */
+    .u1-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 12px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      color: var(--charcoal);
+      opacity: 0.55;
+      transition: opacity 0.25s ease, gap 0.25s ease;
+    }
+    .u1-tile:hover .u1-cta { opacity: 1; gap: 9px; }
+
+    /* Novo tile */
+    .u1-tile--novo { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+    .u1-tile--novo::after { background: linear-gradient(to top, rgba(249,185,74,0.35) 0%, transparent 55%); }
+    .u1-tile--novo .u1-eyebrow { color: var(--heading); opacity: 0.45; }
+    .u1-tile--novo .u1-name { color: var(--heading); }
+    .u1-tile--novo .u1-price { color: var(--heading); opacity: 0.55; }
+    .u1-tile--novo .u1-cta { color: var(--heading); opacity: 0.55; }
+    .u1-tile--novo:hover .u1-cta { opacity: 0.9; }
+    .u1-tile--novo:hover { box-shadow: 0 18px 44px rgba(249,185,74,0.30); }
+
+    /* V1 Mobile */
+    @media (max-width: 767px) {
+      .u1-top { grid-template-columns: 1fr; }
+      .u1-bottom { grid-template-columns: repeat(2, 1fr); }
+      .u1-top .u1-tile { height: 220px; }
+      .u1-bottom .u1-tile { height: 200px; }
+      .u1-bottom .u1-tile:last-child { grid-column: 1 / -1; }
+      .u1-name { font-size: 2rem !important; }
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════════
+       V2 — UREDNIŠKI NASLOV (Headline Editorial)
+       ──────────────────────────────────────────────────────────────────────
+       Same 2+3 grid. Name becomes a headline: 3.2rem top / 2.4rem bottom.
+       It dominates the tile. A thin gold line animates under the name on
+       hover — the underline IS the hover state, not just a CTA arrow.
+       Eyebrow is prominent (tracked, dark). Price in gold italic.
+       The name + gold underline together form the brand moment.
+       ══════════════════════════════════════════════════════════════════════ */
+
+    .u2 { background: var(--light-grey); padding: 40px 0; }
+
+    .u2-top {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .u2-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .u2-tile {
+      position: relative;
+      background: var(--cat-bg, #ececec);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .u2-top .u2-tile    { height: 300px; }
+    .u2-bottom .u2-tile { height: 240px; }
+
+    .u2-tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.10);
+    }
+    .u2-tile:hover .product-img {
+      transform: scale(1.05) translateY(-4px);
+    }
+
+    .u2-tile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.22) 42%, transparent 68%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .u2-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 26px 24px;
+      z-index: 4;
+    }
+
+    .u2-eyebrow {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.62rem;
+      letter-spacing: 0.20em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      margin-bottom: 6px;
+    }
+
+    /* ★ Name: 3.2rem top / 2.4rem bottom — headline scale */
+    .u2-name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 800;
+      font-size: 3.2rem; /* ≈ 54px */
+      color: var(--heading);
+      line-height: 0.95;
+      letter-spacing: -0.035em;
+    }
+    .u2-bottom .u2-name { font-size: 2.4rem; /* ≈ 41px */ }
+
+    /* ★ Gold underline — animates width from 0 to 100% on hover */
+    .u2-name-wrap {
+      display: inline-block;
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .u2-name-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.35s ease;
+    }
+    .u2-tile:hover .u2-name-wrap::after { width: 100%; }
+
+    /* ★ Price italic gold */
+    .u2-price {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 0.90rem;
+      color: var(--gold-dark);
+      margin-top: 7px;
+    }
+
+    /* Novo */
+    .u2-tile--novo { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+    .u2-tile--novo::after { background: linear-gradient(to top, rgba(249,185,74,0.30) 0%, transparent 55%); }
+    .u2-tile--novo .u2-eyebrow { color: var(--heading); }
+    .u2-tile--novo .u2-name { color: var(--heading); }
+    .u2-tile--novo .u2-name-wrap::after { background: var(--heading); }
+    .u2-tile--novo .u2-price { color: var(--heading); opacity: 0.55; }
+    .u2-tile--novo:hover { box-shadow: 0 18px 44px rgba(249,185,74,0.30); }
+
+    /* V2 Mobile */
+    @media (max-width: 767px) {
+      .u2-top { grid-template-columns: 1fr; }
+      .u2-bottom { grid-template-columns: repeat(2, 1fr); }
+      .u2-top .u2-tile { height: 220px; }
+      .u2-bottom .u2-tile { height: 200px; }
+      .u2-bottom .u2-tile:last-child { grid-column: 1 / -1; }
+      .u2-name { font-size: 2.2rem !important; }
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════════════
+       V3 — UREDNIŠKI GRAFIČEN (Graphic Editorial)
+       ──────────────────────────────────────────────────────────────────────
+       Same 2+3 grid. Typography is the loudest element.
+       Name: 3.8rem top tiles / 2.8rem bottom — Open Sans 800.
+       A small decorative number (01–05) sits top-right as a design accent.
+       A thick gold left border expands on hover: 4px → 7px.
+       No eyebrow. No CTA text — the name + price IS the message.
+       The tile is information-dense visually, text-sparse verbally.
+       ══════════════════════════════════════════════════════════════════════ */
+
+    .u3 { background: #fff; padding: 40px 0; }
+
+    .u3-top {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .u3-bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .u3-tile {
+      position: relative;
+      background: var(--cat-bg, #ececec);
+      border-radius: 12px;
+      overflow: hidden;
+      border-left: 4px solid var(--gold);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-left-width 0.25s ease;
+    }
+    .u3-top .u3-tile    { height: 300px; }
+    .u3-bottom .u3-tile { height: 240px; }
+
+    .u3-tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.10);
+      border-left-width: 7px;
+    }
+    .u3-tile:hover .product-img {
+      transform: scale(1.05) translateY(-4px);
+    }
+
+    .u3-tile::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.25) 40%, transparent 65%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* ★ Decorative number — top-right design accent */
+    .u3-num {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 800;
+      font-size: 80px;
+      line-height: 1;
+      color: rgba(43,46,53,0.08);
+      user-select: none;
+      pointer-events: none;
+      z-index: 4;
+      letter-spacing: -0.04em;
+      transition: color 0.3s ease;
+    }
+    .u3-tile:hover .u3-num { color: rgba(249,185,74,0.20); }
+
+    .u3-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 18px 22px 22px;
+      z-index: 4;
+    }
+
+    /* ★ Name: 3.8rem top / 2.8rem bottom — loudest element */
+    .u3-name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 800;
+      font-size: 3.8rem; /* ≈ 65px */
+      color: var(--heading);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      transition: letter-spacing 0.25s ease;
+    }
+    .u3-bottom .u3-name { font-size: 2.8rem; /* ≈ 48px */ }
+    .u3-tile:hover .u3-name { letter-spacing: -0.02em; }
+
+    /* ★ Price — gold italic, appears below name */
+    .u3-price {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--gold-dark);
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+    }
+    .u3-tile:hover .u3-price { opacity: 1; transform: translateY(0); }
+
+    /* Novo tile */
+    .u3-tile--novo {
+      background: var(--gold);
+      border-left-color: var(--heading);
+    }
+    .u3-tile--novo::after { background: linear-gradient(to top, rgba(249,185,74,0.40) 0%, transparent 55%); }
+    .u3-tile--novo .u3-num { color: rgba(43,46,53,0.10); }
+    .u3-tile--novo:hover .u3-num { color: rgba(43,46,53,0.18); }
+    .u3-tile--novo .u3-name { color: var(--heading); }
+    .u3-tile--novo .u3-price { color: rgba(43,46,53,0.60); }
+    .u3-tile--novo:hover { box-shadow: 0 18px 44px rgba(249,185,74,0.30); }
+
+    /* V3 Mobile */
+    @media (max-width: 767px) {
+      .u3-top { grid-template-columns: 1fr; }
+      .u3-bottom { grid-template-columns: repeat(2, 1fr); }
+      .u3-top .u3-tile { height: 220px; }
+      .u3-bottom .u3-tile { height: 200px; }
+      .u3-bottom .u3-tile:last-child { grid-column: 1 / -1; }
+      .u3-name { font-size: 2.4rem !important; }
+      .u3-num { font-size: 56px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-sim"></div>
+
+
+  <!-- ====================================================================
+       V1 — UREDNIŠKI KREPKO (Bold Editorial)
+       Same layout. Name 2.6rem/2rem. Gold price. CTA arrow animates.
+       ==================================================================== -->
+  <div class="vl">
+    <span class="vl__n">V1</span>
+    <span class="vl__title">Uredniški Krepko</span>
+    <span class="vl__desc">— same grid, name 2.6rem top / 2rem bottom, gold italic price, CTA gap animates</span>
+  </div>
+
+  <section class="u1">
+    <div class="container">
+
+      <div class="u1-top">
+
+        <a href="#" class="u1-tile" style="--cat-bg: #f2d4d4">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png" alt="">
+          <div class="u1-content">
+            <div class="u1-eyebrow">Oblačila za deklice</div>
+            <div class="u1-name">Deklice</div>
+            <div class="u1-price">Od 2 € — vse velikosti</div>
+            <div class="u1-cta">Razišči &rarr;</div>
+          </div>
+        </a>
+
+        <a href="#" class="u1-tile" style="--cat-bg: #d4dff2">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png" alt="">
+          <div class="u1-content">
+            <div class="u1-eyebrow">Oblačila za fantke</div>
+            <div class="u1-name">Fantje</div>
+            <div class="u1-price">Od 2 € — vse velikosti</div>
+            <div class="u1-cta">Razišči &rarr;</div>
+          </div>
+        </a>
+
+      </div>
+
+      <div class="u1-bottom">
+
+        <a href="#" class="u1-tile" style="--cat-bg: #d4e8d8">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png" alt="">
+          <div class="u1-content">
+            <div class="u1-eyebrow">Za mame</div>
+            <div class="u1-name">Mamice</div>
+            <div class="u1-price">Od 5 €</div>
+            <div class="u1-cta">Razišči &rarr;</div>
+          </div>
+        </a>
+
+        <a href="#" class="u1-tile" style="--cat-bg: #e8e4df">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png" alt="">
+          <div class="u1-content">
+            <div class="u1-eyebrow">Top znamke</div>
+            <div class="u1-name">Znamke</div>
+            <div class="u1-price">Zara · H&amp;M · Next · Mayoral</div>
+            <div class="u1-cta">Razišči &rarr;</div>
+          </div>
+        </a>
+
+        <a href="#" class="u1-tile u1-tile--novo">
+          <div class="u1-content">
+            <div class="u1-eyebrow">Novo v trgovini</div>
+            <div class="u1-name">Novo<br>prispelo</div>
+            <div class="u1-price">Sveži kosi — dodani danes</div>
+            <div class="u1-cta">Poglej novo &rarr;</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ====================================================================
+       V2 — UREDNIŠKI NASLOV (Headline Editorial)
+       Name 3.2rem/2.4rem. Gold underline animates width on hover.
+       ==================================================================== -->
+  <div class="vl">
+    <span class="vl__n">V2</span>
+    <span class="vl__title">Uredniški Naslov</span>
+    <span class="vl__desc">— name 3.2rem top / 2.4rem bottom, gold underline animates on hover, price italic gold</span>
+  </div>
+
+  <section class="u2">
+    <div class="container">
+
+      <div class="u2-top">
+
+        <a href="#" class="u2-tile" style="--cat-bg: #f2d4d4">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png" alt="">
+          <div class="u2-content">
+            <div class="u2-eyebrow">Oblačila za deklice</div>
+            <span class="u2-name-wrap"><div class="u2-name">Deklice</div></span>
+            <div class="u2-price">Od 2 € — vse velikosti</div>
+          </div>
+        </a>
+
+        <a href="#" class="u2-tile" style="--cat-bg: #d4dff2">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png" alt="">
+          <div class="u2-content">
+            <div class="u2-eyebrow">Oblačila za fantke</div>
+            <span class="u2-name-wrap"><div class="u2-name">Fantje</div></span>
+            <div class="u2-price">Od 2 € — vse velikosti</div>
+          </div>
+        </a>
+
+      </div>
+
+      <div class="u2-bottom">
+
+        <a href="#" class="u2-tile" style="--cat-bg: #d4e8d8">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png" alt="">
+          <div class="u2-content">
+            <div class="u2-eyebrow">Za mame</div>
+            <span class="u2-name-wrap"><div class="u2-name">Mamice</div></span>
+            <div class="u2-price">Od 5 €</div>
+          </div>
+        </a>
+
+        <a href="#" class="u2-tile" style="--cat-bg: #e8e4df">
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png" alt="">
+          <div class="u2-content">
+            <div class="u2-eyebrow">Top znamke</div>
+            <span class="u2-name-wrap"><div class="u2-name">Znamke</div></span>
+            <div class="u2-price">Zara · H&amp;M · Next · Mayoral</div>
+          </div>
+        </a>
+
+        <a href="#" class="u2-tile u2-tile--novo">
+          <div class="u2-content">
+            <div class="u2-eyebrow">Novo v trgovini</div>
+            <span class="u2-name-wrap"><div class="u2-name">Novo<br>prispelo</div></span>
+            <div class="u2-price">Sveži kosi — dodani danes</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ====================================================================
+       V3 — UREDNIŠKI GRAFIČEN (Graphic Editorial)
+       Name 3.8rem/2.8rem. Decorative number top-right. Gold left border
+       expands. Price reveals on hover.
+       ==================================================================== -->
+  <div class="vl">
+    <span class="vl__n">V3</span>
+    <span class="vl__title">Uredniški Grafičen</span>
+    <span class="vl__desc">— name 3.8rem top / 2.8rem bottom, decorative number, gold left border expands, price reveals on hover</span>
+  </div>
+
+  <section class="u3">
+    <div class="container">
+
+      <div class="u3-top">
+
+        <a href="#" class="u3-tile" style="--cat-bg: #f2d4d4">
+          <span class="u3-num">01</span>
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png" alt="">
+          <div class="u3-content">
+            <div class="u3-name">Deklice</div>
+            <div class="u3-price">Od 2 € — vse velikosti</div>
+          </div>
+        </a>
+
+        <a href="#" class="u3-tile" style="--cat-bg: #d4dff2">
+          <span class="u3-num">02</span>
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png" alt="">
+          <div class="u3-content">
+            <div class="u3-name">Fantje</div>
+            <div class="u3-price">Od 2 € — vse velikosti</div>
+          </div>
+        </a>
+
+      </div>
+
+      <div class="u3-bottom">
+
+        <a href="#" class="u3-tile" style="--cat-bg: #d4e8d8">
+          <span class="u3-num">03</span>
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png" alt="">
+          <div class="u3-content">
+            <div class="u3-name">Mamice</div>
+            <div class="u3-price">Od 5 €</div>
+          </div>
+        </a>
+
+        <a href="#" class="u3-tile" style="--cat-bg: #e8e4df">
+          <span class="u3-num">04</span>
+          <img class="product-img" src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png" alt="">
+          <div class="u3-content">
+            <div class="u3-name">Znamke</div>
+            <div class="u3-price">Zara · H&amp;M · Next</div>
+          </div>
+        </a>
+
+        <a href="#" class="u3-tile u3-tile--novo">
+          <span class="u3-num">05</span>
+          <div class="u3-content">
+            <div class="u3-name">Novo<br>prispelo</div>
+            <div class="u3-price">Sveži kosi</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+<!--
+=== SONNET HANDOFF ===
+
+SOURCE: Iterates on Opus V2 "Uredniški (Editorial)" from
+        claude/handoff/active/category-strip-v1.html
+GRID:   2-row asymmetric — top: [1.15fr 0.85fr], bottom: [1fr 1fr 1fr], gap 14px
+
+RECOMMENDED VARIATION: V2 — Uredniški Naslov
+REASON: The animated gold underline makes hover feel brand-coherent (gold = action),
+and 3.2rem names are large enough to dominate without overflow risk on the 3-tile bottom row.
+
+USER DECISION NEEDED: none — all 3 are production-ready. Pick based on browser preview.
+
+TWIG: Add .home-categories section after .home-hero in template/common/home.twig
+SCSS: New .home-categories block in stylesheet/src/pages/_home.scss
+
+SHARED IMPLEMENTATION NOTES:
+- Section bg: $color-surface-alt (#f7f7f7) for V1/V2, $color-surface (#fff) for V3
+- Top row: grid-template-columns: 1.15fr 0.85fr; height: 300px
+- Bottom row: grid-template-columns: repeat(3,1fr); height: 240px
+- Both rows gap: 14px; margin-bottom between rows: 14px
+- Tile: border-radius: $radius-lg (12px); overflow: hidden
+- Hover: translateY(-5px); box-shadow: 0 18px 44px rgba(0,0,0,0.10)
+- Product img: position absolute, right: 20px, bottom: 0, height: 80%
+  filter: drop-shadow(-4px 8px 16px rgba(0,0,0,0.16)); hover: scale(1.05) translateY(-4px)
+- White gradient floor via ::after: rgba(255,255,255,0.80) → transparent at 65%
+- Novo tile: background linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%)
+
+V1 SPECIFIC:
+- .home-categories__name: 2.6rem Open Sans 700 top tiles, 2rem bottom tiles
+- .home-categories__price: DM Sans italic, $color-primary-dark, always visible
+
+V2 SPECIFIC:
+- .home-categories__name: 3.2rem Open Sans 800 top / 2.4rem bottom, letter-spacing -0.035em
+- .home-categories__name-wrap::after: height 2px, background $color-primary, width 0 → 100% on hover (0.35s ease)
+- No CTA text — underline IS the hover signal
+
+V3 SPECIFIC:
+- .home-categories__tile: border-left: 4px solid $color-primary; expands to 7px on hover
+- .home-categories__num: position absolute, top 12px right 14px, 80px Open Sans 800,
+  rgba(43,46,53,0.08); → rgba(249,185,74,0.20) on hover
+- .home-categories__name: 3.8rem Open Sans 800 top / 2.8rem bottom, letter-spacing -0.04em
+- .home-categories__price: opacity 0 → 1 on hover (reveals)
+
+DESIGN TOKENS:
+- $color-primary (#f9b94a) — gold underline (V2), left border (V3), Novo bg, price color
+- $color-primary-dark (#e0a030) — price italic (V1, V2), Novo gradient end
+- $color-text-heading (#2b2e35) — all category names, Novo text, number tint
+- $color-surface-alt (#f7f7f7) — section background (V1, V2)
+- $radius-lg (12px) — tile border-radius
+- $transition-base (200ms ease) — fast hover states
+- $transition-slow (350ms ease) — gold underline, border expansion, price reveal
+
+IMAGE PATHS (Twig):
+{{ base }}image/catalog/assets/homepage/otroski_koticek_deklice3.png  → Deklice
+{{ base }}image/catalog/assets/homepage/otroski_koticek_decki.png     → Fantje
+{{ base }}image/catalog/assets/homepage/otroski_koticek_nosecnica.png → Mamice
+{{ base }}image/catalog/assets/homepage/otroski_koticek_pomlad.png    → Znamke
+=== END HANDOFF ===
+-->
+
+</body>
+</html>

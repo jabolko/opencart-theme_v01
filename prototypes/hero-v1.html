@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Variations — Otroški kotiček</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+
+    /* ── Reset ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; color: #2b2e35; background: #f0eeea; }
+    a { text-decoration: none; cursor: pointer; }
+    img { display: block; max-width: 100%; }
+
+    /* ── Tokens ─────────────────────────────────────────────────── */
+    :root {
+      --gold:          #f9b94a;
+      --gold-dark:     #e0a030;
+      --gold-light:    #ffd369;
+      --charcoal:      #2b2e35;
+      --text-base:     #565656;
+      --text-muted:    #9aa0af;
+      --text-on-dark:  #f5f5f5;
+      --surface:       #ffffff;
+      --surface-warm:  #fafaf8;
+      --surface-alt:   #f7f7f7;
+      --border:        #e3e5ea;
+    }
+
+    /* ── Variant label strip ────────────────────────────────────── */
+    .label {
+      background: #111;
+      color: rgba(255,255,255,0.55);
+      padding: 14px 48px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .label strong { color: var(--gold); letter-spacing: 0.12em; }
+    .label span { color: rgba(255,255,255,0.28); }
+
+    /* ── Spacer between variants ────────────────────────────────── */
+    .gap { height: 3px; background: #111; }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       VARIATION 1 — THE SPLIT
+       Clean two-column. Warm off-white left, image fills right.
+       Trust stats directly below CTA — part of the text column.
+    ══════════════════════════════════════════════════════════════ */
+
+    .v1 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 92vh;
+    }
+
+    /* Left column */
+    .v1__col-text {
+      background: var(--surface-warm);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 72px 80px 80px;
+    }
+
+    .v1__eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .v1__headline {
+      font-family: 'Open Sans', sans-serif;
+      font-size: clamp(34px, 3.4vw, 54px);
+      font-weight: 600;
+      line-height: 1.08;
+      color: var(--charcoal);
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+
+    .v1__tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 40px;
+    }
+
+    .v1__ctas {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 52px;
+    }
+
+    .v1__btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: var(--charcoal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 30px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 12px rgba(249,185,74,0.38);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .v1__btn-primary:hover {
+      box-shadow: 0 6px 22px rgba(249,185,74,0.52);
+      transform: translateY(-1px);
+    }
+
+    .v1__btn-ghost {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: #566b6f;
+      border-bottom: 1px solid rgba(86,107,111,0.3);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .v1__btn-ghost:hover { color: var(--gold-dark); }
+
+    /* Trust — typographic row with dividers */
+    .v1__trust {
+      display: flex;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .v1__trust-item {
+      flex: 1;
+      padding-right: 24px;
+    }
+    .v1__trust-item + .v1__trust-item {
+      padding-left: 24px;
+      padding-right: 24px;
+      border-left: 1px solid var(--border);
+    }
+    .v1__trust-item:last-child { padding-right: 0; }
+
+    .v1__trust-num {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 42px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 5px;
+      letter-spacing: -0.02em;
+    }
+    .v1__trust-num sup {
+      font-size: 0.55em;
+      vertical-align: super;
+      font-weight: 600;
+    }
+
+    .v1__trust-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+      line-height: 1.4;
+    }
+
+    /* Right column — image fills full height */
+    .v1__col-img {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .v1__col-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    /* Soft gradient on left edge of image — blends into text column */
+    .v1__col-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(250,250,248,0.18) 0%, transparent 14%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       VARIATION 2 — THE DARK ROOM
+       Charcoal full-width bg. Image as a physical "print" — tilted,
+       with deep shadow. Gold accents cut through the dark.
+    ══════════════════════════════════════════════════════════════ */
+
+    .v2 {
+      background: var(--charcoal);
+      min-height: 92vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Warm glow behind text */
+    .v2::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 70% at 20% 55%, rgba(249,185,74,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* Left column */
+    .v2__col-text {
+      padding: 88px 60px 88px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .v2__eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(249,185,74,0.65);
+      margin-bottom: 18px;
+    }
+
+    .v2__headline {
+      font-family: 'Open Sans', sans-serif;
+      font-size: clamp(34px, 3.2vw, 52px);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--text-on-dark);
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+
+    /* Gold accent on one word */
+    .v2__headline em {
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .v2__tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 17px;
+      color: rgba(245,245,245,0.5);
+      line-height: 1.55;
+      margin-bottom: 44px;
+    }
+
+    .v2__ctas {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      margin-bottom: 56px;
+    }
+
+    .v2__btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: var(--charcoal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 30px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 22px rgba(249,185,74,0.45);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .v2__btn-primary:hover {
+      box-shadow: 0 8px 30px rgba(249,185,74,0.6);
+      transform: translateY(-1px);
+    }
+
+    .v2__btn-ghost {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: rgba(245,245,245,0.52);
+      border-bottom: 1px solid rgba(245,245,245,0.22);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .v2__btn-ghost:hover { color: rgba(245,245,245,0.85); }
+
+    /* Trust — horizontal row, gold numbers */
+    .v2__trust {
+      display: flex;
+      gap: 0;
+    }
+
+    .v2__trust-item {
+      padding-right: 32px;
+    }
+    .v2__trust-item + .v2__trust-item {
+      padding-left: 32px;
+      border-left: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .v2__trust-num {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 38px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 5px;
+      letter-spacing: -0.02em;
+    }
+    .v2__trust-num sup {
+      font-size: 0.55em;
+      vertical-align: super;
+    }
+
+    .v2__trust-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: rgba(245,245,245,0.38);
+      letter-spacing: 0.03em;
+    }
+
+    /* Right column — tilted print */
+    .v2__col-img {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 80px 64px 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .v2__print {
+      position: relative;
+      transform: rotate(-2.5deg);
+      transition: transform 0.4s ease;
+    }
+    .v2__print:hover { transform: rotate(-0.5deg) scale(1.015); }
+
+    .v2__print-inner {
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.2),
+        0 12px 32px rgba(0,0,0,0.5),
+        0 28px 64px rgba(0,0,0,0.35);
+    }
+
+    .v2__print-inner img {
+      width: 100%;
+      max-width: 440px;
+      display: block;
+    }
+
+    /* White border — Polaroid-ish */
+    .v2__print-border {
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 8px 8px 28px;
+    }
+
+    /* Decorative shadow on the floor behind the print */
+    .v2__print::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 8%;
+      right: 8%;
+      height: 24px;
+      background: rgba(0,0,0,0.4);
+      filter: blur(18px);
+      border-radius: 50%;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       VARIATION 3 — THE TYPE POSTER
+       White canvas. Headline IS the hero. Image as floating card.
+       Trust numbers enormous — ghost text behind them becomes texture.
+    ══════════════════════════════════════════════════════════════ */
+
+    .v3 {
+      background: var(--surface);
+      padding: 72px 0 0;
+      overflow: hidden;
+    }
+
+    .v3__wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 80px;
+    }
+
+    /* Top section — headline + floating image card */
+    .v3__top {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 64px;
+    }
+
+    .v3__left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Gold bar above eyebrow */
+    .v3__bar {
+      width: 36px;
+      height: 3px;
+      background: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .v3__eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .v3__headline {
+      font-family: 'Open Sans', sans-serif;
+      font-size: clamp(48px, 5.8vw, 84px);
+      font-weight: 600;
+      line-height: 0.96;
+      color: var(--charcoal);
+      letter-spacing: -0.025em;
+      margin-bottom: 32px;
+    }
+
+    /* Tagline + CTAs sit side-by-side below headline */
+    .v3__bottom-row {
+      display: flex;
+      gap: 48px;
+      align-items: flex-end;
+    }
+
+    .v3__tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      flex: 1;
+      max-width: 320px;
+    }
+
+    .v3__ctas {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .v3__btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: var(--charcoal);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 9999px;
+      box-shadow: 0 2px 12px rgba(249,185,74,0.38);
+      white-space: nowrap;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .v3__btn-primary:hover {
+      box-shadow: 0 6px 22px rgba(249,185,74,0.52);
+      transform: translateY(-1px);
+    }
+
+    .v3__btn-ghost {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: #566b6f;
+      border-bottom: 1px solid rgba(86,107,111,0.3);
+      padding-bottom: 2px;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .v3__btn-ghost:hover { color: var(--gold-dark); }
+
+    /* Floating image card */
+    .v3__card {
+      margin-top: 4px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .v3__card:hover {
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      transform: translateY(-3px);
+    }
+    .v3__card img { width: 100%; display: block; }
+
+    /* ── Trust section — giant numbers as graphic elements ──────── */
+    .v3__trust {
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: var(--surface-alt);
+    }
+
+    .v3__trust-item {
+      position: relative;
+      padding: 40px 48px 44px;
+      overflow: hidden;
+    }
+
+    .v3__trust-item + .v3__trust-item {
+      border-left: 1px solid var(--border);
+    }
+
+    /* Ghost number — the graphic layer */
+    .v3__ghost {
+      position: absolute;
+      top: -8px;
+      left: 20px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 130px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: rgba(43,46,53,0.055);
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Real number — sits on top */
+    .v3__real {
+      position: relative;
+      z-index: 1;
+    }
+
+    .v3__trust-num {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 52px;
+      font-weight: 600;
+      color: var(--gold);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .v3__trust-num sup {
+      font-size: 0.5em;
+      vertical-align: super;
+      color: var(--gold-dark);
+    }
+
+    .v3__trust-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+  </style>
+</head>
+<body>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       VARIATION 1 — THE SPLIT
+       Minimal two-column. Text left on warm off-white.
+       Trust integrated below CTA with dividers — text as graphic.
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="label">
+    <strong>V1</strong>
+    <span>—</span>
+    The Split &nbsp;·&nbsp; Warm off-white / Image full-bleed right / Trust below CTA
+  </div>
+
+  <section class="v1">
+
+    <div class="v1__col-text">
+      <p class="v1__eyebrow">Otroški kotiček · od 2011</p>
+      <h1 class="v1__headline">Nežno rabljena<br>oblačila za otroke<br>in mamice.</h1>
+      <p class="v1__tagline">Tvoje najljubše znamke,<br>za delček cene.</p>
+
+      <div class="v1__ctas">
+        <a href="#" class="v1__btn-primary">Brskaj po ponudbi</a>
+        <a href="#" class="v1__btn-ghost">Prodaj oblačila</a>
+      </div>
+
+      <!-- Trust stats as typographic row below CTA -->
+      <div class="v1__trust">
+        <div class="v1__trust-item">
+          <p class="v1__trust-num">14</p>
+          <p class="v1__trust-label">let izkušenj</p>
+        </div>
+        <div class="v1__trust-item">
+          <p class="v1__trust-num">250.000<sup>+</sup></p>
+          <p class="v1__trust-label">oblačil v dobrem domu</p>
+        </div>
+        <div class="v1__trust-item">
+          <p class="v1__trust-num">5.000<sup>+</sup></p>
+          <p class="v1__trust-label">zadovoljnih strank</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="v1__col-img">
+      <img src="../opencart/image/catalog/assets/hero/otroski-koticek-slider05_0012.webp"
+           alt="Otroška oblačila — Otroški kotiček"
+           fetchpriority="high" loading="eager">
+    </div>
+
+  </section>
+
+
+  <div class="gap"></div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       VARIATION 2 — THE DARK ROOM
+       Full charcoal canvas. Image as a physical tilted print.
+       Gold numbers pierce the dark.
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="label">
+    <strong>V2</strong>
+    <span>—</span>
+    The Dark Room &nbsp;·&nbsp; Charcoal full-width / Image as tilted print / Gold on dark
+  </div>
+
+  <section class="v2">
+
+    <div class="v2__col-text">
+      <p class="v2__eyebrow">Otroški kotiček · od 2011</p>
+      <h1 class="v2__headline">
+        Nežno rabljena<br>oblačila za <em>otroke</em><br>in mamice.
+      </h1>
+      <p class="v2__tagline">Tvoje najljubše znamke,<br>za delček cene.</p>
+
+      <div class="v2__ctas">
+        <a href="#" class="v2__btn-primary">Brskaj po ponudbi</a>
+        <a href="#" class="v2__btn-ghost">Prodaj oblačila</a>
+      </div>
+
+      <!-- Trust — horizontal gold numbers on dark -->
+      <div class="v2__trust">
+        <div class="v2__trust-item">
+          <p class="v2__trust-num">14</p>
+          <p class="v2__trust-label">let izkušenj</p>
+        </div>
+        <div class="v2__trust-item">
+          <p class="v2__trust-num">250.000<sup>+</sup></p>
+          <p class="v2__trust-label">oblačil v dobrem domu</p>
+        </div>
+        <div class="v2__trust-item">
+          <p class="v2__trust-num">5.000<sup>+</sup></p>
+          <p class="v2__trust-label">zadovoljnih strank</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image as physical tilted print -->
+    <div class="v2__col-img">
+      <div class="v2__print">
+        <div class="v2__print-border">
+          <div class="v2__print-inner">
+            <img src="../opencart/image/catalog/assets/hero/otroski-koticek-slider05_0012.webp"
+                 alt="Otroška oblačila — Otroški kotiček"
+                 fetchpriority="high" loading="eager">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <div class="gap"></div>
+
+
+  <!-- ══════════════════════════════════════════════════════════════
+       VARIATION 3 — THE TYPE POSTER
+       White canvas, headline as the hero. Image floats top-right.
+       Trust: enormous ghost numbers become the background texture.
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="label">
+    <strong>V3</strong>
+    <span>—</span>
+    The Type Poster &nbsp;·&nbsp; Giant headline / Image as card / Numbers as graphic
+  </div>
+
+  <section class="v3">
+    <div class="v3__wrap">
+
+      <!-- Headline + floating card -->
+      <div class="v3__top">
+
+        <div class="v3__left">
+          <div class="v3__bar"></div>
+          <p class="v3__eyebrow">Otroški kotiček · od 2011</p>
+          <h1 class="v3__headline">Nežno<br>rabljena<br>oblačila.</h1>
+          <div class="v3__bottom-row">
+            <p class="v3__tagline">Tvoje najljubše znamke,<br>za delček cene.</p>
+            <div class="v3__ctas">
+              <a href="#" class="v3__btn-primary">Brskaj po ponudbi</a>
+              <a href="#" class="v3__btn-ghost">Prodaj oblačila</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating image card -->
+        <div class="v3__card">
+          <img src="../opencart/image/catalog/assets/hero/otroski-koticek-slider05_0012.webp"
+               alt="Otroška oblačila — Otroški kotiček"
+               fetchpriority="high" loading="eager">
+        </div>
+
+      </div>
+
+    </div><!-- /.v3__wrap -->
+
+    <!-- Trust bar — full width, ghost numbers as texture -->
+    <div class="v3__trust">
+
+      <div class="v3__trust-item">
+        <span class="v3__ghost" aria-hidden="true">14</span>
+        <div class="v3__real">
+          <p class="v3__trust-num">14</p>
+          <p class="v3__trust-label">let izkušenj</p>
+        </div>
+      </div>
+
+      <div class="v3__trust-item">
+        <span class="v3__ghost" aria-hidden="true">250k</span>
+        <div class="v3__real">
+          <p class="v3__trust-num">250.000<sup>+</sup></p>
+          <p class="v3__trust-label">oblačil v dobrem domu</p>
+        </div>
+      </div>
+
+      <div class="v3__trust-item">
+        <span class="v3__ghost" aria-hidden="true">5k</span>
+        <div class="v3__real">
+          <p class="v3__trust-num">5.000<sup>+</sup></p>
+          <p class="v3__trust-label">zadovoljnih strank</p>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+</body>
+</html>

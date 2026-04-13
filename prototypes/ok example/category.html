@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deklice — Otroški Kotiček</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container flex-between">
+      <div class="flex" style="align-items:center; gap:var(--space-md);">
+        <span>📧 info@otroski-koticek.si</span>
+        <span class="separator"></span>
+        <span>📞 +386 40 123 456</span>
+      </div>
+      <div class="flex" style="align-items:center; gap:var(--space-lg);">
+        <a href="#">Pomoč</a>
+        <a href="#">Sledenje naročilu</a>
+        <a href="#">🇸🇮 Slovenščina</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-main">
+      <div class="container flex-between">
+        <a href="index.html" class="header-logo">
+          <div class="logo-icon">🧸</div>
+          <div>
+            <div class="logo-text">Otroški Kotiček</div>
+            <div class="logo-tagline">Nežno rabljena otroška oblačila</div>
+          </div>
+        </a>
+        <div class="header-search">
+          <input type="text" placeholder="Iščite oblačila, velikosti, znamke...">
+          <button class="search-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </button>
+        </div>
+        <div class="header-actions">
+          <a href="#" class="header-action">
+            <div class="action-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span>Račun</span>
+          </a>
+          <a href="#" class="header-action">
+            <div class="action-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span class="badge">3</span>
+            </div>
+            <span>Želje</span>
+          </a>
+          <a href="cart.html" class="header-action">
+            <div class="action-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span class="badge">2</span>
+            </div>
+            <span class="cart-total">€24,90</span>
+          </a>
+        </div>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <nav class="nav">
+      <div class="container">
+        <ul class="nav-list" id="navList">
+          <li class="nav-item"><a href="index.html" class="nav-link">Domov</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link active">Deklice <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Dečki <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Nosečnice <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link">Novo</a></li>
+          <li class="nav-item"><a href="category.html" class="nav-link" style="color:var(--rose);">Akcija</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link">O nas</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs">
+    <div class="container">
+      <ul class="breadcrumb-list">
+        <li><a href="index.html">Domov</a></li>
+        <li><span class="sep">›</span></li>
+        <li class="active">Deklice</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Category Header -->
+  <div class="category-header">
+    <div class="container">
+      <h1>Deklice</h1>
+      <p class="category-desc">Odkrijte našo kolekcijo nežno rabljenih oblačil za deklice — od udobnih pajackov do stilskih oblek. Vsak kos je skrbno pregledan in pripravljen za novo lastnico.</p>
+    </div>
+  </div>
+
+  <!-- Category Content -->
+  <section class="section">
+    <div class="container">
+      <div class="category-page">
+
+        <!-- Sidebar -->
+        <aside class="sidebar-filters">
+          <div class="filter-group">
+            <h4>Kategorija</h4>
+            <div class="filter-option active">
+              <span class="filter-checkbox">✓</span>
+              <span>Vse</span>
+              <span class="filter-count">1.247</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Jakne & Bunde</span>
+              <span class="filter-count">189</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Majice & Srajčke</span>
+              <span class="filter-count">342</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Obleke & Krila</span>
+              <span class="filter-count">215</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Hlače & Kavbojke</span>
+              <span class="filter-count">278</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Puloverji & Jope</span>
+              <span class="filter-count">156</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Kompleti & Pajaci</span>
+              <span class="filter-count">67</span>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Velikost</h4>
+            <div class="size-grid">
+              <div class="size-option">56</div>
+              <div class="size-option">62</div>
+              <div class="size-option">68</div>
+              <div class="size-option">74</div>
+              <div class="size-option">80</div>
+              <div class="size-option">86</div>
+              <div class="size-option active">92</div>
+              <div class="size-option">98</div>
+              <div class="size-option">104</div>
+              <div class="size-option">110</div>
+              <div class="size-option">116</div>
+              <div class="size-option">122</div>
+              <div class="size-option">128</div>
+              <div class="size-option">134</div>
+              <div class="size-option">140</div>
+              <div class="size-option">146+</div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Stanje</h4>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Novo z etiketo</span>
+              <span class="filter-count">45</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Odlično stanje</span>
+              <span class="filter-count">523</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Zelo dobro stanje</span>
+              <span class="filter-count">412</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Dobro stanje</span>
+              <span class="filter-count">267</span>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Cena</h4>
+            <div class="price-range">
+              <input class="price-input" type="text" placeholder="€ Od" value="">
+              <span style="color:var(--gray-400);">—</span>
+              <input class="price-input" type="text" placeholder="€ Do" value="">
+            </div>
+            <div style="margin-top:var(--space-md);">
+              <button class="btn btn-sm btn-outline-gold" style="width:100%;">Uporabi</button>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Znamka</h4>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>H&M</span>
+              <span class="filter-count">189</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Zara</span>
+              <span class="filter-count">145</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>C&A</span>
+              <span class="filter-count">112</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Next</span>
+              <span class="filter-count">98</span>
+            </div>
+            <div class="filter-option">
+              <span class="filter-checkbox"></span>
+              <span>Reserved</span>
+              <span class="filter-count">76</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Products Listing -->
+        <div>
+          <div class="listing-toolbar">
+            <span class="listing-count">Prikazanih <strong>1–24</strong> od <strong>1.247</strong> izdelkov</span>
+            <div class="listing-sort">
+              <select class="sort-select">
+                <option>Razvrsti: Najnovejše</option>
+                <option>Cena: Najnižja</option>
+                <option>Cena: Najvišja</option>
+                <option>Ime: A–Ž</option>
+                <option>Priljubljenost</option>
+              </select>
+              <div class="view-toggle">
+                <button class="active" title="Mreža">⊞</button>
+                <button title="Seznam">☰</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="products-grid" style="grid-template-columns:repeat(3,1fr);">
+
+            <!-- Products repeated -->
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#fce5b0,#f5e0df);display:flex;align-items:center;justify-content:center;font-size:3rem;">👗</div>
+                <div class="product-badges"><span class="product-badge badge-new">Novo</span></div>
+                <div class="product-actions">
+                  <button class="product-action-btn">♡</button>
+                </div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Obleke & Krila</div>
+                <h3 class="product-name">Cvetlična poletna oblekica</h3>
+                <div class="product-size">Vel: 104 · H&M</div>
+                <div class="product-price">
+                  <span class="price-current">€8,90</span>
+                  <span class="price-original">€29,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Odlično</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#f5e0df,#e0e8f5);display:flex;align-items:center;justify-content:center;font-size:3rem;">🎀</div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Kompleti</div>
+                <h3 class="product-name">Roza komplet jopa + hlače</h3>
+                <div class="product-size">Vel: 86 · Next</div>
+                <div class="product-price">
+                  <span class="price-current">€11,90</span>
+                  <span class="price-original">€34,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Odlično</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#e8f0e6,#fce5b0);display:flex;align-items:center;justify-content:center;font-size:3rem;">👚</div>
+                <div class="product-badges"><span class="product-badge badge-sale">-50%</span></div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Majice & Srajčke</div>
+                <h3 class="product-name">Bombažna majica z volančki</h3>
+                <div class="product-size">Vel: 110 · Zara</div>
+                <div class="product-price">
+                  <span class="price-current">€4,50</span>
+                  <span class="price-original">€9,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Zelo dobro</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#e0e8f5,#f5e0df);display:flex;align-items:center;justify-content:center;font-size:3rem;">🧥</div>
+                <div class="product-badges"><span class="product-badge badge-eco">Eko</span></div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Jakne & Bunde</div>
+                <h3 class="product-name">Zimska bunda z umetnim krznom</h3>
+                <div class="product-size">Vel: 122 · Reserved</div>
+                <div class="product-price">
+                  <span class="price-current">€16,90</span>
+                  <span class="price-original">€59,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Odlično</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#fce5b0,#e8f0e6);display:flex;align-items:center;justify-content:center;font-size:3rem;">🧶</div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Puloverji & Jope</div>
+                <h3 class="product-name">Pleteni pulover z vzorcem</h3>
+                <div class="product-size">Vel: 98 · H&M</div>
+                <div class="product-price">
+                  <span class="price-current">€9,90</span>
+                  <span class="price-original">€35,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Zelo dobro</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#f5e0df,#fce5b0);display:flex;align-items:center;justify-content:center;font-size:3rem;">👖</div>
+                <div class="product-badges"><span class="product-badge badge-new">Novo</span></div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Hlače & Kavbojke</div>
+                <h3 class="product-name">Elastične kavbojke slim fit</h3>
+                <div class="product-size">Vel: 116 · C&A</div>
+                <div class="product-price">
+                  <span class="price-current">€7,90</span>
+                  <span class="price-original">€22,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Dobro</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#e8f0e6,#e0e8f5);display:flex;align-items:center;justify-content:center;font-size:3rem;">🌸</div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Obleke & Krila</div>
+                <h3 class="product-name">Tül krilo z bleščicami</h3>
+                <div class="product-size">Vel: 128 · H&M</div>
+                <div class="product-price">
+                  <span class="price-current">€6,50</span>
+                  <span class="price-original">€19,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Zelo dobro</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#fce5b0,#f5e0df);display:flex;align-items:center;justify-content:center;font-size:3rem;">🧣</div>
+                <div class="product-badges"><span class="product-badge badge-sale">-65%</span></div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Dodatki</div>
+                <h3 class="product-name">Zimski set kapa + šal</h3>
+                <div class="product-size">Vel: Uni · Next</div>
+                <div class="product-price">
+                  <span class="price-current">€3,90</span>
+                  <span class="price-original">€12,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Odlično</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+            <a href="product.html" class="product-card" style="text-decoration:none;">
+              <div class="product-image-wrap">
+                <div class="product-image" style="background:linear-gradient(135deg,#e0e8f5,#e8f0e6);display:flex;align-items:center;justify-content:center;font-size:3rem;">👶</div>
+                <div class="product-actions"><button class="product-action-btn">♡</button></div>
+              </div>
+              <div class="product-info">
+                <div class="product-category">Kompleti & Pajaci</div>
+                <h3 class="product-name">Pajac z zajčki motiv</h3>
+                <div class="product-size">Vel: 68 · Zara</div>
+                <div class="product-price">
+                  <span class="price-current">€5,90</span>
+                  <span class="price-original">€17,90</span>
+                </div>
+                <div class="product-bottom">
+                  <div class="product-condition"><span class="condition-dot"></span> Odlično</div>
+                  <button class="add-to-cart-btn">V košarico</button>
+                </div>
+              </div>
+            </a>
+
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <a href="#">←</a>
+            <span class="active">1</span>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <span>...</span>
+            <a href="#">52</a>
+            <a href="#">→</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2>Bodite prvi, ki izveste za novosti</h2>
+        <p>Prijavite se na naše e-novice in prejmite 10% popust na prvi nakup.</p>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" placeholder="Vaš e-poštni naslov">
+          <button type="submit">Prijavite se</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-icon">🧸</div>
+            <span class="logo-text">Otroški Kotiček</span>
+          </div>
+          <p>Nežno rabljena otroška oblačila vrhunske kakovosti. Trajnostna moda za generacije, ki prihajajo.</p>
+          <div class="footer-social">
+            <a href="#">f</a><a href="#">ig</a><a href="#">tt</a><a href="#">p</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Nakupovanje</h4>
+          <ul>
+            <li><a href="category.html">Deklice</a></li>
+            <li><a href="category.html">Dečki</a></li>
+            <li><a href="category.html">Dojenčki</a></li>
+            <li><a href="category.html">Nosečnice</a></li>
+            <li><a href="category.html">Novo prispelo</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Informacije</h4>
+          <ul>
+            <li><a href="about.html">O nas</a></li>
+            <li><a href="#">Pogoji poslovanja</a></li>
+            <li><a href="#">Politika zasebnosti</a></li>
+            <li><a href="#">Vračila & Reklamacije</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="#">📧 info@otroski-koticek.si</a></li>
+            <li><a href="#">📞 +386 40 123 456</a></li>
+            <li><a href="#">📍 Ljubljana, Slovenija</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Otroški Kotiček. Vse pravice pridržane.</span>
+        <div class="payment-icons">
+          <div class="payment-icon">VISA</div>
+          <div class="payment-icon">MC</div>
+          <div class="payment-icon">PAYPAL</div>
+          <div class="payment-icon">UPN</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

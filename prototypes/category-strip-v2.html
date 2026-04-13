@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Strip V2 — 3 Variations | Otroški kotiček</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;1,9..40,400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; font-weight: 400; color: #565656; background: #fff; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; display: block; }
+
+    /* VARIATION LABELS */
+    .vl { background: #111; padding: 20px 32px; display: flex; align-items: baseline; gap: 16px; }
+    .vl__n { font-family: 'Open Sans', sans-serif; font-weight: 600; font-size: 28px; color: #f9b94a; }
+    .vl__d { font-size: 14px; color: #9aa0af; font-family: 'DM Sans', sans-serif; }
+
+    /* HERO SIMULATION */
+    .hero-sim { height: 60px; background: #eeeeee; }
+
+
+    /* ==========================================================================
+       V1 — "COLOUR STAGE"
+
+       Each tile is a theatre stage. The coloured zone is the backdrop, the product
+       PNG is the performer — large, centered, slightly cropping the bottom boundary.
+       Text below is BIG and owns its white zone. The category name is a headline,
+       not a label. Price in gold. Small arrow CTA.
+
+       Key decisions:
+       - Portrait 3:4 tiles — feels like a product card, not a banner
+       - Product image overflows the split line slightly — creates depth, breaks rigidity
+       - Name at 30px, Open Sans 700 — text IS design here
+       - filter: drop-shadow follows clothing silhouette, not box
+       - Novo tile: gold stage, giant "N" ghost letter, typographic only
+       ========================================================================== */
+    .cats-v1 {
+      background: #ffffff;
+    }
+    .cats-v1__inner {
+      max-width: 1550px;
+      margin: 0 auto;
+    }
+    .cats-v1__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+
+    .cat-v1 {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      cursor: pointer;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top colour zone — 58% */
+    .cat-v1__stage {
+      position: relative;
+      flex: 0 0 58%;
+      background: var(--c);
+      overflow: visible; /* let image bleed down */
+    }
+
+    /* Product image — floats in stage, slightly overflows into white zone */
+    .cat-v1__img {
+      position: absolute;
+      bottom: -14%; /* overflow into white zone */
+      left: 50%;
+      transform: translateX(-50%);
+      height: 90%;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.16));
+      transition: transform 0.35s ease, filter 0.35s ease;
+      z-index: 3;
+    }
+
+    .cat-v1:hover .cat-v1__img {
+      transform: translateX(-50%) translateY(-6px) scale(1.04);
+      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.22));
+    }
+
+    /* White text zone — 42% */
+    .cat-v1__info {
+      flex: 0 0 42%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 24px 22px;
+      position: relative;
+      z-index: 2; /* above image overflow */
+    }
+
+    .cat-v1__name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      line-height: 1.1;
+      color: #2b2e35;
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+
+    .cat-v1:hover .cat-v1__name {
+      color: #1a1c20;
+    }
+
+    .cat-v1__price {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 14px;
+      color: #e0a030;
+      margin-top: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    .cat-v1__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9aa0af;
+      margin-top: 10px;
+      transition: color 0.2s ease, gap 0.2s ease;
+    }
+
+    .cat-v1:hover .cat-v1__cta {
+      color: #2b2e35;
+      gap: 8px;
+    }
+
+    /* Novo tile — gold stage, no image, big typographic */
+    .cat-v1--novo .cat-v1__stage {
+      background: #f9b94a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cat-v1--novo__ghost {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 160px;
+      color: rgba(43, 46, 53, 0.08);
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .cat-v1__novo-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: #2b2e35;
+      color: #f9b94a;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .cat-v1--novo .cat-v1__name {
+      color: #2b2e35;
+    }
+
+    .cat-v1--novo .cat-v1__price {
+      color: rgba(43, 46, 53, 0.55);
+    }
+
+    .cat-v1--novo .cat-v1__cta {
+      color: rgba(43, 46, 53, 0.45);
+    }
+
+    .cat-v1--novo:hover .cat-v1__cta {
+      color: #2b2e35;
+    }
+
+    /* V1 mobile */
+    @media (max-width: 767px) {
+      .cats-v1__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3px;
+      }
+      .cat-v1:last-child { grid-column: 1 / -1; }
+      .cat-v1__name { font-size: 22px; }
+    }
+
+
+    /* ==========================================================================
+       V2 — "FULL STAGE — OVERSIZED NAME"
+
+       The whole tile is the stage. Product PNG anchored bottom-right, large and
+       dramatic. Category name is HUGE — 52px+ — it's not a label, it's the
+       headline of the tile. White text sits left, product right. The name size
+       and weight make the type itself feel like design.
+
+       Key decisions:
+       - Landscape tiles (4:3) — wider format lets name + image coexist
+       - Name at 52px Open Sans 700 — very bold, very big
+       - Product sits right-of-center, bleeds off the bottom edge
+       - Subtle gradient left → transparent to keep text legible
+       - Novo: no image, name fills the tile
+       - Border between tiles: 3px white gap on coloured backgrounds
+       ========================================================================== */
+    .cats-v2 {
+      background: #f0ece6;
+      padding: 0;
+    }
+    .cats-v2__inner {
+      max-width: 1550px;
+      margin: 0 auto;
+    }
+    .cats-v2__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+    }
+
+    .cat-v2 {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      cursor: pointer;
+      background-color: var(--c);
+    }
+
+    /* Left-side gradient to protect text legibility over any image bleed */
+    .cat-v2::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.28) 0%,
+        rgba(0, 0, 0, 0.10) 50%,
+        transparent 100%
+      );
+      z-index: 2;
+      transition: opacity 0.3s ease;
+    }
+
+    .cat-v2:hover::before {
+      opacity: 0.7;
+    }
+
+    /* Product image — bottom-right anchor, large, bleeds off edge */
+    .cat-v2__img {
+      position: absolute;
+      bottom: -4%;
+      right: -6%;
+      height: 82%;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(-8px 12px 24px rgba(0, 0, 0, 0.18));
+      transition: transform 0.4s ease;
+      z-index: 1;
+    }
+
+    .cat-v2:hover .cat-v2__img {
+      transform: translateY(-10px) scale(1.04);
+    }
+
+    /* Text block — always left, always z-index above gradient */
+    .cat-v2__body {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 50%; /* stop halfway so name doesn't cover image */
+      z-index: 3;
+    }
+
+    .cat-v2__label {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 6px;
+    }
+
+    .cat-v2__name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 3.2vw, 48px);
+      line-height: 1.0;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .cat-v2__price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.70);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* Novo tile — full gold, no image, name fills left */
+    .cat-v2--novo {
+      background: #f9b94a;
+    }
+
+    .cat-v2--novo::before {
+      display: none;
+    }
+
+    .cat-v2--novo .cat-v2__body {
+      right: 24px; /* name can be wider since no image */
+      bottom: 28px;
+    }
+
+    .cat-v2--novo .cat-v2__label {
+      color: rgba(43, 46, 53, 0.55);
+    }
+
+    .cat-v2--novo .cat-v2__name {
+      color: #2b2e35;
+    }
+
+    .cat-v2--novo .cat-v2__price {
+      color: rgba(43, 46, 53, 0.60);
+    }
+
+    /* Novo decorative corner */
+    .cat-v2--novo__star {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 120px;
+      line-height: 1;
+      color: rgba(43, 46, 53, 0.06);
+      user-select: none;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* V2 mobile */
+    @media (max-width: 767px) {
+      .cats-v2__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3px;
+      }
+      .cat-v2:last-child { grid-column: 1 / -1; }
+    }
+
+
+    /* ==========================================================================
+       V3 — "WHITE CARD, COLOUR FOOTER"
+
+       Clean white cards. Product PNG is large and centered — the product IS the
+       tile. At the bottom: a solid colour footer band. Inside that band: the
+       category name is BIG and white. The footer band + giant name form a single
+       graphic unit — name and colour together are the brand moment.
+
+       On hover the footer band rises up, revealing more name and pushing the
+       product upward. Feels alive.
+
+       Key decisions:
+       - White background — lets the clothing colours speak
+       - Colour footer: 88px default, expands to 110px on hover
+       - Name: 26px Open Sans 700 white, inside the band
+       - Product: large, bottom-anchored above the band
+       - filter: drop-shadow is very subtle (clothing on white — barely visible bg)
+       - Novo: full gold card, no product image
+       ========================================================================== */
+    .cats-v3 {
+      background: #f7f7f7;
+      padding: 24px 0;
+    }
+    .cats-v3__inner {
+      max-width: 1550px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .cats-v3__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .cat-v3 {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      cursor: pointer;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #e8e8e8;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .cat-v3:hover {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+      border-color: transparent;
+    }
+
+    /* Product image — centered, large, sitting above the footer */
+    .cat-v3__img {
+      position: absolute;
+      bottom: 80px; /* above the footer band */
+      left: 50%;
+      transform: translateX(-50%);
+      height: 70%;
+      width: 90%;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.10));
+      transition: transform 0.35s ease;
+      z-index: 2;
+    }
+
+    .cat-v3:hover .cat-v3__img {
+      transform: translateX(-50%) translateY(-8px);
+    }
+
+    /* Colour footer band */
+    .cat-v3__footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: var(--c);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
+      transition: height 0.35s ease;
+      z-index: 3;
+    }
+
+    .cat-v3:hover .cat-v3__footer {
+      height: 100px;
+    }
+
+    .cat-v3__name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      line-height: 1.1;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    .cat-v3__price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.72);
+      margin-top: 3px;
+      font-style: italic;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+    }
+
+    .cat-v3:hover .cat-v3__price {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Novo tile — gold card, typographic */
+    .cat-v3--novo {
+      background: #f9b94a;
+      border-color: transparent;
+    }
+
+    .cat-v3--novo .cat-v3__footer {
+      background: #2b2e35;
+    }
+
+    .cat-v3--novo .cat-v3__price {
+      color: rgba(255, 255, 255, 0.60);
+    }
+
+    /* Novo ghost "N" fills the gold area */
+    .cat-v3__novo-ghost {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58%);
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      font-size: 200px;
+      line-height: 1;
+      color: rgba(43, 46, 53, 0.08);
+      user-select: none;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .cat-v3__novo-label {
+      position: absolute;
+      top: 22px;
+      left: 20px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(43, 46, 53, 0.50);
+      z-index: 4;
+    }
+
+    /* V3 mobile */
+    @media (max-width: 767px) {
+      .cats-v3 { padding: 16px 0; }
+      .cats-v3__inner { padding: 0 12px; }
+      .cats-v3__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .cat-v3:last-child { grid-column: 1 / -1; aspect-ratio: 5 / 3; }
+      .cat-v3__img { height: 60%; bottom: 72px; }
+      .cat-v3__name { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-sim"></div>
+
+
+  <!-- ====================================================================
+       V1 — COLOUR STAGE
+       ==================================================================== -->
+  <div class="vl">
+    <span class="vl__n">V1</span>
+    <span class="vl__d">Colour Stage — product floats in coloured top zone, big name headlines the white bottom zone</span>
+  </div>
+
+  <section class="cats-v1">
+    <div class="cats-v1__inner">
+      <div class="cats-v1__grid">
+
+        <a href="#" class="cat-v1" style="--c: #f0d4d4">
+          <div class="cat-v1__stage">
+            <img class="cat-v1__img"
+                 src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png"
+                 alt="Deklice">
+          </div>
+          <div class="cat-v1__info">
+            <span class="cat-v1__name">Deklice</span>
+            <span class="cat-v1__price">od 2 €</span>
+            <span class="cat-v1__cta">Poglej ponudbo &rarr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v1" style="--c: #cfd9ef">
+          <div class="cat-v1__stage">
+            <img class="cat-v1__img"
+                 src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png"
+                 alt="Fantje">
+          </div>
+          <div class="cat-v1__info">
+            <span class="cat-v1__name">Fantje</span>
+            <span class="cat-v1__price">od 2 €</span>
+            <span class="cat-v1__cta">Poglej ponudbo &rarr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v1" style="--c: #c8e0cc">
+          <div class="cat-v1__stage">
+            <img class="cat-v1__img"
+                 src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png"
+                 alt="Mamice">
+          </div>
+          <div class="cat-v1__info">
+            <span class="cat-v1__name">Mamice</span>
+            <span class="cat-v1__price">od 5 €</span>
+            <span class="cat-v1__cta">Poglej ponudbo &rarr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v1" style="--c: #e2ddd6">
+          <div class="cat-v1__stage">
+            <img class="cat-v1__img"
+                 src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png"
+                 alt="Znamke">
+          </div>
+          <div class="cat-v1__info">
+            <span class="cat-v1__name">Znamke</span>
+            <span class="cat-v1__price">Zara &middot; H&amp;M &middot; Next</span>
+            <span class="cat-v1__cta">Poglej ponudbo &rarr;</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v1 cat-v1--novo" style="--c: #f9b94a">
+          <div class="cat-v1__stage">
+            <span class="cat-v1--novo__ghost">N</span>
+            <span class="cat-v1__novo-badge">Novo</span>
+          </div>
+          <div class="cat-v1__info">
+            <span class="cat-v1__name">Novo<br>prispelo</span>
+            <span class="cat-v1__price">sveži kosi</span>
+            <span class="cat-v1__cta">Poglej &rarr;</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ====================================================================
+       V2 — FULL STAGE / OVERSIZED NAME
+       ==================================================================== -->
+  <div class="vl">
+    <span class="vl__n">V2</span>
+    <span class="vl__d">Full Stage — product anchored bottom-right, oversized name left. Type is the design.</span>
+  </div>
+
+  <section class="cats-v2">
+    <div class="cats-v2__inner">
+      <div class="cats-v2__grid">
+
+        <a href="#" class="cat-v2" style="--c: #d4888a">
+          <img class="cat-v2__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png"
+               alt="Deklice">
+          <div class="cat-v2__body">
+            <span class="cat-v2__label">Za deklice</span>
+            <span class="cat-v2__name">Deklice</span>
+            <span class="cat-v2__price">od 2 €</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v2" style="--c: #6e90b8">
+          <img class="cat-v2__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png"
+               alt="Fantje">
+          <div class="cat-v2__body">
+            <span class="cat-v2__label">Za fantke</span>
+            <span class="cat-v2__name">Fantje</span>
+            <span class="cat-v2__price">od 2 €</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v2" style="--c: #6a9e78">
+          <img class="cat-v2__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png"
+               alt="Mamice">
+          <div class="cat-v2__body">
+            <span class="cat-v2__label">Za mamice</span>
+            <span class="cat-v2__name">Mamice</span>
+            <span class="cat-v2__price">od 5 €</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v2" style="--c: #8c7d6c">
+          <img class="cat-v2__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png"
+               alt="Znamke">
+          <div class="cat-v2__body">
+            <span class="cat-v2__label">Top znamke</span>
+            <span class="cat-v2__name">Znamke</span>
+            <span class="cat-v2__price">Zara &middot; H&amp;M &middot; Next</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v2 cat-v2--novo" style="--c: #f9b94a">
+          <span class="cat-v2--novo__star">&#x2605;</span>
+          <div class="cat-v2__body">
+            <span class="cat-v2__label">Pravkar prispelo</span>
+            <span class="cat-v2__name">Novo<br>prispelo</span>
+            <span class="cat-v2__price">sveži kosi vsak teden</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ====================================================================
+       V3 — WHITE CARD / COLOUR FOOTER
+       ==================================================================== -->
+  <div class="vl">
+    <span class="vl__n">V3</span>
+    <span class="vl__d">White Card — product breathes on white, rising colour footer with big name reveals on hover</span>
+  </div>
+
+  <section class="cats-v3">
+    <div class="cats-v3__inner">
+      <div class="cats-v3__grid">
+
+        <a href="#" class="cat-v3" style="--c: #d4888a">
+          <img class="cat-v3__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png"
+               alt="Deklice">
+          <div class="cat-v3__footer">
+            <span class="cat-v3__name">Deklice</span>
+            <span class="cat-v3__price">od 2 €</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v3" style="--c: #6e90b8">
+          <img class="cat-v3__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png"
+               alt="Fantje">
+          <div class="cat-v3__footer">
+            <span class="cat-v3__name">Fantje</span>
+            <span class="cat-v3__price">od 2 €</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v3" style="--c: #6a9e78">
+          <img class="cat-v3__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png"
+               alt="Mamice">
+          <div class="cat-v3__footer">
+            <span class="cat-v3__name">Mamice</span>
+            <span class="cat-v3__price">od 5 €</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v3" style="--c: #8c7d6c">
+          <img class="cat-v3__img"
+               src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png"
+               alt="Znamke">
+          <div class="cat-v3__footer">
+            <span class="cat-v3__name">Znamke</span>
+            <span class="cat-v3__price">Zara &middot; H&amp;M &middot; Next</span>
+          </div>
+        </a>
+
+        <a href="#" class="cat-v3 cat-v3--novo">
+          <span class="cat-v3__novo-ghost">N</span>
+          <span class="cat-v3__novo-label">Pravkar prispelo</span>
+          <div class="cat-v3__footer">
+            <span class="cat-v3__name">Novo<br>prispelo</span>
+            <span class="cat-v3__price">sveži kosi</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+<!--
+=== SONNET HANDOFF ===
+
+RECOMMENDED VARIATION: V1 — Colour Stage
+REASON: Product images float naturally on branded colour backgrounds with clean white text
+zone below — works best with the transparent PNGs and gives clear visual hierarchy.
+
+USER DECISION NEEDED: Pick V1, V2, or V3. Also confirm the muted category colours
+(V1/V3 use soft pastels, V2 uses deeper saturated tones for legibility on dark background).
+
+TWIG: Add .home-categories section after .home-hero in template/common/home.twig
+SCSS: Add .home-categories block in stylesheet/src/pages/_home.scss
+
+IMPLEMENTATION NOTES (apply to chosen variation):
+
+V1:
+- CSS Grid 5 cols, gap: 4px, no border-radius
+- Tile: aspect-ratio 3/4, flex-direction column
+- Stage zone: flex 0 0 58%, overflow visible (lets img bleed)
+- Product img: position absolute, bottom: -14%, left: 50%, transform: translateX(-50%), height: 90%
+- Info zone: flex 0 0 42%, z-index: 2 (sits above image overflow)
+- Hover img: translateY(-6px) scale(1.04)
+- Novo tile: gold stage, ghost "N" span (160px, rgba dark 0.08), dark NOVO badge pill
+- Mobile: 2 cols, last tile grid-column: 1 / -1
+
+V2:
+- CSS Grid 5 cols, gap: 3px, no border-radius
+- Tile: aspect-ratio 3/4, background: var(--c) (saturated category colour)
+- ::before left gradient: rgba(0,0,0,0.28) → transparent (text legibility)
+- Product img: position absolute, bottom: -4%, right: -6%, height: 82%, z-index: 1
+- Body: position absolute, bottom: 24px, left: 24px, right: 50%, z-index: 3
+- Name: clamp(28px, 3.2vw, 48px), font-weight 700
+- Hover: img translateY(-10px) scale(1.04), ::before opacity 0.7
+- Novo: no ::before, body right: 24px, star glyph as ghost decoration
+
+V3:
+- CSS Grid 5 cols, gap: 12px, padding: 0 24px
+- Tile: aspect-ratio 3/4, border-radius: 6px, border: 1px solid #e8e8e8, white bg
+- Product img: position absolute, bottom: 80px, left: 50%, transform: translateX(-50%), height: 70%
+- Hover: img translateY(-8px), footer height 80px → 100px (transition 0.35s)
+- Price: opacity 0 → 1 on hover (reveal animation)
+- Novo: gold tile bg, dark footer (#2b2e35), ghost N (200px, rgba dark 0.08)
+
+DESIGN TOKENS USED (all variations):
+- $color-primary (#f9b94a) — Novo tile background (V1, V3), label text (V3 Novo footer)
+- $color-text-heading (#2b2e35) — category name (V1), Novo name (V1, V3), dark badge (V1)
+- $color-text-muted (#9aa0af) — CTA text default (V1)
+- $color-text-on-dark (#f5f5f5) — category name on coloured bg (V2, V3 footer)
+- $color-primary-dark (#e0a030) — price italic (V1)
+- $color-surface (#ffffff) — info zone (V1), card background (V3)
+- $color-surface-alt (#f7f7f7) — section background (V3)
+- $shadow-hover (0 4px 16px rgba(0,0,0,0.12)) — card hover (V3)
+- $radius-sm (4px) — NOVO badge pill
+- $transition-base (200ms ease) — hover transitions
+
+IMAGE PATHS (Twig, relative to OpenCart web root):
+- {{ base }}image/catalog/assets/homepage/otroski_koticek_deklice3.png
+- {{ base }}image/catalog/assets/homepage/otroski_koticek_decki.png
+- {{ base }}image/catalog/assets/homepage/otroski_koticek_nosecnica.png
+- {{ base }}image/catalog/assets/homepage/otroski_koticek_pomlad.png
+=== END HANDOFF ===
+-->
+
+</body>
+</html>

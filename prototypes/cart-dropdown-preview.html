@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart Dropdown — 3 Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #ececec;
+      padding: 40px 24px;
+      display: flex;
+      gap: 48px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    :root {
+      --gold:      #f9b94a;
+      --gold-dark: #e0a030;
+      --gold-pale: #fdf3e0;
+      --text:      #2b2e35;
+      --muted:     #9aa0af;
+      --body:      #565656;
+      --surface:   #ffffff;
+      --alt:       #f7f7f7;
+      --border:    #d6d9e0;
+    }
+
+    /* ── shared label ── */
+    .option-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* ============================================================
+       OPTION 1 — Row list: thumbnail + name + price + remove
+       Clean lines, no table borders, warm footer
+    ============================================================ */
+
+    .cart-1 {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(43,46,53,.12);
+      width: 340px;
+      overflow: hidden;
+    }
+
+    .cart-1__header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Open Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .cart-1__items {
+      list-style: none;
+      padding: 8px 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .cart-1__item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      transition: background .12s;
+    }
+
+    .cart-1__item:hover { background: var(--alt); }
+
+    .cart-1__thumb {
+      flex: 0 0 52px;
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--alt);
+    }
+
+    .cart-1__thumb-placeholder {
+      flex: 0 0 52px;
+      width: 52px;
+      height: 52px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--border);
+    }
+
+    .cart-1__info {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .cart-1__name {
+      font-size: 13.5px;
+      font-weight: 400;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      text-decoration: none;
+    }
+
+    .cart-1__name:hover { color: var(--gold-dark); }
+
+    .cart-1__option {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .cart-1__price {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .cart-1__remove {
+      flex: 0 0 auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--border);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: color .15s;
+    }
+
+    .cart-1__remove:hover { color: #d55e6f; }
+
+    .cart-1__footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 20px;
+      background: var(--alt);
+    }
+
+    .cart-1__total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+    }
+
+    .cart-1__total-label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .cart-1__total-amount {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cart-1__actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-outline-1 {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--body);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-outline-1:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-primary-1 {
+      flex: 1;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 24px;
+      background: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2b2e35;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .btn-primary-1:hover { background: var(--gold-dark); }
+
+    /* ============================================================
+       OPTION 2 — Ultra-minimal: text rows only, no image
+       Widest but lightest feel — for stores with long product names
+    ============================================================ */
+
+    .cart-2 {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(43,46,53,.12);
+      width: 300px;
+      overflow: hidden;
+    }
+
+    .cart-2__header {
+      padding: 16px 20px 12px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cart-2__items {
+      list-style: none;
+      padding: 4px 0;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .cart-2__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .cart-2__item:last-child { border-bottom: none; }
+
+    .cart-2__dot {
+      flex: 0 0 6px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .cart-2__name {
+      flex: 1 1 auto;
+      font-size: 13.5px;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .cart-2__name:hover { color: var(--gold-dark); }
+
+    .cart-2__option {
+      font-size: 11px;
+      color: var(--muted);
+      display: block;
+      margin-top: 1px;
+    }
+
+    .cart-2__price {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    .cart-2__remove {
+      flex: 0 0 auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--border);
+      line-height: 1;
+      padding: 2px 0 2px 4px;
+      transition: color .15s;
+    }
+
+    .cart-2__remove:hover { color: #d55e6f; }
+
+    .cart-2__footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+
+    .cart-2__total {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      font-size: 13px;
+    }
+
+    .cart-2__total-label { color: var(--muted); }
+
+    .cart-2__total-amount {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cart-2__cta {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: var(--gold);
+      border: none;
+      border-radius: 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #2b2e35;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .cart-2__cta:hover { background: var(--gold-dark); }
+
+    .cart-2__view {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .cart-2__view:hover { color: var(--text); }
+
+    /* ============================================================
+       OPTION 3 — Card items: each product in own bordered card
+       Most structured, clear item separation, roomier feel
+    ============================================================ */
+
+    .cart-3 {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(43,46,53,.12);
+      width: 360px;
+      overflow: hidden;
+    }
+
+    .cart-3__header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .cart-3__title {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cart-3__count {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .cart-3__items {
+      list-style: none;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .cart-3__item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      transition: border-color .15s;
+    }
+
+    .cart-3__item:hover { border-color: var(--gold); }
+
+    .cart-3__thumb-placeholder {
+      flex: 0 0 48px;
+      width: 48px;
+      height: 56px;
+      border-radius: 6px;
+      background: var(--alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--border);
+      font-size: 20px;
+    }
+
+    .cart-3__info {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .cart-3__name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    .cart-3__name:hover { color: var(--gold-dark); }
+
+    .cart-3__option {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .cart-3__price {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .cart-3__remove {
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: border-color .15s, color .15s, background .15s;
+    }
+
+    .cart-3__remove:hover {
+      border-color: #d55e6f;
+      color: #d55e6f;
+      background: #fdf0f2;
+    }
+
+    .cart-3__footer {
+      border-top: 1px solid var(--border);
+      background: var(--alt);
+      padding: 14px 20px 18px;
+    }
+
+    .cart-3__total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+    }
+
+    .cart-3__total-label {
+      font-size: 12.5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .cart-3__total-amount {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cart-3__actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-ghost-3 {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--body);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: border-color .15s, color .15s;
+    }
+
+    .btn-ghost-3:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-gold-3 {
+      flex: 2;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 24px;
+      background: var(--gold);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #2b2e35;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .btn-gold-3:hover { background: var(--gold-dark); }
+  </style>
+</head>
+<body>
+
+  <!-- ── OPTION 1 ── -->
+  <div>
+    <p class="option-label">Option 1 — Row list with thumbnail</p>
+    <div class="cart-1">
+      <div class="cart-1__header">Košarica</div>
+      <ul class="cart-1__items">
+        <li class="cart-1__item">
+          <div class="cart-1__thumb-placeholder">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div class="cart-1__info">
+            <a href="#" class="cart-1__name">Zimska jakna — deklice 110</a>
+            <div class="cart-1__option">Velikost: 110</div>
+          </div>
+          <span class="cart-1__price">24,90 €</span>
+          <button class="cart-1__remove" title="Odstrani">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </li>
+        <li class="cart-1__item">
+          <div class="cart-1__thumb-placeholder">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div class="cart-1__info">
+            <a href="#" class="cart-1__name">Kavbojke 98 — modra</a>
+            <div class="cart-1__option">Velikost: 98</div>
+          </div>
+          <span class="cart-1__price">18,50 €</span>
+          <button class="cart-1__remove" title="Odstrani">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </li>
+      </ul>
+      <div class="cart-1__footer">
+        <div class="cart-1__total">
+          <span class="cart-1__total-label">Skupaj</span>
+          <span class="cart-1__total-amount">43,40 €</span>
+        </div>
+        <div class="cart-1__actions">
+          <a href="#" class="btn-outline-1">Košarica</a>
+          <a href="#" class="btn-primary-1">Blagajna →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OPTION 2 ── -->
+  <div>
+    <p class="option-label">Option 2 — Ultra-minimal text rows</p>
+    <div class="cart-2">
+      <div class="cart-2__header">Košarica</div>
+      <ul class="cart-2__items">
+        <li class="cart-2__item">
+          <span class="cart-2__dot"></span>
+          <div style="flex:1;min-width:0">
+            <a href="#" class="cart-2__name">Zimska jakna — deklice 110</a>
+            <span class="cart-2__option">Velikost: 110</span>
+          </div>
+          <span class="cart-2__price">24,90 €</span>
+          <button class="cart-2__remove" title="Odstrani">×</button>
+        </li>
+        <li class="cart-2__item">
+          <span class="cart-2__dot"></span>
+          <div style="flex:1;min-width:0">
+            <a href="#" class="cart-2__name">Kavbojke 98 — modra</a>
+            <span class="cart-2__option">Velikost: 98</span>
+          </div>
+          <span class="cart-2__price">18,50 €</span>
+          <button class="cart-2__remove" title="Odstrani">×</button>
+        </li>
+      </ul>
+      <div class="cart-2__footer">
+        <div class="cart-2__total">
+          <span class="cart-2__total-label">Skupaj</span>
+          <span class="cart-2__total-amount">43,40 €</span>
+        </div>
+        <a href="#" class="cart-2__cta">Nadaljuj na blagajno →</a>
+        <a href="#" class="cart-2__view">Poglej košarico</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OPTION 3 ── -->
+  <div>
+    <p class="option-label">Option 3 — Card-per-item</p>
+    <div class="cart-3">
+      <div class="cart-3__header">
+        <span class="cart-3__title">Vaša košarica</span>
+        <span class="cart-3__count">2 kosa</span>
+      </div>
+      <ul class="cart-3__items">
+        <li class="cart-3__item">
+          <div class="cart-3__thumb-placeholder">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div class="cart-3__info">
+            <a href="#" class="cart-3__name">Zimska jakna — deklice 110</a>
+            <div class="cart-3__option">Velikost: 110</div>
+          </div>
+          <span class="cart-3__price">24,90 €</span>
+          <button class="cart-3__remove" title="Odstrani">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </li>
+        <li class="cart-3__item">
+          <div class="cart-3__thumb-placeholder">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div class="cart-3__info">
+            <a href="#" class="cart-3__name">Kavbojke 98 — modra</a>
+            <div class="cart-3__option">Velikost: 98</div>
+          </div>
+          <span class="cart-3__price">18,50 €</span>
+          <button class="cart-3__remove" title="Odstrani">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </li>
+      </ul>
+      <div class="cart-3__footer">
+        <div class="cart-3__total">
+          <span class="cart-3__total-label">Skupaj</span>
+          <span class="cart-3__total-amount">43,40 €</span>
+        </div>
+        <div class="cart-3__actions">
+          <a href="#" class="btn-ghost-3">Košarica</a>
+          <a href="#" class="btn-gold-3">Blagajna →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

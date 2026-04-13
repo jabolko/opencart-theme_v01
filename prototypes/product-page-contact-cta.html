@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact CTA — 5 Variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --gold-wash: rgba(249, 185, 74, 0.08);
+            --charcoal: #565656;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: var(--surface-alt);
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: visible;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Shared popup */
+        .hours-popup {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            right: 0;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+            padding: 14px 16px;
+            min-width: 200px;
+            z-index: 10;
+            font-size: 13px;
+            color: var(--charcoal);
+        }
+
+        .hours-popup.show { display: block; }
+
+        .hours-popup::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            right: 16px;
+            width: 12px;
+            height: 12px;
+            background: var(--white);
+            transform: rotate(45deg);
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .hours-popup__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+            margin-bottom: 8px;
+        }
+
+        .hours-popup__row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: 12px;
+        }
+
+        .hours-popup__day { color: var(--charcoal); }
+        .hours-popup__time { font-family: 'Open Sans', sans-serif; font-weight: 600; color: var(--heading); }
+        .hours-popup__closed { color: var(--muted); }
+
+        /* ================================================================
+           V1 — INLINE TEXT + INFO ICON
+           Single line, phone as link, info circle on right
+           ================================================================ */
+        .v1-contact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .v1-contact__text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .v1-contact__text a {
+            color: var(--heading);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .v1-contact__info {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .v1-contact__info:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+        /* ================================================================
+           V2 — PHONE ICON LEFT + INFO RIGHT
+           Phone icon, text, info button. Slightly more prominent.
+           ================================================================ */
+        .v2-contact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .v2-contact__icon svg {
+            width: 16px; height: 16px;
+            stroke: var(--muted);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .v2-contact__text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .v2-contact__text strong {
+            color: var(--heading);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+        }
+
+        .v2-contact__text a {
+            color: var(--heading);
+            text-decoration: none;
+        }
+
+        .v2-contact__info {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .v2-contact__info:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+        /* ================================================================
+           V3 — SUBTLE CARD
+           Light bg card, phone left, info right
+           ================================================================ */
+        .v3-contact {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--white);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .v3-contact__icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--gold-wash);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v3-contact__icon svg {
+            width: 14px; height: 14px;
+            stroke: var(--gold-dark);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .v3-contact__body { flex: 1; }
+
+        .v3-contact__label {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .v3-contact__phone {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--heading);
+            text-decoration: none;
+        }
+
+        .v3-contact__info {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .v3-contact__info:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+        /* ================================================================
+           V4 — BORDER TOP/BOTTOM STRIP
+           Divider lines, centered text, info at end
+           ================================================================ */
+        .v4-contact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .v4-contact__text {
+            flex: 1;
+            font-size: 12px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .v4-contact__text a {
+            color: var(--heading);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .v4-contact__info {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .v4-contact__info:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+        /* ================================================================
+           V5 — CLICKABLE ROW
+           Entire row is a tel: link, info icon separate
+           ================================================================ */
+        .v5-contact {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .v5-contact__link {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: opacity 0.15s;
+        }
+
+        .v5-contact__link:active { opacity: 0.7; }
+
+        .v5-contact__link svg {
+            width: 16px; height: 16px;
+            stroke: var(--gold-dark);
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+        }
+
+        .v5-contact__question {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .v5-contact__number {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--heading);
+        }
+
+        .v5-contact__info {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            color: var(--muted);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .v5-contact__info:hover { border-color: var(--charcoal); color: var(--charcoal); }
+    </style>
+</head>
+<body>
+
+<!-- V1 — INLINE TEXT -->
+<div class="variation">
+    <div class="variation-label">V1 — Inline Text <span>Simplest. One line of text, phone as link, info circle right.</span></div>
+    <div class="v1-contact">
+        <span class="v1-contact__text">Imaš vprašanje? Pokliči nas: <a href="tel:+38640611233">040 611 233</a></span>
+        <button class="v1-contact__info" onclick="this.nextElementSibling.classList.toggle('show')">?</button>
+        <div class="hours-popup">
+            <div class="hours-popup__title">Delovni čas</div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Tor – Pet</span><span class="hours-popup__time">10:00 – 18:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Sobota</span><span class="hours-popup__time">9:00 – 12:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day hours-popup__closed">Pon, Ned</span><span class="hours-popup__closed">Zaprto</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- V2 — PHONE ICON LEFT -->
+<div class="variation">
+    <div class="variation-label">V2 — Phone Icon <span>Phone icon left, text + number, info button right.</span></div>
+    <div class="v2-contact">
+        <span class="v2-contact__icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></span>
+        <span class="v2-contact__text">Imaš vprašanje? <a href="tel:+38640611233"><strong>040 611 233</strong></a></span>
+        <button class="v2-contact__info" onclick="this.nextElementSibling.classList.toggle('show')">?</button>
+        <div class="hours-popup">
+            <div class="hours-popup__title">Delovni čas</div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Tor – Pet</span><span class="hours-popup__time">10:00 – 18:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Sobota</span><span class="hours-popup__time">9:00 – 12:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day hours-popup__closed">Pon, Ned</span><span class="hours-popup__closed">Zaprto</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- V3 — SUBTLE CARD -->
+<div class="variation">
+    <div class="variation-label">V3 — Subtle Card <span>White card, gold icon circle, label + big phone number.</span></div>
+    <div class="v3-contact">
+        <div class="v3-contact__icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div class="v3-contact__body">
+            <div class="v3-contact__label">Imaš vprašanje?</div>
+            <a href="tel:+38640611233" class="v3-contact__phone">040 611 233</a>
+        </div>
+        <button class="v3-contact__info" onclick="this.nextElementSibling.classList.toggle('show')">?</button>
+        <div class="hours-popup">
+            <div class="hours-popup__title">Delovni čas</div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Tor – Pet</span><span class="hours-popup__time">10:00 – 18:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Sobota</span><span class="hours-popup__time">9:00 – 12:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day hours-popup__closed">Pon, Ned</span><span class="hours-popup__closed">Zaprto</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- V4 — BORDER STRIP -->
+<div class="variation">
+    <div class="variation-label">V4 — Border Strip <span>Divider lines top/bottom, centered text. Footnote feel.</span></div>
+    <div class="v4-contact">
+        <span class="v4-contact__text">Imaš vprašanje? Pokliči nas: <a href="tel:+38640611233">040 611 233</a></span>
+        <button class="v4-contact__info" onclick="this.nextElementSibling.classList.toggle('show')">?</button>
+        <div class="hours-popup">
+            <div class="hours-popup__title">Delovni čas</div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Tor – Pet</span><span class="hours-popup__time">10:00 – 18:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Sobota</span><span class="hours-popup__time">9:00 – 12:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day hours-popup__closed">Pon, Ned</span><span class="hours-popup__closed">Zaprto</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- V5 — CLICKABLE ROW -->
+<div class="variation">
+    <div class="variation-label">V5 — Tappable Row <span>Entire left side is a tel: link. Phone icon + question + number. Tap to call.</span></div>
+    <div class="v5-contact">
+        <a href="tel:+38640611233" class="v5-contact__link">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            <span class="v5-contact__question">Imaš vprašanje?</span>
+            <span class="v5-contact__number">040 611 233</span>
+        </a>
+        <button class="v5-contact__info" onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('show')">?</button>
+        <div class="hours-popup">
+            <div class="hours-popup__title">Delovni čas</div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Tor – Pet</span><span class="hours-popup__time">10:00 – 18:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day">Sobota</span><span class="hours-popup__time">9:00 – 12:00</span></div>
+            <div class="hours-popup__row"><span class="hours-popup__day hours-popup__closed">Pon, Ned</span><span class="hours-popup__closed">Zaprto</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Close popup when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.hours-popup') && !e.target.classList.contains('v1-contact__info') && !e.target.classList.contains('v2-contact__info') && !e.target.classList.contains('v3-contact__info') && !e.target.classList.contains('v4-contact__info') && !e.target.classList.contains('v5-contact__info')) {
+        var popups = document.querySelectorAll('.hours-popup');
+        for (var i = 0; i < popups.length; i++) { popups[i].classList.remove('show'); }
+    }
+});
+</script>
+
+</body>
+</html>

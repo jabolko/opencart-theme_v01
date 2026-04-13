@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Step 1 — Merged Guest/Register/Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f9b94a; --gold-dark: #e0a030; --charcoal: #565656; --heading: #2b2e35;
+    --muted: #9aa0af; --surface: #fff; --surface-alt: #f7f7f7; --border: #d6d9e0;
+    --success: #7d9478; --error: #d55e6f;
+    --font-heading: 'Open Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); color: var(--charcoal); background: var(--surface-alt); padding: 16px; font-size: 15px; }
+
+  .version-nav { position: sticky; top: 0; z-index: 100; background: #3a3a3a; padding: 12px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: -16px -16px 16px; }
+  .version-nav span { color: #fff; font-family: var(--font-heading); font-weight: 600; font-size: 14px; margin-right: 8px; }
+  .version-nav button { padding: 6px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; background: transparent; color: #fff; font-family: var(--font-body); font-size: 13px; cursor: pointer; }
+  .version-nav button.active, .version-nav button:hover { background: var(--gold); color: var(--heading); border-color: var(--gold); }
+  .version { display: none; max-width: 420px; margin: 0 auto; }
+  .version.active { display: block; }
+
+  /* Shared */
+  .card { background: #fff; border-radius: 12px; padding: 20px 16px; margin-bottom: 12px; }
+  .card-title { font-family: var(--font-heading); font-size: 15px; font-weight: 600; color: var(--heading); margin-bottom: 16px; }
+  .form { display: flex; flex-direction: column; gap: 12px; }
+  .form-row { display: flex; gap: 10px; }
+  .form-row > * { flex: 1; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--heading); font-family: var(--font-heading); }
+  .form-input { padding: 11px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 14px; color: var(--heading); outline: none; }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: var(--muted); }
+  .btn { width: 100%; padding: 14px; background: var(--gold); color: var(--heading); border: none; border-radius: 12px; font-family: var(--font-heading); font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  .btn:hover { background: var(--gold-dark); }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .check input { accent-color: var(--gold); width: 16px; height: 16px; }
+  .divider { height: 1px; background: var(--border); margin: 4px 0; }
+  .pw-fields { display: none; flex-direction: column; gap: 12px; padding-top: 4px; border-top: 1px dashed var(--border); margin-top: 4px; }
+  .pw-fields.visible { display: flex; }
+  .login-fields { display: none; flex-direction: column; gap: 12px; }
+  .login-fields.visible { display: flex; }
+  .address-fields { display: flex; flex-direction: column; gap: 12px; }
+
+  /* ═══ V1 — Pills + Text Link ═══ */
+  .v1-nav { display: flex; align-items: center; gap: 0; margin-bottom: 16px; }
+  .v1-pills { display: flex; gap: 0; background: var(--surface-alt); border-radius: 8px; padding: 3px; }
+  .v1-pill { padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; font-family: var(--font-heading); color: var(--muted); cursor: pointer; border: none; background: transparent; transition: all 0.2s; }
+  .v1-pill.active { background: var(--surface); color: var(--heading); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .v1-login-link { margin-left: auto; font-size: 13px; color: var(--charcoal); text-decoration: none; font-family: var(--font-heading); font-weight: 500; cursor: pointer; }
+  .v1-login-link:hover { color: var(--heading); }
+  .v1-login-link svg { width: 14px; height: 14px; vertical-align: -2px; margin-right: 2px; }
+
+  /* ═══ V2 — Underline Tabs + Link ═══ */
+  .v2-nav { display: flex; align-items: center; border-bottom: 1.5px solid var(--border); margin-bottom: 16px; }
+  .v2-tab { padding: 8px 16px 10px; font-size: 13px; font-weight: 600; font-family: var(--font-heading); color: var(--muted); cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.2s; }
+  .v2-tab.active { color: var(--heading); border-bottom-color: var(--gold); }
+  .v2-login-link { margin-left: auto; font-size: 12px; color: var(--muted); text-decoration: underline; cursor: pointer; padding-bottom: 10px; }
+
+  /* ═══ V3 — Segmented Control + Link ═══ */
+  .v3-nav { display: flex; align-items: center; gap: 0; margin-bottom: 16px; }
+  .v3-segment { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .v3-seg { padding: 8px 18px; font-size: 13px; font-weight: 500; font-family: var(--font-heading); color: var(--muted); cursor: pointer; border: none; background: transparent; transition: all 0.2s; border-right: 1px solid var(--border); }
+  .v3-seg:last-child { border-right: none; }
+  .v3-seg.active { background: var(--gold); color: var(--heading); }
+  .v3-login-link { margin-left: auto; font-size: 13px; color: var(--charcoal); text-decoration: none; cursor: pointer; font-weight: 500; font-family: var(--font-heading); }
+  .v3-login-link span { text-decoration: underline; }
+
+  /* ═══ V4 — Radio-style options inline ═══ */
+  .v4-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .v4-opt { display: flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1.5px solid var(--border); border-radius: 20px; font-size: 12px; font-weight: 500; font-family: var(--font-heading); color: var(--muted); cursor: pointer; transition: all 0.2s; background: transparent; }
+  .v4-opt.active { border-color: var(--gold); color: var(--heading); background: #fffbf0; }
+  .v4-opt-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; }
+  .v4-opt.active .v4-opt-dot { border-color: var(--gold); background: var(--gold); }
+  .v4-opt.active .v4-opt-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+  .v4-login-link { margin-left: auto; font-size: 12px; color: var(--muted); text-decoration: underline; cursor: pointer; }
+
+  /* ═══ V5 — Minimal (no tabs, guest default, register = expandable) ═══ */
+  .v5-expand { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--surface-alt); }
+  .v5-expand-left { font-size: 13px; color: var(--charcoal); }
+  .v5-expand-left a { color: var(--charcoal); text-decoration: underline; cursor: pointer; font-weight: 500; }
+  .v5-expand-right { font-size: 12px; color: var(--muted); }
+  .v5-expand-right a { color: var(--muted); text-decoration: underline; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<nav class="version-nav">
+  <span>Step 1:</span>
+  <button class="active" onclick="show(1)">V1 Pills</button>
+  <button onclick="show(2)">V2 Underline</button>
+  <button onclick="show(3)">V3 Segment</button>
+  <button onclick="show(4)">V4 Chips</button>
+  <button onclick="show(5)">V5 Minimal</button>
+</nav>
+
+<!-- ═══ V1 — PILLS + TEXT LINK ═══ -->
+<div class="version active" id="v1">
+  <!-- Guest (default) -->
+  <div class="card" id="v1-guest">
+    <div class="v1-nav">
+      <div class="v1-pills">
+        <button class="v1-pill active" onclick="v1show('guest')">Gost</button>
+        <button class="v1-pill" onclick="v1show('register')">Registracija</button>
+      </div>
+      <a class="v1-login-link" onclick="v1show('login')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Prijava
+      </a>
+    </div>
+    <div class="form" id="v1-form-guest">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ime</label><input class="form-input" placeholder="Ana"></div>
+        <div class="form-group"><label class="form-label">Priimek</label><input class="form-input" placeholder="Novak"></div>
+      </div>
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" type="tel" placeholder="040 123 456"></div>
+      <div class="form-group"><label class="form-label">Ulica in hišna številka</label><input class="form-input" placeholder="Slovenska cesta 17"></div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 0.4;"><label class="form-label">Pošta</label><input class="form-input" placeholder="1000"></div>
+        <div class="form-group" style="flex: 0.6;"><label class="form-label">Mesto</label><input class="form-input" placeholder="Ljubljana"></div>
+      </div>
+      <div id="v1-pw" class="pw-fields">
+        <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Najmanj 4 znake"></div>
+        <div class="form-group"><label class="form-label">Potrdi geslo</label><input class="form-input" type="password" placeholder="Ponovi geslo"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Naslov za dostavo je enak</label>
+      <button class="btn">Nadaljuj na dostavo</button>
+    </div>
+    <div id="v1-form-login" class="login-fields">
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Geslo"></div>
+      <div style="text-align: right;"><a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline;">Pozabljeno geslo?</a></div>
+      <button class="btn">Prijavi se</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ V2 — UNDERLINE TABS ═══ -->
+<div class="version" id="v2">
+  <div class="card">
+    <div class="v2-nav">
+      <button class="v2-tab active" onclick="v2show('guest',this)">Gost</button>
+      <button class="v2-tab" onclick="v2show('register',this)">Registracija</button>
+      <a class="v2-login-link" onclick="v2show('login',this)">Prijava</a>
+    </div>
+    <div class="form" id="v2-form-guest">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ime</label><input class="form-input" placeholder="Ana"></div>
+        <div class="form-group"><label class="form-label">Priimek</label><input class="form-input" placeholder="Novak"></div>
+      </div>
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" type="tel" placeholder="040 123 456"></div>
+      <div class="form-group"><label class="form-label">Ulica in hišna številka</label><input class="form-input" placeholder="Slovenska cesta 17"></div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 0.4;"><label class="form-label">Pošta</label><input class="form-input" placeholder="1000"></div>
+        <div class="form-group" style="flex: 0.6;"><label class="form-label">Mesto</label><input class="form-input" placeholder="Ljubljana"></div>
+      </div>
+      <div id="v2-pw" class="pw-fields">
+        <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Najmanj 4 znake"></div>
+        <div class="form-group"><label class="form-label">Potrdi geslo</label><input class="form-input" type="password" placeholder="Ponovi geslo"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Naslov za dostavo je enak</label>
+      <button class="btn">Nadaljuj na dostavo</button>
+    </div>
+    <div id="v2-form-login" class="login-fields">
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Geslo"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline;">Pozabljeno geslo?</a>
+      </div>
+      <button class="btn">Prijavi se</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ V3 — SEGMENTED CONTROL ═══ -->
+<div class="version" id="v3">
+  <div class="card">
+    <div class="v3-nav">
+      <div class="v3-segment">
+        <button class="v3-seg active" onclick="v3show('guest',this)">Gost</button>
+        <button class="v3-seg" onclick="v3show('register',this)">Registracija</button>
+      </div>
+      <a class="v3-login-link" onclick="v3show('login',this)"><span>Prijava</span></a>
+    </div>
+    <div class="form" id="v3-form-guest">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ime</label><input class="form-input" placeholder="Ana"></div>
+        <div class="form-group"><label class="form-label">Priimek</label><input class="form-input" placeholder="Novak"></div>
+      </div>
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" type="tel" placeholder="040 123 456"></div>
+      <div class="form-group"><label class="form-label">Ulica in hišna številka</label><input class="form-input" placeholder="Slovenska cesta 17"></div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 0.4;"><label class="form-label">Pošta</label><input class="form-input" placeholder="1000"></div>
+        <div class="form-group" style="flex: 0.6;"><label class="form-label">Mesto</label><input class="form-input" placeholder="Ljubljana"></div>
+      </div>
+      <div id="v3-pw" class="pw-fields">
+        <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Najmanj 4 znake"></div>
+        <div class="form-group"><label class="form-label">Potrdi geslo</label><input class="form-input" type="password" placeholder="Ponovi geslo"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Naslov za dostavo je enak</label>
+      <button class="btn">Nadaljuj na dostavo</button>
+    </div>
+    <div id="v3-form-login" class="login-fields">
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Geslo"></div>
+      <div style="text-align: right;"><a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline;">Pozabljeno geslo?</a></div>
+      <button class="btn">Prijavi se</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ V4 — CHIP/PILL RADIOS ═══ -->
+<div class="version" id="v4">
+  <div class="card">
+    <div class="v4-nav">
+      <button class="v4-opt active" onclick="v4show('guest',this)"><span class="v4-opt-dot"></span> Gost</button>
+      <button class="v4-opt" onclick="v4show('register',this)"><span class="v4-opt-dot"></span> Registracija</button>
+      <a class="v4-login-link" onclick="v4show('login',this)">Prijava</a>
+    </div>
+    <div class="form" id="v4-form-guest">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ime</label><input class="form-input" placeholder="Ana"></div>
+        <div class="form-group"><label class="form-label">Priimek</label><input class="form-input" placeholder="Novak"></div>
+      </div>
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" type="tel" placeholder="040 123 456"></div>
+      <div class="form-group"><label class="form-label">Ulica in hišna številka</label><input class="form-input" placeholder="Slovenska cesta 17"></div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 0.4;"><label class="form-label">Pošta</label><input class="form-input" placeholder="1000"></div>
+        <div class="form-group" style="flex: 0.6;"><label class="form-label">Mesto</label><input class="form-input" placeholder="Ljubljana"></div>
+      </div>
+      <div id="v4-pw" class="pw-fields">
+        <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Najmanj 4 znake"></div>
+        <div class="form-group"><label class="form-label">Potrdi geslo</label><input class="form-input" type="password" placeholder="Ponovi geslo"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Naslov za dostavo je enak</label>
+      <button class="btn">Nadaljuj na dostavo</button>
+    </div>
+    <div id="v4-form-login" class="login-fields">
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Geslo"></div>
+      <div style="text-align: right;"><a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline;">Pozabljeno geslo?</a></div>
+      <button class="btn">Prijavi se</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ V5 — MINIMAL (no tabs, links only) ═══ -->
+<div class="version" id="v5">
+  <div class="card">
+    <div class="v5-expand">
+      <div class="v5-expand-left">
+        Naročilo brez registracije &middot; <a onclick="v5show('register')">Ustvari račun</a>
+      </div>
+      <div class="v5-expand-right">
+        <a onclick="v5show('login')">Prijava</a>
+      </div>
+    </div>
+    <div class="form" id="v5-form-guest">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ime</label><input class="form-input" placeholder="Ana"></div>
+        <div class="form-group"><label class="form-label">Priimek</label><input class="form-input" placeholder="Novak"></div>
+      </div>
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" type="tel" placeholder="040 123 456"></div>
+      <div class="form-group"><label class="form-label">Ulica in hišna številka</label><input class="form-input" placeholder="Slovenska cesta 17"></div>
+      <div class="form-row">
+        <div class="form-group" style="flex: 0.4;"><label class="form-label">Pošta</label><input class="form-input" placeholder="1000"></div>
+        <div class="form-group" style="flex: 0.6;"><label class="form-label">Mesto</label><input class="form-input" placeholder="Ljubljana"></div>
+      </div>
+      <div id="v5-pw" class="pw-fields">
+        <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Najmanj 4 znake"></div>
+        <div class="form-group"><label class="form-label">Potrdi geslo</label><input class="form-input" type="password" placeholder="Ponovi geslo"></div>
+      </div>
+      <label class="check"><input type="checkbox" checked> Naslov za dostavo je enak</label>
+      <button class="btn">Nadaljuj na dostavo</button>
+    </div>
+    <div id="v5-form-login" class="login-fields">
+      <div class="form-group"><label class="form-label">E-naslov</label><input class="form-input" type="email" placeholder="ana@email.com"></div>
+      <div class="form-group"><label class="form-label">Geslo</label><input class="form-input" type="password" placeholder="Geslo"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="#" style="font-size: 12px; color: var(--muted); text-decoration: underline;">Pozabljeno geslo?</a>
+      </div>
+      <button class="btn">Prijavi se</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(n) {
+  document.querySelectorAll('.version').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.version-nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('v' + n).classList.add('active');
+  document.querySelectorAll('.version-nav button')[n - 1].classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// V1
+function v1show(mode) {
+  var pw = document.getElementById('v1-pw');
+  var guest = document.getElementById('v1-form-guest');
+  var login = document.getElementById('v1-form-login');
+  var pills = document.querySelectorAll('#v1 .v1-pill');
+  pills.forEach(function(p) { p.classList.remove('active'); });
+
+  if (mode === 'guest') {
+    pills[0].classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.remove('visible');
+  } else if (mode === 'register') {
+    pills[1].classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.add('visible');
+  } else {
+    guest.style.display = 'none'; login.classList.add('visible');
+  }
+}
+
+// V2
+function v2show(mode, el) {
+  var pw = document.getElementById('v2-pw');
+  var guest = document.getElementById('v2-form-guest');
+  var login = document.getElementById('v2-form-login');
+  document.querySelectorAll('#v2 .v2-tab').forEach(function(t) { t.classList.remove('active'); });
+
+  if (mode === 'guest') {
+    if(el) el.classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.remove('visible');
+  } else if (mode === 'register') {
+    if(el) el.classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.add('visible');
+  } else {
+    guest.style.display = 'none'; login.classList.add('visible');
+  }
+}
+
+// V3
+function v3show(mode, el) {
+  var pw = document.getElementById('v3-pw');
+  var guest = document.getElementById('v3-form-guest');
+  var login = document.getElementById('v3-form-login');
+  document.querySelectorAll('#v3 .v3-seg').forEach(function(s) { s.classList.remove('active'); });
+
+  if (mode === 'guest') {
+    if(el) el.classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.remove('visible');
+  } else if (mode === 'register') {
+    if(el) el.classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.add('visible');
+  } else {
+    guest.style.display = 'none'; login.classList.add('visible');
+  }
+}
+
+// V4
+function v4show(mode, el) {
+  var pw = document.getElementById('v4-pw');
+  var guest = document.getElementById('v4-form-guest');
+  var login = document.getElementById('v4-form-login');
+  document.querySelectorAll('#v4 .v4-opt').forEach(function(o) { o.classList.remove('active'); });
+
+  if (mode === 'guest') {
+    if(el) el.classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.remove('visible');
+  } else if (mode === 'register') {
+    if(el) el.classList.add('active');
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.add('visible');
+  } else {
+    guest.style.display = 'none'; login.classList.add('visible');
+  }
+}
+
+// V5
+function v5show(mode) {
+  var pw = document.getElementById('v5-pw');
+  var guest = document.getElementById('v5-form-guest');
+  var login = document.getElementById('v5-form-login');
+  var expand = document.querySelector('#v5 .v5-expand');
+
+  if (mode === 'guest') {
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.remove('visible');
+    expand.querySelector('.v5-expand-left').innerHTML = 'Naročilo brez registracije &middot; <a onclick="v5show(\'register\')">Ustvari račun</a>';
+  } else if (mode === 'register') {
+    guest.style.display = 'flex'; login.classList.remove('visible');
+    pw.classList.add('visible');
+    expand.querySelector('.v5-expand-left').innerHTML = 'Registracija &middot; <a onclick="v5show(\'guest\')">Nadaljuj kot gost</a>';
+  } else {
+    guest.style.display = 'none'; login.classList.add('visible');
+  }
+}
+</script>
+</body>
+</html>

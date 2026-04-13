@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Footer v1 — 3 Iterations</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #c8c8c8; }
+
+    :root {
+      --gold:      #f9b94a;
+      --gold-dk:   #e0a030;
+      --bg:        #3a3a3a;
+      --bg-raised: #424242;
+      --on:        #f5f5f5;
+      --muted:     rgba(245,245,245,.55);
+      --dim:       rgba(245,245,245,.28);
+      --rule:      rgba(245,245,245,.09);
+    }
+
+    .iter-label {
+      padding: 40px 0 0 40px;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: #888;
+    }
+
+    /* ── shared primitives ── */
+    a { text-decoration: none; }
+
+    .foot-heading {
+      font-family: 'Open Sans', sans-serif;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 14px;
+    }
+
+    .foot-link {
+      display: block;
+      font-size: 13.5px; color: var(--muted);
+      padding: 4px 0;
+      transition: color .16s, padding-left .14s;
+    }
+    .foot-link:hover { color: var(--gold); padding-left: 4px; }
+
+    .foot-contact {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13.5px; color: var(--muted);
+      padding: 5px 0; transition: color .16s;
+    }
+    .foot-contact:hover { color: var(--gold); }
+    .foot-contact .fa { color: var(--gold); width: 14px; font-size: 12px; }
+
+    .foot-hours-row {
+      display: flex; justify-content: space-between;
+      font-size: 13px; padding: 4.5px 0;
+      border-bottom: 1px solid var(--rule);
+      color: var(--muted);
+    }
+    .foot-hours-row span:first-child { color: rgba(245,245,245,.8); }
+
+    .social-links { display: flex; gap: 10px; }
+    .social-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(245,245,245,.08);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; transition: background .16s, color .16s, transform .14s;
+    }
+    .social-btn:hover {
+      background: var(--gold); color: #3a3a3a;
+      transform: translateY(-2px);
+    }
+
+    .review-badge { height: 64px; width: auto; filter: brightness(1.1); opacity: .9; }
+
+    .foot-copy {
+      font-size: 12px; color: var(--dim);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       ITERATION A — Full-width founder banner · 4-col grid
+       Classic. Founder quote runs edge-to-edge across the top.
+       Grid below: store | links | links | account.
+    ══════════════════════════════════════════════════════════ */
+
+    .fA { background: var(--bg); color: var(--on); }
+
+    /* Banner */
+    .fA__banner {
+      display: flex; align-items: center; gap: 28px;
+      padding: 28px 48px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(0,0,0,.12);
+    }
+    .fA__photo {
+      width: 62px; height: 62px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid var(--gold);
+    }
+    .fA__quote {
+      font-size: 14px; line-height: 1.65;
+      color: var(--muted); font-style: italic;
+      max-width: 560px;
+    }
+    .fA__cite {
+      font-style: normal; font-weight: 600;
+      font-size: 12.5px; color: var(--gold); margin-top: 5px;
+    }
+    .fA__review { margin-left: auto; flex-shrink: 0; }
+
+    /* Grid */
+    .fA__grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding: 36px 48px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* Bottom */
+    .fA__bottom {
+      padding: 14px 48px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       ITERATION B — Founder as first column · compact strip
+       More condensed. No full-width banner — founder occupies
+       col 1 of the grid as a card. Gold top accent line.
+    ══════════════════════════════════════════════════════════ */
+
+    .fB {
+      background: var(--bg); color: var(--on);
+      border-top: 3px solid var(--gold);
+    }
+
+    .fB__grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 0;
+      padding: 0 48px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .fB__col {
+      padding: 36px 0 36px 0;
+      border-right: 1px solid var(--rule);
+      padding-right: 32px;
+      padding-left: 32px;
+    }
+    .fB__col:first-child { padding-left: 0; }
+    .fB__col:last-child  { border-right: none; padding-right: 0; }
+
+    /* Founder card inside col */
+    .fB__founder {
+      display: flex; align-items: flex-start; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .fB__photo {
+      width: 52px; height: 52px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid var(--gold);
+    }
+    .fB__name { font-weight: 600; font-size: 14px; color: var(--on); }
+    .fB__role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .fB__quote {
+      font-size: 13px; line-height: 1.65;
+      color: var(--muted); font-style: italic;
+      margin-bottom: 20px;
+    }
+
+    .fB__bottom {
+      padding: 14px 48px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       ITERATION C — Slim banner · 5-col dense grid · dividers
+       Founder strip slimmer (photo + single-line quote).
+       Store info split across 2 cols (address | hours).
+       Tightest layout — works well at full browser width.
+    ══════════════════════════════════════════════════════════ */
+
+    .fC { background: var(--bg); color: var(--on); }
+
+    /* Slim banner */
+    .fC__banner {
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 48px;
+      border-bottom: 1px solid var(--rule);
+      background: rgba(0,0,0,.1);
+    }
+    .fC__photo {
+      width: 44px; height: 44px; border-radius: 50%;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid var(--gold);
+    }
+    .fC__quote {
+      font-size: 13.5px; color: var(--muted);
+      font-style: italic;
+    }
+    .fC__cite {
+      font-style: normal; font-weight: 600;
+      font-size: 12px; color: var(--gold);
+    }
+    .fC__banner-right {
+      margin-left: auto; display: flex;
+      align-items: center; gap: 24px; flex-shrink: 0;
+    }
+
+    /* Dense 5-col grid */
+    .fC__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      gap: 32px;
+      padding: 32px 48px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .fC__bottom {
+      padding: 14px 48px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ITERATION A — Full-width founder banner
+═══════════════════════════════════════════════════════════ -->
+<p class="iter-label">Iteration A — Full-width founder banner · review badge aligned right</p>
+
+<footer class="fA">
+
+  <!-- Founder banner -->
+  <div class="fA__banner">
+    <img class="fA__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Tanja">
+    <blockquote class="fA__quote">
+      "Otroški kotiček je več kot trgovina — je prostor, kjer vsak otrok najde kaj zase. Vse izbiramo z ljubeznijo in mislijo na vašo družino."
+      <p class="fA__cite">— Tanja, ustanoviteljica</p>
+    </blockquote>
+    <div class="fA__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter review ver01.png" alt="Google ocene">
+    </div>
+  </div>
+
+  <!-- 4-col grid -->
+  <div class="fA__grid">
+
+    <!-- Col 1: Store -->
+    <div>
+      <p class="foot-heading">Naša trgovina</p>
+      <address style="font-style:normal; font-size:14px; color:rgba(245,245,245,.75); line-height:1.8; margin-bottom:14px;">
+        <strong style="display:block; font-size:15px; font-weight:600; color:#f5f5f5; margin-bottom:3px;">Otroški kotiček</strong>
+        Šolska ulica 2, 3330 Mozirje
+      </address>
+      <div style="margin-bottom:16px;">
+        <div class="foot-hours-row"><span>Tor – Pet</span><span>10:00 – 18:00</span></div>
+        <div class="foot-hours-row"><span>Sobota</span><span>9:00 – 12:00</span></div>
+        <div class="foot-hours-row"><span>Pon, Ned</span><span>Zaprto</span></div>
+      </div>
+      <a href="tel:+386XXXXXXXX" class="foot-contact"><i class="fa fa-phone"></i> +386 XX XXX XXX</a>
+      <a href="/kontakt" class="foot-contact"><i class="fa fa-envelope"></i> info@otroski-koticek.si</a>
+    </div>
+
+    <!-- Col 2: Informations + Service -->
+    <div>
+      <p class="foot-heading">Informacije</p>
+      <a href="#" class="foot-link">O nas</a>
+      <a href="#" class="foot-link">Zasebnost</a>
+      <a href="#" class="foot-link">Pogoji poslovanja</a>
+      <p class="foot-heading" style="margin-top:20px;">Storitve</p>
+      <a href="#" class="foot-link">Kontakt</a>
+      <a href="#" class="foot-link">Vračila</a>
+      <a href="#" class="foot-link">Zemljevid strani</a>
+    </div>
+
+    <!-- Col 3: Extra -->
+    <div>
+      <p class="foot-heading">Odkrijte</p>
+      <a href="#" class="foot-link">Prodaj oblačila</a>
+      <a href="#" class="foot-link">Bone vrednosti</a>
+      <a href="#" class="foot-link">Partnerski program</a>
+      <a href="#" class="foot-link">Posebne ponudbe</a>
+    </div>
+
+    <!-- Col 4: Account + social -->
+    <div>
+      <p class="foot-heading">Moj račun</p>
+      <a href="#" class="foot-link">Moj račun</a>
+      <a href="#" class="foot-link">Moje naročilo</a>
+      <a href="#" class="foot-link">Seznam želja</a>
+      <a href="#" class="foot-link">Novice</a>
+      <p class="foot-heading" style="margin-top:20px;">Sledite nam</p>
+      <div class="social-links">
+        <a href="#" class="social-btn"><i class="fa fa-facebook"></i></a>
+        <a href="#" class="social-btn"><i class="fa fa-instagram"></i></a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fA__bottom">
+    <span class="foot-copy">© 2025 Otroški kotiček, Šolska ulica 2, Mozirje. Vse pravice pridržane.</span>
+  </div>
+
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     ITERATION B — Founder as first column · gold top border
+═══════════════════════════════════════════════════════════ -->
+<p class="iter-label">Iteration B — Founder in first column · vertical dividers · gold top border</p>
+
+<footer class="fB">
+
+  <div class="fB__grid">
+
+    <!-- Col 1: Founder + store + social -->
+    <div class="fB__col">
+      <div class="fB__founder">
+        <img class="fB__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Tanja">
+        <div>
+          <p class="fB__name">Tanja</p>
+          <p class="fB__role">Ustanoviteljica · Mozirje</p>
+        </div>
+      </div>
+      <p class="fB__quote">"Vsak kos, ki pride v našo trgovino, pregledam osebno. Iščemo kakovost, ki zdrži."</p>
+
+      <p class="foot-heading">Naša trgovina</p>
+      <address style="font-style:normal; font-size:13px; color:rgba(245,245,245,.65); line-height:1.75; margin-bottom:12px;">
+        Šolska ulica 2, 3330 Mozirje
+      </address>
+      <div style="margin-bottom:14px;">
+        <div class="foot-hours-row"><span>Tor – Pet</span><span>10:00 – 18:00</span></div>
+        <div class="foot-hours-row"><span>Sobota</span><span>9:00 – 12:00</span></div>
+      </div>
+      <a href="tel:+386XXXXXXXX" class="foot-contact"><i class="fa fa-phone"></i> +386 XX XXX XXX</a>
+      <a href="/kontakt" class="foot-contact"><i class="fa fa-envelope"></i> info@otroski-koticek.si</a>
+      <div class="social-links" style="margin-top:16px;">
+        <a href="#" class="social-btn"><i class="fa fa-facebook"></i></a>
+        <a href="#" class="social-btn"><i class="fa fa-instagram"></i></a>
+      </div>
+    </div>
+
+    <!-- Col 2: Informations + Service -->
+    <div class="fB__col">
+      <p class="foot-heading">Informacije</p>
+      <a href="#" class="foot-link">O nas</a>
+      <a href="#" class="foot-link">Zasebnost</a>
+      <a href="#" class="foot-link">Pogoji poslovanja</a>
+      <p class="foot-heading" style="margin-top:20px;">Storitve</p>
+      <a href="#" class="foot-link">Kontakt</a>
+      <a href="#" class="foot-link">Vračila</a>
+      <a href="#" class="foot-link">Zemljevid strani</a>
+    </div>
+
+    <!-- Col 3: Extra -->
+    <div class="fB__col">
+      <p class="foot-heading">Odkrijte</p>
+      <a href="#" class="foot-link">Prodaj oblačila</a>
+      <a href="#" class="foot-link">Bone vrednosti</a>
+      <a href="#" class="foot-link">Partnerski program</a>
+      <a href="#" class="foot-link">Posebne ponudbe</a>
+    </div>
+
+    <!-- Col 4: Account + review -->
+    <div class="fB__col">
+      <p class="foot-heading">Moj račun</p>
+      <a href="#" class="foot-link">Moj račun</a>
+      <a href="#" class="foot-link">Moje naročilo</a>
+      <a href="#" class="foot-link">Seznam želja</a>
+      <a href="#" class="foot-link">Novice</a>
+      <div style="margin-top:24px;">
+        <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter review ver01.png" alt="Google ocene">
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fB__bottom">
+    <span class="foot-copy">© 2025 Otroški kotiček, Šolska ulica 2, Mozirje. Vse pravice pridržane.</span>
+  </div>
+
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     ITERATION C — Slim banner · 5-col dense · store split
+═══════════════════════════════════════════════════════════ -->
+<p class="iter-label">Iteration C — Slim founder strip · social + review inline · 5-col dense grid</p>
+
+<footer class="fC">
+
+  <!-- Slim founder strip -->
+  <div class="fC__banner">
+    <img class="fC__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Tanja">
+    <p class="fC__quote">
+      "Vsak kos izbiramo z mislijo na vašo družino."
+      <span class="fC__cite"> — Tanja, ustanoviteljica</span>
+    </p>
+    <div class="fC__banner-right">
+      <div class="social-links">
+        <a href="#" class="social-btn"><i class="fa fa-facebook"></i></a>
+        <a href="#" class="social-btn"><i class="fa fa-instagram"></i></a>
+      </div>
+      <img class="review-badge" style="height:52px;" src="../opencart/image/catalog/assets/elements/badges/foofter review ver01.png" alt="Google ocene">
+    </div>
+  </div>
+
+  <!-- 5-col grid -->
+  <div class="fC__grid">
+
+    <!-- Col 1: Address -->
+    <div>
+      <p class="foot-heading">Naša trgovina</p>
+      <address style="font-style:normal; font-size:13.5px; color:rgba(245,245,245,.7); line-height:1.8; margin-bottom:12px;">
+        <strong style="display:block; font-weight:600; color:#f5f5f5; margin-bottom:2px;">Otroški kotiček</strong>
+        Šolska ulica 2<br>3330 Mozirje
+      </address>
+      <a href="tel:+386XXXXXXXX" class="foot-contact"><i class="fa fa-phone"></i> +386 XX XXX XXX</a>
+      <a href="/kontakt" class="foot-contact"><i class="fa fa-envelope"></i> info@otroski-koticek.si</a>
+    </div>
+
+    <!-- Col 2: Hours -->
+    <div>
+      <p class="foot-heading">Delovni čas</p>
+      <div class="foot-hours-row"><span>Tor – Pet</span><span>10:00 – 18:00</span></div>
+      <div class="foot-hours-row"><span>Sobota</span><span>9:00 – 12:00</span></div>
+      <div class="foot-hours-row"><span>Pon, Ned</span><span>Zaprto</span></div>
+    </div>
+
+    <!-- Col 3: Informations + Service -->
+    <div>
+      <p class="foot-heading">Informacije</p>
+      <a href="#" class="foot-link">O nas</a>
+      <a href="#" class="foot-link">Zasebnost</a>
+      <a href="#" class="foot-link">Pogoji</a>
+      <p class="foot-heading" style="margin-top:18px;">Storitve</p>
+      <a href="#" class="foot-link">Kontakt</a>
+      <a href="#" class="foot-link">Vračila</a>
+      <a href="#" class="foot-link">Zemljevid strani</a>
+    </div>
+
+    <!-- Col 4: Extra -->
+    <div>
+      <p class="foot-heading">Odkrijte</p>
+      <a href="#" class="foot-link">Prodaj oblačila</a>
+      <a href="#" class="foot-link">Bone vrednosti</a>
+      <a href="#" class="foot-link">Partnerski program</a>
+      <a href="#" class="foot-link">Posebne ponudbe</a>
+    </div>
+
+    <!-- Col 5: Account -->
+    <div>
+      <p class="foot-heading">Moj račun</p>
+      <a href="#" class="foot-link">Moj račun</a>
+      <a href="#" class="foot-link">Moje naročilo</a>
+      <a href="#" class="foot-link">Seznam želja</a>
+      <a href="#" class="foot-link">Novice</a>
+    </div>
+
+  </div>
+
+  <div class="fC__bottom">
+    <span class="foot-copy">© 2025 Otroški kotiček, Šolska ulica 2, Mozirje. Vse pravice pridržane.</span>
+  </div>
+
+</footer>
+
+<div style="height:40px;"></div>
+</body>
+</html>

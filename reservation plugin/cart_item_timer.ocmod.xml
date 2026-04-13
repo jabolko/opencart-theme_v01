@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Cart Item Timer</name>
+    <code>cart_item_timer</code>
+    <version>3.1</version>
+    <author>Output Web</author>
+    <link>https://www.buy-extensions.com</link>
+ 
+    <!-- startup -->
+    <file path="catalog/language/en-gb/checkout/cart.php">
+        <operation>
+            <search><![CDATA[// Text]]></search>
+            <add position="after"><![CDATA[
+                $_['text_item_timer']             = 'Your item is saved for <span>${minutes}:${seconds}</span> minutes!';
+                $_['text_item_expired']           = '<span>Item expired!</span>';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/language/sl-SI/checkout/cart.php">
+        <operation>
+            <search><![CDATA[// Text]]></search>
+            <add position="after"><![CDATA[
+                $_['text_item_timer']             = 'Tvoj artikel je rezerviran <span>${minutes}:${seconds}</span> minut!';
+                $_['text_item_expired']           = '<span>Artikel je potekel!</span>';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="system/library/cart/cart.php">
+        <operation>
+            <search><![CDATA['cart_id'         => $cart['cart_id'],]]></search>
+            <add position="after"><![CDATA[
+            'date_added'         => $cart['date_added'],
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$recurring_query = $this->db->query]]></search>
+            <add position="before"><![CDATA[
+                $query_reserved = $this->db->query("SELECT * FROM " . DB_PREFIX . "reserved_stock WHERE cart_id='". (int)$cart['cart_id'] ."'");
+                if($query_reserved->num_rows && $stock==false){
+                    if($cart['quantity']<=$query_reserved->row['quantity']){
+                        $stock = true;
+                    }
+                }
+            ]]></add>
+        </operation>
+        
+        <operation>
+            <search><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "cart SET api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "', customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', date_added = NOW()");]]></search>
+            <add position="after"><![CDATA[
+            $cart_id = $this->db->getLastId();
+            $this->db->query("INSERT INTO " . DB_PREFIX . "reserved_stock SET cart_id = '" . (int)$cart_id . "', product_id = '" . (int)$product_id . "', quantity = '" . (int)$quantity . "'");
+            $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "'");
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = (quantity + " . (int)$quantity . ") WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id = '" . (int)$product_id . "' AND recurring_id = '" . (int)$recurring_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "'");]]></search>
+            <add position="after"><![CDATA[
+            $query_res = $this->db->query("SELECT cart_id FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id = '" . (int)$product_id . "' AND recurring_id = '" . (int)$recurring_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "'");
+            
+            $this->db->query("UPDATE " . DB_PREFIX . "reserved_stock SET quantity = quantity + " . (int)$quantity . " WHERE cart_id = '" . (int)$query_res->row['cart_id'] . "' AND product_id = '" . (int)$product_id . "'");
+            
+            // Adjust stock for updated quantity
+            
+            $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "'");
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[public function remove($cart_id) {]]></search>
+            <add position="after"><![CDATA[
+            // Get the product ID and quantity to restore stock
+            $query = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+            $this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$cart_id . "'");
+            if ($query->num_rows) {
+                $product_id = $query->row['product_id'];
+                $quantity = $query->row['quantity'];
+        
+                // Restore stock quantity
+                $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "'");
+            }
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[public function clear() {]]></search>
+            <add position="after"><![CDATA[
+            // Get all items from the cart to restore stock
+            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+        
+            foreach ($query->rows as $result) {
+                $this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$result['cart_id'] . "'");
+                $product_id = $result['product_id'];
+                $quantity = $result['quantity'];
+        
+                // Restore stock quantity
+                //$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + " . (int)$quantity . " WHERE product_id = '" . (int)$product_id . "'");
+            }
+
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = '" . (int)$quantity . "' WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");]]></search>
+            <add position="replace"><![CDATA[
+                // Fetch the current cart quantity for the given cart ID
+                $query = $this->db->query("SELECT product_id, quantity FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+                
+                if ($query->num_rows) {
+                    $product_id = $query->row['product_id'];
+                    $old_quantity = $query->row['quantity'];
+                    
+                    // Update the cart quantity
+                    $this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = '" . (int)$quantity . "' WHERE cart_id = '" . (int)$cart_id . "' AND api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+                    
+                    // Adjust stock based on the difference in quantity
+                    $quantity_diff = (int)$quantity - (int)$old_quantity;
+                    
+                    if ($quantity_diff != 0) {
+                        // If quantity increased, decrease product stock
+                        // If quantity decreased, increase product stock
+                        $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity - " . (int)$quantity_diff . " WHERE product_id = '" . (int)$product_id . "'");
+                        
+                        // Update reserved stock accordingly
+                        $this->db->query("UPDATE " . DB_PREFIX . "reserved_stock SET quantity = '" . (int)$quantity . "' WHERE cart_id = '" . (int)$cart_id . "' AND product_id = '" . (int)$product_id . "'");
+                    }
+                }
+            ]]></add>
+        </operation>
+        
+        <operation>
+            <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 1 HOUR)");]]></search>
+            <add position="replace"><![CDATA[
+			
+            // Fetch all expired carts with no customer ID after 1 hour
+            $expired_carts_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+            
+            if ($expired_carts_query->num_rows) {
+                foreach ($expired_carts_query->rows as $cart) {
+                    // Fetch the product's current reserved stock and restore it
+                    $product_id = (int)$cart['product_id'];
+                    $quantity = (int)$cart['quantity'];
+            
+                    // Update the stock for the product by adding back the reserved quantity
+                    $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + '" . $quantity . "' WHERE product_id = '" . $product_id . "'");
+            
+                    // Optionally, remove the reserved stock entry if you have a `reserved_stock` table
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+                }
+            
+                // Finally, remove the expired carts after restoring stock
+                $this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE (api_id > '0' OR customer_id = '0') AND date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+            }
+
+            ]]></add>
+        </operation>
+        
+        <operation>
+            <search><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "cart SET session_id = '" . $this->db->escape($this->session->getId()) . "' WHERE api_id = '0' AND customer_id = '" . (int)$this->customer->getId() . "'");]]></search>
+            <add position="after"><![CDATA[
+            // Remove all the expired carts with customer ID
+			$expired_customer_carts_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+			
+			if ($expired_customer_carts_query->num_rows) {
+				foreach ($expired_customer_carts_query->rows as $cart) {
+					// Fetch the product's current reserved stock and restore it
+					$product_id = (int)$cart['product_id'];
+					$quantity = (int)$cart['quantity'];
+			
+					// Update the stock for the product by adding back the reserved quantity
+					$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + '" . $quantity . "' WHERE product_id = '" . $product_id . "'");
+			
+					// Optionally, remove the reserved stock entry if you have a `reserved_stock` table
+					$this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+				}
+			
+				// Finally, remove the expired carts after restoring stock
+				$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+			}
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart['cart_id'] . "'");]]></search>
+            <add position="replace"><![CDATA[
+            //$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[$this->add($cart['product_id'], $cart['quantity'], json_decode($cart['option']), $cart['recurring_id']);]]></search>
+            <add position="replace"><![CDATA[
+            //$this->add($cart['product_id'], $cart['quantity'], json_decode($cart['option']), $cart['recurring_id']);
+            
+            $this->db->query("UPDATE " . DB_PREFIX . "cart SET customer_id = '" . (int)$this->customer->getId() . "' WHERE api_id = '0' AND cart_id = '" . (int)$cart['cart_id'] . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+            ]]></add>
+        </operation>
+        
+        <operation>
+            <search><![CDATA[public function clear() {]]></search>
+            <add position="before"><![CDATA[
+            public function clearCart() {
+                 // Get all items from the cart to restore stock
+                $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+            
+                foreach ($query->rows as $result) {
+                    $this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$result['cart_id'] . "'");
+                    $product_id = $result['product_id'];
+                    $quantity = $result['quantity'];
+            
+                }
+                //$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE api_id = '" . (isset($this->session->data['api_id']) ? (int)$this->session->data['api_id'] : 0) . "' AND customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "'");
+            }
+			
+			
+			public function clearExpiredCard() {
+				// Fetch all expired carts after 1 hour
+				$expired_carts_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+				
+				if ($expired_carts_query->num_rows) {
+					foreach ($expired_carts_query->rows as $cart) {
+						// Fetch the product's current reserved stock and restore it
+						$product_id = (int)$cart['product_id'];
+						$quantity = (int)$cart['quantity'];
+				
+						// Update the stock for the product by adding back the reserved quantity
+						$this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + '" . $quantity . "' WHERE product_id = '" . $product_id . "'");
+				
+						// Optionally, remove the reserved stock entry if you have a `reserved_stock` table
+						$this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+					}
+				
+					// Finally, remove the expired carts after restoring stock
+					$this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+				}
+			}
+            ]]></add>
+        </operation>
+		
+    </file>
+    <file path="catalog/controller/checkout/cart.php">
+        <operation>
+            <search><![CDATA['cart_id'   => $product['cart_id'],]]></search>
+            <add position="after"><![CDATA[
+            'date_added'   => $product['date_added'],
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[public function index() {]]></search>
+            <add position="before"><![CDATA[
+            public function currentTime(){
+                header('Content-Type: application/json');
+                echo json_encode(['server_time' => date('Y-m-d H:i:s')]);
+            }
+            ]]></add>
+        </operation>
+        
+        <operation>
+            <search><![CDATA[public function index() {]]></search>
+            <add position="before"><![CDATA[
+                public function clearExpiredCard() {
+                    // Fetch all expired carts after 1 hour
+                    $expired_carts_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+                    
+                    if ($expired_carts_query->num_rows) {
+                        foreach ($expired_carts_query->rows as $cart) {
+                            // Fetch the product's current reserved stock and restore it
+                            $product_id = (int)$cart['product_id'];
+                            $quantity = (int)$cart['quantity'];
+                    
+                            // Update the stock for the product by adding back the reserved quantity
+                            $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = quantity + '" . $quantity . "' WHERE product_id = '" . $product_id . "'");
+                    
+                            // Optionally, remove the reserved stock entry if you have a `reserved_stock` table
+                            $this->db->query("DELETE FROM " . DB_PREFIX . "reserved_stock WHERE cart_id = '" . (int)$cart['cart_id'] . "'");
+                        }
+                    
+                        // Finally, remove the expired carts after restoring stock
+                        $this->db->query("DELETE FROM " . DB_PREFIX . "cart WHERE date_added < DATE_SUB(NOW(), INTERVAL 20 MINUTE)");
+                    }
+                }
+            ]]></add>
+        </operation>
+		
+		<operation>
+            <search><![CDATA[if ($product_info) {]]></search>
+            <add position="after"><![CDATA[
+				if($product_info['quantity']<=0){
+					$json['error'] = true;
+				}
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/view/theme/journal3/template/checkout/cart.twig">
+        <operation>
+            <search><![CDATA[{{ header }}]]></search>
+            <add position="after"><![CDATA[
+            <style>
+                .countdown-timer{
+                    font-weight: 700;
+                    color: #000 !important
+                }
+                .countdown-timer span{
+                    color: red;
+                    font-size:85%;
+                }
+            </style>
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[{% if product.option %}]]></search>
+            <add position="before"><![CDATA[
+            <br>
+            <small class="countdown-timer" data-time-added="{{ product.date_added }}" id="item-timer-{{ product.cart_id }}"></span>
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[{{ footer }}]]></search>
+            <add position="before"><![CDATA[
+            
+            <script>
+                // Function to parse 'YYYY-MM-DD HH:MM:SS' format into a JavaScript timestamp
+                function parseDateTime(dateTimeStr) {
+                    var dateTimeParts = dateTimeStr.split(' ');
+                    var dateParts = dateTimeParts[0].split('-');
+                    var timeParts = dateTimeParts[1].split(':');
+                    
+                    // Create a new Date object using UTC to avoid timezone issues
+                    return new Date(Date.UTC(
+                        dateParts[0],    // Year
+                        dateParts[1] - 1, // Month (0-based in JavaScript)
+                        dateParts[2],    // Day
+                        timeParts[0],    // Hours
+                        timeParts[1],    // Minutes
+                        timeParts[2]     // Seconds
+                    )).getTime() / 1000; // Convert to seconds since epoch
+                }
+            
+                // Function to start the countdown for each cart item
+                function startCountdownTimers(serverTime) {
+                    var countdownElements = document.querySelectorAll('.countdown-timer');
+                    var serverTimestamp = parseDateTime(serverTime); // Convert server time to timestamp
+            
+                    countdownElements.forEach(function (element) {
+                        var timeAdded = element.getAttribute('data-time-added'); // Get the time item was added
+                        
+                        var timeAddedTimestamp = parseDateTime(timeAdded); // Parse 'YYYY-MM-DD HH:MM:SS' into timestamp (in seconds)
+                        var elapsedTime = serverTimestamp - timeAddedTimestamp; // Time passed since item was added (based on server time)
+                        
+                        var remainingTime = 1200 - elapsedTime; // Remaining time: 20 minuts (1200 seconds) minus elapsed time
+            
+                        if (remainingTime > 0) {
+                            var timer = setInterval(function () {
+                                remainingTime--;
+            
+                                // Calculate minutes and seconds remaining
+                                var minutes = Math.floor(remainingTime / 60);
+                                var seconds = remainingTime % 60;
+                                seconds = seconds < 10 ? '0' + seconds : seconds;
+                                if (remainingTime <= 0) {
+                                    clearInterval(timer);
+                                    element.innerHTML = "{{ text_item_expired }}";
+                                } else {
+                                    element.innerHTML = `{{ text_item_timer }}`;
+                                }
+                            }, 1000); // Update every second
+                        } else {
+                            element.innerHTML = "{{ text_item_expired }}";
+                        }
+                    });
+                }
+            
+                // Fetch the server time using AJAX and start the countdown timers
+                $(document).ready(function() {
+                    $.get('index.php?route=checkout/cart/currentTime', function(response) {
+                        var serverTime = response.server_time; // Get server time in 'YYYY-MM-DD HH:MM:SS' format
+                        startCountdownTimers(serverTime); // Start the countdown using server time
+                    });
+                });
+            </script>
+            ]]></add>
+        </operation>
+    </file>
+    
+    <file path="catalog/controller/checkout/success.php">
+        <operation>
+            <search><![CDATA[$this->cart->clear();]]></search>
+            <add position="before"><![CDATA[
+                $this->cart->clearCart();
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/api/order.php">
+        <operation>
+            <search><![CDATA[$this->cart->clear();]]></search>
+            <add position="before"><![CDATA[
+                $this->cart->clearCart();
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/extension/payment/klarna_checkout.php">
+        <operation>
+            <search><![CDATA[$this->cart->clear();]]></search>
+            <add position="before"><![CDATA[
+                $this->cart->clearCart();
+            ]]></add>
+        </operation>
+    </file>
+    <file path="catalog/controller/common/cart.php">
+        <operation>
+            <search><![CDATA['cart_id'   => $product['cart_id'],]]></search>
+            <add position="after"><![CDATA[
+            'date_added'   => $product['date_added'],
+            ]]></add>
+        </operation>
+    </file>
+	<file path="catalog/controller/common/cart.php">
+        <operation>
+            <search><![CDATA['cart_id'   => $product['cart_id'],]]></search>
+            <add position="after"><![CDATA[
+            'date_added'   => $product['date_added'],
+            ]]></add>
+        </operation>
+		<operation>
+            <search><![CDATA[public function index() {]]></search>
+            <add position="after"><![CDATA[
+            $this->cart->clearExpiredCard();
+            ]]></add>
+        </operation>
+    </file>
+	
+    <file path="catalog/view/theme/journal3/template/common/cart.twig">
+        <operation>
+            <search><![CDATA[{% if journal3.get('catalogMiniCartStatus') %}]]></search>
+            <add position="before"><![CDATA[
+            <style>
+                .countdown-timer{
+                    font-weight: 700;
+                    color: #000 !important;
+                    display:block;
+                }
+                .countdown-timer span{
+                    color: red;
+                    font-size:85%;
+                }
+            </style>
+            ]]></add>
+        </operation>
+        <operation>
+            <search><![CDATA[<td class="text-left td-name"><a href="{{ product.href }}">{{ product.name }}</a><br > {% if product.option %}]]></search>
+            <add position="replace"><![CDATA[
+            <td class="text-left td-name"><a href="{{ product.href }}">{{ product.name }}</a><br>
+            <span class="countdown-timer" data-time-added="{{ product.date_added }}" id="item-timer-{{ product.cart_id }}"></span>
+            <br > {% if product.option %}
+            
+            ]]></add>
+        </operation>
+        
+    </file>
+	<file path="catalog/view/theme/journal3/template/product/product.twig">
+        <operation>
+            <search><![CDATA[parent.$('.cart-content ul').load('index.php?route=common/cart{{ constant('JOURNAL3_ROUTE_SEPARATOR') }}info{% if journal3_is_oc4 %}&language={{ language }}{% endif %} ul li');]]></search>
+            <add position="after"><![CDATA[
+            setTimeout(function(){
+				 $.get('index.php?route=checkout/cart/currentTime', function(response) {
+					var serverTime = response.server_time; 
+					startCountdownTimers(serverTime); 
+				});
+			}, 1000);
+            ]]></add>
+        </operation>
+    </file>
+	<file path="catalog/model/checkout/order.php">
+        <operation>
+            <search><![CDATA[$this->db->query("UPDATE `" . DB_PREFIX . "product` SET quantity = (quantity + " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '1'");]]></search>
+            <add position="replace"><![CDATA[
+				$this->db->query("UPDATE `" . DB_PREFIX . "product` SET quantity = (quantity + " . (int)$order_product['quantity'] . ") WHERE product_id = '" . (int)$order_product['product_id'] . "' AND subtract = '0'");
+            ]]></add>
+        </operation>
+    </file>
+	
+	<file path="catalog/controller/journal3/event/product.php">
+        <operation>
+            <search><![CDATA[$args['journal3_button_cart'] = $this->journal3->get('filterAddToCartStock') && self::$product_info['quantity'] <= 0 ? self::$product_info['stock_status'] : $this->language->get('button_cart');]]></search>
+            <add position="replace"><![CDATA[
+				if(self::$product_info['quantity']<=0){
+					$reserved_query=$this->db->query("SELECT * FROM ".DB_PREFIX."reserved_stock WHERE product_id='".(int)self::$product_info['product_id']."'");
+			   
+					if($reserved_query->num_rows){
+						$reserved_status = 'REZERVIRAN';
+					}else{
+						$reserved_status = false;
+					}
+				}else{
+					$reserved_status = false;
+				}
+				if($reserved_status){
+					$args['journal3_button_cart'] = $this->journal3->get('filterAddToCartStock') && self::$product_info['quantity'] <= 0 ? self::$product_info['stock_status'] : $this->language->get('button_cart');
+				}else{
+					$args['journal3_button_cart'] = $this->journal3->get('filterAddToCartStock') && self::$product_info['quantity'] <= 0 ? 'PRODANO' : $this->language->get('button_cart');
+				}
+            ]]></add>
+        </operation>
+    </file>
+</modification>

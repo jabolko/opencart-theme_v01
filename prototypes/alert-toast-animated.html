@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Toast Alerts — 5 Variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --success: #7d9478;
+            --error: #d55e6f;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: var(--surface-alt);
+            min-height: 100vh;
+        }
+
+        /* Demo page layout */
+        .demo-page {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 20px 16px 100px;
+        }
+
+        .demo-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--heading);
+            margin-bottom: 8px;
+        }
+
+        .demo-desc {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .demo-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .demo-btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--heading);
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s;
+        }
+
+        .demo-btn:hover { border-color: var(--gold); }
+
+        .demo-btn span {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .demo-separator {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 30px 0;
+        }
+
+        /* ================================================================
+           TOAST CONTAINER — fixed position, holds all toasts
+           ================================================================ */
+        .toast-container {
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast-container--top-right {
+            top: 16px;
+            right: 16px;
+            align-items: flex-end;
+        }
+
+        .toast-container--top-center {
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            align-items: center;
+        }
+
+        .toast-container--bottom-center {
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            align-items: center;
+        }
+
+        .toast-container--bottom-right {
+            bottom: 16px;
+            right: 16px;
+            align-items: flex-end;
+        }
+
+        .toast-container--top-full {
+            top: 0;
+            left: 0;
+            right: 0;
+            align-items: stretch;
+        }
+
+        /* ================================================================
+           V1 — DARK SNACKBAR (bottom center, slide up)
+           ================================================================ */
+        .toast-v1 {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: var(--heading);
+            color: rgba(255,255,255,0.9);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            min-width: 280px;
+            max-width: 380px;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .toast-v1.dismissing { animation: slideDown 0.3s ease forwards; }
+
+        .toast-v1__icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-v1__icon svg { width: 14px; height: 14px; stroke: var(--white); fill: none; stroke-width: 2.5; }
+
+        .toast-v1--success .toast-v1__icon { background: var(--success); }
+        .toast-v1--danger .toast-v1__icon { background: var(--error); }
+        .toast-v1--info .toast-v1__icon { background: var(--gold); }
+
+        .toast-v1__text { flex: 1; }
+
+        .toast-v1__action {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .toast-v1__progress {
+            position: absolute;
+            bottom: 0;
+            left: 12px;
+            right: 12px;
+            height: 2px;
+            border-radius: 1px;
+            background: rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+
+        .toast-v1__progress-fill {
+            height: 100%;
+            background: rgba(255,255,255,0.3);
+            animation: shrink 3s linear forwards;
+        }
+
+        .toast-v1 { position: relative; }
+
+        /* ================================================================
+           V2 — GLASS CARD (top right, slide in from right)
+           ================================================================ */
+        .toast-v2 {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            font-size: 13px;
+            color: var(--heading);
+            min-width: 300px;
+            max-width: 380px;
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .toast-v2.dismissing { animation: slideOutRight 0.3s ease forwards; }
+
+        .toast-v2__bar {
+            width: 3px;
+            height: 28px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .toast-v2--success .toast-v2__bar { background: var(--success); }
+        .toast-v2--danger .toast-v2__bar { background: var(--error); }
+        .toast-v2--info .toast-v2__bar { background: var(--gold); }
+
+        .toast-v2__body { flex: 1; }
+
+        .toast-v2__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .toast-v2--success .toast-v2__title { color: var(--success); }
+        .toast-v2--danger .toast-v2__title { color: var(--error); }
+        .toast-v2--info .toast-v2__title { color: var(--gold-dark); }
+
+        .toast-v2__text {
+            font-size: 12px;
+            color: var(--charcoal);
+        }
+
+        .toast-v2__close {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.05);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .toast-v2__close svg { width: 12px; height: 12px; stroke: var(--muted); fill: none; stroke-width: 2.5; }
+
+        /* ================================================================
+           V3 — MINIMAL PILL (top center, drop down)
+           ================================================================ */
+        .toast-v3 {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--heading);
+            color: rgba(255,255,255,0.9);
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+            animation: dropDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            white-space: nowrap;
+        }
+
+        .toast-v3.dismissing { animation: floatUp 0.3s ease forwards; }
+
+        .toast-v3__dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .toast-v3--success .toast-v3__dot { background: var(--success); }
+        .toast-v3--danger .toast-v3__dot { background: var(--error); }
+        .toast-v3--info .toast-v3__dot { background: var(--gold); }
+
+        /* ================================================================
+           V4 — FULL WIDTH BAR (top, slides down, progress auto-dismiss)
+           ================================================================ */
+        .toast-v4 {
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            animation: slideDown2 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast-v4.dismissing { animation: slideUp2 0.3s ease forwards; }
+
+        .toast-v4--success { background: var(--success); color: var(--white); }
+        .toast-v4--danger { background: var(--error); color: var(--white); }
+        .toast-v4--info { background: var(--gold); color: var(--heading); }
+
+        .toast-v4__icon svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        .toast-v4__text { flex: 1; }
+
+        .toast-v4__close {
+            background: none;
+            border: none;
+            color: inherit;
+            opacity: 0.6;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            pointer-events: auto;
+        }
+
+        .toast-v4__progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .toast-v4__progress-fill {
+            height: 100%;
+            background: rgba(255,255,255,0.35);
+            animation: shrink 3s linear forwards;
+        }
+
+        /* ================================================================
+           V5 — CARD WITH IMAGE (top right, slide in, shows product thumb)
+           ================================================================ */
+        .toast-v5 {
+            pointer-events: auto;
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: var(--white);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            min-width: 300px;
+            max-width: 380px;
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast-v5.dismissing { animation: slideOutRight 0.3s ease forwards; }
+
+        .toast-v5__thumb {
+            width: 52px; height: 52px;
+            border-radius: 8px;
+            background: var(--surface-alt);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .toast-v5__thumb img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .toast-v5__body { flex: 1; min-width: 0; }
+
+        .toast-v5__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .toast-v5--success .toast-v5__title { color: var(--success); }
+        .toast-v5--danger .toast-v5__title { color: var(--error); }
+
+        .toast-v5__text {
+            font-size: 12px;
+            color: var(--charcoal);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .toast-v5__action {
+            display: inline-block;
+            margin-top: 4px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            text-decoration: none;
+            padding: 4px 12px;
+            border-radius: 999px;
+        }
+
+        .toast-v5--success .toast-v5__action { background: var(--success); color: var(--white); }
+        .toast-v5--danger .toast-v5__action { background: var(--error); color: var(--white); }
+
+        .toast-v5__progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .toast-v5__progress-fill {
+            height: 100%;
+            animation: shrink 4s linear forwards;
+        }
+
+        .toast-v5--success .toast-v5__progress-fill { background: var(--success); }
+        .toast-v5--danger .toast-v5__progress-fill { background: var(--error); }
+
+        /* ================================================================
+           ANIMATIONS
+           ================================================================ */
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes slideDown {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(20px); opacity: 0; }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100px); opacity: 0; }
+        }
+        @keyframes dropDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes floatUp {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-20px); opacity: 0; }
+        }
+        @keyframes slideDown2 {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+        @keyframes slideUp2 {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100%); }
+        }
+        @keyframes shrink {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Toast containers for each variation -->
+<div class="toast-container toast-container--bottom-center" id="container-v1"></div>
+<div class="toast-container toast-container--top-right" id="container-v2"></div>
+<div class="toast-container toast-container--top-center" id="container-v3"></div>
+<div class="toast-container toast-container--top-full" id="container-v4"></div>
+<div class="toast-container toast-container--top-right" id="container-v5"></div>
+
+<div class="demo-page">
+    <h1 class="demo-title">Toast Alerts — klikni za prikaz</h1>
+    <p class="demo-desc">Vsak gumb sproži animiran toast, ki se avtomatsko skrije po 3-4 sekundah. Klikni več gumbov za prikaz več toastov hkrati.</p>
+
+    <div class="demo-buttons">
+        <button class="demo-btn" onclick="showV1('success')">V1 — Dark Snackbar (dno, center) <span>Temna podlaga, barvna ikona, link na košarico. Drsi gor.</span></button>
+        <button class="demo-btn" onclick="showV1('danger')">V1 — Dark Snackbar (error)</button>
+    </div>
+
+    <hr class="demo-separator">
+
+    <div class="demo-buttons">
+        <button class="demo-btn" onclick="showV2('success')">V2 — Glass Card (zgoraj desno) <span>Steklen efekt, barvna črta, naslov + opis. Drsi z desne.</span></button>
+        <button class="demo-btn" onclick="showV2('danger')">V2 — Glass Card (error)</button>
+    </div>
+
+    <hr class="demo-separator">
+
+    <div class="demo-buttons">
+        <button class="demo-btn" onclick="showV3('success')">V3 — Minimal Pill (zgoraj center) <span>Temna pilula, barvna pika, minimalen tekst. Pade dol.</span></button>
+        <button class="demo-btn" onclick="showV3('danger')">V3 — Minimal Pill (error)</button>
+    </div>
+
+    <hr class="demo-separator">
+
+    <div class="demo-buttons">
+        <button class="demo-btn" onclick="showV4('success')">V4 — Full Bar (zgoraj, celotna širina) <span>Barvna celotna vrstica, ikona, progress bar. Drsi dol.</span></button>
+        <button class="demo-btn" onclick="showV4('danger')">V4 — Full Bar (error)</button>
+    </div>
+
+    <hr class="demo-separator">
+
+    <div class="demo-buttons">
+        <button class="demo-btn" onclick="showV5('success')">V5 — Product Card (zgoraj desno) <span>Slika produkta, naslov, link na košarico, progress. Drsi z desne.</span></button>
+        <button class="demo-btn" onclick="showV5('danger')">V5 — Product Card (error)</button>
+    </div>
+</div>
+
+<script>
+function dismiss(el, delay) {
+    setTimeout(function() {
+        el.classList.add('dismissing');
+        setTimeout(function() { el.remove(); }, 400);
+    }, delay || 3000);
+}
+
+function showV1(type) {
+    var c = document.getElementById('container-v1');
+    var msg = type === 'success' ? 'Artikel je bil dodan v košarico!' : 'Prosimo, izberite velikost.';
+    var icon = type === 'success'
+        ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+        : '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    var el = document.createElement('div');
+    el.className = 'toast-v1 toast-v1--' + type;
+    el.innerHTML = '<div class="toast-v1__icon">' + icon + '</div><span class="toast-v1__text">' + msg + '</span>' + (type === 'success' ? '<span class="toast-v1__action">Košarica</span>' : '') + '<div class="toast-v1__progress"><div class="toast-v1__progress-fill"></div></div>';
+    c.appendChild(el);
+    dismiss(el, 3000);
+}
+
+function showV2(type) {
+    var c = document.getElementById('container-v2');
+    var titles = { success: 'Dodano v košarico', danger: 'Napaka' };
+    var msgs = { success: 'Pulover št. 122/128', danger: 'Prosimo, izberite velikost.' };
+    var el = document.createElement('div');
+    el.className = 'toast-v2 toast-v2--' + type;
+    el.innerHTML = '<div class="toast-v2__bar"></div><div class="toast-v2__body"><div class="toast-v2__title">' + titles[type] + '</div><div class="toast-v2__text">' + msgs[type] + '</div></div><button class="toast-v2__close" onclick="this.parentElement.classList.add(\'dismissing\');setTimeout(function(){this.parentElement.remove()}.bind(this),300)"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+    c.appendChild(el);
+    dismiss(el, 4000);
+}
+
+function showV3(type) {
+    var c = document.getElementById('container-v3');
+    var msg = type === 'success' ? 'Dodano v košarico!' : 'Izberite velikost';
+    var el = document.createElement('div');
+    el.className = 'toast-v3 toast-v3--' + type;
+    el.innerHTML = '<span class="toast-v3__dot"></span>' + msg;
+    c.appendChild(el);
+    dismiss(el, 2500);
+}
+
+function showV4(type) {
+    var c = document.getElementById('container-v4');
+    var msg = type === 'success' ? 'Artikel je bil dodan v košarico!' : 'Prosimo, izberite velikost.';
+    var icon = type === 'success'
+        ? '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>'
+        : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    var el = document.createElement('div');
+    el.className = 'toast-v4 toast-v4--' + type;
+    el.innerHTML = '<span class="toast-v4__icon">' + icon + '</span><span class="toast-v4__text">' + msg + '</span><button class="toast-v4__close" onclick="this.parentElement.classList.add(\'dismissing\');setTimeout(function(){this.parentElement.remove()}.bind(this),300)">&times;</button><div class="toast-v4__progress"><div class="toast-v4__progress-fill"></div></div>';
+    c.appendChild(el);
+    dismiss(el, 3000);
+}
+
+function showV5(type) {
+    var c = document.getElementById('container-v5');
+    var titles = { success: 'Dodano v košarico', danger: 'Napaka' };
+    var msgs = { success: 'Pulover št. 122/128', danger: 'Prosimo, izberite velikost.' };
+    var actions = { success: '<a class="toast-v5__action" href="#">Odpri košarico</a>', danger: '<a class="toast-v5__action" href="#">Popravi</a>' };
+    var el = document.createElement('div');
+    el.className = 'toast-v5 toast-v5--' + type;
+    el.innerHTML = '<div class="toast-v5__thumb"><div style="width:52px;height:52px;background:var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;">👕</div></div><div class="toast-v5__body"><div class="toast-v5__title">' + titles[type] + '</div><div class="toast-v5__text">' + msgs[type] + '</div>' + actions[type] + '</div><div class="toast-v5__progress"><div class="toast-v5__progress-fill"></div></div>';
+    c.appendChild(el);
+    dismiss(el, 4000);
+}
+</script>
+
+</body>
+</html>

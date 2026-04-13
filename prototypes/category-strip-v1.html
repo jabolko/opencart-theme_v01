@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category Strip — 3 Variations | Otroški kotiček</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;1,400&family=Open+Sans:wght@600&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       RESET & BASE
+       ========================================================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      color: #565656;
+      background: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ==========================================================================
+       VARIATION LABEL STRIPS
+       Thin dark strips between variations for identification
+       ========================================================================== */
+    .variation-label {
+      background: #111111;
+      padding: 20px 32px;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .variation-label__letter {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 28px;
+      color: #f9b94a;
+      letter-spacing: 0.02em;
+    }
+
+    .variation-label__desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: #9aa0af;
+    }
+
+    /* ==========================================================================
+       HERO SIMULATION STRIP
+       40px tall grey strip to simulate the hero section above V1
+       ========================================================================== */
+    .hero-sim {
+      height: 40px;
+      background: #eeeeee;
+    }
+
+    /* ==========================================================================
+       V1 — "PHOTO CARDS"
+
+       Classic lifestyle tile grid. Each tile uses the category fallback colour
+       as background (simulating future photos via --cat-img). A dark overlay
+       sits on top for text contrast. Text is pinned to bottom-left.
+
+       Key decisions:
+       - No border-radius: hard edges feel editorial and photo-forward
+       - 3px gap: just enough to separate tiles without breaking visual flow
+       - Dark overlay via ::before pseudo-element (keeps markup clean)
+       - "Novo prispelo" gets a gold overlay instead of dark for urgency
+       ========================================================================== */
+    .cats-v1 {
+      background: #ffffff;
+      padding: 0;
+    }
+
+    .cats-v1__inner {
+      max-width: 1550px;
+      margin: 0 auto;
+    }
+
+    .cats-v1__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+    }
+
+    .cat-v1 {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      /* Fallback colour fills the tile; future photos go via --cat-img */
+      background-color: var(--cat-bg);
+      background-image: var(--cat-img, none);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transition: transform 0.3s ease;
+    }
+
+    /* Dark overlay — sits above the background, below the text */
+    .cat-v1::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.30);
+      transition: background 0.3s ease;
+      z-index: 1;
+    }
+
+    .cat-v1:hover {
+      transform: scale(1.025);
+      z-index: 2; /* Lift above siblings when scaled */
+    }
+
+    .cat-v1:hover::before {
+      background: rgba(0, 0, 0, 0.50);
+    }
+
+    /* Text content — always above the overlay */
+    .cat-v1__body {
+      position: relative;
+      z-index: 2;
+      padding: 20px 24px;
+    }
+
+    .cat-v1__name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 22px;
+      color: #ffffff;
+      line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+
+    .cat-v1__price {
+      font-family: 'DM Sans', sans-serif;
+      font-style: italic;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.78);
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    /* --- V1: "Novo prispelo" accent tile ---
+       Gold overlay instead of dark. Charcoal text for contrast on gold. */
+    .cat-v1--novo::before {
+      background: rgba(249, 185, 74, 0.35);
+    }
+
+    .cat-v1--novo:hover::before {
+      background: rgba(249, 185, 74, 0.55);
+    }
+
+    .cat-v1--novo .cat-v1__name {
+      color: #2b2e35;
+    }
+
+    .cat-v1--novo .cat-v1__price {
+      color: rgba(43, 46, 53, 0.72);
+      font-style: italic;
+    }
+
+    /* NOVO badge — small pill in top-right corner */
+    .cat-v1__badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      background: #f9b94a;
+      color: #2b2e35;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 100px;
+      line-height: 1;
+    }
+
+    /* V1 responsive: 2 columns on mobile, last tile spans full width */
+    @media (max-width: 767px) {
+      .cats-v1__grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .cat-v1:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .cat-v1__name {
+        font-size: 18px;
+      }
+
+      .cat-v1__body {
+        padding: 16px 18px;
+      }
+    }
+
+
+    /* ==========================================================================
+       V2 — "SPLIT TILE"
+
+       No image background. Purely typographic and colour-driven.
+       Each tile splits into two zones:
+       - Top 60%: solid category colour with a giant ghost letter (decorative)
+       - Bottom 40%: white with category name and price
+
+       Key decisions:
+       - Ghost letter at ~140px creates visual texture without images
+       - 12px border-radius for a softer, friendlier feel
+       - Gold bottom border on hover adds warmth and brand recognition
+       - Box-shadow lift on hover creates depth hierarchy
+       ========================================================================== */
+    .cats-v2 {
+      background: #f7f7f7;
+      padding: 48px 24px;
+    }
+
+    .cats-v2__inner {
+      max-width: 1550px;
+      margin: 0 auto;
+    }
+
+    .cats-v2__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .cat-v2 {
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      border: 1px solid #d6d9e0;
+      /* Invisible border-bottom that transitions to gold on hover */
+      border-bottom: 3px solid transparent;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .cat-v2:hover {
+      border-bottom-color: #f9b94a;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Top zone: 60% of tile, category colour with ghost letter */
+    .cat-v2__top {
+      flex: 0 0 60%;
+      background: var(--cat-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      transition: filter 0.3s ease;
+    }
+
+    .cat-v2:hover .cat-v2__top {
+      filter: brightness(0.88);
+    }
+
+    /* Giant ghost letter — purely decorative texture */
+    .cat-v2__ghost {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 140px;
+      color: rgba(255, 255, 255, 0.35);
+      line-height: 1;
+      user-select: none;
+      /* Slight upward shift so the letter sits optically centred */
+      margin-top: -8px;
+    }
+
+    /* Bottom zone: 40% of tile, white with text */
+    .cat-v2__bottom {
+      flex: 0 0 40%;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    .cat-v2__name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: #2b2e35;
+      line-height: 1.3;
+    }
+
+    .cat-v2__price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #e0a030;
+      margin-top: 3px;
+      letter-spacing: 0.02em;
+    }
+
+    /* --- V2: "Novo prispelo" accent tile ---
+       Top zone uses full gold instead of tint.
+       Ghost letter uses dark colour instead of white for contrast on gold. */
+    .cat-v2--novo .cat-v2__top {
+      background: #f9b94a;
+    }
+
+    .cat-v2--novo .cat-v2__ghost {
+      color: rgba(43, 46, 53, 0.12);
+    }
+
+    /* V2 responsive */
+    @media (max-width: 767px) {
+      .cats-v2 {
+        padding: 32px 16px;
+      }
+
+      .cats-v2__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .cat-v2:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .cat-v2__ghost {
+        font-size: 90px;
+      }
+
+      .cat-v2__name {
+        font-size: 16px;
+      }
+    }
+
+
+    /* ==========================================================================
+       V3 — "EDITORIAL ROW"
+
+       Portrait orientation tiles — tall and narrow, magazine-style.
+       aspect-ratio: 2/3 for vertical emphasis.
+
+       Key decisions:
+       - Portrait ratio feels editorial and fashion-forward
+       - Decorative numbers (01-05) create visual rhythm and scanning aid
+       - Gold left border on every tile creates a unifying vertical beat
+       - translateY on hover name adds satisfying micro-interaction
+       - Text-shadow on white text ensures readability on any bg colour
+       ========================================================================== */
+    .cats-v3 {
+      background: #ffffff;
+      padding: 48px 24px;
+    }
+
+    .cats-v3__inner {
+      max-width: 1550px;
+      margin: 0 auto;
+    }
+
+    .cats-v3__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .cat-v3 {
+      position: relative;
+      aspect-ratio: 2 / 3;
+      overflow: hidden;
+      border-radius: 8px;
+      background-color: var(--cat-bg);
+      background-image: var(--cat-img, none);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      cursor: pointer;
+      /* Gold left border — always visible, creates vertical rhythm */
+      border-left: 2px solid #f9b94a;
+      transition: filter 0.3s ease, border-left-width 0.3s ease;
+    }
+
+    .cat-v3:hover {
+      filter: brightness(0.82);
+      border-left-width: 4px;
+    }
+
+    /* Decorative number — positioned top-right */
+    .cat-v3__number {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 100px;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.18);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Text content — bottom-left */
+    .cat-v3__body {
+      position: relative;
+      z-index: 2;
+      padding: 24px 20px;
+    }
+
+    .cat-v3__name {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      color: #ffffff;
+      line-height: 1.2;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+      transition: transform 0.3s ease;
+    }
+
+    .cat-v3:hover .cat-v3__name {
+      transform: translateY(-4px);
+    }
+
+    .cat-v3__price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 5px;
+      letter-spacing: 0.02em;
+    }
+
+    /* --- V3: "Novo prispelo" accent tile ---
+       Gold background, charcoal text. Number uses dark tint.
+       No text-shadow needed — gold bg is bright enough. */
+    .cat-v3--novo {
+      background-color: #f9b94a;
+    }
+
+    .cat-v3--novo .cat-v3__number {
+      color: rgba(43, 46, 53, 0.12);
+    }
+
+    .cat-v3--novo .cat-v3__name {
+      color: #2b2e35;
+      text-shadow: none;
+    }
+
+    .cat-v3--novo .cat-v3__price {
+      color: rgba(43, 46, 53, 0.65);
+    }
+
+    /* On hover, gold tile should NOT darken as much — override brightness */
+    .cat-v3--novo:hover {
+      filter: brightness(0.92);
+    }
+
+    /* V3 responsive */
+    @media (max-width: 767px) {
+      .cats-v3 {
+        padding: 32px 16px;
+      }
+
+      .cats-v3__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .cat-v3:last-child {
+        grid-column: 1 / -1;
+        /* On mobile, the full-width tile can go landscape */
+        aspect-ratio: 5 / 3;
+      }
+
+      .cat-v3__number {
+        font-size: 64px;
+      }
+
+      .cat-v3__name {
+        font-size: 17px;
+      }
+
+      .cat-v3__body {
+        padding: 18px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====================================================================
+       HERO SIMULATION — 40px grey strip to show the transition context
+       ==================================================================== -->
+  <div class="hero-sim"></div>
+
+
+  <!-- ====================================================================
+       VARIATION 1 — "PHOTO CARDS"
+       ==================================================================== -->
+  <div class="variation-label">
+    <span class="variation-label__letter">V1</span>
+    <span class="variation-label__desc">Photo Cards — dark overlay on lifestyle colours, white text bottom-left, flush grid, 3px gap</span>
+  </div>
+
+  <section class="cats-v1">
+    <div class="cats-v1__inner">
+      <div class="cats-v1__grid">
+
+        <a href="/category/deklice" class="cat-v1" style="--cat-bg: #f2d4d4;">
+          <div class="cat-v1__body">
+            <div class="cat-v1__name">Deklice</div>
+            <div class="cat-v1__price">od 2 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/fantje" class="cat-v1" style="--cat-bg: #d4dff2;">
+          <div class="cat-v1__body">
+            <div class="cat-v1__name">Fantje</div>
+            <div class="cat-v1__price">od 2 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/mamice" class="cat-v1" style="--cat-bg: #d4e8d8;">
+          <div class="cat-v1__body">
+            <div class="cat-v1__name">Mamice</div>
+            <div class="cat-v1__price">od 5 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/znamke" class="cat-v1" style="--cat-bg: #e8e4df;">
+          <div class="cat-v1__body">
+            <div class="cat-v1__name">Znamke</div>
+            <div class="cat-v1__price">Zara &middot; H&amp;M &middot; Next</div>
+          </div>
+        </a>
+
+        <a href="/product/special" class="cat-v1 cat-v1--novo" style="--cat-bg: rgba(249,185,74,0.22);">
+          <span class="cat-v1__badge">Novo</span>
+          <div class="cat-v1__body">
+            <div class="cat-v1__name">Novo prispelo</div>
+            <div class="cat-v1__price">sve&zcaron;i kosi</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ====================================================================
+       VARIATION 2 — "SPLIT TILE"
+       ==================================================================== -->
+  <div class="variation-label">
+    <span class="variation-label__letter">V2</span>
+    <span class="variation-label__desc">Split Tile — top 60% colour zone with ghost letter, bottom 40% white with text, 12px radius, 16px gap</span>
+  </div>
+
+  <section class="cats-v2">
+    <div class="cats-v2__inner">
+      <div class="cats-v2__grid">
+
+        <a href="/category/deklice" class="cat-v2" style="--cat-bg: #f2d4d4;">
+          <div class="cat-v2__top">
+            <span class="cat-v2__ghost">D</span>
+          </div>
+          <div class="cat-v2__bottom">
+            <div class="cat-v2__name">Deklice</div>
+            <div class="cat-v2__price">od 2 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/fantje" class="cat-v2" style="--cat-bg: #d4dff2;">
+          <div class="cat-v2__top">
+            <span class="cat-v2__ghost">F</span>
+          </div>
+          <div class="cat-v2__bottom">
+            <div class="cat-v2__name">Fantje</div>
+            <div class="cat-v2__price">od 2 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/mamice" class="cat-v2" style="--cat-bg: #d4e8d8;">
+          <div class="cat-v2__top">
+            <span class="cat-v2__ghost">M</span>
+          </div>
+          <div class="cat-v2__bottom">
+            <div class="cat-v2__name">Mamice</div>
+            <div class="cat-v2__price">od 5 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/znamke" class="cat-v2" style="--cat-bg: #e8e4df;">
+          <div class="cat-v2__top">
+            <span class="cat-v2__ghost">Z</span>
+          </div>
+          <div class="cat-v2__bottom">
+            <div class="cat-v2__name">Znamke</div>
+            <div class="cat-v2__price">Zara &middot; H&amp;M &middot; Next</div>
+          </div>
+        </a>
+
+        <a href="/product/special" class="cat-v2 cat-v2--novo" style="--cat-bg: rgba(249,185,74,0.22);">
+          <div class="cat-v2__top">
+            <span class="cat-v2__ghost">N</span>
+          </div>
+          <div class="cat-v2__bottom">
+            <div class="cat-v2__name">Novo prispelo</div>
+            <div class="cat-v2__price">sve&zcaron;i kosi</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ====================================================================
+       VARIATION 3 — "EDITORIAL ROW"
+       ==================================================================== -->
+  <div class="variation-label">
+    <span class="variation-label__letter">V3</span>
+    <span class="variation-label__desc">Editorial Row — portrait tiles (2:3), decorative numbers, gold left border rhythm, text-shadow for depth</span>
+  </div>
+
+  <section class="cats-v3">
+    <div class="cats-v3__inner">
+      <div class="cats-v3__grid">
+
+        <a href="/category/deklice" class="cat-v3" style="--cat-bg: #f2d4d4;">
+          <span class="cat-v3__number">01</span>
+          <div class="cat-v3__body">
+            <div class="cat-v3__name">Deklice</div>
+            <div class="cat-v3__price">od 2 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/fantje" class="cat-v3" style="--cat-bg: #d4dff2;">
+          <span class="cat-v3__number">02</span>
+          <div class="cat-v3__body">
+            <div class="cat-v3__name">Fantje</div>
+            <div class="cat-v3__price">od 2 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/mamice" class="cat-v3" style="--cat-bg: #d4e8d8;">
+          <span class="cat-v3__number">03</span>
+          <div class="cat-v3__body">
+            <div class="cat-v3__name">Mamice</div>
+            <div class="cat-v3__price">od 5 &euro;</div>
+          </div>
+        </a>
+
+        <a href="/category/znamke" class="cat-v3" style="--cat-bg: #e8e4df;">
+          <span class="cat-v3__number">04</span>
+          <div class="cat-v3__body">
+            <div class="cat-v3__name">Znamke</div>
+            <div class="cat-v3__price">Zara &middot; H&amp;M &middot; Next</div>
+          </div>
+        </a>
+
+        <a href="/product/special" class="cat-v3 cat-v3--novo" style="--cat-bg: #f9b94a;">
+          <span class="cat-v3__number">05</span>
+          <div class="cat-v3__body">
+            <div class="cat-v3__name">Novo prispelo</div>
+            <div class="cat-v3__price">sve&zcaron;i kosi</div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

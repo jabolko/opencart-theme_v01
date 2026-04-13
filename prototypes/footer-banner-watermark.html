@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Footer Banner — #RabljenoJeZakon Watermark</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #c8c8c8; }
+
+    :root {
+      --gold:  #f9b94a;
+      --bg:    #3a3a3a;
+      --on:    #f5f5f5;
+      --rule:  rgba(245,245,245,.09);
+      --dim:   rgba(245,245,245,.28);
+    }
+
+    .iter-label {
+      padding: 40px 0 0 40px;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; color: #888;
+    }
+
+    /* ── grid stub ── */
+    .foot-stub { background: var(--bg); padding: 32px 48px 0; border-top: 1px solid var(--rule); }
+    .stub-cols { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+    .stub-heading { font-family: 'Open Sans', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .stub-line { height: 9px; background: rgba(245,245,245,.1); border-radius: 4px; margin-bottom: 7px; }
+    .stub-line.w60 { width: 60%; } .stub-line.w45 { width: 45%; } .stub-line.w75 { width: 75%; }
+    .stub-copy { padding: 12px 0 20px; font-size: 11px; color: var(--dim); }
+
+    /* ── shared banner base ── */
+    .banner {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 48px;
+      background: linear-gradient(135deg, rgba(249,185,74,.09) 0%, rgba(249,185,74,.03) 100%);
+      border-bottom: 1px solid rgba(249,185,74,.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner__photo {
+      width: 108px; height: 108px;
+      border-radius: 50%; object-fit: cover;
+      object-position: center top;
+      flex-shrink: 0;
+      border: 3px solid var(--gold);
+      position: relative; z-index: 1;
+    }
+
+    .banner__text {
+      flex: 1 1 auto; min-width: 0;
+      position: relative; z-index: 1;
+    }
+
+    .banner__quote {
+      font-size: 15px; line-height: 1.65;
+      color: rgba(245,245,245,.82);
+      font-style: italic;
+    }
+    /* grey inline curly quotes */
+    .banner__quote::before { content: '\201C'; color: rgba(245,245,245,.3); font-style: normal; }
+    .banner__quote::after  { content: '\201D'; color: rgba(245,245,245,.3); font-style: normal; }
+
+    .banner__cite {
+      display: block; margin-top: 10px;
+      font-style: normal; font-weight: 600;
+      font-size: 13px; color: var(--gold);
+    }
+
+    .banner__review {
+      flex-shrink: 0; min-width: 160px;
+      background: rgba(0,0,0,.22);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      position: relative; z-index: 1;
+    }
+    .review-badge { height: 60px; width: auto; filter: brightness(1.1); opacity: .9; display: block; }
+    .review-count { font-size: 12px; color: rgba(245,245,245,.4); }
+    .review-count strong { color: var(--gold); font-size: 18px; margin-right: 2px; }
+
+    /* ── watermark base ── */
+    .wm {
+      position: absolute;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 700;
+      color: rgba(249,185,74,.07);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      z-index: 0;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       VARIATION 1 — Large horizontal, centered behind quote
+       Full-width text, centered vertically in the banner.
+       Very large, single line, barely visible — reads as texture.
+    ══════════════════════════════════════════════════════════ */
+    .v1 .wm {
+      font-size: 96px;
+      letter-spacing: -.02em;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(249,185,74,.055);
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       VARIATION 2 — Diagonal, large, bottom-right anchor
+       Rotated -12°. Sits behind the review card, partially
+       clipped by overflow:hidden. Feels dynamic/energetic.
+    ══════════════════════════════════════════════════════════ */
+    .v2 .wm {
+      font-size: 80px;
+      letter-spacing: .01em;
+      bottom: -16px;
+      right: -20px;
+      transform: rotate(-12deg);
+      transform-origin: right bottom;
+      color: rgba(249,185,74,.065);
+    }
+
+
+    /* ══════════════════════════════════════════════════════════
+       VARIATION 3 — Two-line stacked, top-right, smaller
+       "#Rabljeno" on first line, "JeZakon" on second.
+       Slightly larger opacity — more intentional, less subtle.
+       Positioned top-right behind the review card.
+    ══════════════════════════════════════════════════════════ */
+    .v3 .wm {
+      font-size: 52px;
+      letter-spacing: .02em;
+      line-height: 1.1;
+      white-space: normal;
+      width: 300px;
+      text-align: right;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(249,185,74,.09);
+    }
+
+  </style>
+</head>
+<body>
+
+
+<!-- ═══ VARIATION 1 — Horizontal centered ═══════════════════════ -->
+<p class="iter-label">Variation 1 — Large horizontal · centered · barely-there texture</p>
+<div style="background: var(--bg);">
+  <div class="banner v1">
+    <span class="wm">#RabljenoJeZakon</span>
+    <img class="banner__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="banner__text">
+      <p class="banner__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="banner__cite">— Meta</cite>
+    </div>
+    <a href="#" class="banner__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="review-count"><strong>207</strong> ocen</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+
+<!-- ═══ VARIATION 2 — Diagonal bottom-right ════════════════════ -->
+<p class="iter-label">Variation 2 — Diagonal −12° · bottom-right anchor · partially clipped</p>
+<div style="background: var(--bg);">
+  <div class="banner v2">
+    <span class="wm">#RabljenoJeZakon</span>
+    <img class="banner__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="banner__text">
+      <p class="banner__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="banner__cite">— Meta</cite>
+    </div>
+    <a href="#" class="banner__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="review-count"><strong>207</strong> ocen</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+
+<!-- ═══ VARIATION 3 — Two-line stacked top-right ════════════════ -->
+<p class="iter-label">Variation 3 — Two-line stacked · top-right · slightly more visible</p>
+<div style="background: var(--bg);">
+  <div class="banner v3">
+    <span class="wm">#Rabljeno Je Zakon</span>
+    <img class="banner__photo" src="../opencart/image/catalog/assets/elements/spletna-meta-002.jpg" alt="Meta">
+    <div class="banner__text">
+      <p class="banner__quote">Otroški kotiček - nežno rabljena otroška oblačila, izbrana z ljubeznijo in mislijo na vašo družino.</p>
+      <cite class="banner__cite">— Meta</cite>
+    </div>
+    <a href="#" class="banner__review">
+      <img class="review-badge" src="../opencart/image/catalog/assets/elements/badges/foofter%20review%20ver01.png" alt="Ocene">
+      <p class="review-count"><strong>207</strong> ocen</p>
+    </a>
+  </div>
+  <div class="foot-stub">
+    <div class="stub-cols">
+      <div><p class="stub-heading">Naša trgovina</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w45"></div></div>
+      <div><p class="stub-heading">Informacije</p><div class="stub-line w75"></div><div class="stub-line w60"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Odkrijte</p><div class="stub-line w60"></div><div class="stub-line w45"></div><div class="stub-line w75"></div></div>
+      <div><p class="stub-heading">Moj račun</p><div class="stub-line w75"></div><div class="stub-line w60"></div></div>
+    </div>
+    <p class="stub-copy">© Otroški kotiček od 2011 – 2026. Vse pravice pridržane.</p>
+  </div>
+</div>
+
+<div style="height:40px;"></div>
+</body>
+</html>

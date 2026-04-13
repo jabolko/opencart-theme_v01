@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout Buttons — All States Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f9b94a; --gold-dark: #e0a030; --charcoal: #565656; --heading: #2b2e35;
+    --muted: #9aa0af; --surface: #fff; --surface-alt: #f7f7f7; --border: #d6d9e0;
+    --success: #7d9478; --error: #d55e6f;
+    --font-heading: 'Open Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); color: var(--charcoal); background: var(--surface-alt); font-size: 15px; padding: 16px; max-width: 500px; margin: 0 auto; }
+  h1 { font-family: var(--font-heading); font-size: 18px; color: var(--heading); margin-bottom: 16px; }
+  h2 { font-family: var(--font-heading); font-size: 14px; color: var(--heading); margin: 24px 0 12px; padding-top: 16px; border-top: 1px solid var(--border); }
+  h2:first-of-type { border: none; padding-top: 0; margin-top: 16px; }
+  .label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-family: var(--font-heading); }
+  .state-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .state-label { font-size: 10px; color: var(--muted); font-family: var(--font-heading); }
+  .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 8px; }
+
+  /* ═══ Current OC default (what Bootstrap renders) ═══ */
+  .btn-oc { display: inline-block; padding: 6px 12px; font-size: 14px; font-weight: 400; line-height: 1.42857143; text-align: center; white-space: nowrap; vertical-align: middle; cursor: pointer; border: 1px solid transparent; border-radius: 4px; }
+  .btn-oc-primary { color: #fff; background-color: #337ab7; border-color: #2e6da4; }
+  .btn-oc-primary:hover { background-color: #286090; }
+  .btn-oc-primary.loading { opacity: 0.65; cursor: wait; }
+
+  /* ═══ Our current theme styling (from _checkout.scss) ═══ */
+  .btn-theme { width: 100%; padding: 14px; background: var(--gold); color: var(--heading); border: none; border-radius: 12px; font-family: var(--font-heading); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+  .btn-theme:hover { background: var(--gold-dark); }
+  .btn-theme:active { transform: scale(0.98); }
+  .btn-theme.loading { opacity: 0.65; cursor: wait; }
+  .btn-theme.disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-theme svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ═══ Proposed consistent design ═══ */
+  .btn-new { width: 100%; padding: 14px; background: var(--gold); color: var(--heading); border: none; border-radius: 12px; font-family: var(--font-heading); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; position: relative; }
+  .btn-new:hover { background: var(--gold-dark); }
+  .btn-new:active { transform: scale(0.98); background: var(--gold-dark); }
+  .btn-new:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .btn-new.is-loading { opacity: 0.7; cursor: wait; pointer-events: none; }
+  .btn-new.is-loading::after { content: ''; display: inline-block; width: 16px; height: 16px; border: 2px solid var(--heading); border-top-color: transparent; border-radius: 50%; animation: btn-spin 0.6s linear infinite; margin-left: 8px; }
+  .btn-new.is-disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+  .btn-new svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* Secondary (text-only, for Uredi / Nazaj) */
+  .btn-link { background: none; border: none; color: var(--muted); font-size: 13px; font-family: var(--font-heading); font-weight: 500; cursor: pointer; text-decoration: underline; padding: 8px 0; }
+  .btn-link:hover { color: var(--heading); }
+
+  @keyframes btn-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* Radio + Checkbox (current) */
+  .radio-current { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--surface-alt); border: 1.5px solid transparent; border-radius: 8px; font-size: 13px; color: var(--heading); cursor: pointer; margin-bottom: 6px; }
+  .radio-current.selected { background: #fffbf0; border-color: var(--gold); }
+  .radio-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .radio-current.selected .radio-dot { background: var(--gold); border-color: var(--gold); }
+  .radio-current.selected .radio-dot::after { content: ''; width: 5px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -1px; }
+  .radio-current:hover { border-color: var(--gold); }
+  .radio-current:focus-within { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+  .check-current { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--charcoal); cursor: pointer; padding: 8px 0; }
+  .check-box { width: 16px; height: 16px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .check-current.checked .check-box { background: var(--gold); border-color: var(--gold); }
+  .check-current.checked .check-box::after { content: ''; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -1px; }
+
+  /* Pills */
+  .pills { display: flex; gap: 0; background: var(--surface-alt); border-radius: 8px; padding: 3px; margin-bottom: 12px; }
+  .pill { padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; font-family: var(--font-heading); color: var(--muted); cursor: pointer; border: none; background: transparent; }
+  .pill.active { background: #fff; color: var(--heading); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .pill:hover:not(.active) { color: var(--charcoal); }
+
+  /* Done summary row */
+  .done-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; }
+  .done-left { display: flex; align-items: center; gap: 8px; }
+  .done-check { width: 20px; height: 20px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .done-check svg { width: 10px; height: 10px; stroke: #fff; stroke-width: 3; fill: none; }
+  .done-info { font-size: 13px; color: var(--charcoal); }
+  .done-info strong { color: var(--heading); font-family: var(--font-heading); font-weight: 600; display: block; }
+
+  /* Compare layout */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .compare-col { }
+  .compare-label { font-size: 10px; color: var(--error); font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .compare-label--good { color: var(--success); }
+</style>
+</head>
+<body>
+
+<h1>Checkout Buttons — All States</h1>
+
+<!-- ═══ PRIMARY CTA BUTTONS ═══ -->
+<h2>1. Primary CTA Buttons (step progression)</h2>
+
+<p class="label">All states:</p>
+<div class="card">
+  <div class="state-row">
+    <div class="state-label">Default</div>
+    <button class="btn-new">Nadaljuj na dostavo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Hover</div>
+    <button class="btn-new" style="background: var(--gold-dark);">Nadaljuj na dostavo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Active (pressed)</div>
+    <button class="btn-new" style="background: var(--gold-dark); transform: scale(0.98);">Nadaljuj na dostavo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Loading (AJAX in progress)</div>
+    <button class="btn-new is-loading">Nadaljuj na dostavo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Focus (keyboard navigation)</div>
+    <button class="btn-new" style="outline: 2px solid var(--gold); outline-offset: 2px;">Nadaljuj na dostavo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Disabled</div>
+    <button class="btn-new is-disabled">Nadaljuj na dostavo</button>
+  </div>
+</div>
+
+<p class="label">All CTA button labels per step:</p>
+<div class="card">
+  <div class="state-row">
+    <div class="state-label">Step 1 → Podatki</div>
+    <button class="btn-new">Nadaljuj na dostavo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Step 2 → Dostava</div>
+    <button class="btn-new">Nadaljuj na plačilo</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Step 3 → Plačilo</div>
+    <button class="btn-new">Nadaljuj na pregled</button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Step 4 → Potrditev (proxy button)</div>
+    <button class="btn-new">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Potrdi naročilo — 10.50€
+    </button>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Login button</div>
+    <button class="btn-new">Prijavi se</button>
+  </div>
+</div>
+
+<!-- ═══ OC DEFAULT vs OUR THEME ═══ -->
+<h2>2. OC Default vs Our Theme (current issues)</h2>
+
+<p class="label">What OC renders vs what our CSS makes it look like:</p>
+<div class="compare">
+  <div class="compare-col">
+    <div class="compare-label">OC Default (Bootstrap .btn-primary)</div>
+    <input type="button" value="Nadaljujte" class="btn-oc btn-oc-primary" style="width: 100%;">
+    <br><br>
+    <input type="button" value="Nadaljujte" class="btn-oc btn-oc-primary loading" style="width: 100%;">
+    <div class="state-label" style="margin-top: 4px;">↑ Bootstrap "loading" state</div>
+  </div>
+  <div class="compare-col">
+    <div class="compare-label compare-label--good">Our theme (restyled)</div>
+    <button class="btn-new">Nadaljuj na dostavo</button>
+    <br>
+    <button class="btn-new is-loading">Nadaljuj na dostavo</button>
+    <div class="state-label" style="margin-top: 4px;">↑ Our "loading" with spinner</div>
+  </div>
+</div>
+
+<!-- ═══ RADIO BUTTONS ═══ -->
+<h2>3. Radio Buttons (shipping/payment selection)</h2>
+
+<div class="card">
+  <p class="label">States:</p>
+  <div class="state-row">
+    <div class="state-label">Unselected</div>
+    <div class="radio-current">
+      <div class="radio-dot"></div>
+      Pošta Slovenije — 4.50€
+    </div>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Selected</div>
+    <div class="radio-current selected">
+      <div class="radio-dot"></div>
+      DPD — 3.50€
+    </div>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Hover (unselected)</div>
+    <div class="radio-current" style="border-color: var(--gold);">
+      <div class="radio-dot"></div>
+      Osebni prevzem — Brezplačno
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CHECKBOXES ═══ -->
+<h2>4. Checkboxes</h2>
+
+<div class="card">
+  <div class="state-row">
+    <div class="state-label">Checked</div>
+    <div class="check-current checked">
+      <div class="check-box"></div>
+      Naslov za dostavo je enak naslovu za račun
+    </div>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Unchecked</div>
+    <div class="check-current">
+      <div class="check-box"></div>
+      Prebral sem in se strinjam s Splošni pogoji
+    </div>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Checked</div>
+    <div class="check-current checked">
+      <div class="check-box"></div>
+      Prebral sem in se strinjam s Splošni pogoji
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PILLS / TABS ═══ -->
+<h2>5. Pills Navigation (Guest/Register/Login)</h2>
+
+<div class="card">
+  <div class="state-row">
+    <div class="state-label">Guest active</div>
+    <div style="display: flex; align-items: center;">
+      <div class="pills">
+        <button class="pill active">Gost</button>
+        <button class="pill">Registracija</button>
+      </div>
+      <a style="margin-left: auto; font-size: 13px; color: var(--charcoal); text-decoration: none; font-family: var(--font-heading); font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 3px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Prijava
+      </a>
+    </div>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Register active</div>
+    <div style="display: flex; align-items: center;">
+      <div class="pills">
+        <button class="pill">Gost</button>
+        <button class="pill active">Registracija</button>
+      </div>
+      <a style="margin-left: auto; font-size: 13px; color: var(--charcoal); text-decoration: none; font-family: var(--font-heading); font-weight: 500;">Prijava</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DONE SUMMARY ═══ -->
+<h2>6. Completed Step Summary</h2>
+
+<div class="card">
+  <div class="done-row">
+    <div class="done-left">
+      <div class="done-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="done-info"><strong>Tvoji podatki</strong>Ana Novak · ana@email.com</div>
+    </div>
+    <button class="btn-link">Uredi</button>
+  </div>
+</div>
+<div class="card">
+  <div class="done-row">
+    <div class="done-left">
+      <div class="done-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="done-info"><strong>Način dostave</strong>DPD — 3.50€</div>
+    </div>
+    <button class="btn-link">Uredi</button>
+  </div>
+</div>
+<div class="card">
+  <div class="done-row">
+    <div class="done-left">
+      <div class="done-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="done-info"><strong>Način plačila</strong>Bančno nakazilo / Predračun</div>
+    </div>
+    <button class="btn-link">Uredi</button>
+  </div>
+</div>
+
+<!-- ═══ SECONDARY / LINK BUTTONS ═══ -->
+<h2>7. Secondary / Link Buttons</h2>
+
+<div class="card">
+  <div class="state-row">
+    <div class="state-label">Back to cart</div>
+    <a style="display: flex; align-items: center; justify-content: center; gap: 4px; padding: 12px; font-size: 12px; color: var(--muted); text-decoration: none; font-family: var(--font-heading); font-weight: 500;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Nazaj na košarico
+    </a>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Spremeni (address bar)</div>
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--charcoal);">
+      <span>Dostava na: Ana Novak, Testna 1, 1000 Ljubljana</span>
+      <a style="font-size: 11px; color: var(--muted); text-decoration: underline; cursor: pointer;">Spremeni</a>
+    </div>
+  </div>
+  <div class="state-row">
+    <div class="state-label">Pozabljeno geslo?</div>
+    <a style="font-size: 12px; color: var(--muted); text-decoration: underline;">Pozabljeno geslo?</a>
+  </div>
+</div>
+
+<!-- ═══ KNOWN ISSUES ═══ -->
+<h2>8. Known Issues to Fix</h2>
+
+<div class="card" style="font-size: 13px; line-height: 1.7;">
+  <strong style="color: var(--error);">A. Bootstrap loading state</strong><br>
+  OC uses <code>.button('loading')</code> which adds Bootstrap's loading text. Our CSS doesn't override this — button text changes to "Loading..." in English.<br><br>
+
+  <strong style="color: var(--error);">B. Focus ring inconsistent</strong><br>
+  Radio buttons have <code>outline: none</code> (we removed it for the blue dot fix) but CTA buttons have no focus style at all. Keyboard users can't see which element is active.<br><br>
+
+  <strong style="color: var(--error);">C. Confirm proxy button styling</strong><br>
+  The proxy <code>#ck-confirm-proxy</code> uses <code>.btn.btn-primary</code> class which picks up Bootstrap's blue + our gold override. But it's a <code>&lt;button&gt;</code> while others are <code>&lt;input&gt;</code> — different default rendering.<br><br>
+
+  <strong style="color: var(--gold-dark);">D. Loading spinner missing</strong><br>
+  Our proposed <code>.is-loading::after</code> spinner doesn't exist in current CSS. Bootstrap's <code>.button('loading')</code> just changes text value.
+</div>
+
+</body>
+</html>

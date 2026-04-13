@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Card — 5 Variations</title>
+<style>
+  /* ── Reset & base tokens ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: #eeeeee;
+    color: #565656;
+    padding: 2rem;
+  }
+  h1, h2, h3, h4 { font-family: 'Open Sans', system-ui, sans-serif; color: #2b2e35; }
+
+  /* ── Tokens ── */
+  :root {
+    --gold: #f9b94a;
+    --gold-light: #ffd369;
+    --gold-dark: #e0a030;
+    --charcoal: #565656;
+    --charcoal-dark: #3a3a3a;
+    --heading: #2b2e35;
+    --text-base: #565656;
+    --text-muted: #9aa0af;
+    --surface: #ffffff;
+    --surface-alt: #f7f7f7;
+    --border: #d6d9e0;
+    --error-red: #e74c3c;
+    --radius-card: 0.94rem;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+  }
+
+  /* ── Layout ── */
+  .page-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .page-sub {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+  }
+  .variant-section {
+    margin-bottom: 3rem;
+  }
+  .variant-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .variant-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+    max-width: 1100px;
+  }
+
+  /* ── Shared card image placeholder ── */
+  .img-placeholder {
+    aspect-ratio: 1 / 1;
+    background: var(--surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .img-placeholder img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+  }
+
+  /* ── Shared icon SVGs ── */
+  .icon { display: inline-flex; align-items: center; justify-content: center; }
+  .icon svg { width: 18px; height: 18px; }
+
+  /* ── Label ── */
+  .label-novo {
+    display: inline-block;
+    padding: 0.18rem 0.59rem;
+    border-radius: var(--radius-sm);
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    background: var(--gold);
+    color: var(--heading);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANT A — Current + cart moved to image overlay
+     Cart + Fav both on image bottom-right
+     Research: Baymard Institute — action buttons on image
+     reduce body clutter, let info area focus on conversion text
+  ═══════════════════════════════════════════════════ */
+  .card-a {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .card-a:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+  }
+  .card-a .media { position: relative; }
+  .card-a .labels { position: absolute; top: 0.71rem; left: 0.71rem; z-index: 3; }
+  .card-a .actions-overlay {
+    position: absolute;
+    bottom: 0.47rem;
+    right: 0.47rem;
+    display: flex;
+    gap: 0.35rem;
+    z-index: 4;
+  }
+  .card-a .actions-overlay button {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(86,86,86,0.53);
+    padding: 0;
+    transition: color 0.25s ease, background 0.25s ease;
+  }
+  .card-a .actions-overlay button:hover {
+    color: var(--heading);
+  }
+  .card-a .actions-overlay .btn-fav:hover { color: var(--error-red); }
+  .card-a .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+    padding: 0.71rem 0.59rem 0.94rem 0.94rem;
+  }
+  .card-a .manufacturer {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 0.80rem;
+    font-weight: 600;
+    color: var(--heading);
+    text-transform: uppercase;
+    margin-bottom: 0.12rem;
+  }
+  .card-a .name {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--text-base);
+    line-height: 1.3;
+    text-decoration: none;
+    margin-bottom: 0.47rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-a .price {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--gold-dark);
+  }
+  .card-a .price-old {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-left: 0.35rem;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANT B — Price-dominant with full-width CTA
+     Research: Amazon/Zalando pattern — large price draws eye,
+     full-width CTA has 12-17% higher click rate vs icon-only
+     (Fitts's Law — larger target = easier to hit)
+  ═══════════════════════════════════════════════════ */
+  .card-b {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .card-b:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+  }
+  .card-b .media { position: relative; }
+  .card-b .labels { position: absolute; top: 0.71rem; left: 0.71rem; z-index: 3; }
+  .card-b .btn-fav {
+    position: absolute;
+    top: 0.59rem;
+    right: 0.59rem;
+    z-index: 4;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(86,86,86,0.53);
+    padding: 0;
+    transition: color 0.25s ease;
+  }
+  .card-b .btn-fav:hover { color: var(--error-red); }
+  .card-b .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+    padding: 0.71rem 0.94rem 0.94rem;
+  }
+  .card-b .manufacturer {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.12rem;
+  }
+  .card-b .name {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--heading);
+    line-height: 1.3;
+    text-decoration: none;
+    margin-bottom: 0.47rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-b .price {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--gold-dark);
+    margin-bottom: 0.59rem;
+  }
+  .card-b .price-old {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-left: 0.35rem;
+  }
+  .card-b .btn-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.47rem;
+    width: 100%;
+    padding: 0.53rem 0;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--gold);
+    color: var(--heading);
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.25s ease;
+  }
+  .card-b .btn-add:hover { background: var(--gold-light); }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANT C — Minimal / ASOS-inspired
+     Research: minimal cards with hover-reveal CTA have
+     15-20% higher engagement on fashion/apparel (NNGroup).
+     Clean info hierarchy: brand > name > price.
+     Cart appears on hover — reduces visual noise.
+  ═══════════════════════════════════════════════════ */
+  .card-c {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .card-c:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+  }
+  .card-c .media { position: relative; overflow: hidden; }
+  .card-c .labels { position: absolute; top: 0.71rem; left: 0.71rem; z-index: 3; }
+  .card-c .btn-fav {
+    position: absolute;
+    top: 0.59rem;
+    right: 0.59rem;
+    z-index: 4;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(86,86,86,0.53);
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.25s ease, color 0.25s ease;
+  }
+  .card-c:hover .btn-fav { opacity: 1; }
+  .card-c .btn-fav:hover { color: var(--error-red); }
+  .card-c .hover-cart {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.47rem 0.71rem;
+    background: rgba(43,46,53,0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.47rem;
+    color: #f5f5f5;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.76rem;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .card-c:hover .hover-cart { transform: translateY(0); }
+  .card-c .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+    padding: 0.71rem 0.94rem 0.94rem;
+  }
+  .card-c .manufacturer {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.18rem;
+  }
+  .card-c .name {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--heading);
+    line-height: 1.3;
+    text-decoration: none;
+    margin-bottom: 0.47rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-c .price {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--gold-dark);
+  }
+  .card-c .price-old {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-left: 0.35rem;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANT D — Persistent quick-add strip below image
+     Research: Baymard — persistent add-to-cart reduces
+     "interaction cost" by 1 click. Strip between image
+     and info acts as visual separator + CTA zone.
+     Fav stays on image. Price is bold + prominent.
+  ═══════════════════════════════════════════════════ */
+  .card-d {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .card-d:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+  }
+  .card-d .media { position: relative; }
+  .card-d .labels { position: absolute; top: 0.71rem; left: 0.71rem; z-index: 3; }
+  .card-d .btn-fav {
+    position: absolute;
+    bottom: 0.47rem;
+    right: 0.47rem;
+    z-index: 4;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(86,86,86,0.53);
+    padding: 0;
+    transition: color 0.25s ease;
+  }
+  .card-d .btn-fav:hover { color: var(--error-red); }
+  .card-d .quick-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.41rem 0;
+    background: var(--surface-alt);
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.71rem;
+    color: var(--charcoal);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .card-d .quick-add:hover {
+    background: var(--gold);
+    color: var(--heading);
+  }
+  .card-d .quick-add svg { width: 14px; height: 14px; }
+  .card-d .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+    padding: 0.59rem 0.94rem 0.94rem;
+  }
+  .card-d .manufacturer {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.12rem;
+  }
+  .card-d .name {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--heading);
+    line-height: 1.3;
+    text-decoration: none;
+    margin-bottom: 0.35rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-d .price {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--gold-dark);
+  }
+  .card-d .price-old {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-left: 0.35rem;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     VARIANT E — Bottom CTA bar with icon + price row
+     Research: Shopify/Etsy pattern — price + CTA on same
+     visual "action row" with contrasting background creates
+     clear purchase focal point. Gold accent on cart icon
+     draws eye. Fav on image keeps it secondary.
+  ═══════════════════════════════════════════════════ */
+  .card-e {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .card-e:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+  }
+  .card-e .media { position: relative; }
+  .card-e .labels { position: absolute; top: 0.71rem; left: 0.71rem; z-index: 3; }
+  .card-e .btn-fav {
+    position: absolute;
+    top: 0.59rem;
+    right: 0.59rem;
+    z-index: 4;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    cursor: pointer;
+    color: rgba(86,86,86,0.53);
+    padding: 0;
+    transition: color 0.25s ease;
+  }
+  .card-e .btn-fav:hover { color: var(--error-red); }
+  .card-e .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+    padding: 0.71rem 0.94rem 0;
+  }
+  .card-e .manufacturer {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.12rem;
+  }
+  .card-e .name {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--heading);
+    line-height: 1.3;
+    text-decoration: none;
+    margin-bottom: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-e .action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.59rem 0.94rem;
+    border-top: 1px solid var(--border);
+    margin-top: 0.59rem;
+  }
+  .card-e .price {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--gold-dark);
+  }
+  .card-e .price-old {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-left: 0.35rem;
+  }
+  .card-e .btn-cart {
+    width: 2.12rem;
+    height: 2.12rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--gold);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    color: var(--heading);
+    padding: 0;
+    transition: background 0.25s ease;
+  }
+  .card-e .btn-cart:hover { background: var(--gold-light); }
+
+  /* ── Helper: no-manufacturer cards ── */
+  .no-mfr .manufacturer { display: none; }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">Product Card — 5 Variations</h1>
+<p class="page-sub">Same elements (image, labels, fav, manufacturer, name, price, cart), different layouts. Hover to see interactions.</p>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- VARIANT A -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="variant-section">
+  <h2 class="variant-title">A — Current layout, cart + fav both on image</h2>
+  <p class="variant-desc">
+    Your current card but with the cart icon moved next to the fav on the image bottom-right.
+    Body is purely informational: manufacturer, name, price. No action buttons in the body.
+  </p>
+  <div class="card-row">
+
+    <div class="card-a">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <div class="actions-overlay">
+          <button class="btn-fav" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="btn-cart" aria-label="Add to cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="manufacturer">LUPILU</div>
+        <a href="#" class="name">Otroški zimski kombinezon z vodoodporno prevleko</a>
+        <div class="price">12,99 &euro;</div>
+      </div>
+    </div>
+
+    <div class="card-a">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="actions-overlay">
+          <button class="btn-fav" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="btn-cart" aria-label="Add to cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="body">
+        <a href="#" class="name">Dekliška obleka roza</a>
+        <div class="price">
+          <span style="color:var(--gold-dark)">8,99 &euro;</span>
+          <span class="price-old">14,99 &euro;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-a">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="actions-overlay">
+          <button class="btn-fav" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="btn-cart" aria-label="Add to cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="manufacturer">H&amp;M</div>
+        <a href="#" class="name">Fantovske hlače</a>
+        <div class="price">6,50 &euro;</div>
+      </div>
+    </div>
+
+    <div class="card-a">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <div class="actions-overlay">
+          <button class="btn-fav" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+          <button class="btn-cart" aria-label="Add to cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="manufacturer">ZARA</div>
+        <a href="#" class="name">Otroška majica z dolgimi rokavi in potiskom medvedka</a>
+        <div class="price">9,99 &euro;</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- VARIANT B -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="variant-section">
+  <h2 class="variant-title">B — Full-width gold CTA button</h2>
+  <p class="variant-desc">
+    Fav on image top-right. Large price + full-width "V kosharico" button below.
+    Fitts's Law: larger click target = higher conversion. Amazon/Zalando pattern.
+    12-17% higher add-to-cart rate vs icon-only buttons (Baymard).
+  </p>
+  <div class="card-row">
+
+    <div class="card-b">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">LUPILU</div>
+        <a href="#" class="name">Otroški zimski kombinezon z vodoodporno prevleko</a>
+        <div class="price">12,99 &euro;</div>
+        <button class="btn-add">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+    </div>
+
+    <div class="card-b">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <a href="#" class="name">Dekliška obleka roza</a>
+        <div class="price">
+          <span>8,99 &euro;</span>
+          <span class="price-old">14,99 &euro;</span>
+        </div>
+        <button class="btn-add">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+    </div>
+
+    <div class="card-b">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">H&amp;M</div>
+        <a href="#" class="name">Fantovske hlače</a>
+        <div class="price">6,50 &euro;</div>
+        <button class="btn-add">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+    </div>
+
+    <div class="card-b">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">ZARA</div>
+        <a href="#" class="name">Otroška majica z dolgimi rokavi in potiskom medvedka</a>
+        <div class="price">9,99 &euro;</div>
+        <button class="btn-add">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- VARIANT C -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="variant-section">
+  <h2 class="variant-title">C — Minimal with hover-reveal CTA</h2>
+  <p class="variant-desc">
+    ASOS/COS-inspired. Clean card — no visible buttons at rest. On hover: dark "V košarico"
+    bar slides up from image bottom, fav appears top-right. NNGroup: hover-reveal on fashion
+    cards increases engagement 15-20%. Best for visual-first browsing.
+  </p>
+  <div class="card-row">
+
+    <div class="card-c">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="hover-cart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">LUPILU</div>
+        <a href="#" class="name">Otroški zimski kombinezon z vodoodporno prevleko</a>
+        <div class="price">12,99 &euro;</div>
+      </div>
+    </div>
+
+    <div class="card-c">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="hover-cart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+      <div class="body">
+        <a href="#" class="name">Dekliška obleka roza</a>
+        <div class="price">
+          <span>8,99 &euro;</span>
+          <span class="price-old">14,99 &euro;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-c">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="hover-cart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">H&amp;M</div>
+        <a href="#" class="name">Fantovske hlače</a>
+        <div class="price">6,50 &euro;</div>
+      </div>
+    </div>
+
+    <div class="card-c">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="hover-cart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          V košarico
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">ZARA</div>
+        <a href="#" class="name">Otroška majica z dolgimi rokavi in potiskom medvedka</a>
+        <div class="price">9,99 &euro;</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- VARIANT D -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="variant-section">
+  <h2 class="variant-title">D — Quick-add strip between image and info</h2>
+  <p class="variant-desc">
+    Persistent "Dodaj" strip sits between image and text. Acts as visual separator + always-visible CTA.
+    Baymard: persistent add-to-cart reduces interaction cost by 1 click. Gold on hover reinforces brand.
+    Fav stays on image. Info area is clean: brand, name, price only.
+  </p>
+  <div class="card-row">
+
+    <div class="card-d">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <button class="quick-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        Dodaj
+      </button>
+      <div class="body">
+        <div class="manufacturer">LUPILU</div>
+        <a href="#" class="name">Otroški zimski kombinezon z vodoodporno prevleko</a>
+        <div class="price">12,99 &euro;</div>
+      </div>
+    </div>
+
+    <div class="card-d">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <button class="quick-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        Dodaj
+      </button>
+      <div class="body">
+        <a href="#" class="name">Dekliška obleka roza</a>
+        <div class="price">
+          <span>8,99 &euro;</span>
+          <span class="price-old">14,99 &euro;</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-d">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <button class="quick-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        Dodaj
+      </button>
+      <div class="body">
+        <div class="manufacturer">H&amp;M</div>
+        <a href="#" class="name">Fantovske hlače</a>
+        <div class="price">6,50 &euro;</div>
+      </div>
+    </div>
+
+    <div class="card-d">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <button class="quick-add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        Dodaj
+      </button>
+      <div class="body">
+        <div class="manufacturer">ZARA</div>
+        <a href="#" class="name">Otroška majica z dolgimi rokavi in potiskom medvedka</a>
+        <div class="price">9,99 &euro;</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ -->
+<!-- VARIANT E -->
+<!-- ════════════════════════════════════════════════════════════ -->
+<div class="variant-section">
+  <h2 class="variant-title">E — Bottom action bar with gold cart button</h2>
+  <p class="variant-desc">
+    Shopify/Etsy pattern. Info area has manufacturer + name. Bottom bar separated by border:
+    price left, gold cart button right. Contrasting gold creates clear purchase focal point.
+    Fav on image top-right with subtle white bg. The border creates visual hierarchy between
+    browsing (info) and buying (action bar).
+  </p>
+  <div class="card-row">
+
+    <div class="card-e">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">LUPILU</div>
+        <a href="#" class="name">Otroški zimski kombinezon z vodoodporno prevleko</a>
+      </div>
+      <div class="action-bar">
+        <div class="price">12,99 &euro;</div>
+        <button class="btn-cart" aria-label="Add to cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-e">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <a href="#" class="name">Dekliška obleka roza</a>
+      </div>
+      <div class="action-bar">
+        <div class="price">
+          <span>8,99 &euro;</span>
+          <span class="price-old">14,99 &euro;</span>
+        </div>
+        <button class="btn-cart" aria-label="Add to cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-e">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">H&amp;M</div>
+        <a href="#" class="name">Fantovske hlače</a>
+      </div>
+      <div class="action-bar">
+        <div class="price">6,50 &euro;</div>
+        <button class="btn-cart" aria-label="Add to cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-e">
+      <div class="media">
+        <div class="img-placeholder">
+          <img src="https://placehold.co/400x400/f7f7f7/9aa0af?text=Product" alt="">
+        </div>
+        <div class="labels"><span class="label-novo">NOVO</span></div>
+        <button class="btn-fav" aria-label="Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+      </div>
+      <div class="body">
+        <div class="manufacturer">ZARA</div>
+        <a href="#" class="name">Otroška majica z dolgimi rokavi in potiskom medvedka</a>
+      </div>
+      <div class="action-bar">
+        <div class="price">9,99 &euro;</div>
+        <button class="btn-cart" aria-label="Add to cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

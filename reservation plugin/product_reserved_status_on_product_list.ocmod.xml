@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>Product Reserved Status On Product List</name>
+    <code>Product_Reserved_Status_On_Product_List</code>
+    <version>1.1</version>
+    <author>Output Web</author>
+    <link>https://www.buy-extensions.com</link>
+
+    
+    <file path="admin/controller/catalog/product.php">
+        <operation>
+            <search><![CDATA[$data['products'][] = array(]]></search>
+            <add position="before"><![CDATA[
+			if($result['quantity']<=0){
+				$reserved_query=$this->db->query("SELECT * FROM ".DB_PREFIX."reserved_stock WHERE product_id='".(int)$result['product_id']."'");
+			   
+				if($reserved_query->num_rows){
+					$reserved_status = '<span style="color:#05bc05;">REZERVIRANO</span>';
+				}else{
+					$reserved_status = '<span style="color:#ff0000;">PRODANO</span>';
+				}
+			}else{
+				$reserved_status = '';
+			}
+            ]]></add>
+        </operation>
+		<operation>
+            <search><![CDATA[$data['products'][] = array(]]></search>
+            <add position="after"><![CDATA[
+				'reserved_status' => $reserved_status,
+            ]]></add>
+        </operation>
+    </file>
+	<file path="admin/view/template/catalog/product_list.twig">
+        <operation>
+            <search><![CDATA[<td class="text-right">{% if product.quantity <= 0 %} <span class="label label-warning">{{ product.quantity }}</span> {% elseif product.quantity <= 5 %} <span class="label label-danger">{{ product.quantity }}</span> {% else %} <span class="label label-success">{{ product.quantity }}</span> {% endif %}</td>]]></search>
+            <add position="replace"><![CDATA[<td class="text-right">{% if product.reserved_status %} {{  product.reserved_status }} {% endif %} {% if product.quantity <= 0 %} <span class="label label-warning">{{ product.quantity }}</span> {% elseif product.quantity <= 5 %} <span class="label label-danger">{{ product.quantity }}</span> {% else %} <span class="label label-success">{{ product.quantity }}</span> {% endif %}</td>]]></add>
+        </operation>
+    </file>
+	
+</modification>

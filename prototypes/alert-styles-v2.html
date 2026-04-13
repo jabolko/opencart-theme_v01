@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Alerts — 5 Variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --charcoal: #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --success: #7d9478;
+            --error: #d55e6f;
+            --warning: #e99f20;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: var(--surface-alt);
+            padding: 20px;
+        }
+
+        .section {
+            max-width: 420px;
+            margin: 0 auto 50px;
+        }
+
+        .section-label {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--heading);
+            margin-bottom: 4px;
+        }
+
+        .section-desc {
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .alerts { display: flex; flex-direction: column; gap: 10px; }
+
+        /* ================================================================
+           V1 — FLOATING SNACKBAR
+           Fixed bottom, slides up. Dark bg, icon, action link.
+           Like Android/Material snackbar.
+           ================================================================ */
+        .v1-alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: var(--heading);
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .v1-alert__icon {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v1-alert__icon svg { width: 16px; height: 16px; stroke: var(--white); fill: none; stroke-width: 2.5; }
+
+        .v1-alert--success .v1-alert__icon { background: var(--success); }
+        .v1-alert--danger .v1-alert__icon { background: var(--error); }
+        .v1-alert--info .v1-alert__icon { background: var(--gold); }
+
+        .v1-alert__text { flex: 1; }
+
+        .v1-alert__action {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--gold);
+            text-decoration: none;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        /* ================================================================
+           V2 — GLASS CARD
+           Frosted glass effect, blurred bg, subtle border
+           ================================================================ */
+        .v2-alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            font-size: 14px;
+            color: var(--heading);
+        }
+
+        .v2-alert__bar {
+            width: 3px;
+            height: 32px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .v2-alert--success .v2-alert__bar { background: var(--success); }
+        .v2-alert--danger .v2-alert__bar { background: var(--error); }
+        .v2-alert--info .v2-alert__bar { background: var(--gold); }
+
+        .v2-alert__body { flex: 1; }
+
+        .v2-alert__title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 1px;
+        }
+
+        .v2-alert--success .v2-alert__title { color: var(--success); }
+        .v2-alert--danger .v2-alert__title { color: var(--error); }
+        .v2-alert--info .v2-alert__title { color: var(--gold-dark); }
+
+        .v2-alert__text {
+            font-size: 12px;
+            color: var(--charcoal);
+        }
+
+        .v2-alert__close {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.05);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.15s;
+        }
+
+        .v2-alert__close:hover { background: rgba(0,0,0,0.1); }
+        .v2-alert__close svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; stroke-width: 2; }
+
+        /* ================================================================
+           V3 — PROGRESS TIMER
+           Auto-dismiss with shrinking progress bar at bottom
+           ================================================================ */
+        .v3-alert {
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .v3-alert__content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--heading);
+        }
+
+        .v3-alert__icon svg { width: 18px; height: 18px; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+        .v3-alert--success .v3-alert__icon svg { stroke: var(--success); }
+        .v3-alert--danger .v3-alert__icon svg { stroke: var(--error); }
+        .v3-alert--info .v3-alert__icon svg { stroke: var(--gold-dark); }
+
+        .v3-alert__text {
+            flex: 1;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .v3-alert__close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .v3-alert__progress {
+            height: 3px;
+            background: var(--border);
+        }
+
+        .v3-alert__progress-fill {
+            height: 100%;
+            animation: shrink 5s linear forwards;
+        }
+
+        .v3-alert--success .v3-alert__progress-fill { background: var(--success); width: 70%; }
+        .v3-alert--danger .v3-alert__progress-fill { background: var(--error); width: 90%; }
+        .v3-alert--info .v3-alert__progress-fill { background: var(--gold); width: 40%; }
+
+        @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+
+        /* ================================================================
+           V4 — ICON + TEXT INLINE
+           Ultra minimal, no box, just a colored bar that slides in
+           ================================================================ */
+        .v4-alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .v4-alert__emoji {
+            font-size: 20px;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+
+        .v4-alert__text {
+            flex: 1;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--heading);
+        }
+
+        .v4-alert__subtext {
+            font-weight: 400;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--muted);
+            font-size: 12px;
+            display: block;
+            margin-top: 1px;
+        }
+
+        .v4-alert--success { background: rgba(125, 148, 120, 0.08); }
+        .v4-alert--danger { background: rgba(213, 94, 111, 0.08); }
+        .v4-alert--info { background: rgba(249, 185, 74, 0.06); }
+
+        .v4-alert__link {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            text-decoration: none;
+            flex-shrink: 0;
+            padding: 6px 14px;
+            border-radius: 999px;
+        }
+
+        .v4-alert--success .v4-alert__link { background: var(--success); color: var(--white); }
+        .v4-alert--danger .v4-alert__link { background: var(--error); color: var(--white); }
+        .v4-alert--info .v4-alert__link { background: var(--gold); color: var(--heading); }
+
+        /* ================================================================
+           V5 — SPLIT CARD
+           Icon left panel + message right, action button
+           ================================================================ */
+        .v5-alert {
+            display: flex;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .v5-alert__icon-panel {
+            width: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .v5-alert--success .v5-alert__icon-panel { background: var(--success); }
+        .v5-alert--danger .v5-alert__icon-panel { background: var(--error); }
+        .v5-alert--info .v5-alert__icon-panel { background: var(--gold); }
+
+        .v5-alert__icon-panel svg { width: 20px; height: 20px; stroke: var(--white); fill: none; stroke-width: 2.5; }
+
+        .v5-alert__body {
+            flex: 1;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .v5-alert__text {
+            flex: 1;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--heading);
+        }
+
+        .v5-alert__close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- V1 — FLOATING SNACKBAR -->
+<div class="section">
+    <div class="section-label">V1 — Floating Snackbar</div>
+    <div class="section-desc">Dark bg, icon circle, action link. Like Shopify/Material toast. Works as fixed bottom popup.</div>
+    <div class="alerts">
+        <div class="v1-alert v1-alert--success">
+            <div class="v1-alert__icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <span class="v1-alert__text">Artikel je bil dodan v košarico!</span>
+            <a class="v1-alert__action">Košarica</a>
+        </div>
+        <div class="v1-alert v1-alert--danger">
+            <div class="v1-alert__icon"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+            <span class="v1-alert__text">Prosimo, izberite velikost.</span>
+            <a class="v1-alert__action">Popravi</a>
+        </div>
+        <div class="v1-alert v1-alert--info">
+            <div class="v1-alert__icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <span class="v1-alert__text">Dodan na seznam želja.</span>
+            <a class="v1-alert__action">Seznam</a>
+        </div>
+    </div>
+</div>
+
+<!-- V2 — GLASS CARD -->
+<div class="section">
+    <div class="section-label">V2 — Glass Card</div>
+    <div class="section-desc">Frosted glass effect, color bar left, title + description, round close button.</div>
+    <div class="alerts">
+        <div class="v2-alert v2-alert--success">
+            <div class="v2-alert__bar"></div>
+            <div class="v2-alert__body">
+                <div class="v2-alert__title">Dodano v košarico</div>
+                <div class="v2-alert__text">Artikel je bil uspešno dodan.</div>
+            </div>
+            <button class="v2-alert__close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="v2-alert v2-alert--danger">
+            <div class="v2-alert__bar"></div>
+            <div class="v2-alert__body">
+                <div class="v2-alert__title">Napaka</div>
+                <div class="v2-alert__text">Prosimo, izberite velikost.</div>
+            </div>
+            <button class="v2-alert__close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="v2-alert v2-alert--info">
+            <div class="v2-alert__bar"></div>
+            <div class="v2-alert__body">
+                <div class="v2-alert__title">Seznam želja</div>
+                <div class="v2-alert__text">Artikel je bil dodan na seznam želja.</div>
+            </div>
+            <button class="v2-alert__close"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+    </div>
+</div>
+
+<!-- V3 — PROGRESS TIMER -->
+<div class="section">
+    <div class="section-label">V3 — Progress Timer</div>
+    <div class="section-desc">Auto-dismiss with animated progress bar at bottom. Disappears after 5 seconds.</div>
+    <div class="alerts">
+        <div class="v3-alert v3-alert--success">
+            <div class="v3-alert__content">
+                <span class="v3-alert__icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+                <span class="v3-alert__text">Artikel je bil dodan v košarico!</span>
+                <button class="v3-alert__close">&times;</button>
+            </div>
+            <div class="v3-alert__progress"><div class="v3-alert__progress-fill"></div></div>
+        </div>
+        <div class="v3-alert v3-alert--danger">
+            <div class="v3-alert__content">
+                <span class="v3-alert__icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></span>
+                <span class="v3-alert__text">Prosimo, izberite velikost.</span>
+                <button class="v3-alert__close">&times;</button>
+            </div>
+            <div class="v3-alert__progress"><div class="v3-alert__progress-fill"></div></div>
+        </div>
+        <div class="v3-alert v3-alert--info">
+            <div class="v3-alert__content">
+                <span class="v3-alert__icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+                <span class="v3-alert__text">Dodan na seznam želja.</span>
+                <button class="v3-alert__close">&times;</button>
+            </div>
+            <div class="v3-alert__progress"><div class="v3-alert__progress-fill"></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- V4 — EMOJI + ACTION BUTTON -->
+<div class="section">
+    <div class="section-label">V4 — Emoji + Action</div>
+    <div class="section-desc">Friendly emoji, soft tint bg, pill action button. Warm and approachable.</div>
+    <div class="alerts">
+        <div class="v4-alert v4-alert--success">
+            <span class="v4-alert__emoji">🛒</span>
+            <div class="v4-alert__text">Dodano v košarico!<span class="v4-alert__subtext">Pulover št. 122/128</span></div>
+            <a class="v4-alert__link" href="#">Košarica</a>
+        </div>
+        <div class="v4-alert v4-alert--danger">
+            <span class="v4-alert__emoji">⚠️</span>
+            <div class="v4-alert__text">Napaka<span class="v4-alert__subtext">Prosimo, izberite velikost</span></div>
+            <a class="v4-alert__link" href="#">Popravi</a>
+        </div>
+        <div class="v4-alert v4-alert--info">
+            <span class="v4-alert__emoji">❤️</span>
+            <div class="v4-alert__text">Na seznamu želja!<span class="v4-alert__subtext">Pulover št. 122/128</span></div>
+            <a class="v4-alert__link" href="#">Seznam</a>
+        </div>
+    </div>
+</div>
+
+<!-- V5 — SPLIT ICON PANEL -->
+<div class="section">
+    <div class="section-label">V5 — Split Panel</div>
+    <div class="section-desc">Colored left panel with icon, white right with text. Bold, clear status.</div>
+    <div class="alerts">
+        <div class="v5-alert v5-alert--success">
+            <div class="v5-alert__icon-panel">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="v5-alert__body">
+                <span class="v5-alert__text">Artikel je bil dodan v košarico!</span>
+                <button class="v5-alert__close">&times;</button>
+            </div>
+        </div>
+        <div class="v5-alert v5-alert--danger">
+            <div class="v5-alert__icon-panel">
+                <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </div>
+            <div class="v5-alert__body">
+                <span class="v5-alert__text">Prosimo, izberite velikost.</span>
+                <button class="v5-alert__close">&times;</button>
+            </div>
+        </div>
+        <div class="v5-alert v5-alert--info">
+            <div class="v5-alert__icon-panel">
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="v5-alert__body">
+                <span class="v5-alert__text">Dodan na seznam želja.</span>
+                <button class="v5-alert__close">&times;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

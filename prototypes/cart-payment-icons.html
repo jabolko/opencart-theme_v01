@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart Payment Icons — 5 Variations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 17px; }
+  body { background: #f7f7f7; padding: 24px 16px; font-family: 'DM Sans', sans-serif; color: #565656; }
+  h2 { font-family: 'Open Sans', sans-serif; font-size: 0.82rem; font-weight: 600; color: #9aa0af; margin: 40px 0 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  h2:first-of-type { margin-top: 0; }
+  .wrap { max-width: 390px; margin: 0 auto; }
+
+  /* Payment icon base — rounded rect cards */
+  .pay-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 28px;
+    border: 1px solid #d6d9e0;
+    border-radius: 4px;
+    background: #fff;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    font-size: 7px;
+    letter-spacing: 0.02em;
+    color: #2b2e35;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .pay-icon--plain {
+    border: none;
+    background: transparent;
+    width: 36px;
+    height: 24px;
+  }
+  .pay-icon--grey {
+    filter: grayscale(100%) opacity(0.6);
+  }
+  .pay-icon--sm {
+    width: 36px;
+    height: 24px;
+  }
+
+  /* Visa */
+  .pi-visa { color: #1a1f71; font-size: 11px; font-weight: 700; font-style: italic; letter-spacing: -0.02em; }
+  /* Mastercard circles */
+  .pi-mc { position: relative; width: 42px; height: 28px; }
+  .pi-mc-c1 { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #eb001b; top: 6px; left: 7px; }
+  .pi-mc-c2 { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #f79e1b; top: 6px; left: 19px; opacity: 0.85; }
+  /* PayPal */
+  .pi-pp { color: #003087; font-size: 8px; font-weight: 700; letter-spacing: -0.02em; }
+  .pi-pp span { color: #009cde; }
+  /* Apple Pay */
+  .pi-ap { font-size: 9px; color: #000; letter-spacing: -0.02em; }
+  /* Google Pay */
+  .pi-gp-g { font-weight: 700; font-size: 9px; }
+  .pi-gp-g .g1 { color: #4285F4; } .pi-gp-g .g2 { color: #EA4335; } .pi-gp-g .g3 { color: #FBBC05; } .pi-gp-g .g4 { color: #34A853; }
+  /* Bank */
+  .pi-bank { font-size: 6.5px; color: #565656; font-weight: 600; text-align: center; line-height: 1.2; }
+  /* COD */
+  .pi-cod { font-size: 6.5px; color: #565656; font-weight: 600; text-align: center; line-height: 1.2; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Reusable payment icon set -->
+
+<!-- ===================== V1 — Below Trust Badges, Centered Row ===================== -->
+<h2>V1 — Centered Row with Border Cards</h2>
+<div style="display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; padding: 12px 0;">
+  <div class="pay-icon"><span class="pi-visa">VISA</span></div>
+  <div class="pay-icon"><div class="pi-mc"><div class="pi-mc-c1"></div><div class="pi-mc-c2"></div></div></div>
+  <div class="pay-icon"><span class="pi-pp">Pay<span>Pal</span></span></div>
+  <div class="pay-icon"><span class="pi-ap">Pay</span></div>
+  <div class="pay-icon"><span class="pi-gp-g"><span class="g1">G</span> Pay</span></div>
+  <div class="pay-icon"><span class="pi-bank">Bančno<br>nakazilo</span></div>
+  <div class="pay-icon"><span class="pi-cod">Po<br>povzetju</span></div>
+</div>
+
+<!-- ===================== V2 — Label Above, Greyscale ===================== -->
+<h2>V2 — Label Above + Greyscale</h2>
+<div style="text-align: center; padding: 8px 0;">
+  <div style="font-family: 'Open Sans'; font-size: 0.59rem; font-weight: 600; color: #9aa0af; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Sprejemamo</div>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;">
+    <div class="pay-icon pay-icon--grey"><span class="pi-visa">VISA</span></div>
+    <div class="pay-icon pay-icon--grey"><div class="pi-mc"><div class="pi-mc-c1"></div><div class="pi-mc-c2"></div></div></div>
+    <div class="pay-icon pay-icon--grey"><span class="pi-pp">Pay<span>Pal</span></span></div>
+    <div class="pay-icon pay-icon--grey"><span class="pi-ap">Pay</span></div>
+    <div class="pay-icon pay-icon--grey"><span class="pi-gp-g"><span class="g1">G</span> Pay</span></div>
+    <div class="pay-icon pay-icon--grey"><span class="pi-bank">Bančno<br>nakazilo</span></div>
+    <div class="pay-icon pay-icon--grey"><span class="pi-cod">Po<br>povzetju</span></div>
+  </div>
+</div>
+
+<!-- ===================== V3 — Inside Summary Card ===================== -->
+<h2>V3 — Inside Summary Card</h2>
+<div style="background: #fff; border-radius: 8px; padding: 16px;">
+  <div style="display: flex; justify-content: space-between; font-family: 'Open Sans'; font-size: 0.875rem; margin-bottom: 4px;">
+    <span style="color: #565656;">Podznesek</span><span style="color: #565656;">12,80 €</span>
+  </div>
+  <div style="display: flex; justify-content: space-between; font-family: 'Open Sans'; font-size: 0.875rem; margin-bottom: 12px;">
+    <span style="color: #565656;">Dostava</span><span style="color: #565656;">3,50 €</span>
+  </div>
+  <div style="border-top: 1px solid #d6d9e0; padding-top: 12px; display: flex; justify-content: space-between; font-family: 'Open Sans'; font-weight: 600; font-size: 1.125rem; color: #2b2e35; margin-bottom: 16px;">
+    <span>Skupaj</span><span>16,30 €</span>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 5px; flex-wrap: wrap; padding-top: 8px; border-top: 1px solid #eeeeee;">
+    <div class="pay-icon pay-icon--sm"><span class="pi-visa">VISA</span></div>
+    <div class="pay-icon pay-icon--sm"><div class="pi-mc" style="width:36px;height:24px;"><div class="pi-mc-c1" style="width:14px;height:14px;top:5px;left:5px;"></div><div class="pi-mc-c2" style="width:14px;height:14px;top:5px;left:16px;"></div></div></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-pp" style="font-size:7px;">Pay<span>Pal</span></span></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-ap" style="font-size:8px;">Pay</span></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-gp-g" style="font-size:8px;"><span class="g1">G</span> Pay</span></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-bank" style="font-size:5.5px;">Bančno<br>nakazilo</span></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-cod" style="font-size:5.5px;">Po<br>povzetju</span></div>
+  </div>
+</div>
+
+<!-- ===================== V4 — Minimal Text List ===================== -->
+<h2>V4 — Minimal Text + Icons</h2>
+<div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 0; flex-wrap: wrap;">
+  <div style="display: flex; align-items: center; gap: 4px;">
+    <div class="pay-icon pay-icon--sm"><span class="pi-visa">VISA</span></div>
+    <div class="pay-icon pay-icon--sm"><div class="pi-mc" style="width:36px;height:24px;"><div class="pi-mc-c1" style="width:14px;height:14px;top:5px;left:5px;"></div><div class="pi-mc-c2" style="width:14px;height:14px;top:5px;left:16px;"></div></div></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-pp" style="font-size:7px;">Pay<span>Pal</span></span></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-ap" style="font-size:8px;">Pay</span></div>
+    <div class="pay-icon pay-icon--sm"><span class="pi-gp-g" style="font-size:8px;"><span class="g1">G</span> Pay</span></div>
+  </div>
+  <span style="font-family: 'Open Sans'; font-size: 0.59rem; color: #9aa0af;">+ nakazilo, povzetje</span>
+</div>
+
+<!-- ===================== V5 — Sticky CTA Footer with Icons ===================== -->
+<h2>V5 — Inside Sticky Footer</h2>
+<div style="
+  position: relative;
+  background: #fff;
+  padding: 12px 16px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  border-radius: 12px;
+">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <div>
+      <div style="font-family: 'DM Sans'; font-size: 0.71rem; color: #9aa0af;">Skupaj</div>
+      <div style="font-family: 'Open Sans'; font-weight: 700; font-size: 1.125rem; color: #2b2e35;">16,30 €</div>
+    </div>
+    <a href="#" style="display: inline-flex; align-items: center; gap: 8px; background: #f9b94a; color: #2b2e35; font-family: 'Open Sans'; font-weight: 600; font-size: 0.875rem; padding: 12px 24px; border-radius: 9999px; text-decoration: none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      Varno zaključi nakup
+    </a>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 4px; flex-wrap: wrap;">
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><span class="pi-visa">VISA</span></div>
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><div class="pi-mc" style="width:36px;height:24px;"><div class="pi-mc-c1" style="width:14px;height:14px;top:5px;left:5px;"></div><div class="pi-mc-c2" style="width:14px;height:14px;top:5px;left:16px;"></div></div></div>
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><span class="pi-pp" style="font-size:7px;">Pay<span>Pal</span></span></div>
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><span class="pi-ap" style="font-size:8px;">Pay</span></div>
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><span class="pi-gp-g" style="font-size:8px;"><span class="g1">G</span> Pay</span></div>
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><span class="pi-bank" style="font-size:5.5px;">Bančno<br>nakazilo</span></div>
+    <div class="pay-icon pay-icon--sm pay-icon--grey"><span class="pi-cod" style="font-size:5.5px;">Po<br>povzetju</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

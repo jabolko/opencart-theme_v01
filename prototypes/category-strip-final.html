@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S3 Category Strip — Final — Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;1,9..40,400&family=Open+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================================
+           DESIGN TOKENS
+           ================================================================ */
+        :root {
+            --gold:          #f9b94a;
+            --gold-light:    #ffd369;
+            --gold-dark:     #e0a030;
+            --charcoal:      #565656;
+            --charcoal-dark: #3a3a3a;
+            --heading:       #2b2e35;
+            --muted:         #9aa0af;
+            --white:         #ffffff;
+            --light-grey:    #f7f7f7;
+            --section-grey:  #ececec;
+            --hero-grey:     #eeeeee;
+            --border:        #d6d9e0;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 17px;
+            background: var(--white);
+            color: var(--charcoal);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; display: block; }
+
+        .container {
+            max-width: 1550px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* Simulate hero above */
+        .hero-sim {
+            height: 40px;
+            background: var(--hero-grey);
+        }
+
+        /* ================================================================
+           SECTION SHELL
+           Background continues from hero grey → section grey.
+           Small top padding bleeds the hero colour into the section,
+           making it feel continuous rather than a hard cut.
+           ================================================================ */
+        .home-categories {
+            background: var(--light-grey);
+            padding: 40px 0 56px;
+        }
+
+        /* ================================================================
+           GRID LAYOUT
+           2-row asymmetric editorial grid.
+           Row 1: Feature tiles — Deklice (wider) + Fantje (narrower)
+           Row 2: Discovery row — Mamice, Znamke, Novo (equal thirds)
+           Gap: 12px — tight enough to feel like one unified surface.
+           ================================================================ */
+        .cat-grid {
+            display: grid;
+            grid-template-rows: 360px 285px;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .cat-row {
+            display: grid;
+            gap: 12px;
+        }
+
+        .cat-row--top {
+            grid-template-columns: 1.15fr 0.85fr;
+        }
+
+        .cat-row--bottom {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        /* ================================================================
+           TILE BASE
+           Rounded corners, clipped overflow so product images can
+           bleed right or bottom without showing scroll.
+           Transition: smooth lift on hover, cubic-bezier for premium feel.
+           ================================================================ */
+        .cat-tile {
+            position: relative;
+            background: var(--cat-bg, var(--section-grey));
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            transition:
+                transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+                box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .cat-tile:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.10);
+        }
+
+        /* ================================================================
+           PRODUCT IMAGE
+           Transparent PNGs — drop-shadow follows clothing silhouette.
+           Images are right-anchored and bottom-anchored, slightly larger
+           than the tile so they feel cinematic, not crammed.
+           On hover: lifts slightly (product floats up as tile rises).
+           ================================================================ */
+        .cat-tile__img {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 52%;
+            height: 94%;
+            object-fit: contain;
+            object-position: right bottom;
+            z-index: 1;
+            pointer-events: none;
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.13));
+            transition:
+                transform 0.5s cubic-bezier(0.22, 0.61, 0.36, 1),
+                filter 0.5s ease;
+        }
+
+        .cat-row--bottom .cat-tile__img {
+            width: 50%;
+            height: 88%;
+        }
+
+        .cat-tile:hover .cat-tile__img {
+            transform: translateY(-6px) scale(1.03);
+            filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.16));
+        }
+
+        /* ================================================================
+           TEXT CONTENT
+           Pinned to bottom-left. The gradient floor lifts the text off
+           the background without a hard block — text floats over the tile.
+           Left 48% is the text zone; product image owns the right 52%.
+           ================================================================ */
+        .cat-tile__content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0 28px 28px;
+            z-index: 3;
+            /* Wide gradient floor for legibility — fades from tile colour */
+            background: linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.60) 0%,
+                rgba(255, 255, 255, 0.30) 55%,
+                transparent 100%
+            );
+        }
+
+        .cat-row--bottom .cat-tile__content {
+            padding: 0 22px 22px;
+        }
+
+        /* ================================================================
+           CATEGORY NAME
+           Open Sans 800 — maximum authority without screaming.
+           Letter-spacing tight for a modern editorial feel.
+           Line clamped to 2 lines max.
+           ================================================================ */
+        .cat-tile__name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 800;
+            font-size: 2.9rem;
+            color: var(--heading);
+            line-height: 1.0;
+            letter-spacing: -0.04em;
+            display: block;
+            /* Gold underline: starts as 0-width line, sweeps to full on hover */
+            position: relative;
+        }
+
+        .cat-tile__name::after {
+            content: '';
+            display: block;
+            height: 3px;
+            background: var(--gold);
+            width: 0;
+            border-radius: 2px;
+            margin-top: 8px;
+            transition: width 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        .cat-tile:hover .cat-tile__name::after {
+            width: 60%;
+        }
+
+        .cat-row--bottom .cat-tile__name {
+            font-size: 2.1rem;
+        }
+
+        /* ================================================================
+           PRICE / SUBLINE
+           DM Sans italic — warm, personal. Gold anchors the price as
+           the key value signal. Always visible (not hidden until hover)
+           so price-sensitive shoppers see it immediately.
+           ================================================================ */
+        .cat-tile__price {
+            font-family: 'DM Sans', sans-serif;
+            font-style: italic;
+            font-size: 1.0rem;
+            color: var(--gold-dark);
+            margin-top: 6px;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .cat-row--bottom .cat-tile__price {
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* ================================================================
+           NOVO PRISPELO TILE — Special treatment
+           Gold diagonal gradient. No product image.
+           Ghost "NOVO" watermark creates visual mass where the product
+           would sit, so the tile doesn't feel empty.
+           Dark pill CTA gives the eye a landing point.
+           ================================================================ */
+        .cat-tile--novo {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+        }
+
+        /* Ghost watermark — typographic fill for the right zone */
+        .cat-tile--novo::before {
+            content: 'NOVO';
+            position: absolute;
+            right: -12px;
+            bottom: -20px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 800;
+            font-size: 9.5rem;
+            color: rgba(255, 255, 255, 0.22);
+            line-height: 1;
+            letter-spacing: -0.05em;
+            pointer-events: none;
+            z-index: 1;
+            user-select: none;
+        }
+
+        /* Override gradient floor — tile is gold, needs dark-tinted floor */
+        .cat-tile--novo .cat-tile__content {
+            background: linear-gradient(
+                0deg,
+                rgba(180, 120, 0, 0.18) 0%,
+                transparent 70%
+            );
+        }
+
+        .cat-tile--novo .cat-tile__name {
+            color: var(--heading);
+        }
+
+        /* Gold underline is darker on gold bg for contrast */
+        .cat-tile--novo .cat-tile__name::after {
+            background: var(--heading);
+            opacity: 0.25;
+        }
+
+        .cat-tile--novo:hover .cat-tile__name::after {
+            opacity: 0.5;
+        }
+
+        /* Pill CTA — dark against gold, looks premium */
+        .cat-tile__cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            padding: 10px 22px;
+            background: var(--heading);
+            color: var(--gold);
+            border-radius: 9999px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.3px;
+            transition:
+                background 0.3s ease,
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .cat-tile__cta svg {
+            transition: transform 0.3s ease;
+        }
+
+        .cat-tile--novo:hover .cat-tile__cta {
+            background: var(--charcoal-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .cat-tile--novo:hover .cat-tile__cta svg {
+            transform: translateX(3px);
+        }
+
+        .cat-tile--novo:hover {
+            box-shadow: 0 20px 50px rgba(249, 185, 74, 0.30);
+        }
+
+        /* Novo tile — subline uses dark charcoal, not gold */
+        .cat-tile--novo .cat-tile__price {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--heading);
+            opacity: 0.5;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ================================================================
+           MOBILE (≤ 768px)
+           Both rows collapse to 2 columns.
+           Novo tile spans full width — it's the hero on mobile.
+           Heights scale down proportionally.
+           ================================================================ */
+        @media (max-width: 768px) {
+            .home-categories {
+                padding: 24px 0 40px;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            .cat-grid {
+                grid-template-rows: auto;
+                gap: 8px;
+            }
+
+            .cat-row {
+                gap: 8px;
+            }
+
+            .cat-row--top {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cat-row--top .cat-tile {
+                height: 240px;
+            }
+
+            .cat-row--bottom {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .cat-row--bottom .cat-tile {
+                height: 200px;
+            }
+
+            /* Novo spans full width on mobile — too important to halve */
+            .cat-tile--novo {
+                grid-column: 1 / -1;
+                height: 160px !important;
+            }
+
+            .cat-tile--novo::before {
+                font-size: 6rem;
+                right: 16px;
+                bottom: -8px;
+            }
+
+            .cat-tile__name {
+                font-size: 2.0rem;
+            }
+
+            .cat-row--bottom .cat-tile__name {
+                font-size: 1.6rem;
+            }
+
+            .cat-tile__img {
+                width: 50%;
+                height: 90%;
+            }
+
+            .cat-tile__content {
+                padding: 0 16px 16px;
+            }
+
+            .cat-row--bottom .cat-tile__content {
+                padding: 0 14px 14px;
+            }
+        }
+
+        /* ================================================================
+           TABLET (769px – 992px)
+           ================================================================ */
+        @media (min-width: 769px) and (max-width: 992px) {
+            .cat-grid {
+                grid-template-rows: 300px 240px;
+            }
+
+            .cat-tile__name {
+                font-size: 2.4rem;
+            }
+
+            .cat-row--bottom .cat-tile__name {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Simulate hero above -->
+<div class="hero-sim"></div>
+
+<!-- ================================================================
+     S3 — HOME CATEGORIES
+     ================================================================ -->
+<section class="home-categories">
+    <div class="container">
+        <div class="cat-grid">
+
+            <!-- ROW 1: Feature tiles -->
+            <div class="cat-row cat-row--top">
+
+                <!-- Deklice — wider feature tile -->
+                <a class="cat-tile" href="/category/60" style="--cat-bg: #f2d4d4;">
+                    <img
+                        class="cat-tile__img"
+                        src="../opencart/image/catalog/assets/homepage/otroski_koticek_deklice3.png"
+                        alt="Deklice"
+                    >
+                    <div class="cat-tile__content">
+                        <span class="cat-tile__name">Deklice</span>
+                        <span class="cat-tile__price">od 2 €</span>
+                    </div>
+                </a>
+
+                <!-- Fantje — narrower feature tile -->
+                <a class="cat-tile" href="/category/61" style="--cat-bg: #d4dff2;">
+                    <img
+                        class="cat-tile__img"
+                        src="../opencart/image/catalog/assets/homepage/otroski_koticek_decki.png"
+                        alt="Fantje"
+                    >
+                    <div class="cat-tile__content">
+                        <span class="cat-tile__name">Fantje</span>
+                        <span class="cat-tile__price">od 2 €</span>
+                    </div>
+                </a>
+
+            </div><!-- /cat-row--top -->
+
+            <!-- ROW 2: Discovery row -->
+            <div class="cat-row cat-row--bottom">
+
+                <!-- Mamice -->
+                <a class="cat-tile" href="/category/62" style="--cat-bg: #d4e8d8;">
+                    <img
+                        class="cat-tile__img"
+                        src="../opencart/image/catalog/assets/homepage/otroski_koticek_nosecnica.png"
+                        alt="Mamice"
+                    >
+                    <div class="cat-tile__content">
+                        <span class="cat-tile__name">Mamice</span>
+                        <span class="cat-tile__price">od 5 €</span>
+                    </div>
+                </a>
+
+                <!-- Znamke -->
+                <a class="cat-tile" href="/category/63" style="--cat-bg: #e8e4df;">
+                    <img
+                        class="cat-tile__img"
+                        src="../opencart/image/catalog/assets/homepage/otroski_koticek_pomlad.png"
+                        alt="Znamke"
+                    >
+                    <div class="cat-tile__content">
+                        <span class="cat-tile__name">Znamke</span>
+                        <span class="cat-tile__price">Zara · H&M · Next</span>
+                    </div>
+                </a>
+
+                <!-- Novo prispelo — gold tile, typographic only -->
+                <a class="cat-tile cat-tile--novo" href="/novo-prispelo">
+                    <div class="cat-tile__content">
+                        <span class="cat-tile__name">Novo prispelo</span>
+                        <span class="cat-tile__price">Sveži kosi</span>
+                        <span class="cat-tile__cta">
+                            Poglej novo
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                </a>
+
+            </div><!-- /cat-row--bottom -->
+
+        </div><!-- /cat-grid -->
+    </div><!-- /container -->
+</section>
+
+<!--
+=== SONNET HANDOFF ===
+
+RECOMMENDED VARIATION: Final — Uredniški (Editorial)
+REASON: 2+3 asymmetric editorial grid with oversized Open Sans 800 names,
+gold-dark italic prices, product PNGs right-bottom anchored with drop-shadow,
+white gradient floor for legibility. Single definitive design — no variations.
+
+USER DECISION NEEDED: Confirm real category URL slugs (currently /category/60–63
+and /novo-prispelo are placeholder paths — verify against OpenCart admin).
+
+TWIG: Add section after .home-hero in template/common/home.twig
+SCSS: Add .home-categories block in stylesheet/src/pages/_home.scss
+
+IMPLEMENTATION NOTES:
+- CSS Grid: two .cat-row divs inside .cat-grid. Row 1: grid-template-columns: 1.15fr 0.85fr.
+  Row 2: repeat(3, 1fr). Gap: 12px on both rows. Section bg: $color-surface-alt (#f7f7f7).
+- Tile heights: 360px (top row), 285px (bottom row). border-radius: 14px. overflow: hidden.
+- Per-tile colour via CSS custom property --cat-bg on the <a> element (inline style).
+  Deklice: #f2d4d4 | Fantje: #d4dff2 | Mamice: #d4e8d8 | Znamke: #e8e4df
+- Product images: position absolute, right 0, bottom 0, width 52% (top) / 50% (bottom),
+  height 94% / 88%. object-fit: contain, object-position: right bottom.
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.13)). Use <img> tag, not background-image.
+- Gradient floor: linear-gradient(0deg, rgba(255,255,255,0.60) 0%, rgba(255,255,255,0.30) 55%, transparent 100%).
+  Position: absolute bottom 0 left 0 right 0. z-index: 3.
+- Text: .cat-tile__name — Open Sans 800, 2.9rem (top) / 2.1rem (bottom), letter-spacing: -0.04em.
+  .cat-tile__price — DM Sans italic, 1.0rem / 0.9rem, color: $color-gold-dark (#e0a030).
+- Gold underline: .cat-tile__name::after, height 3px, bg $color-primary, width 0 → 60% on hover.
+  Transition: width 0.35s cubic-bezier(0.22, 0.61, 0.36, 1).
+- Hover state: translateY(-8px) + box-shadow(0 20px 50px rgba(0,0,0,0.10)).
+  Product image: translateY(-6px) scale(1.03).
+- NOVO tile (.cat-tile--novo): background linear-gradient(135deg, #ffd369 0%, #f9b94a 50%, #e0a030 100%).
+  No product image. ::before pseudo = ghost "NOVO" watermark, font-size 9.5rem, color rgba(255,255,255,0.22),
+  right -12px, bottom -20px, z-index 1.
+  Gradient floor override: rgba(180,120,0,0.18) → transparent. Name + price in $color-text-heading.
+  .cat-tile__cta pill: bg $color-text-heading, color $color-primary, border-radius 9999px, padding 10px 22px.
+  Hover: box-shadow(0 20px 50px rgba(249,185,74,0.30)).
+- MOBILE (≤768px): Both rows collapse to 2 cols, heights 240px / 200px.
+  Novo tile: grid-column 1/-1, height 160px — spans full width.
+  ghost watermark scales to 6rem.
+
+DESIGN TOKENS USED:
+- $color-primary (#f9b94a) — Novo gradient mid, CTA text colour
+- $color-gold-light (#ffd369) — Novo gradient start
+- $color-gold-dark (#e0a030) — Novo gradient end, price text colour
+- $color-text-heading (#2b2e35) — all category names, Novo CTA bg
+- $color-charcoal (#565656) — secondary text
+- $color-charcoal-dark (#3a3a3a) — CTA hover bg
+- $color-surface-alt (#f7f7f7) — section background
+- $color-section (#ececec) — tile fallback background
+=== END HANDOFF ===
+-->
+
+</body>
+</html>

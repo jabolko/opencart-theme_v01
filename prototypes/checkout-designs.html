@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — 5 Design Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Tokens ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f9b94a;
+    --gold-light: #ffd369;
+    --gold-dark: #e0a030;
+    --charcoal: #565656;
+    --dark: #3a3a3a;
+    --heading: #2b2e35;
+    --body: #565656;
+    --muted: #9aa0af;
+    --surface: #ffffff;
+    --surface-alt: #f7f7f7;
+    --section: #eeeeee;
+    --border: #d6d9e0;
+    --success: #7d9478;
+    --error: #d55e6f;
+    --font-heading: 'Open Sans', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  body { font-family: var(--font-body); color: var(--body); background: var(--section); font-size: 15px; line-height: 1.5; }
+  h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
+
+  /* ── Version Selector ── */
+  .version-nav { position: sticky; top: 0; z-index: 100; background: var(--dark); padding: 12px 16px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .version-nav span { color: #fff; font-family: var(--font-heading); font-weight: 600; font-size: 14px; margin-right: 8px; }
+  .version-nav button { padding: 6px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; background: transparent; color: #fff; font-family: var(--font-body); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .version-nav button.active, .version-nav button:hover { background: var(--gold); color: var(--heading); border-color: var(--gold); }
+  .version { display: none; }
+  .version.active { display: block; }
+
+  /* ── Shared Components ── */
+
+  /* Checkout Header (minimal) */
+  .ck-header { background: #fff; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .ck-header__logo { font-family: var(--font-heading); font-weight: 700; font-size: 18px; color: var(--heading); text-decoration: none; }
+  .ck-header__logo svg { vertical-align: middle; margin-right: 6px; }
+  .ck-header__secure { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+  .ck-header__secure svg { width: 14px; height: 14px; }
+  .ck-header__phone { font-size: 13px; color: var(--charcoal); text-decoration: none; display: none; }
+  @media(min-width:768px) { .ck-header__phone { display: block; } }
+
+  /* Progress Bar */
+  .ck-progress { display: flex; align-items: center; justify-content: center; padding: 16px; background: #fff; gap: 0; }
+  .ck-progress__step { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-family: var(--font-heading); font-weight: 500; }
+  .ck-progress__step.is-active { color: var(--heading); font-weight: 600; }
+  .ck-progress__step.is-done { color: var(--success); }
+  .ck-progress__dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .ck-progress__step.is-active .ck-progress__dot { background: var(--gold); border-color: var(--gold); color: var(--heading); }
+  .ck-progress__step.is-done .ck-progress__dot { background: var(--success); border-color: var(--success); color: #fff; }
+  .ck-progress__line { width: 32px; height: 2px; background: var(--border); margin: 0 4px; flex-shrink: 0; }
+  .ck-progress__line.is-done { background: var(--success); }
+  .ck-progress__label { display: none; }
+  @media(min-width:480px) { .ck-progress__label { display: inline; } }
+
+  /* Form Elements */
+  .ck-form { display: flex; flex-direction: column; gap: 12px; }
+  .ck-form__row { display: flex; gap: 12px; }
+  .ck-form__row > * { flex: 1; }
+  .ck-form__group { display: flex; flex-direction: column; gap: 4px; }
+  .ck-form__label { font-size: 13px; font-weight: 500; color: var(--heading); font-family: var(--font-heading); }
+  .ck-form__input { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; color: var(--heading); background: #fff; outline: none; transition: border-color 0.2s; }
+  .ck-form__input:focus { border-color: var(--gold); }
+  .ck-form__input::placeholder { color: var(--muted); }
+  .ck-form__input--prefilled { background: var(--surface-alt); color: var(--charcoal); }
+
+  /* Radio Options */
+  .ck-radio { display: flex; flex-direction: column; gap: 8px; }
+  .ck-radio__option { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; background: #fff; }
+  .ck-radio__option:hover { border-color: var(--gold); }
+  .ck-radio__option.is-selected { border-color: var(--gold); background: #fffbf0; }
+  .ck-radio__circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .ck-radio__option.is-selected .ck-radio__circle { border-color: var(--gold); }
+  .ck-radio__option.is-selected .ck-radio__circle::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--gold); }
+  .ck-radio__text { flex: 1; }
+  .ck-radio__title { font-size: 14px; color: var(--heading); font-weight: 500; font-family: var(--font-heading); }
+  .ck-radio__desc { font-size: 12px; color: var(--muted); }
+  .ck-radio__price { font-size: 14px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); white-space: nowrap; }
+  .ck-radio__price--free { color: var(--success); }
+
+  /* Order Summary Mini Card */
+  .ck-item { display: flex; gap: 12px; padding: 12px 0; }
+  .ck-item + .ck-item { border-top: 1px solid var(--section); }
+  .ck-item__img { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; background: var(--section); flex-shrink: 0; }
+  .ck-item__info { flex: 1; min-width: 0; }
+  .ck-item__brand { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.3px; }
+  .ck-item__name { font-size: 13px; color: var(--heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ck-item__meta { font-size: 11px; color: var(--muted); }
+  .ck-item__price { font-size: 14px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); white-space: nowrap; }
+
+  /* Summary Totals */
+  .ck-totals { display: flex; flex-direction: column; gap: 8px; padding: 16px 0; }
+  .ck-totals__row { display: flex; justify-content: space-between; font-size: 14px; }
+  .ck-totals__row span:first-child { color: var(--charcoal); }
+  .ck-totals__row span:last-child { color: var(--heading); font-weight: 500; }
+  .ck-totals__row--free span:last-child { color: var(--success); font-weight: 600; }
+  .ck-totals__row--total { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
+  .ck-totals__row--total span { font-size: 16px; font-weight: 600; font-family: var(--font-heading); color: var(--heading); }
+
+  /* CTA Button */
+  .ck-cta { width: 100%; padding: 16px; background: var(--gold); color: var(--heading); border: none; border-radius: var(--radius); font-family: var(--font-heading); font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+  .ck-cta:hover { background: var(--gold-dark); }
+  .ck-cta svg { width: 18px; height: 18px; }
+
+  /* Trust Strip */
+  .ck-trust { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 12px; font-size: 11px; color: var(--muted); }
+  .ck-trust svg { width: 16px; height: 16px; opacity: 0.6; }
+  .ck-trust__item { display: flex; align-items: center; gap: 4px; }
+
+  /* Payment Icons */
+  .ck-pay-icons { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .ck-pay-icons__icon { width: 38px; height: 24px; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 9px; font-weight: 600; color: var(--charcoal); }
+
+  /* Section Card */
+  .ck-card { background: #fff; border-radius: var(--radius); padding: 20px 16px; }
+  .ck-card + .ck-card { margin-top: 8px; }
+  .ck-card__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .ck-card__title { font-size: 16px; font-weight: 600; color: var(--heading); }
+  .ck-card__edit { font-size: 13px; color: var(--gold-dark); text-decoration: none; font-weight: 500; }
+  .ck-card__completed { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--success); }
+
+  /* Accordion Panel */
+  .ck-panel { background: #fff; border-radius: var(--radius); overflow: hidden; }
+  .ck-panel + .ck-panel { margin-top: 2px; }
+  .ck-panel__header { display: flex; align-items: center; gap: 12px; padding: 16px; cursor: pointer; }
+  .ck-panel__number { width: 28px; height: 28px; border-radius: 50%; background: var(--section); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--muted); font-family: var(--font-heading); flex-shrink: 0; }
+  .ck-panel.is-active .ck-panel__number { background: var(--gold); color: var(--heading); }
+  .ck-panel.is-done .ck-panel__number { background: var(--success); color: #fff; }
+  .ck-panel__title { flex: 1; font-size: 15px; font-weight: 600; color: var(--muted); font-family: var(--font-heading); }
+  .ck-panel.is-active .ck-panel__title { color: var(--heading); }
+  .ck-panel.is-done .ck-panel__title { color: var(--heading); }
+  .ck-panel__summary { font-size: 13px; color: var(--charcoal); }
+  .ck-panel__edit { font-size: 13px; color: var(--gold-dark); text-decoration: none; }
+  .ck-panel__body { padding: 0 16px 20px 56px; display: none; }
+  .ck-panel.is-active .ck-panel__body { display: block; }
+
+  /* Sticky Footer (mobile) */
+  .ck-sticky { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 12px 16px; border-top: 1px solid var(--border); z-index: 50; display: flex; align-items: center; gap: 12px; }
+  .ck-sticky__total { flex: 1; }
+  .ck-sticky__label { font-size: 11px; color: var(--muted); }
+  .ck-sticky__price { font-size: 18px; font-weight: 700; color: var(--heading); font-family: var(--font-heading); }
+  .ck-sticky__btn { flex: 1; }
+
+  /* Express Pay */
+  .ck-express { display: flex; gap: 8px; margin-bottom: 16px; }
+  .ck-express__btn { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: border-color 0.2s; }
+  .ck-express__btn:hover { border-color: var(--charcoal); }
+  .ck-express__btn--apple { background: #000; color: #fff; border-color: #000; }
+  .ck-express__btn--google { background: #fff; }
+  .ck-express__btn svg { height: 20px; }
+
+  /* Divider */
+  .ck-divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; font-size: 12px; color: var(--muted); }
+  .ck-divider::before, .ck-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Checkbox */
+  .ck-check { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .ck-check input { width: 18px; height: 18px; accent-color: var(--gold); margin-top: 1px; flex-shrink: 0; }
+  .ck-check a { color: var(--gold-dark); }
+
+  /* Summary sidebar */
+  .ck-sidebar { background: #fff; border-radius: var(--radius); padding: 20px; position: sticky; top: 16px; }
+  .ck-sidebar__title { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--heading); }
+  .ck-sidebar__toggle { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #fff; border-radius: var(--radius); cursor: pointer; margin-bottom: 8px; }
+  .ck-sidebar__toggle-text { font-size: 14px; color: var(--gold-dark); font-weight: 500; }
+  .ck-sidebar__toggle-price { font-size: 16px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); }
+
+  /* Desktop Layout */
+  .ck-layout { max-width: 960px; margin: 0 auto; padding: 16px; }
+  @media(min-width:768px) {
+    .ck-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; padding: 24px; }
+    .ck-layout__main { order: 1; }
+    .ck-layout__side { order: 2; }
+    .ck-sticky { display: none; }
+  }
+
+  /* Spacer for sticky footer */
+  .ck-spacer { height: 80px; }
+  @media(min-width:768px) { .ck-spacer { height: 0; } }
+
+  /* ── V1 Specific ── */
+  .v1-page { background: var(--surface-alt); }
+
+  /* ── V2 Specific ── */
+  .v2-page { background: var(--surface-alt); }
+  .v2-steps { display: flex; flex-direction: column; gap: 0; }
+
+  /* ── V3 Specific ── */
+  .v3-page { background: var(--surface); }
+  .v3-section { border-bottom: 8px solid var(--surface-alt); padding: 20px 16px; }
+  .v3-section:last-child { border-bottom: none; }
+  .v3-section__title { font-size: 14px; font-weight: 600; color: var(--heading); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; font-family: var(--font-heading); }
+
+  /* ── V4 Specific ── */
+  .v4-page { background: var(--surface-alt); }
+  .v4-timeline { position: relative; padding-left: 32px; }
+  .v4-timeline::before { content: ''; position: absolute; left: 13px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .v4-step { position: relative; padding-bottom: 24px; }
+  .v4-step__dot { position: absolute; left: -32px; top: 2px; width: 28px; height: 28px; border-radius: 50%; background: var(--section); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .v4-step.is-active .v4-step__dot { background: var(--gold); border-color: var(--gold); }
+  .v4-step.is-done .v4-step__dot { background: var(--success); border-color: var(--success); }
+  .v4-step__dot svg { width: 14px; height: 14px; }
+  .v4-step__title { font-size: 14px; font-weight: 600; color: var(--muted); font-family: var(--font-heading); margin-bottom: 12px; }
+  .v4-step.is-active .v4-step__title { color: var(--heading); }
+  .v4-step.is-done .v4-step__title { color: var(--success); }
+  .v4-step__body { display: none; }
+  .v4-step.is-active .v4-step__body { display: block; }
+  .v4-step__summary { font-size: 13px; color: var(--charcoal); }
+
+  /* ── V5 Specific ── */
+  .v5-page { background: #fff; }
+  .v5-bar { height: 3px; background: var(--section); }
+  .v5-bar__fill { height: 100%; background: var(--gold); transition: width 0.3s; }
+  .v5-step-label { text-align: center; padding: 12px; font-size: 13px; font-weight: 600; color: var(--heading); font-family: var(--font-heading); }
+  .v5-container { max-width: 480px; margin: 0 auto; padding: 0 16px 100px; }
+  .v5-container .ck-form { gap: 16px; }
+  .v5-container .ck-form__input { border-radius: 0; border: none; border-bottom: 1.5px solid var(--border); padding: 12px 0; font-size: 16px; }
+  .v5-container .ck-form__input:focus { border-bottom-color: var(--gold); }
+  .v5-container .ck-form__label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+
+<!-- Version Navigation -->
+<nav class="version-nav">
+  <span>Checkout:</span>
+  <button class="active" onclick="showVersion(1)">V1 Accordion</button>
+  <button onclick="showVersion(2)">V2 Card Steps</button>
+  <button onclick="showVersion(3)">V3 Single Page</button>
+  <button onclick="showVersion(4)">V4 Timeline</button>
+  <button onclick="showVersion(5)">V5 Minimal</button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════════
+     V1 — RESTYLED ACCORDION (closest to OC default structure)
+     Keeps OC's panel-collapse pattern, modern look
+     ════════════════════════════════════════════════════════════════ -->
+<div class="version active" id="v1">
+  <div class="v1-page">
+    <!-- Header -->
+    <div class="ck-header">
+      <a class="ck-header__logo" href="#">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2e35" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Otroški kotiček
+      </a>
+      <a class="ck-header__phone" href="tel:+38640611233">040 611 233</a>
+      <div class="ck-header__secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Varna povezava
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="ck-progress">
+      <div class="ck-progress__step is-done">
+        <div class="ck-progress__dot">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <span class="ck-progress__label">Podatki</span>
+      </div>
+      <div class="ck-progress__line is-done"></div>
+      <div class="ck-progress__step is-active">
+        <div class="ck-progress__dot">2</div>
+        <span class="ck-progress__label">Dostava</span>
+      </div>
+      <div class="ck-progress__line"></div>
+      <div class="ck-progress__step">
+        <div class="ck-progress__dot">3</div>
+        <span class="ck-progress__label">Plačilo</span>
+      </div>
+      <div class="ck-progress__line"></div>
+      <div class="ck-progress__step">
+        <div class="ck-progress__dot">4</div>
+        <span class="ck-progress__label">Potrditev</span>
+      </div>
+    </div>
+
+    <div class="ck-layout">
+      <div class="ck-layout__main">
+        <!-- Step 1: Done -->
+        <div class="ck-panel is-done">
+          <div class="ck-panel__header">
+            <div class="ck-panel__number">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="ck-panel__title">Kontaktni podatki</div>
+            <div class="ck-panel__summary">ana.novak@email.com</div>
+            <a class="ck-panel__edit" href="#">Uredi</a>
+          </div>
+        </div>
+
+        <!-- Step 2: Active -->
+        <div class="ck-panel is-active">
+          <div class="ck-panel__header">
+            <div class="ck-panel__number">2</div>
+            <div class="ck-panel__title">Naslov za dostavo</div>
+          </div>
+          <div class="ck-panel__body">
+            <div class="ck-form">
+              <div class="ck-form__row">
+                <div class="ck-form__group">
+                  <label class="ck-form__label">Ime</label>
+                  <input class="ck-form__input" type="text" placeholder="Ana">
+                </div>
+                <div class="ck-form__group">
+                  <label class="ck-form__label">Priimek</label>
+                  <input class="ck-form__input" type="text" placeholder="Novak">
+                </div>
+              </div>
+              <div class="ck-form__group">
+                <label class="ck-form__label">Ulica in hišna številka</label>
+                <input class="ck-form__input" type="text" placeholder="Slovenska cesta 17">
+              </div>
+              <div class="ck-form__row">
+                <div class="ck-form__group" style="flex: 0.4;">
+                  <label class="ck-form__label">Pošta</label>
+                  <input class="ck-form__input" type="text" placeholder="1000">
+                </div>
+                <div class="ck-form__group" style="flex: 0.6;">
+                  <label class="ck-form__label">Mesto</label>
+                  <input class="ck-form__input" type="text" placeholder="Ljubljana">
+                </div>
+              </div>
+              <div class="ck-form__group">
+                <label class="ck-form__label">Telefon</label>
+                <input class="ck-form__input" type="tel" placeholder="040 123 456">
+              </div>
+              <div style="margin-top: 8px;">
+                <button class="ck-cta" style="font-size: 15px; padding: 14px;">Nadaljuj na dostavo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Pending -->
+        <div class="ck-panel">
+          <div class="ck-panel__header">
+            <div class="ck-panel__number">3</div>
+            <div class="ck-panel__title">Način dostave</div>
+          </div>
+        </div>
+
+        <!-- Step 4: Pending -->
+        <div class="ck-panel">
+          <div class="ck-panel__header">
+            <div class="ck-panel__number">4</div>
+            <div class="ck-panel__title">Način plačila</div>
+          </div>
+        </div>
+
+        <!-- Step 5: Pending -->
+        <div class="ck-panel">
+          <div class="ck-panel__header">
+            <div class="ck-panel__number">5</div>
+            <div class="ck-panel__title">Potrditev naročila</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="ck-layout__side">
+        <div class="ck-sidebar">
+          <div class="ck-sidebar__title">Tvoje naročilo</div>
+          <div class="ck-item">
+            <div class="ck-item__img" style="background: #eee;"></div>
+            <div class="ck-item__info">
+              <div class="ck-item__brand">S.OLIVER</div>
+              <div class="ck-item__name">Jakna šт. 74</div>
+              <div class="ck-item__meta">Vel. 74 · Deklice</div>
+            </div>
+            <div class="ck-item__price">12.48€</div>
+          </div>
+          <div class="ck-item">
+            <div class="ck-item__img" style="background: #eee;"></div>
+            <div class="ck-item__info">
+              <div class="ck-item__brand">COOL CLUB</div>
+              <div class="ck-item__name">Obleka št. 74</div>
+              <div class="ck-item__meta">Vel. 74 · Deklice</div>
+            </div>
+            <div class="ck-item__price">3.06€</div>
+          </div>
+          <div class="ck-totals">
+            <div class="ck-totals__row">
+              <span>Vmesni seštevek</span>
+              <span>15.54€</span>
+            </div>
+            <div class="ck-totals__row ck-totals__row--free">
+              <span>Dostava</span>
+              <span>Brezplačna</span>
+            </div>
+            <div class="ck-totals__row ck-totals__row--total">
+              <span>Skupaj</span>
+              <span>15.54€</span>
+            </div>
+          </div>
+          <div class="ck-pay-icons">
+            <div class="ck-pay-icons__icon">VISA</div>
+            <div class="ck-pay-icons__icon">MC</div>
+            <div class="ck-pay-icons__icon" style="font-size: 8px;">PayPal</div>
+            <div class="ck-pay-icons__icon">AP</div>
+            <div class="ck-pay-icons__icon">GP</div>
+          </div>
+          <div class="ck-trust" style="padding: 12px 0; justify-content: flex-start;">
+            <div class="ck-trust__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              SSL šifrirano
+            </div>
+            <div class="ck-trust__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              14 dni vračilo
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Sticky -->
+    <div class="ck-sticky">
+      <div class="ck-sticky__total">
+        <div class="ck-sticky__label">Skupaj</div>
+        <div class="ck-sticky__price">15.54€</div>
+      </div>
+      <div class="ck-sticky__btn">
+        <button class="ck-cta" style="padding: 14px; font-size: 15px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Nadaljuj
+        </button>
+      </div>
+    </div>
+    <div class="ck-spacer"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V2 — CARD STEPS (each step = white card, completed = collapsed)
+     More visual separation, feels modern
+     ════════════════════════════════════════════════════════════════ -->
+<div class="version" id="v2">
+  <div class="v2-page">
+    <div class="ck-header">
+      <a class="ck-header__logo" href="#">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2e35" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Otroški kotiček
+      </a>
+      <a class="ck-header__phone" href="tel:+38640611233">040 611 233</a>
+      <div class="ck-header__secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Varna povezava
+      </div>
+    </div>
+
+    <div class="ck-layout">
+      <div class="ck-layout__main">
+        <!-- Completed: Contact -->
+        <div class="ck-card" style="background: var(--surface-alt); border: 1px solid var(--border);">
+          <div class="ck-card__header" style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="ck-card__completed">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="16 9 10.5 14.5 8 12"/></svg>
+              </div>
+              <span style="font-size: 14px; color: var(--charcoal);">ana.novak@email.com</span>
+            </div>
+            <a class="ck-card__edit" href="#">Uredi</a>
+          </div>
+        </div>
+
+        <!-- Active: Address -->
+        <div class="ck-card">
+          <div class="ck-card__header">
+            <div class="ck-card__title">Naslov za dostavo</div>
+            <span style="font-size: 12px; color: var(--muted);">Korak 2 od 4</span>
+          </div>
+          <div class="ck-form">
+            <div class="ck-form__row">
+              <div class="ck-form__group">
+                <label class="ck-form__label">Ime</label>
+                <input class="ck-form__input" type="text" value="Ana">
+              </div>
+              <div class="ck-form__group">
+                <label class="ck-form__label">Priimek</label>
+                <input class="ck-form__input" type="text" value="Novak">
+              </div>
+            </div>
+            <div class="ck-form__group">
+              <label class="ck-form__label">Ulica in hišna številka</label>
+              <input class="ck-form__input" type="text" placeholder="Slovenska cesta 17">
+            </div>
+            <div class="ck-form__row">
+              <div class="ck-form__group" style="flex: 0.4;">
+                <label class="ck-form__label">Poštna št.</label>
+                <input class="ck-form__input" type="text" placeholder="1000">
+              </div>
+              <div class="ck-form__group" style="flex: 0.6;">
+                <label class="ck-form__label">Mesto</label>
+                <input class="ck-form__input" type="text" placeholder="Ljubljana">
+              </div>
+            </div>
+            <div class="ck-form__group">
+              <label class="ck-form__label">Telefon</label>
+              <input class="ck-form__input" type="tel" placeholder="040 123 456">
+            </div>
+            <button class="ck-cta" style="margin-top: 8px;">Nadaljuj</button>
+          </div>
+        </div>
+
+        <!-- Pending: Shipping -->
+        <div class="ck-card" style="opacity: 0.5; pointer-events: none;">
+          <div class="ck-card__header" style="margin-bottom: 0;">
+            <div class="ck-card__title" style="color: var(--muted);">Način dostave</div>
+            <span style="font-size: 12px; color: var(--muted);">Korak 3</span>
+          </div>
+        </div>
+
+        <!-- Pending: Payment -->
+        <div class="ck-card" style="opacity: 0.5; pointer-events: none;">
+          <div class="ck-card__header" style="margin-bottom: 0;">
+            <div class="ck-card__title" style="color: var(--muted);">Plačilo</div>
+            <span style="font-size: 12px; color: var(--muted);">Korak 4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="ck-layout__side">
+        <div class="ck-sidebar">
+          <div class="ck-sidebar__title">Povzetek naročila (2)</div>
+          <div class="ck-item">
+            <div class="ck-item__img" style="background: #eee;"></div>
+            <div class="ck-item__info">
+              <div class="ck-item__brand">S.OLIVER</div>
+              <div class="ck-item__name">Jakna št. 74</div>
+            </div>
+            <div class="ck-item__price">12.48€</div>
+          </div>
+          <div class="ck-item">
+            <div class="ck-item__img" style="background: #eee;"></div>
+            <div class="ck-item__info">
+              <div class="ck-item__brand">COOL CLUB</div>
+              <div class="ck-item__name">Obleka št. 74</div>
+            </div>
+            <div class="ck-item__price">3.06€</div>
+          </div>
+          <div class="ck-totals">
+            <div class="ck-totals__row">
+              <span>Vmesni seštevek</span>
+              <span>15.54€</span>
+            </div>
+            <div class="ck-totals__row ck-totals__row--free">
+              <span>Dostava</span>
+              <span>Brezplačna</span>
+            </div>
+            <div class="ck-totals__row ck-totals__row--total">
+              <span>Skupaj z DDV</span>
+              <span>15.54€</span>
+            </div>
+          </div>
+          <div class="ck-trust" style="padding: 8px 0; justify-content: flex-start;">
+            <div class="ck-trust__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              SSL šifrirano
+            </div>
+            <div class="ck-trust__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              14 dni vračilo
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ck-spacer"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V3 — SINGLE PAGE (all fields visible, sectioned by dividers)
+     No steps — one long form, summary at top on mobile
+     ════════════════════════════════════════════════════════════════ -->
+<div class="version" id="v3">
+  <div class="v3-page">
+    <div class="ck-header">
+      <a class="ck-header__logo" href="#">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2e35" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Otroški kotiček
+      </a>
+      <a class="ck-header__phone" href="tel:+38640611233">040 611 233</a>
+      <div class="ck-header__secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Varna povezava
+      </div>
+    </div>
+
+    <!-- Mobile: Collapsible Summary -->
+    <div class="ck-sidebar__toggle" style="display: flex; margin: 0;">
+      <div class="ck-sidebar__toggle-text">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dark)" stroke-width="2" style="vertical-align: -2px; margin-right: 4px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Prikaži povzetek (2 artikla)
+      </div>
+      <div class="ck-sidebar__toggle-price">15.54€</div>
+    </div>
+
+    <div style="max-width: 560px; margin: 0 auto;">
+      <!-- Express Pay -->
+      <div class="v3-section">
+        <div class="ck-express">
+          <button class="ck-express__btn ck-express__btn--apple">
+            <svg height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            Apple Pay
+          </button>
+          <button class="ck-express__btn ck-express__btn--google">
+            <svg height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google Pay
+          </button>
+        </div>
+        <div class="ck-divider">ali izpolni spodaj</div>
+      </div>
+
+      <!-- Contact -->
+      <div class="v3-section">
+        <div class="v3-section__title">Kontakt</div>
+        <div class="ck-form">
+          <div class="ck-form__group">
+            <input class="ck-form__input" type="email" placeholder="E-naslov">
+          </div>
+          <label class="ck-check">
+            <input type="checkbox">
+            Obveščaj me o novostih in akcijah
+          </label>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="v3-section">
+        <div class="v3-section__title">Naslov za dostavo</div>
+        <div class="ck-form">
+          <div class="ck-form__row">
+            <div class="ck-form__group">
+              <input class="ck-form__input" type="text" placeholder="Ime">
+            </div>
+            <div class="ck-form__group">
+              <input class="ck-form__input" type="text" placeholder="Priimek">
+            </div>
+          </div>
+          <div class="ck-form__group">
+            <input class="ck-form__input" type="text" placeholder="Ulica in hišna številka">
+          </div>
+          <div class="ck-form__row">
+            <div class="ck-form__group" style="flex: 0.4;">
+              <input class="ck-form__input" type="text" placeholder="Pošta">
+            </div>
+            <div class="ck-form__group" style="flex: 0.6;">
+              <input class="ck-form__input" type="text" placeholder="Mesto">
+            </div>
+          </div>
+          <div class="ck-form__group">
+            <input class="ck-form__input" type="tel" placeholder="Telefon">
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping -->
+      <div class="v3-section">
+        <div class="v3-section__title">Dostava</div>
+        <div class="ck-radio">
+          <div class="ck-radio__option is-selected">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">GLS paketna dostava</div>
+              <div class="ck-radio__desc">2–3 delovne dni</div>
+            </div>
+            <div class="ck-radio__price">3.90€</div>
+          </div>
+          <div class="ck-radio__option">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">Pošta Slovenije</div>
+              <div class="ck-radio__desc">3–5 delovnih dni</div>
+            </div>
+            <div class="ck-radio__price">2.50€</div>
+          </div>
+          <div class="ck-radio__option">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">Osebni prevzem</div>
+              <div class="ck-radio__desc">Ljubljana, Celovška 5</div>
+            </div>
+            <div class="ck-radio__price ck-radio__price--free">Brezplačno</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="v3-section">
+        <div class="v3-section__title">Plačilo</div>
+        <div class="ck-radio">
+          <div class="ck-radio__option is-selected">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">Kreditna kartica</div>
+              <div class="ck-radio__desc">Visa, Mastercard</div>
+            </div>
+            <div class="ck-pay-icons" style="gap: 4px;">
+              <div class="ck-pay-icons__icon" style="width: 32px; height: 20px; font-size: 8px;">VISA</div>
+              <div class="ck-pay-icons__icon" style="width: 32px; height: 20px; font-size: 8px;">MC</div>
+            </div>
+          </div>
+          <div class="ck-radio__option">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">PayPal</div>
+            </div>
+          </div>
+          <div class="ck-radio__option">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">Bančno nakazilo</div>
+            </div>
+          </div>
+          <div class="ck-radio__option">
+            <div class="ck-radio__circle"></div>
+            <div class="ck-radio__text">
+              <div class="ck-radio__title">Plačilo ob prevzemu</div>
+              <div class="ck-radio__desc">+1.50€ manipulativni stroški</div>
+            </div>
+            <div class="ck-radio__price">+1.50€</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm -->
+      <div class="v3-section" style="border-bottom: none;">
+        <div class="ck-totals" style="padding-top: 0;">
+          <div class="ck-totals__row">
+            <span>Vmesni seštevek</span>
+            <span>15.54€</span>
+          </div>
+          <div class="ck-totals__row">
+            <span>Dostava (GLS)</span>
+            <span>3.90€</span>
+          </div>
+          <div class="ck-totals__row ck-totals__row--total">
+            <span>Skupaj z DDV</span>
+            <span>19.44€</span>
+          </div>
+        </div>
+        <label class="ck-check" style="margin-bottom: 16px;">
+          <input type="checkbox">
+          Strinjam se s <a href="#">splošnimi pogoji</a> in <a href="#">politiko zasebnosti</a>
+        </label>
+        <button class="ck-cta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Zaključi nakup — 19.44€
+        </button>
+        <div class="ck-trust" style="margin-top: 8px;">
+          <div class="ck-trust__item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            SSL šifrirano
+          </div>
+          <div class="ck-trust__item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            14 dni vračilo
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ck-spacer"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V4 — TIMELINE (vertical line with dots, active step expanded)
+     Visual progress via timeline, elegant feel
+     ════════════════════════════════════════════════════════════════ -->
+<div class="version" id="v4">
+  <div class="v4-page">
+    <div class="ck-header">
+      <a class="ck-header__logo" href="#">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2e35" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Otroški kotiček
+      </a>
+      <a class="ck-header__phone" href="tel:+38640611233">040 611 233</a>
+      <div class="ck-header__secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Varna povezava
+      </div>
+    </div>
+
+    <div class="ck-layout">
+      <div class="ck-layout__main">
+        <div class="ck-card" style="padding: 24px 20px;">
+          <div class="v4-timeline">
+            <!-- Done: Email -->
+            <div class="v4-step is-done">
+              <div class="v4-step__dot">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="v4-step__title">Kontakt</div>
+              <div class="v4-step__summary" style="display: flex; justify-content: space-between;">
+                <span>ana.novak@email.com</span>
+                <a href="#" style="color: var(--gold-dark); font-size: 13px; text-decoration: none;">Uredi</a>
+              </div>
+            </div>
+
+            <!-- Done: Address -->
+            <div class="v4-step is-done">
+              <div class="v4-step__dot">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="v4-step__title">Naslov</div>
+              <div class="v4-step__summary" style="display: flex; justify-content: space-between;">
+                <span>Ana Novak, Slovenska c. 17, 1000 Ljubljana</span>
+                <a href="#" style="color: var(--gold-dark); font-size: 13px; text-decoration: none;">Uredi</a>
+              </div>
+            </div>
+
+            <!-- Active: Shipping -->
+            <div class="v4-step is-active">
+              <div class="v4-step__dot">
+                <span style="font-size: 12px; font-weight: 700; color: var(--heading);">3</span>
+              </div>
+              <div class="v4-step__title">Način dostave</div>
+              <div class="v4-step__body" style="display: block;">
+                <div class="ck-radio">
+                  <div class="ck-radio__option is-selected">
+                    <div class="ck-radio__circle"></div>
+                    <div class="ck-radio__text">
+                      <div class="ck-radio__title">GLS paketna dostava</div>
+                      <div class="ck-radio__desc">2–3 delovne dni</div>
+                    </div>
+                    <div class="ck-radio__price">3.90€</div>
+                  </div>
+                  <div class="ck-radio__option">
+                    <div class="ck-radio__circle"></div>
+                    <div class="ck-radio__text">
+                      <div class="ck-radio__title">Pošta Slovenije</div>
+                      <div class="ck-radio__desc">3–5 delovnih dni</div>
+                    </div>
+                    <div class="ck-radio__price">2.50€</div>
+                  </div>
+                  <div class="ck-radio__option">
+                    <div class="ck-radio__circle"></div>
+                    <div class="ck-radio__text">
+                      <div class="ck-radio__title">Osebni prevzem</div>
+                      <div class="ck-radio__desc">Ljubljana</div>
+                    </div>
+                    <div class="ck-radio__price ck-radio__price--free">Brezplačno</div>
+                  </div>
+                </div>
+                <button class="ck-cta" style="margin-top: 16px; font-size: 15px; padding: 14px;">Nadaljuj na plačilo</button>
+              </div>
+            </div>
+
+            <!-- Pending: Payment -->
+            <div class="v4-step">
+              <div class="v4-step__dot">
+                <span style="font-size: 12px; font-weight: 600; color: var(--muted);">4</span>
+              </div>
+              <div class="v4-step__title">Plačilo</div>
+            </div>
+
+            <!-- Pending: Confirm -->
+            <div class="v4-step" style="padding-bottom: 0;">
+              <div class="v4-step__dot">
+                <span style="font-size: 12px; font-weight: 600; color: var(--muted);">5</span>
+              </div>
+              <div class="v4-step__title">Potrditev</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="ck-layout__side">
+        <div class="ck-sidebar">
+          <div class="ck-sidebar__title">Tvoje naročilo</div>
+          <div class="ck-item">
+            <div class="ck-item__img" style="background: #eee;"></div>
+            <div class="ck-item__info">
+              <div class="ck-item__brand">S.OLIVER</div>
+              <div class="ck-item__name">Jakna št. 74</div>
+            </div>
+            <div class="ck-item__price">12.48€</div>
+          </div>
+          <div class="ck-item">
+            <div class="ck-item__img" style="background: #eee;"></div>
+            <div class="ck-item__info">
+              <div class="ck-item__brand">COOL CLUB</div>
+              <div class="ck-item__name">Obleka št. 74</div>
+            </div>
+            <div class="ck-item__price">3.06€</div>
+          </div>
+          <div class="ck-totals">
+            <div class="ck-totals__row">
+              <span>Vmesni seštevek</span>
+              <span>15.54€</span>
+            </div>
+            <div class="ck-totals__row">
+              <span>Dostava (GLS)</span>
+              <span>3.90€</span>
+            </div>
+            <div class="ck-totals__row ck-totals__row--total">
+              <span>Skupaj</span>
+              <span>19.44€</span>
+            </div>
+          </div>
+          <div class="ck-pay-icons">
+            <div class="ck-pay-icons__icon">VISA</div>
+            <div class="ck-pay-icons__icon">MC</div>
+            <div class="ck-pay-icons__icon" style="font-size: 8px;">PayPal</div>
+            <div class="ck-pay-icons__icon">AP</div>
+            <div class="ck-pay-icons__icon">GP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Sticky -->
+    <div class="ck-sticky">
+      <div class="ck-sticky__total">
+        <div class="ck-sticky__label">Skupaj z DDV</div>
+        <div class="ck-sticky__price">19.44€</div>
+      </div>
+      <div class="ck-sticky__btn">
+        <button class="ck-cta" style="padding: 14px; font-size: 15px;">Nadaljuj</button>
+      </div>
+    </div>
+    <div class="ck-spacer"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     V5 — MINIMAL (Shopify-inspired, one step at a time, underline inputs)
+     Ultra-clean, focused, no visual clutter
+     ════════════════════════════════════════════════════════════════ -->
+<div class="version" id="v5">
+  <div class="v5-page">
+    <div class="ck-header" style="border-bottom: none;">
+      <a class="ck-header__logo" href="#">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2b2e35" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Otroški kotiček
+      </a>
+      <a class="ck-header__phone" href="tel:+38640611233">040 611 233</a>
+      <div class="ck-header__secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Varna povezava
+      </div>
+    </div>
+
+    <!-- Thin Progress Bar -->
+    <div class="v5-bar">
+      <div class="v5-bar__fill" style="width: 50%;"></div>
+    </div>
+    <div class="v5-step-label">Naslov za dostavo</div>
+
+    <div class="v5-container">
+      <!-- Express -->
+      <div class="ck-express" style="margin-bottom: 24px;">
+        <button class="ck-express__btn ck-express__btn--apple">
+          <svg height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Pay
+        </button>
+        <button class="ck-express__btn ck-express__btn--google">
+          <svg height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Pay
+        </button>
+      </div>
+      <div class="ck-divider" style="margin-bottom: 32px;">ali izpolni ročno</div>
+
+      <div class="ck-form">
+        <div class="ck-form__group">
+          <label class="ck-form__label">E-NASLOV</label>
+          <input class="ck-form__input" type="email" placeholder="ana.novak@email.com" value="ana.novak@email.com">
+        </div>
+        <div class="ck-form__row">
+          <div class="ck-form__group">
+            <label class="ck-form__label">IME</label>
+            <input class="ck-form__input" type="text" placeholder="Ana">
+          </div>
+          <div class="ck-form__group">
+            <label class="ck-form__label">PRIIMEK</label>
+            <input class="ck-form__input" type="text" placeholder="Novak">
+          </div>
+        </div>
+        <div class="ck-form__group">
+          <label class="ck-form__label">ULICA IN HIŠNA ŠTEVILKA</label>
+          <input class="ck-form__input" type="text" placeholder="Slovenska cesta 17">
+        </div>
+        <div class="ck-form__row">
+          <div class="ck-form__group" style="flex: 0.4;">
+            <label class="ck-form__label">POŠTA</label>
+            <input class="ck-form__input" type="text" placeholder="1000">
+          </div>
+          <div class="ck-form__group" style="flex: 0.6;">
+            <label class="ck-form__label">MESTO</label>
+            <input class="ck-form__input" type="text" placeholder="Ljubljana">
+          </div>
+        </div>
+        <div class="ck-form__group">
+          <label class="ck-form__label">TELEFON</label>
+          <input class="ck-form__input" type="tel" placeholder="040 123 456">
+        </div>
+      </div>
+
+      <div style="margin-top: 32px;">
+        <button class="ck-cta" style="border-radius: 0;">Nadaljuj na dostavo</button>
+      </div>
+
+      <div class="ck-trust" style="margin-top: 16px;">
+        <div class="ck-trust__item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          256-bit SSL
+        </div>
+        <div class="ck-trust__item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          14 dni vračilo
+        </div>
+        <div class="ck-trust__item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72"/></svg>
+          040 611 233
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Sticky -->
+    <div class="ck-sticky">
+      <div class="ck-sticky__total">
+        <div class="ck-sticky__label">Skupaj (2 artikla)</div>
+        <div class="ck-sticky__price">15.54€</div>
+      </div>
+      <div class="ck-sticky__btn">
+        <button class="ck-cta" style="padding: 14px; font-size: 15px; border-radius: 0;">Nadaljuj</button>
+      </div>
+    </div>
+    <div class="ck-spacer"></div>
+  </div>
+</div>
+
+
+<script>
+function showVersion(n) {
+  document.querySelectorAll('.version').forEach(function(v) { v.classList.remove('active'); });
+  document.querySelectorAll('.version-nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('v' + n).classList.add('active');
+  document.querySelectorAll('.version-nav button')[n - 1].classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hero Section Variations — Otroški kotiček</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;1,400&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       ============================================================ */
+    :root {
+      --color-gold:           #f9b94a;
+      --color-gold-dark:      #e0a030;
+      --color-gold-light:     #ffd369;
+      --color-charcoal:       #2b2e35;
+      --color-text-body:      #565656;
+      --color-text-muted:     #9aa0af;
+      --color-text-link:      #566b6f;
+      --color-surface-white:  #ffffff;
+      --color-surface-warm:   #fafaf8;
+      --color-surface-alt:    #f7f7f7;
+      --color-surface-sect:   #ececec;
+      --color-border:         #d6d9e0;
+      --font-heading:         'Open Sans', sans-serif;
+      --font-body:            'DM Sans', sans-serif;
+      --fw-heading:           600;
+      --fw-body:              400;
+    }
+
+    /* ============================================================
+       RESET & BASE
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: var(--fw-body);
+      color: var(--color-text-body);
+      background: var(--color-surface-white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    /* ============================================================
+       VARIANT LABEL STRIPS
+       ============================================================ */
+    .variant-label {
+      background: #111;
+      color: #888;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .variant-label__number {
+      color: var(--color-gold);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .variant-label__desc {
+      color: #666;
+      font-style: italic;
+    }
+
+    /* ============================================================
+       SHARED BUTTON STYLES
+       ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .btn--pill {
+      background: var(--color-gold);
+      color: var(--color-charcoal);
+      padding: 14px 32px;
+      border-radius: 100px;
+    }
+
+    .btn--pill:hover {
+      background: var(--color-gold-dark);
+      box-shadow: 0 4px 16px rgba(249, 185, 74, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--color-text-link);
+      padding: 14px 24px;
+      border-radius: 100px;
+      border: 1.5px solid var(--color-border);
+    }
+
+    .btn--ghost:hover {
+      border-color: var(--color-text-link);
+      color: var(--color-charcoal);
+      background: rgba(86, 107, 111, 0.04);
+    }
+
+    /* ============================================================
+       V1 — WIDE TYPOGRAPHY
+       ============================================================ */
+    .hero-v1 {
+      background: var(--color-surface-alt);
+      padding: 56px 0 64px;
+    }
+
+    .hero-v1__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: grid;
+      grid-template-columns: 55% 45%;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-v1__eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-gold-dark);
+      margin-bottom: 16px;
+    }
+
+    .hero-v1__headline {
+      font-family: var(--font-heading);
+      font-weight: var(--fw-heading);
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--color-charcoal);
+      margin-bottom: 14px;
+    }
+
+    .hero-v1__tagline {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 16px;
+      color: var(--color-text-muted);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .hero-v1__actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .hero-v1__trust {
+      border-top: 1px solid var(--color-border);
+      padding-top: 28px;
+      display: flex;
+      gap: 48px;
+    }
+
+    .hero-v1__trust-item {}
+
+    .hero-v1__trust-number {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 44px;
+      line-height: 1;
+      color: var(--color-gold);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-v1__trust-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-top: 6px;
+    }
+
+    .hero-v1__image-wrap {
+      position: relative;
+    }
+
+    .hero-v1__image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.04),
+        0 12px 28px rgba(0, 0, 0, 0.07);
+    }
+
+    /* ============================================================
+       V2 — CENTRED STAGE
+       ============================================================ */
+    .hero-v2 {
+      background: var(--color-surface-warm);
+      padding: 64px 0 0;
+    }
+
+    .hero-v2__container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .hero-v2__eyebrow {
+      text-align: center;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-gold-dark);
+      margin-bottom: 20px;
+    }
+
+    .hero-v2__headline {
+      text-align: center;
+      font-family: var(--font-heading);
+      font-weight: var(--fw-heading);
+      font-size: clamp(36px, 4.5vw, 60px);
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--color-charcoal);
+      margin-bottom: 28px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-v2__tagline-block {
+      border-left: 4px solid var(--color-gold);
+      padding-left: 20px;
+      margin-bottom: 32px;
+      max-width: 520px;
+    }
+
+    .hero-v2__tagline {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 19px;
+      line-height: 1.5;
+      color: var(--color-text-body);
+    }
+
+    .hero-v2__actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .hero-v2__trust {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .hero-v2__trust-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .hero-v2__trust-number {
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 48px;
+      line-height: 1;
+      color: var(--color-gold);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-v2__trust-text {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .hero-v2__trust-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      line-height: 1.3;
+    }
+
+    .hero-v2__image-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero-v2__image {
+      width: 100%;
+      max-height: 320px;
+      object-fit: cover;
+      border-radius: 0 0 16px 16px;
+    }
+
+    /* ============================================================
+       V3 — GRAPHIC CONTRAST
+       ============================================================ */
+    .hero-v3 {
+      background: var(--color-surface-sect);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .hero-v3__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 40% 60%;
+      min-height: 520px;
+    }
+
+    .hero-v3__image-col {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-v3__image {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-v3__text-col {
+      padding: 56px 48px 56px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-v3__eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 18px;
+    }
+
+    .hero-v3__headline {
+      font-family: var(--font-heading);
+      font-weight: var(--fw-heading);
+      font-size: clamp(32px, 3.5vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      margin-bottom: 14px;
+    }
+
+    .hero-v3__headline-accent {
+      color: var(--color-charcoal);
+    }
+
+    .hero-v3__headline-fade {
+      color: var(--color-text-muted);
+    }
+
+    .hero-v3__tagline {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--color-text-body);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .hero-v3__actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .hero-v3__actions .btn--ghost {
+      padding: 12px 0;
+      border: none;
+      font-size: 13px;
+    }
+
+    .hero-v3__actions .btn--ghost:hover {
+      background: transparent;
+      color: var(--color-gold-dark);
+    }
+
+    .hero-v3__trust-rule {
+      width: 40px;
+      height: 2px;
+      background: var(--color-gold);
+      border: none;
+      margin-bottom: 28px;
+    }
+
+    .hero-v3__trust {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .hero-v3__trust-item {}
+
+    .hero-v3__trust-number {
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 36px;
+      line-height: 1;
+      color: var(--color-charcoal);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-v3__trust-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    /* ============================================================
+       RESPONSIVE — TABLET & BELOW
+       ============================================================ */
+    @media (max-width: 900px) {
+      /* V1 */
+      .hero-v1__container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .hero-v1__image-wrap {
+        order: -1;
+        max-width: 480px;
+      }
+
+      .hero-v1__trust {
+        gap: 32px;
+      }
+
+      /* V3 */
+      .hero-v3__container {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .hero-v3__image-col {
+        max-height: 320px;
+      }
+
+      .hero-v3__image {
+        aspect-ratio: 3 / 2;
+      }
+
+      .hero-v3__text-col {
+        padding: 40px 32px 48px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      /* V1 */
+      .hero-v1 { padding: 40px 0 48px; }
+      .hero-v1__container { padding: 0 24px; }
+      .hero-v1__actions { flex-direction: column; align-items: flex-start; }
+      .hero-v1__trust { flex-direction: column; gap: 20px; }
+
+      /* V2 */
+      .hero-v2 { padding: 48px 0 0; }
+      .hero-v2__container { padding: 0 24px; }
+      .hero-v2__actions { flex-direction: column; }
+      .hero-v2__trust {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+
+      /* V3 */
+      .hero-v3__text-col { padding: 32px 24px 40px; }
+      .hero-v3__actions { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       VARIATION 1 — WIDE TYPOGRAPHY
+       ============================================================ -->
+  <div class="variant-label">
+    <span class="variant-label__number">V1</span>
+    Wide Typography
+    <span class="variant-label__desc">— text left 55%, image right 45%, dominant headline, trust stats as typographic feature</span>
+  </div>
+
+  <section class="hero-v1">
+    <div class="hero-v1__container">
+      <div class="hero-v1__content">
+        <p class="hero-v1__eyebrow">Otroški kotiček · od 2011</p>
+        <h1 class="hero-v1__headline">Nežno rabljena oblačila za otroke in mamice.</h1>
+        <p class="hero-v1__tagline">Tvoje najljubše znamke, za delček cene.</p>
+        <div class="hero-v1__actions">
+          <a href="#" class="btn btn--pill">Brskaj po ponudbi</a>
+          <a href="#" class="btn btn--ghost">Prodaj oblačila</a>
+        </div>
+        <div class="hero-v1__trust">
+          <div class="hero-v1__trust-item">
+            <div class="hero-v1__trust-number">14</div>
+            <div class="hero-v1__trust-label">let izkušenj</div>
+          </div>
+          <div class="hero-v1__trust-item">
+            <div class="hero-v1__trust-number">250k+</div>
+            <div class="hero-v1__trust-label">oblačil v dobrem domu</div>
+          </div>
+          <div class="hero-v1__trust-item">
+            <div class="hero-v1__trust-number">5k+</div>
+            <div class="hero-v1__trust-label">zadovoljnih strank</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-v1__image-wrap">
+        <img
+          class="hero-v1__image"
+          src="../opencart/image/catalog/assets/hero/otroski-koticek-slider05_0012.webp"
+          alt="Barvita otroška oblačila na svetli podlagi"
+          fetchpriority="high"
+          loading="eager"
+          width="600"
+          height="450"
+        >
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       VARIATION 2 — CENTRED STAGE
+       ============================================================ -->
+  <div class="variant-label">
+    <span class="variant-label__number">V2</span>
+    Centred Stage
+    <span class="variant-label__desc">— single centred column, deliberate tagline break with gold border, image as section footer</span>
+  </div>
+
+  <section class="hero-v2">
+    <div class="hero-v2__container">
+      <p class="hero-v2__eyebrow">Otroški kotiček · od 2011</p>
+      <h2 class="hero-v2__headline">Nežno rabljena oblačila za otroke in mamice.</h2>
+      <div class="hero-v2__tagline-block">
+        <p class="hero-v2__tagline">Tvoje najljubše znamke, za delček cene.</p>
+      </div>
+      <div class="hero-v2__actions">
+        <a href="#" class="btn btn--pill">Brskaj po ponudbi</a>
+        <a href="#" class="btn btn--ghost">Prodaj oblačila</a>
+      </div>
+      <div class="hero-v2__trust">
+        <div class="hero-v2__trust-item">
+          <span class="hero-v2__trust-number">14</span>
+          <div class="hero-v2__trust-text">
+            <span class="hero-v2__trust-label">let</span>
+            <span class="hero-v2__trust-label">izkušenj</span>
+          </div>
+        </div>
+        <div class="hero-v2__trust-item">
+          <span class="hero-v2__trust-number">250k+</span>
+          <div class="hero-v2__trust-text">
+            <span class="hero-v2__trust-label">oblačil v</span>
+            <span class="hero-v2__trust-label">dobrem domu</span>
+          </div>
+        </div>
+        <div class="hero-v2__trust-item">
+          <span class="hero-v2__trust-number">5k+</span>
+          <div class="hero-v2__trust-text">
+            <span class="hero-v2__trust-label">zadovoljnih</span>
+            <span class="hero-v2__trust-label">strank</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-v2__image-wrap">
+      <img
+        class="hero-v2__image"
+        src="../opencart/image/catalog/assets/hero/otroski-koticek-slider05_0012.webp"
+        alt="Barvita otroška oblačila na svetli podlagi"
+        fetchpriority="high"
+        loading="eager"
+        width="860"
+        height="320"
+      >
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       VARIATION 3 — GRAPHIC CONTRAST
+       ============================================================ -->
+  <div class="variant-label">
+    <span class="variant-label__number">V3</span>
+    Graphic Contrast
+    <span class="variant-label__desc">— image left, text right, split headline colour, vertical trust list</span>
+  </div>
+
+  <section class="hero-v3">
+    <div class="hero-v3__container">
+      <div class="hero-v3__image-col">
+        <img
+          class="hero-v3__image"
+          src="../opencart/image/catalog/assets/hero/otroski-koticek-slider05_0012.webp"
+          alt="Barvita otroška oblačila na svetli podlagi"
+          fetchpriority="high"
+          loading="eager"
+          width="480"
+          height="480"
+        >
+      </div>
+      <div class="hero-v3__text-col">
+        <p class="hero-v3__eyebrow">Otroški kotiček · od 2011</p>
+        <h2 class="hero-v3__headline">
+          <span class="hero-v3__headline-accent">Nežno rabljena</span><br>
+          <span class="hero-v3__headline-fade">oblačila za otroke</span><br>
+          <span class="hero-v3__headline-fade">in mamice.</span>
+        </h2>
+        <p class="hero-v3__tagline">Tvoje najljubše znamke, za delček cene.</p>
+        <div class="hero-v3__actions">
+          <a href="#" class="btn btn--pill">Brskaj po ponudbi</a>
+          <a href="#" class="btn btn--ghost">Prodaj oblačila &rarr;</a>
+        </div>
+        <hr class="hero-v3__trust-rule">
+        <div class="hero-v3__trust">
+          <div class="hero-v3__trust-item">
+            <div class="hero-v3__trust-number">14</div>
+            <div class="hero-v3__trust-label">let izkušenj</div>
+          </div>
+          <div class="hero-v3__trust-item">
+            <div class="hero-v3__trust-number">250.000+</div>
+            <div class="hero-v3__trust-label">oblačil v dobrem domu</div>
+          </div>
+          <div class="hero-v3__trust-item">
+            <div class="hero-v3__trust-number">5.000+</div>
+            <div class="hero-v3__trust-label">zadovoljnih strank</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom spacer -->
+  <div style="height: 80px; background: var(--color-surface-white);"></div>
+
+</body>
+</html>

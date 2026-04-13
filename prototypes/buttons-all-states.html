@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Buttons Across Site — States Audit</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #f9b94a; --gold-light: #ffd369; --gold-dark: #e0a030;
+    --charcoal: #565656; --charcoal-dark: #3a3a3a; --heading: #2b2e35;
+    --muted: #9aa0af; --surface: #fff; --surface-alt: #f7f7f7; --border: #d6d9e0;
+    --success: #7d9478; --error: #d55e6f; --link: #566b6f;
+    --font-heading: 'Open Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); color: var(--charcoal); background: #eee; font-size: 15px; padding: 0; }
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+  h1 { font-family: var(--font-heading); font-size: 20px; color: var(--heading); margin-bottom: 4px; }
+  h1 + p { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+  h2 { font-family: var(--font-heading); font-size: 15px; color: var(--heading); margin: 28px 0 12px; padding-top: 20px; border-top: 2px solid var(--border); }
+  h3 { font-family: var(--font-heading); font-size: 12px; color: var(--muted); margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 8px; }
+  .state { margin-bottom: 12px; }
+  .state-label { font-size: 10px; color: var(--muted); font-family: var(--font-heading); font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .state-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .page-tag { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 4px; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: 0.3px; }
+  .page-tag--all { background: #e8f5e9; color: #2e7d32; }
+  .page-tag--home { background: #e3f2fd; color: #1565c0; }
+  .page-tag--cat { background: #fff3e0; color: #e65100; }
+  .page-tag--pdp { background: #fce4ec; color: #c62828; }
+  .page-tag--cart { background: #f3e5f5; color: #6a1b9a; }
+  .page-tag--checkout { background: #e0f2f1; color: #00695c; }
+
+  /* ═══ 1. Primary CTA (.btn-primary / cta-gold-pill) ═══ */
+  .btn-gold { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 24px; background: var(--gold); color: var(--heading); border: none; border-radius: 8px; font-family: var(--font-heading); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; }
+  .btn-gold:hover { background: var(--gold-dark); }
+  .btn-gold:active { background: var(--gold-dark); transform: scale(0.98); }
+  .btn-gold.loading { opacity: 0.6; cursor: wait; }
+  .btn-gold.disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-gold svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ═══ 2. Default (.btn-default) ═══ */
+  .btn-neutral { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--charcoal); border-radius: 6px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-neutral:hover { background: var(--surface-alt); color: var(--heading); }
+
+  /* ═══ 3. Inverse (.btn-inverse) ═══ */
+  .btn-dark { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: var(--charcoal); border: 1px solid var(--charcoal-dark); color: #f5f5f5; border-radius: 6px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-dark:hover { background: var(--charcoal-dark); }
+
+  /* ═══ 4. Danger (.btn-danger) ═══ */
+  .btn-red { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; background: var(--error); border: none; color: #fff; border-radius: 6px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-red:hover { background: #b84d5e; }
+
+  /* ═══ 5. Link (.btn-link) ═══ */
+  .btn-link-demo { background: none; border: none; color: var(--link); font-size: 13px; cursor: pointer; text-decoration: none; padding: 4px 0; }
+  .btn-link-demo:hover { color: var(--gold); }
+
+  /* ═══ 6. Product card cart button ═══ */
+  .icon-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: none; background: none; border-radius: 8px; cursor: pointer; color: var(--charcoal); transition: all 0.2s; }
+  .icon-btn:hover { background: var(--gold); color: var(--heading); }
+  .icon-btn--lg { width: 48px; height: 48px; }
+  .icon-btn svg { width: 20px; height: 20px; }
+
+  /* ═══ 7. Favourite button ═══ */
+  .fav-btn { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: none; background: none; border-radius: 50%; cursor: pointer; color: rgba(86,86,86,0.53); transition: color 0.25s; }
+  .fav-btn:hover { color: #e74c3c; }
+  .fav-btn svg { width: 20px; height: 20px; }
+
+  /* ═══ 8. PDP cart button ═══ */
+  .pdp-cart { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--gold); color: var(--heading); font-family: var(--font-heading); font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+  .pdp-cart:hover { background: var(--gold-light); }
+  .pdp-cart:active { background: var(--gold-dark); transform: scale(0.98); }
+  .pdp-cart svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  /* ═══ 9. Cart sticky CTA ═══ */
+  .cart-cta { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--gold); color: var(--heading); font-family: var(--font-heading); font-weight: 600; font-size: 13px; padding: 12px 24px; border-radius: 999px; border: none; cursor: pointer; transition: background 0.2s; }
+  .cart-cta:hover { background: var(--gold-light); }
+  .cart-cta svg { width: 16px; height: 16px; }
+
+  /* ═══ 10. Scroller arrows ═══ */
+  .arrow-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: var(--surface); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: var(--charcoal); transition: all 0.2s; }
+  .arrow-btn:hover { background: var(--heading); color: #fff; }
+  .arrow-btn svg { width: 16px; height: 16px; }
+
+  /* ═══ 11. Filter/Category toolbar ═══ */
+  .toolbar-btn { display: inline-flex; align-items: center; gap: 4px; padding: 7px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); font-size: 12px; font-weight: 500; font-family: var(--font-heading); color: var(--charcoal); cursor: pointer; transition: all 0.2s; }
+  .toolbar-btn:hover { border-color: var(--charcoal); }
+  .toolbar-btn svg { width: 14px; height: 14px; }
+
+  /* ═══ 12. Subcategory pills ═══ */
+  .subcat-pill { display: inline-flex; padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); font-size: 12px; font-weight: 500; color: var(--charcoal); text-decoration: none; transition: all 0.2s; white-space: nowrap; }
+  .subcat-pill:hover { border-color: var(--gold); color: var(--heading); }
+  .subcat-pill.active { background: var(--heading); border-color: var(--heading); color: #fff; }
+
+  /* ═══ 13. Checkout radio ═══ */
+  .ck-radio { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface-alt); border: 1.5px solid transparent; border-radius: 8px; font-size: 13px; color: var(--heading); cursor: pointer; transition: all 0.2s; font-family: var(--font-heading); font-weight: 500; }
+  .ck-radio.selected { background: #fffbf0; border-color: var(--gold); }
+  .ck-radio:hover { border-color: var(--gold); }
+  .ck-radio__dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .ck-radio.selected .ck-radio__dot { background: var(--gold); border-color: var(--gold); }
+  .ck-radio.selected .ck-radio__dot::after { content: ''; width: 5px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -1px; }
+
+  /* ═══ 14. Checkout checkbox ═══ */
+  .ck-check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--charcoal); cursor: pointer; }
+  .ck-check__box { width: 16px; height: 16px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .ck-check.checked .ck-check__box { background: var(--gold); border-color: var(--gold); }
+  .ck-check.checked .ck-check__box::after { content: ''; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -1px; }
+
+  /* ═══ 15. Checkout pills ═══ */
+  .ck-pill-group { display: flex; background: var(--surface-alt); border-radius: 8px; padding: 3px; }
+  .ck-pill { padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; font-family: var(--font-heading); color: var(--muted); cursor: pointer; border: none; background: transparent; }
+  .ck-pill.active { background: #fff; color: var(--heading); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* ═══ 16. Text links ═══ */
+  .text-link { font-size: 12px; color: var(--muted); text-decoration: underline; cursor: pointer; }
+  .text-link:hover { color: var(--heading); }
+
+  /* ═══ 17. Newsletter ═══ */
+  .nl-btn { display: inline-flex; padding: 10px 20px; background: var(--gold); color: var(--heading); border: none; border-radius: 8px; font-family: var(--font-heading); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .nl-btn:hover { background: var(--gold-dark); }
+
+  /* ═══ 18. Cart remove ═══ */
+  .remove-btn { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: none; background: var(--surface-alt); border-radius: 50%; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+  .remove-btn:hover { background: var(--error); color: #fff; }
+  .remove-btn svg { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>All Buttons — Full Site Audit</h1>
+<p>Every button type, every state, every page</p>
+
+<!-- ═══ PRIMARY CTA ═══ -->
+<h2>1. Primary CTA <span class="page-tag page-tag--all">All pages</span></h2>
+<h3>.btn-primary / cta-gold-pill</h3>
+<div class="card">
+  <div class="state"><div class="state-label">Default</div><button class="btn-gold">Dodaj v košarico</button></div>
+  <div class="state"><div class="state-label">Hover</div><button class="btn-gold" style="background: var(--gold-dark);">Dodaj v košarico</button></div>
+  <div class="state"><div class="state-label">Active</div><button class="btn-gold" style="background: var(--gold-dark); transform: scale(0.98);">Dodaj v košarico</button></div>
+  <div class="state"><div class="state-label">Loading</div><button class="btn-gold loading">Dodaj v košarico</button></div>
+  <div class="state"><div class="state-label">Disabled</div><button class="btn-gold disabled">Dodaj v košarico</button></div>
+</div>
+<h3>Used as:</h3>
+<div class="card">
+  <div class="state"><div class="state-label"><span class="page-tag page-tag--pdp">PDP</span> Dodaj v košarico</div><button class="pdp-cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Dodaj v košarico</button></div>
+  <div class="state"><div class="state-label"><span class="page-tag page-tag--cart">Cart</span> Varno zaključi nakup</div><button class="cart-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Varno zaključi nakup</button></div>
+  <div class="state"><div class="state-label"><span class="page-tag page-tag--checkout">Checkout</span> Nadaljuj na dostavo</div><button class="btn-gold">Nadaljuj na dostavo</button></div>
+  <div class="state"><div class="state-label"><span class="page-tag page-tag--checkout">Checkout</span> Potrdi naročilo</div><button class="btn-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Potrdi naročilo — 10.50€</button></div>
+  <div class="state"><div class="state-label"><span class="page-tag page-tag--home">Home</span> Prodaj oblačila</div><button class="btn-gold">Prodaj oblačila</button></div>
+  <div class="state"><div class="state-label"><span class="page-tag page-tag--home">Footer</span> Prijavi se na novice</div><button class="nl-btn">Prijavi se na novice</button></div>
+</div>
+
+<!-- ═══ DEFAULT ═══ -->
+<h2>2. Default Button <span class="page-tag page-tag--all">Various</span></h2>
+<h3>.btn-default</h3>
+<div class="card">
+  <div class="state-row">
+    <button class="btn-neutral">Default</button>
+    <button class="btn-neutral" style="background: var(--surface-alt); color: var(--heading);">Hover</button>
+  </div>
+</div>
+
+<!-- ═══ INVERSE ═══ -->
+<h2>3. Inverse Button <span class="page-tag page-tag--all">Header</span></h2>
+<h3>.btn-inverse</h3>
+<div class="card">
+  <div class="state-row">
+    <button class="btn-dark">Default</button>
+    <button class="btn-dark" style="background: var(--charcoal-dark);">Hover</button>
+  </div>
+</div>
+
+<!-- ═══ DANGER ═══ -->
+<h2>4. Danger Button <span class="page-tag page-tag--cart">Cart</span></h2>
+<h3>.btn-danger</h3>
+<div class="card">
+  <div class="state-row">
+    <button class="btn-red">Default</button>
+    <button class="btn-red" style="background: #b84d5e;">Hover</button>
+  </div>
+</div>
+
+<!-- ═══ LINK ═══ -->
+<h2>5. Link Button <span class="page-tag page-tag--all">Various</span></h2>
+<h3>.btn-link</h3>
+<div class="card">
+  <div class="state-row">
+    <button class="btn-link-demo">Default</button>
+    <button class="btn-link-demo" style="color: var(--gold);">Hover</button>
+  </div>
+</div>
+
+<!-- ═══ ICON BUTTONS ═══ -->
+<h2>6. Icon Buttons <span class="page-tag page-tag--cat">Category</span> <span class="page-tag page-tag--home">Home</span></h2>
+<h3>Product card cart + favourite</h3>
+<div class="card">
+  <div class="state-row">
+    <div>
+      <div class="state-label">Cart (default)</div>
+      <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Cart (hover)</div>
+      <button class="icon-btn" style="background: var(--gold); color: var(--heading);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Cart (desktop lg)</div>
+      <button class="icon-btn icon-btn--lg" style="background: var(--gold); color: var(--heading);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Fav (default)</div>
+      <button class="fav-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Fav (hover)</div>
+      <button class="fav-btn" style="color: #e74c3c;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REMOVE ═══ -->
+<h2>7. Remove Button <span class="page-tag page-tag--cart">Cart</span></h2>
+<div class="card">
+  <div class="state-row">
+    <div>
+      <div class="state-label">Default</div>
+      <button class="remove-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Hover</div>
+      <button class="remove-btn" style="background: var(--error); color: #fff;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ARROWS ═══ -->
+<h2>8. Scroller Arrows <span class="page-tag page-tag--home">Home</span> <span class="page-tag page-tag--pdp">PDP</span></h2>
+<div class="card">
+  <div class="state-row">
+    <div>
+      <div class="state-label">Default</div>
+      <button class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Hover</div>
+      <button class="arrow-btn" style="background: var(--heading); color: #fff;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+    </div>
+    <div>
+      <div class="state-label">Next</div>
+      <button class="arrow-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FILTER TOOLBAR ═══ -->
+<h2>9. Filter / Toolbar Buttons <span class="page-tag page-tag--cat">Category</span></h2>
+<div class="card">
+  <div class="state-row">
+    <button class="toolbar-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg> Filtri</button>
+    <button class="toolbar-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Kategorije</button>
+  </div>
+</div>
+
+<!-- ═══ SUBCATEGORY PILLS ═══ -->
+<h2>10. Subcategory Pills <span class="page-tag page-tag--cat">Category</span></h2>
+<div class="card">
+  <div class="state-row" style="flex-wrap: wrap;">
+    <a class="subcat-pill active">Deklice</a>
+    <a class="subcat-pill">Obleke</a>
+    <a class="subcat-pill">Majice</a>
+    <a class="subcat-pill" style="border-color: var(--gold); color: var(--heading);">Hover</a>
+  </div>
+</div>
+
+<!-- ═══ CHECKOUT RADIOS ═══ -->
+<h2>11. Checkout Radios <span class="page-tag page-tag--checkout">Checkout</span></h2>
+<div class="card">
+  <div class="state">
+    <div class="ck-radio selected" style="margin-bottom: 6px;"><div class="ck-radio__dot"></div> DPD — 3.50€</div>
+    <div class="ck-radio" style="margin-bottom: 6px;"><div class="ck-radio__dot"></div> Pošta Slovenije — 4.50€</div>
+    <div class="ck-radio" style="border-color: var(--gold);"><div class="ck-radio__dot"></div> Hover state</div>
+  </div>
+</div>
+
+<!-- ═══ CHECKOUT CHECKBOXES ═══ -->
+<h2>12. Checkout Checkboxes <span class="page-tag page-tag--checkout">Checkout</span></h2>
+<div class="card">
+  <div class="ck-check checked" style="margin-bottom: 8px;"><div class="ck-check__box"></div> Checked state</div>
+  <div class="ck-check"><div class="ck-check__box"></div> Unchecked state</div>
+</div>
+
+<!-- ═══ CHECKOUT PILLS ═══ -->
+<h2>13. Checkout Pills <span class="page-tag page-tag--checkout">Checkout</span></h2>
+<div class="card">
+  <div style="display: flex; align-items: center;">
+    <div class="ck-pill-group">
+      <button class="ck-pill active">Gost</button>
+      <button class="ck-pill">Registracija</button>
+    </div>
+    <span style="margin-left: auto; font-size: 13px; color: var(--charcoal); font-family: var(--font-heading); font-weight: 500; cursor: pointer;">Prijava</span>
+  </div>
+</div>
+
+<!-- ═══ HEADER BUTTONS ═══ -->
+<h2>15. Main Header Buttons <span class="page-tag page-tag--all">All pages</span></h2>
+<h3>.header-action__btn (account, wishlist, cart, search)</h3>
+<div class="card" style="background: #fff;">
+  <div class="state-row">
+    <div>
+      <div class="state-label">Account</div>
+      <button style="display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--heading); background: none; border: none; cursor: pointer; padding: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span style="font-size: 10px;">Račun</span>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Wishlist</div>
+      <button style="display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--heading); background: none; border: none; cursor: pointer; padding: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span style="font-size: 10px;">Želje</span>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Cart</div>
+      <button style="display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--heading); background: none; border: none; cursor: pointer; padding: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span style="font-size: 10px;">5.49€</span>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Hover</div>
+      <button style="display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--gold); background: none; border: none; cursor: pointer; padding: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span style="font-size: 10px;">Račun</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<h3>.mobile-menu-toggle (hamburger)</h3>
+<div class="card">
+  <div class="state-row">
+    <div>
+      <div class="state-label">Closed</div>
+      <button style="display: flex; flex-direction: column; justify-content: space-between; width: 26px; height: 18px; background: #444; border: none; border-radius: 4px; cursor: pointer; padding: 8px 6px; box-sizing: content-box;">
+        <span style="display: block; height: 2.5px; background: #fff; border-radius: 2px;"></span>
+        <span style="display: block; height: 2.5px; background: #fff; border-radius: 2px;"></span>
+        <span style="display: block; height: 2.5px; background: #fff; border-radius: 2px;"></span>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Open (X)</div>
+      <button style="display: flex; flex-direction: column; justify-content: space-between; width: 26px; height: 18px; background: #444; border: none; border-radius: 4px; cursor: pointer; padding: 8px 6px; box-sizing: content-box; position: relative;">
+        <span style="display: block; height: 2.5px; background: #fff; border-radius: 2px; transform: translateY(8px) rotate(45deg);"></span>
+        <span style="display: block; height: 2.5px; background: #fff; border-radius: 2px; opacity: 0;"></span>
+        <span style="display: block; height: 2.5px; background: #fff; border-radius: 2px; transform: translateY(-8px) rotate(-45deg);"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<h2>16. Sticky Nav Buttons <span class="page-tag page-tag--all">All pages (scroll)</span></h2>
+<h3>.sticky-nav__btn</h3>
+<div class="card" style="background: #fff;">
+  <div class="state-row">
+    <div>
+      <div class="state-label">Search</div>
+      <button style="display: flex; align-items: center; gap: 16px; background: none; border: none; color: var(--heading); cursor: pointer; padding: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Account</div>
+      <button style="display: flex; align-items: center; gap: 16px; background: none; border: none; color: var(--heading); cursor: pointer; padding: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Wishlist</div>
+      <button style="display: flex; align-items: center; gap: 16px; background: none; border: none; color: var(--heading); cursor: pointer; padding: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Cart + price</div>
+      <button style="display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--heading); cursor: pointer; padding: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span style="font-size: 14px; font-weight: 500;">5.49€</span>
+      </button>
+    </div>
+    <div>
+      <div class="state-label">Hover</div>
+      <button style="display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--gold); cursor: pointer; padding: 0;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<h3>.mobile-search-btn (mobile only)</h3>
+<div class="card" style="background: #444;">
+  <div class="state-row">
+    <div>
+      <div class="state-label" style="color: #999;">Search icon</div>
+      <button style="display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; padding: 0; color: #f5f5f5;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEXT LINKS ═══ -->
+<h2>17. Text Links / Actions <span class="page-tag page-tag--all">Various</span></h2>
+<div class="card">
+  <div class="state-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+    <a class="text-link">Uredi</a>
+    <a class="text-link">Spremeni</a>
+    <a class="text-link">Pozabljeno geslo?</a>
+    <a style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); text-decoration: none; font-family: var(--font-heading); font-weight: 500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Nazaj na košarico</a>
+    <a style="font-size: 13px; color: var(--gold-dark); text-decoration: none;">Poglej vse &rarr;</a>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

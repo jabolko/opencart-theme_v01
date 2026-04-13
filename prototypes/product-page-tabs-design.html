@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Designs — 5 Variations | Otroški kotiček</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&family=Open+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #f9b94a;
+            --gold-dark: #e0a030;
+            --gold-wash: rgba(249, 185, 74, 0.08);
+            --charcoal: #565656;
+            --heading: #2b2e35;
+            --muted: #9aa0af;
+            --white: #ffffff;
+            --surface-alt: #f7f7f7;
+            --border: #d6d9e0;
+            --success: #7d9478;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            color: var(--charcoal);
+            background: #eee;
+            padding: 20px 0;
+        }
+
+        .variation {
+            max-width: 390px;
+            margin: 0 auto 40px;
+            background: var(--surface-alt);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 16px;
+        }
+
+        .variation-label {
+            background: var(--heading);
+            color: var(--white);
+            padding: 10px 16px;
+            margin: -16px -16px 16px;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .variation-label span {
+            opacity: 0.6;
+            font-weight: 400;
+            font-size: 11px;
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* Sample content for all tabs */
+        .tab-content {
+            padding: 14px 0;
+            font-size: 13px;
+            color: var(--charcoal);
+            line-height: 1.5;
+        }
+
+        .tab-content .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 3px 0;
+        }
+
+        .tab-content .stat-num {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--charcoal);
+            width: 70px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .tab-content .stat-num small {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .tab-content .stat-text {
+            font-size: 12px;
+            color: var(--charcoal);
+        }
+
+        .tab-content .stat-title {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            color: var(--heading);
+        }
+
+        /* ================================================================
+           V1 — UNDERLINE TABS (current, refined)
+           Bottom border indicator, gold active
+           ================================================================ */
+        .v1-tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .v1-tab {
+            flex: 1;
+            padding: 10px 8px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--muted);
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .v1-tab:hover { color: var(--heading); }
+        .v1-tab.active { color: var(--heading); border-bottom-color: var(--gold); }
+
+        /* ================================================================
+           V2 — PILL TABS
+           Rounded pill buttons, gold fill on active
+           ================================================================ */
+        .v2-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 4px;
+            background: var(--white);
+            border-radius: 10px;
+        }
+
+        .v2-tab {
+            flex: 1;
+            padding: 8px 8px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--muted);
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: all 0.25s ease;
+        }
+
+        .v2-tab:hover { color: var(--heading); background: var(--surface-alt); }
+        .v2-tab.active { color: var(--heading); background: var(--gold-wash); }
+
+        /* ================================================================
+           V3 — SEGMENTED CONTROL
+           iOS-style segmented control, solid bg on active
+           ================================================================ */
+        .v3-tabs {
+            display: flex;
+            padding: 3px;
+            background: var(--white);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .v3-tab {
+            flex: 1;
+            padding: 8px 8px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--muted);
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: all 0.25s ease;
+        }
+
+        .v3-tab:hover { color: var(--heading); }
+        .v3-tab.active {
+            color: var(--heading);
+            background: var(--surface-alt);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+
+        /* ================================================================
+           V4 — BUTTON TABS
+           Outlined buttons, gold border on active
+           ================================================================ */
+        .v4-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .v4-tab {
+            flex: 1;
+            padding: 10px 8px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--muted);
+            border: 1.5px solid var(--border);
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            line-height: 1.3;
+            transition: all 0.2s ease;
+        }
+
+        .v4-tab:hover { color: var(--heading); border-color: var(--charcoal); }
+        .v4-tab.active { color: var(--heading); border-color: var(--gold); background: var(--gold-wash); }
+
+        /* ================================================================
+           V5 — MINIMAL DOT INDICATOR
+           Text tabs with a small dot below active
+           ================================================================ */
+        .v5-tabs {
+            display: flex;
+            gap: 0;
+        }
+
+        .v5-tab {
+            flex: 1;
+            padding: 10px 8px 14px;
+            text-align: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+            line-height: 1.3;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .v5-tab:hover { color: var(--heading); }
+        .v5-tab.active { color: var(--heading); }
+
+        .v5-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<!-- V1 — UNDERLINE -->
+<div class="variation">
+    <div class="variation-label">V1 — Underline <span>Current style, refined. Gold bottom border on active tab.</span></div>
+    <div class="v1-tabs">
+        <button class="v1-tab active">Vpliv tekstilne industrije</button>
+        <button class="v1-tab">Naša garancija kakovosti</button>
+    </div>
+    <div class="tab-content">
+        <div class="stat-row">
+            <div class="stat-num">0,50<small>€</small></div>
+            <div><div class="stat-title">Poceni delovna sila</div><div class="stat-text">Delavci v tretjem svetu — tudi otroci</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">10<small>%</small></div>
+            <div><div class="stat-title">Emisije CO₂</div><div class="stat-text">Več kot leti in ladje skupaj</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">93<small>mrd</small></div>
+            <div><div class="stat-title">Poraba vode</div><div class="stat-text">Enako kot 200 milijonov ljudi</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- V2 — PILL -->
+<div class="variation">
+    <div class="variation-label">V2 — Pill Tabs <span>Rounded pills, gold wash on active. Soft, modern feel.</span></div>
+    <div class="v2-tabs">
+        <button class="v2-tab active">Vpliv tekstilne industrije</button>
+        <button class="v2-tab">Naša garancija kakovosti</button>
+    </div>
+    <div class="tab-content">
+        <div class="stat-row">
+            <div class="stat-num">0,50<small>€</small></div>
+            <div><div class="stat-title">Poceni delovna sila</div><div class="stat-text">Delavci v tretjem svetu — tudi otroci</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">10<small>%</small></div>
+            <div><div class="stat-title">Emisije CO₂</div><div class="stat-text">Več kot leti in ladje skupaj</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">93<small>mrd</small></div>
+            <div><div class="stat-title">Poraba vode</div><div class="stat-text">Enako kot 200 milijonov ljudi</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- V3 — SEGMENTED CONTROL -->
+<div class="variation">
+    <div class="variation-label">V3 — Segmented Control <span>iOS-style. Bordered container, raised active segment with shadow.</span></div>
+    <div class="v3-tabs">
+        <button class="v3-tab active">Vpliv tekstilne industrije</button>
+        <button class="v3-tab">Naša garancija kakovosti</button>
+    </div>
+    <div class="tab-content">
+        <div class="stat-row">
+            <div class="stat-num">0,50<small>€</small></div>
+            <div><div class="stat-title">Poceni delovna sila</div><div class="stat-text">Delavci v tretjem svetu — tudi otroci</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">10<small>%</small></div>
+            <div><div class="stat-title">Emisije CO₂</div><div class="stat-text">Več kot leti in ladje skupaj</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">93<small>mrd</small></div>
+            <div><div class="stat-title">Poraba vode</div><div class="stat-text">Enako kot 200 milijonov ljudi</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- V4 — BUTTON TABS -->
+<div class="variation">
+    <div class="variation-label">V4 — Button Tabs <span>Outlined buttons with gold border + wash on active. Clear tap targets.</span></div>
+    <div class="v4-tabs">
+        <button class="v4-tab active">Vpliv tekstilne industrije</button>
+        <button class="v4-tab">Naša garancija kakovosti</button>
+    </div>
+    <div class="tab-content">
+        <div class="stat-row">
+            <div class="stat-num">0,50<small>€</small></div>
+            <div><div class="stat-title">Poceni delovna sila</div><div class="stat-text">Delavci v tretjem svetu — tudi otroci</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">10<small>%</small></div>
+            <div><div class="stat-title">Emisije CO₂</div><div class="stat-text">Več kot leti in ladje skupaj</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">93<small>mrd</small></div>
+            <div><div class="stat-title">Poraba vode</div><div class="stat-text">Enako kot 200 milijonov ljudi</div></div>
+        </div>
+    </div>
+</div>
+
+<!-- V5 — DOT INDICATOR -->
+<div class="variation">
+    <div class="variation-label">V5 — Dot Indicator <span>Clean text, tiny gold dot below active. Most minimal option.</span></div>
+    <div class="v5-tabs">
+        <button class="v5-tab active">Vpliv tekstilne industrije</button>
+        <button class="v5-tab">Naša garancija kakovosti</button>
+    </div>
+    <div class="tab-content">
+        <div class="stat-row">
+            <div class="stat-num">0,50<small>€</small></div>
+            <div><div class="stat-title">Poceni delovna sila</div><div class="stat-text">Delavci v tretjem svetu — tudi otroci</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">10<small>%</small></div>
+            <div><div class="stat-title">Emisije CO₂</div><div class="stat-text">Več kot leti in ladje skupaj</div></div>
+        </div>
+        <div class="stat-row">
+            <div class="stat-num">93<small>mrd</small></div>
+            <div><div class="stat-title">Poraba vode</div><div class="stat-text">Enako kot 200 milijonov ljudi</div></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

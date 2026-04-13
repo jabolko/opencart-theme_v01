@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search Bar Options</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #ececec;
+      padding: 48px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+    }
+
+    :root {
+      --gold:        #f9b94a;
+      --gold-dark:   #e0a030;
+      --text:        #2b2e35;
+      --text-muted:  #9aa0af;
+      --surface:     #ffffff;
+      --surface-alt: #f7f7f7;
+      --border:      #d6d9e0;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #9aa0af;
+      margin-bottom: 20px;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #9aa0af;
+      line-height: 1.5;
+      margin-top: 14px;
+    }
+    .note strong { color: #565656; }
+
+    /* ── Shared: reset Bootstrap input/button defaults ── */
+    .search-input {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      border: none;
+      background: none;
+      color: var(--text);
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .search-btn {
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: none;
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       OPTION 1 — Outline pill
+       Clean 1px border, no fill. Gold border + icon on focus.
+       Lightest visual weight — feels editorial/open.
+    ══════════════════════════════════════════════════════ */
+
+    .search-1 {
+      display: flex;
+      align-items: center;
+      height: 46px;
+      border-radius: 9999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      padding: 0 6px 0 20px;
+      gap: 8px;
+      transition: border-color .18s ease;
+      max-width: 500px;
+    }
+    .search-1:focus-within {
+      border-color: var(--gold);
+    }
+    .search-1 .search-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 9999px;
+      color: var(--text-muted);
+      transition: color .18s ease;
+    }
+    .search-1:focus-within .search-btn {
+      color: var(--gold-dark);
+    }
+    .search-1 .search-btn:hover { color: var(--gold-dark); }
+
+
+    /* ══════════════════════════════════════════════════════
+       OPTION 2 — Filled pill, floating button
+       Grey fill, gold circle button that "floats" inside on right.
+       Warm and inviting — closer to original intent.
+    ══════════════════════════════════════════════════════ */
+
+    .search-2 {
+      display: flex;
+      align-items: center;
+      height: 46px;
+      border-radius: 9999px;
+      border: 1.5px solid transparent;
+      background: var(--surface-alt);
+      padding: 0 4px 0 20px;
+      transition: border-color .18s ease, background .18s ease;
+      max-width: 500px;
+    }
+    .search-2:focus-within {
+      border-color: var(--gold);
+      background: var(--surface);
+    }
+    .search-2 .search-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 9999px;
+      background: var(--gold);
+      color: var(--text);
+      transition: background .18s ease;
+      flex-shrink: 0;
+    }
+    .search-2 .search-btn:hover,
+    .search-2:focus-within .search-btn {
+      background: var(--gold-dark);
+    }
+
+
+    /* ══════════════════════════════════════════════════════
+       OPTION 3 — Underline only
+       No container — just a bottom border, expands on focus.
+       Maximum breathing room. Works best in wide header layouts.
+    ══════════════════════════════════════════════════════ */
+
+    .search-3 {
+      display: flex;
+      align-items: center;
+      height: 46px;
+      border-bottom: 1.5px solid var(--border);
+      padding: 0 4px 0 4px;
+      gap: 8px;
+      transition: border-color .18s ease;
+      max-width: 500px;
+    }
+    .search-3:focus-within {
+      border-color: var(--gold);
+    }
+    .search-3 .search-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 9999px;
+      color: var(--text-muted);
+      transition: color .18s ease;
+    }
+    .search-3:focus-within .search-btn { color: var(--gold-dark); }
+    .search-3 .search-btn:hover { color: var(--gold-dark); }
+
+  </style>
+</head>
+<body>
+
+  <!-- ── OPTION 1 ── -->
+  <div>
+    <p class="section-label">Option 1 — Outline pill · gold border on focus · lightest weight</p>
+    <div class="search-1">
+      <input class="search-input" type="text" placeholder="Iščite oblačila, velikosti, znamke..." />
+      <button class="search-btn"><i class="fa fa-search"></i></button>
+    </div>
+    <p class="note"><strong>No fill at rest.</strong> Border appears with 1px stroke — very editorial. Gold border activates on focus. Icon turns gold. Zero background shift — stable layout.</p>
+  </div>
+
+  <!-- ── OPTION 2 ── -->
+  <div>
+    <p class="section-label">Option 2 — Filled pill · floating gold button · warm & familiar</p>
+    <div class="search-2">
+      <input class="search-input" type="text" placeholder="Iščite oblačila, velikosti, znamke..." />
+      <button class="search-btn"><i class="fa fa-search"></i></button>
+    </div>
+    <p class="note"><strong>Grey fill at rest, white + gold border on focus.</strong> Gold circle button is always visible — signals action clearly. Closest to original intent.</p>
+  </div>
+
+  <!-- ── OPTION 3 ── -->
+  <div>
+    <p class="section-label">Option 3 — Underline only · open · maximum breathing room</p>
+    <div class="search-3">
+      <input class="search-input" type="text" placeholder="Iščite oblačila, velikosti, znamke..." />
+      <button class="search-btn"><i class="fa fa-search"></i></button>
+    </div>
+    <p class="note"><strong>No container box.</strong> Bottom border only — feels like editorial/luxury sites. Gold underline on focus. Needs strong surrounding layout to anchor it.</p>
+  </div>
+
+</body>
+</html>

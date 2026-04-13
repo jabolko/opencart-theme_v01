@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "otroski-koticek-dev",
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["/tmp/otroski-koticek-preview/server.rb"],
+      "port": 8080
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+<table class="table">
+ <tr>
+    <td class="col-xs-3">
+        <h5><span class="required">* </span><strong>{{ entry_code }}</strong></h5>
+        <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ entry_code_help }}</span>
+    </td>
+    <td class="col-xs-9">
+        <div class="col-xs-4">
+            <select id="Checker" name="{{ moduleName }}[Enabled]" class="form-control">
+              <option value="yes" {{ ((moduleData.Enabled is not empty and moduleData.Enabled == 'yes') )?'selected=selected' :''  }}>{{ text_enabled }}</option>
+              <option value="no"  {{ ((moduleData.Enabled is empty or moduleData.Enabled== 'no') )?'selected=selected' :''  }}>{{ text_disabled }}</option>
+            </select>
+        </div>
+    </td>
+    </tr>
+</table>
+<table id="module" class="table">
+	<tr>
+        <td class="col-xs-3" style="vertical-align:top;"><h5><b>{{ text_choose_persits_method }}</b></h5><span class="help">{{ desc_persist_method }}</span></td>
+        <td class="col-xs-9">
+        <div class="col-xs-4">
+            <select name="{{ moduleName }}[Method]" class="form-control">
+                  <option value="cookies" {{ moduleData.Method == 'cookies' ? 'selected' : '' }}>{{ text_browser_cookies }}</option>
+                  <option value="ip"  {{ moduleData.Method == 'ip' ? 'selected' : ''}}>{{ text_ip_address }}</option>
+                  <option value="cookies_ip"  {{ moduleData.Method == 'cookies_ip' ? 'selected' : '' }}>{{ text_do_both }}</option>
+            </select>
+        </div>
+        <div class="col-xs-8">
+        <h5><b>{{text_which_method}}</b></h5>
+        <hr>
+		    <p><span class="help"><b>{{ text_browser_cookies }} &ndash;</b> {{ desc_browser_cookies }}</span></p>
+        <p><span class="help"><b>{{ text_ip_address }} &ndash;</b> {{ desc_ip_address }}</span></p>
+        <p><span class="help"><b>{{ text_do_both }} &ndash;</b> {{ desc_do_both }}</span></p>
+        </div>
+        </td>
+    </tr>
+	<tr>
+        <td class="col-xs-3"><h5><b>{{ text_choose_validiy }}</b></h5><span class="help">{{ text_choose_how_long }}</span></td>
+        <td class="col-xs-9">
+        <div class="col-xs-4">
+                <div class="input-group">
+                  	<input type="text" class="form-control" name="{{ moduleName }}[Limit]" value="
+                    {%- if moduleData.Limit is defined -%}
+                      {{ moduleData.Limit}}
+                    {%- else -%}
+                      {{- 35 -}}
+                    {%- endif -%}" />
+		               <span class="input-group-addon">{{ text_days }}</span>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<script>
+ $(function() {
+    var $typeSelector = $('#Checker');
+    var $toggleArea = $('#module');
+	 if ($typeSelector.val() === 'yes') {
+            $toggleArea.show();
+        }
+        else {
+            $toggleArea.hide();
+        }
+    $typeSelector.change(function(){
+        if ($typeSelector.val() === 'yes') {
+            $toggleArea.show(300);
+        }
+        else {
+            $toggleArea.hide(300);
+        }
+    });
+});
+</script>
