@@ -58,7 +58,7 @@
   {% if error_warning %}
   <div class="ck-layout">
     <div class="ck-layout__main">
-      <div class="ck-panel" style="margin-bottom: 0.15rem;">
+      <div class="panel ck-panel" style="margin-bottom: 0.15rem;">
         <div style="padding: 1rem;">
           <div class="alert alert-danger alert-dismissible" style="margin-bottom: 0;">{{ error_warning }}
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -85,7 +85,7 @@
         </div>
 
         {# Step 1 (merged): Pills nav + Guest/Register/Login form #}
-        <div class="ck-panel" data-step="1">
+        <div class="panel ck-panel" data-step="1">
           <div class="panel-heading">
             <h4 class="panel-title">{% if not logged %}{{ text_checkout_payment_address }}{% else %}{{ text_checkout_payment_address }}{% endif %}</h4>
           </div>
@@ -111,7 +111,7 @@
 
         {# Step 3: Shipping Address (only if different) #}
         {% if shipping_required %}
-        <div class="ck-panel" data-step="2">
+        <div class="panel ck-panel" data-step="2">
           <div class="panel-heading">
             <h4 class="panel-title">{{ text_checkout_shipping_address }}</h4>
           </div>
@@ -121,7 +121,7 @@
         </div>
 
         {# Step 4: Shipping Method #}
-        <div class="ck-panel" data-step="2">
+        <div class="panel ck-panel" data-step="2">
           <div class="panel-heading">
             <h4 class="panel-title">{{ text_checkout_shipping_method }}</h4>
           </div>
@@ -132,7 +132,7 @@
         {% endif %}
 
         {# Step 5: Payment Method #}
-        <div class="ck-panel" data-step="3">
+        <div class="panel ck-panel" data-step="3">
           <div class="panel-heading">
             <h4 class="panel-title">{{ text_checkout_payment_method }}</h4>
           </div>
@@ -142,7 +142,7 @@
         </div>
 
         {# Step 6: Confirm Order #}
-        <div class="ck-panel" data-step="4">
+        <div class="panel ck-panel" data-step="4">
           <div class="panel-heading">
             <h4 class="panel-title">{{ text_checkout_confirm }}</h4>
           </div>
@@ -792,7 +792,10 @@ $(document).delegate('#button-register', 'click', function() {
 
 							$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
 
-							$('a[href=\'#collapse-shipping-address\']').trigger('click');
+							// Show the shipping address panel (hidden by default via CSS) and open it
+							$('#collapse-shipping-address').closest('.ck-panel').addClass('is-visible');
+							$('#collapse-payment-address').collapse('hide');
+							$('#collapse-shipping-address').collapse('show');
 
 							$('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_shipping_method }}');
 							$('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');
@@ -927,7 +930,9 @@ $(document).delegate('#button-payment-address', 'click', function() {
                             success: function(html) {
                                 $('#collapse-shipping-address .panel-body').html(html);
                                 $('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
-                                $('a[href=\'#collapse-shipping-address\']').trigger('click');
+                                $('#collapse-shipping-address').closest('.ck-panel').addClass('is-visible');
+                                $('#collapse-payment-address').collapse('hide');
+                                $('#collapse-shipping-address').collapse('show');
                             }
                         });
                     }
@@ -1141,7 +1146,10 @@ $(document).delegate('#button-guest', 'click', function() {
 
 							$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
 
-							$('a[href=\'#collapse-shipping-address\']').trigger('click');
+							// Show the shipping address panel (hidden by default via CSS)
+							$('#collapse-shipping-address').closest('.ck-panel').addClass('is-visible');
+							$('#collapse-payment-address').collapse('hide');
+							$('#collapse-shipping-address').collapse('show');
 
 							$('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_shipping_method }}');
 							$('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');

@@ -259,11 +259,13 @@ body:has(.ck-page) {
 
 // ── Panels (accordion) ──
 // We restyle .panel-heading and .panel-collapse but keep OC's IDs and structure
+// .panel class is required for Bootstrap 3 collapse accordion to work (data-parent)
 .ck-panel {
   background: $color-surface;
   border-radius: $radius-lg;
-  overflow: hidden;
   margin-bottom: 0.15rem;
+  border: none;
+  box-shadow: none;
 
   .panel-heading {
     padding: 1rem;
